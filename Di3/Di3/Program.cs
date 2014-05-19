@@ -3,17 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Di3
 {
 
     class Program
     {
+        
         static void Main(string[] args)
         {
+            List<Di3> di3 = new List<Di3>();
+            for (int i = 0; i < 25; i++)
+                di3.Add(new Di3());
 
+            Stopwatch parse_Time = new Stopwatch();
+            Stopwatch index_Time = new Stopwatch();
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                parse_Time.Start();
+                BED_Parser parser = new BED_Parser(args[0], "Human");                
+
+                var result = parser.Parse();
+                parse_Time.Stop();
+
+                for (int chr = 0; chr < result.Count; chr++)
+                {
+                    index_Time.Start();
+
+                    foreach (Peak peak in result[chr])
+                    {                        
+                        di3[chr].Insert(peak.start, peak.stop, peak, i, 0, 0);                        
+                    }
+
+                    index_Time.Stop();
+                }
+            }
+
+
+            Console.WriteLine("Done ...");
+            Console.WriteLine("Parser Time : {0}", parse_Time.ElapsedMilliseconds.ToString());
+            Console.WriteLine("Index  Time : {0}", index_Time.ElapsedMilliseconds.ToString());
         }
     }
+
+
+
     
 
     public sealed class Peak
