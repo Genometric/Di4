@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Collections;
+using System.Collections.ObjectModel;
+
 
 namespace Di3
 {
+    /// <summary>
+    /// Dynamic Interval Indexer
+    /// </summary>
     class Di3
     {
         public Di3()
@@ -30,11 +33,11 @@ namespace Di3
             public int index { set; get; }
 
             /// <summary>
-            /// The number of regions (excluding genes) ending at the index.
+            /// The number of regions (excluding genes and features) ending at the index.
             /// </summary>
             public byte introduced_stops_count { set; get; }
-            public List<Block_Peak_Data> peaks { set; get; }//= new List<Block_Peak_Data>();
-            public List<Block_Gene_Data> genes { set; get; }//= new List<Block_Gene_Data>();
+            public List<Block_Peak_Data> peaks { set; get; }
+            public List<Block_Gene_Data> genes { set; get; }
             public List<Block_Feature_Data> features { set; get; }
 
             public Block()
@@ -196,6 +199,13 @@ namespace Di3
             }
         }
 
+        public class Map_Result
+        {
+            public Peak peak { set; get; }
+            public int region_count { set; get; }
+        }
+
+
         /// <summary>
         /// Gets the total number of the indexed peaks 
         /// </summary>
@@ -268,6 +278,18 @@ namespace Di3
         /// </summary>
         public Hashtable sim_HT { set; get; }
 
+        /// <summary>
+        /// This hastable contains the IDs of the samples which are chosen
+        /// for any kind of operations.
+        /// </summary>
+        private Hashtable _marked_samples { set; get; }
+
+        /// <summary>
+        /// This hashtable contains the IDs of the samples which are chosen
+        /// as targets of marked samples. 
+        /// </summary>
+        private Hashtable _target_samples { set; get; }
+
 
         public List<Block> index = new List<Block>();
 
@@ -296,7 +318,10 @@ namespace Di3
             _interval_type = interval_type;
 
             if (sim_HT.ContainsKey(_sample_index) == false)
-            { index_source_count++; sim_HT.Add(_sample_index, sim_HT.Count); }
+            {
+                index_source_count++;
+                sim_HT.Add(_sample_index, sim_HT.Count);
+            }
 
 
             region_count[_interval_type]++;
@@ -430,7 +455,6 @@ namespace Di3
         private Block Get_new_Block(byte type)
         {
             Block b = new Block() { index = _position, introduced_stops_count = 0 };
-            if (type == 3) b.introduced_stops_count = 1;
 
             if (_interval_type == 0)
             {
@@ -441,6 +465,12 @@ namespace Di3
                     peak_Data = (Peak)_interval,
                     identifier = _identifier
                 });
+
+                /// Initially following modification was being applied on all
+                /// new insertions regardless of _interval_type ; but it is changed
+                /// to apply to only new region insertions beucase introduced_stops_count 
+                /// regards only the regions not genes nor features.
+                if (type == 3) b.introduced_stops_count = 1;
             }
             else if (_interval_type == 1)
             {
@@ -517,19 +547,31 @@ namespace Di3
                     peak_Data = (Peak)_interval,
                     identifier = _identifier
                 });
+
+
+                /// This condition is checked inside "_interval_type == 0" condition because
+                /// introduced_stops_count represents only regions stops count and features and 
+                /// genes are excluded.
+                if (type == 3)
+                {
+                    index[insert_index].introduced_stops_count++;
+                }
             }
             else if (_interval_type == 1)
             {
                 index[insert_index].genes.Add(new Block.Block_Gene_Data()
                 {
                     type = type,
-                    gene_Data = (Gene)_interval,
+                    gene_Data = (Gene)_interval
                 });
             }
-
-            if (type == 3)
+            else if (_interval_type == 2)
             {
-                index[insert_index].introduced_stops_count++;
+                index[insert_index].features.Add(new Block.Block_Feature_Data()
+                {
+                    type = type,
+                    feature_Data = (General_Features_Data.Feature)_interval
+                });
             }
         }
 
@@ -765,6 +807,8 @@ namespace Di3
 
                         if (result.cuS != int.MinValue)
                         {
+                            /// CAUTION CAUTION CAUTION
+                            /// THIS CAST MIGHT BE PROBLAMATIC, BECUASE IT IS NOT ALWAYS POSSIBLE TO CAST FROM DOUBLE TO INT
                             result.cuS = (int)(Math.Round(result.cuS / runKey.secondary_resolution, runKey.primary_resolution) * runKey.secondary_resolution);
                             result.cuE = (int)(Math.Round(result.cuE / runKey.secondary_resolution, runKey.primary_resolution) * runKey.secondary_resolution);
 
@@ -803,6 +847,8 @@ namespace Di3
                         // If the region intersects with a gene, it is not required to add the stats to closest down-stream gene.
                         if ((result.cuS > 0 || result.cuS == int.MinValue) && result.coS != int.MinValue)
                         {
+                            /// CAUTION CAUTION CAUTION
+                            /// THIS CAST MIGHT BE PROBLAMATIC, BECUASE IT IS NOT ALWAYS POSSIBLE TO CAST FROM DOUBLE TO INT
                             result.coS = (int)(Math.Round(result.coS / runKey.secondary_resolution, runKey.primary_resolution) * runKey.secondary_resolution);
                             result.coE = (int)(Math.Round(result.coE / runKey.secondary_resolution, runKey.primary_resolution) * runKey.secondary_resolution);
 
@@ -870,6 +916,181 @@ namespace Di3
 
             return rtv;
         }
+
+
+        public SortedList Get_Inter_Region_Distance_Distribution(List<int> source_sample_index, List<int> target_sample_index, int primary_resolution, int secondary_resolution)
+        {
+            SortedList rtv = new SortedList();
+
+            Hashtable distances_HT = new Hashtable();
+
+            _marked_samples = new Hashtable();
+            foreach (int si in source_sample_index)
+                _marked_samples.Add(si, "Hamed");
+
+            _target_samples = new Hashtable();
+            foreach (int ts in target_sample_index)
+                _target_samples.Add(ts, "Hamed");
+
+            int p = 0;
+            int d = -1;
+            int dRight = 0;
+            int index_Count = index.Count;
+
+            for (int i = 0; i < index_Count; i++)
+            {
+                for (p = 0; p < index[i].peaks.Count; p++)
+                {
+                    if (index[i].peaks[p].type == 1 && _marked_samples.Contains(index[i].peaks[p].peak_Source))
+                    {
+                        d = Find_Closest_to_Start(i, p);
+
+                        if (d != 0)
+                        {
+                            dRight = Find_Intersection_from_start_to_stop(i, index[i].peaks[p].peak_Data.stop);
+
+                            if (dRight != 0)
+                                d = Math.Min(d, Find_Closest_to__Stop(dRight));
+                            else
+                                d = 0;
+                        }
+
+                        d = (int)(Math.Round((double)(d / secondary_resolution), primary_resolution) * secondary_resolution);
+
+                        if (distances_HT.ContainsKey(d))
+                            distances_HT[d] = (int)distances_HT[d] + 1;
+                        else
+                            distances_HT.Add(d, (int)1);
+                    }
+                }
+            }
+
+            foreach (DictionaryEntry distance in distances_HT)
+                rtv.Add(Convert.ToInt32(distance.Key), Convert.ToInt32(distance.Value));
+
+            return rtv;
+        }
+        private int Find_Closest_to_Start(int i, int p)
+        {
+            /// If there exist any region at current index (which is pointed by i)
+            /// that its regions source is one of the allowed ones, then distance is 0.
+            /// If any of these conditions is not satisfied, then the nearest region on
+            /// left side needs to be determined.
+            /// By definition of indexing, the nearest on left HAS TO BE OF TYPE 3, 
+            /// hence if at nearest index on left side any region is available, and
+            /// if the regions source is one of the allowed ones, then the distance
+            /// is the difference between two indexes. 
+
+            for (int l = 0; l < index[i].peaks.Count; l++)
+                if (l != p)
+                    if (index[i].peaks[l].type != 3 && _target_samples.Contains(index[i].peaks[l].peak_Source))
+                        return 0;
+
+            int k = 0;
+            for (int j = i - 1; j >= 0; j--)
+                for (k = 0; k < index[j].peaks.Count; k++)
+                    if (_target_samples.Contains(index[j].peaks[k].peak_Source))
+                        return index[i].index - index[j].index;
+
+            return -1;
+        }
+        private int Find_Closest_to__Stop(int i)
+        {
+            if (index[i].peaks.Count > 1)
+                for (int l = 0; l < index[i].peaks.Count; l++)
+                    if (index[i].peaks[l].type == 1 && _target_samples.Contains(index[i].peaks[l].peak_Source))
+                        return 0;
+
+            int k = 0;
+            for (int j = i + 1; j < index.Count; j++)
+                for (k = 0; k < index[j].peaks.Count; k++)
+                    if (_target_samples.Contains(index[j].peaks[k].peak_Source))
+                        return index[j].index - index[i].index;
+
+            return int.MaxValue;
+        }
+        private int Find_Intersection_from_start_to_stop(int i, int indx)
+        {
+            i++;
+            int k = 0;
+            for (; i < index.Count; i++)
+                if (index[i].index == indx)
+                    return i; // No intersection found. This could occur only when the region is not intersecting with any region.
+                else
+                    for (k = 0; k < index[i].peaks.Count; k++)
+                        if (index[i].peaks[k].type == 1)
+                            if (_marked_samples.Contains(index[i].peaks[k].peak_Source))
+                                return 0; // A region intersecting is determined.
+
+            return index.Count; // Neither the stop position, nor an intersecting region is found. 
+            // CAUTION: THIS RETURN SHOULD NEVER BE MET, IF IT IS MET, IT COULD BE A SIGN THAT THE 
+            // SPACE IS NOT CORRECTLY INDEXED.
+        }
+
+
+
+        public List<Map_Result> GMQL_MAP(List<int> source_sample_index, List<int> target_sample_index)
+        {
+            List<Map_Result> rtv = new List<Map_Result>();
+
+            _marked_samples = new Hashtable();
+            foreach (int si in source_sample_index)
+                _marked_samples.Add(si, "Hamed");
+
+            _target_samples = new Hashtable();
+            foreach (int ts in target_sample_index)
+                _target_samples.Add(ts, "Hamed");
+
+
+            int p = 0;
+            int s = 0;
+            int ipc = 0;
+            int j = 0;
+            int k = 0;
+            int index_Count = index.Count;
+            int regCount = 0;
+            int stop_index = 0;
+
+            for (int i = 0; i < index_Count; i++)
+            {
+                ipc = index[i].peaks.Count;
+                for (p = 0; p < ipc; p++)
+                {
+                    if (index[i].peaks[p].type == 1 && _marked_samples.Contains(index[i].peaks[p].peak_Source))
+                    {
+                        regCount = 0;
+                        stop_index = index[i].peaks[p].peak_Data.stop;
+
+                        // search start index for intersecting regions.
+                        for (s = 0; s < ipc; s++)
+                        {
+                            if (s != p)
+                                if (index[i].peaks[s].type == 1 || index[i].peaks[s].type == 2)
+                                    if (_target_samples.ContainsKey(index[i].peaks[s].peak_Source))
+                                        regCount++;
+                        }
+
+                        // search from start index to stop for new intersecting regions.
+                        for (j = i + 1; j < index_Count && index[j].index != stop_index; j++)
+                        {
+                            for (k = 0; k < index[j].peaks.Count; k++)
+                            {
+                                if (index[j].peaks[k].type == 1)
+                                    if (_target_samples.ContainsKey(index[j].peaks[k].peak_Source))
+                                        regCount++;
+                            }
+                        }
+
+                        rtv.Add(new Map_Result() { peak = index[i].peaks[p].peak_Data, region_count = regCount });
+                    }
+                }
+            }
+
+
+            return rtv;
+        }
+
+
 
 
         private Ann_Stats_Record Get_interval_Annotation_relative_to_genes(int Block_index, int region_index)
@@ -1059,5 +1280,4 @@ namespace Di3
         }
 
     }
-
 }

@@ -10,7 +10,7 @@ namespace Di3
 
     class Program
     {
-        
+
         static void Main(string[] args)
         {
             List<Di3> di3 = new List<Di3>();
@@ -19,32 +19,84 @@ namespace Di3
 
             Stopwatch parse_Time = new Stopwatch();
             Stopwatch index_Time = new Stopwatch();
+            Stopwatch process_Time = new Stopwatch();
+            Stopwatch write_Time = new Stopwatch();
+
+            int total_regions = 0;
 
             for (int i = 0; i < args.Length; i++)
             {
                 parse_Time.Start();
-                BED_Parser parser = new BED_Parser(args[0], "Human");                
+                BED_Parser parser = new BED_Parser(args[i], "Human");
 
                 var result = parser.Parse();
                 parse_Time.Stop();
 
+                for (int v = 0; v < result.Count; v++)
+                    total_regions += result[v].Count;
+
+                index_Time.Start();
+
                 for (int chr = 0; chr < result.Count; chr++)
                 {
-                    index_Time.Start();
-
                     foreach (Peak peak in result[chr])
-                    {                        
-                        di3[chr].Insert(peak.start, peak.stop, peak, i, 0, 0);                        
+                    {
+                        di3[chr].Insert(peak.start, peak.stop, peak, i, 0, 0);
                     }
+                }
 
-                    index_Time.Stop();
+                index_Time.Stop();
+            }
+
+            List<int> target_List = new List<int>();
+            for (int i = 1; i < args.Length; i++)
+                target_List.Add(i);
+
+            List<int> source_list = new List<int>();
+            source_list.Add(0);
+
+
+            List<List<Di3.Map_Result>> map_Results = new List<List<Di3.Map_Result>>();
+
+            process_Time.Start();
+
+            for (int chr = 0; chr < di3.Count; chr++)
+            {
+                map_Results.Add(di3[chr].GMQL_MAP(source_list, target_List));
+            }
+
+            process_Time.Stop();
+
+            write_Time.Start();
+
+            using (System.IO.StreamWriter sw = new System.IO.StreamWriter("result.BED"))
+            {
+                for (int chr = 0; chr < map_Results.Count; chr++)
+                {
+                    foreach (Di3.Map_Result mpR in map_Results[chr])
+                    {
+                        sw.WriteLine(
+                            "chr" + chr.ToString() + "\t" +
+                            mpR.peak.start.ToString() + "\t" +
+                            mpR.peak.stop.ToString() + "\t" +
+                            mpR.peak.name + "\t" +
+                            mpR.peak.p_value.ToString() + "\t" +
+                            mpR.region_count.ToString());
+                    }
                 }
             }
 
+            write_Time.Stop();
+
 
             Console.WriteLine("Done ...");
-            Console.WriteLine("Parser Time : {0}", parse_Time.ElapsedMilliseconds.ToString());
-            Console.WriteLine("Index  Time : {0}", index_Time.ElapsedMilliseconds.ToString());
+            Console.WriteLine("Total determined regions count : {0}", total_regions.ToString());
+            Console.WriteLine(".::.     Parser    Time (msec) : {0}", parse_Time.Elapsed.ToString());
+            Console.WriteLine(".::.     Index     Time (msec) : {0}", index_Time.Elapsed.ToString());
+            Console.WriteLine(".::.  Map Process  Time (msec) : {0}", process_Time.Elapsed.ToString());
+            Console.WriteLine(".::.     Write     Time (msec) : {0}", write_Time.Elapsed.ToString());
+
+            int wait = 0;
         }
     }
 
