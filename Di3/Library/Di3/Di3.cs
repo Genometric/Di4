@@ -10,7 +10,7 @@ namespace Di3
     {
         internal List<B<C, I>> Bi { private set; get; }
 
-        public Di3()
+        internal Di3()
         {
             Bi = new List<B<C, I>>();
         }

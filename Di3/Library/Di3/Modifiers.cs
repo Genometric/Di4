@@ -6,27 +6,22 @@ using System.Threading.Tasks;
 
 namespace Di3
 {
-    static public sealed class Insert<C, I>
+    static internal class Modifiers<C, I>
     {
-        public Insert(List<B<C, I>> Bi, I interval)
+        public static void Insert(List<B<C,I>>Bi, I interval)
         {
-            /// handle all operation here. 
+
         }
 
         /// <summary>
         /// Represents the coordinate (right or left-end) of interval being
         /// inserted to Di3.
         /// </summary>
-        private C e { set; get; }
+        private static C e { set; get; }
 
         /// <summary>
         /// Represents the index of Bi
         /// </summary>
-        private int b { set; get; }
-
-
-
-
-
+        private static int b { set; get; }
     }
 }
