@@ -5,14 +5,14 @@ using System.Collections;
 using System.Collections.ObjectModel;
 
 
-namespace Di3
+namespace Di3Main
 {
     /// <summary>
     /// Dynamic Interval Indexer
     /// </summary>
-    class Di3
+    class Di3Main
     {
-        public Di3()
+        public Di3Main()
         {
             region_count = new int[] { 0, 0, 0 };
 

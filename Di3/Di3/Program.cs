@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace Di3
+namespace Di3Main
 {
 
     class Program
@@ -13,9 +13,9 @@ namespace Di3
 
         static void Main(string[] args)
         {
-            List<Di3> di3 = new List<Di3>();
+            List<Di3Main> di3 = new List<Di3Main>();
             for (int i = 0; i < 25; i++)
-                di3.Add(new Di3());
+                di3.Add(new Di3Main());
 
             Stopwatch parse_Time = new Stopwatch();
             Stopwatch index_Time = new Stopwatch();
@@ -56,7 +56,7 @@ namespace Di3
             source_list.Add(0);
 
 
-            List<List<Di3.Map_Result>> map_Results = new List<List<Di3.Map_Result>>();
+            List<List<Di3Main.Map_Result>> map_Results = new List<List<Di3Main.Map_Result>>();
 
             process_Time.Start();
 
@@ -73,7 +73,7 @@ namespace Di3
             {
                 for (int chr = 0; chr < map_Results.Count; chr++)
                 {
-                    foreach (Di3.Map_Result mpR in map_Results[chr])
+                    foreach (Di3Main.Map_Result mpR in map_Results[chr])
                     {
                         sw.WriteLine(
                             "chr" + chr.ToString() + "\t" +

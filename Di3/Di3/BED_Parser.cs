@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Di3
+namespace Di3Main
 {
     /// <summary>
     /// Parse standard Browser Extensible Data (BED) format, and generates chromosome-wide statistics regarding regions length and p-values.
