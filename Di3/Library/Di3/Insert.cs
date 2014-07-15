@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace Di3
 {
-    static public class Insert<C, I> 
+    static public sealed class Insert<C, I>
     {
+        public Insert(List<B<C, I>> Bi, I interval)
+        {
+            /// handle all operation here. 
+        }
+
         /// <summary>
         /// Represents the coordinate (right or left-end) of interval being
         /// inserted to Di3.
@@ -20,10 +25,8 @@ namespace Di3
         private int b { set; get; }
 
 
-        public Insert(I interval)
-        {
-            
-        }
+
+
 
     }
 }

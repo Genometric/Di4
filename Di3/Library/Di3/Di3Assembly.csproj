@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="B.cs" />
-    <Compile Include="Di3.cs" />
+    <Compile Include="Index.cs" />
     <Compile Include="Insert.cs" />
     <Compile Include="Lambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
