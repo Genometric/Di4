@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="B.cs" />
     <Compile Include="Di3.cs" />
+    <Compile Include="IInterval.cs" />
     <Compile Include="Modifiers.cs" />
     <Compile Include="Lambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

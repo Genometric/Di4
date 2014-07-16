@@ -8,10 +8,14 @@ namespace Di3
 {
     /// <summary>
     /// Represents the interval intersecting with 
-    /// the coordinate of corresponding block.
+    /// the coordinate of corresponding block. 
+    /// <para>For intervals of possibly different types,
+    /// it is recommended to define this generic type
+    /// parameter in terms of Lowest Common Denominator.
+    /// </para>
     /// </summary>
     /// <typeparam name="I">Denotes generic type of the interval.</typeparam>
-    internal class Lambda<I>
+    internal class Lambda<C, I> where I : IInterval<C>
     {
         /// <summary>
         /// Gets the type of intersection the interval has

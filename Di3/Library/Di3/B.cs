@@ -11,9 +11,14 @@ namespace Di3
     /// intersecting with a particular coordinate (e) on 
     /// domain.
     /// </summary>
-    /// <typeparam name="C">Represents the coordinate/domain type (e.g,. int, double, Time</typeparam>
-    /// <typeparam name="I">Represents interval type.</typeparam>
-    internal class B<C, I> : Lambda<I>
+    /// <typeparam name="C">Represents the coordinate/domain
+    /// type (e.g,. int, double, Time.</typeparam>
+    /// <typeparam name="I">Represents interval type.
+    /// <para>For intervals of possibly different types,
+    /// it is recommended to define this generic type
+    /// parameter in terms of Lowest Common Denominator.
+    /// </para></typeparam>
+    internal class B<C, I> : Lambda<C, I> where I : IInterval<C>
     {
         /// <summary>
         /// A Block representing relative information of intervals
@@ -24,7 +29,7 @@ namespace Di3
         /// domain</param>
         internal B(C coordinate)
         {
-            lambda = new List<Lambda<I>>();
+            lambda = new List<Lambda<C, I>>();
             e = coordinate;
         }
 
@@ -44,7 +49,7 @@ namespace Di3
         /// Represents the interval intersecting with 
         /// the coordinate of corresponding block.
         /// </summary>
-        internal List<Lambda<I>> lambda { private set; get; }
+        internal List<Lambda<C, I>> lambda { private set; get; }
 
         /// <summary>
         /// Denotes the number of intervals whose
