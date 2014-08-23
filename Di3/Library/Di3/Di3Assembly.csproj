@@ -7,7 +7,7 @@
     <ProjectGuid>{7CAFE7BE-5EF5-4B25-9C01-CDF793626F11}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Di3</RootNamespace>
+    <RootNamespace>DI3</RootNamespace>
     <AssemblyName>Di3</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -44,9 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="B.cs" />
+    <Compile Include="Di3DataStructure.cs" />
     <Compile Include="Di3.cs" />
+    <Compile Include="ICoordinate.cs" />
     <Compile Include="IInterval.cs" />
-    <Compile Include="Modifiers.cs" />
+    <Compile Include="INDEX.cs" />
     <Compile Include="Lambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

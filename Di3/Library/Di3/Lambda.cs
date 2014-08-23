@@ -4,32 +4,74 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Di3
+namespace DI3
 {
     /// <summary>
     /// Represents the interval intersecting with 
-    /// the coordinate of corresponding block. 
+    /// the c of corresponding block. 
     /// <para>For intervals of possibly different types,
     /// it is recommended to define this generic type
     /// parameter in terms of Lowest Common Denominator.
     /// </para>
     /// </summary>
-    /// <typeparam name="I">Denotes generic type of the interval.</typeparam>
-    internal class Lambda<C, I> where I : IInterval<C>
+    /// <typeparam name="C">Represents the c/domain
+    /// type (e.g,. int, double, Time.</typeparam>
+    /// <typeparam name="I">Represents generic type of the interval.
+    /// (e.g., time span, interval on natural numbers)
+    /// <para>For intervals of possibly different types,
+    /// it is recommended to define this generic type
+    /// parameter in terms of Lowest Common Denominator.
+    /// </para></typeparam>
+    /// <typeparam name="M">Represents generic
+    /// type of pointer to descriptive metadata cooresponding
+    /// to the interval.</typeparam>
+    internal class Lambda<C, I, M>
+        where C : ICoordinate<C>
+        where I : IInterval<C, M>
     {
         /// <summary>
-        /// Gets the type of intersection the interval has
-        /// wtih coordinate of the block it corresponds to. 
-        /// <para>value = 0  ::>  Left-end  intersects.</para>
-        /// <para>value = 1  ::>  middle    intersects.</para>
-        /// <para>value = 2  ::>  Right-end intersects.</para>
+        /// Represents the interval intersecting with 
+        /// the c of corresponding block. 
+        /// <para>For intervals of possibly different types,
+        /// it is recommended to define this generic type
+        /// parameter in terms of Lowest Common Denominator.
+        /// </para>
         /// </summary>
-        public byte Tau { internal set; get; }
+        internal Lambda() { }
+
+
+        /// <summary>
+        /// Represents the interval intersecting with 
+        /// the c of corresponding block. 
+        /// <para>For intervals of possibly different types,
+        /// it is recommended to define this generic type
+        /// parameter in terms of Lowest Common Denominator.
+        /// </para>
+        /// </summary>
+        /// <param name="tau">The intersection type of interval
+        /// wtih c of corresponding block.</param>
+        /// <param name="atI">Descriptive metadata of the intereval.</param>
+        internal Lambda(char tau, M atI)
+        {
+            this.tau = tau;
+            this.atI = atI;
+        }
+
+
+        /// <summary>
+        /// Gets the intersection type of interval
+        /// wtih c of corresponding block.
+        /// <para>[value] = L  ::>  Left-end  intersecting the coordiante.</para>
+        /// <para>[value] = M  ::>  Middle    intersecting the coordiante.</para>
+        /// <para>[value] = R  ::>  Right-end intersecting the coordiante.</para>
+        /// </summary>
+        public char tau { private set; get; }
+
 
         /// <summary>
         /// Gets descriptive metadata of the intereval
-        /// represented by generic type I.
+        /// represented by generic type M.
         /// </summary>
-        public I AtI { internal set; get; }
+        public M atI { private set; get; }
     }
 }
