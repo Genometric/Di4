@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IInterval;
+using ICPMD;
 
 namespace DI3
 {
@@ -15,7 +17,7 @@ namespace DI3
     /// </para>
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
-    /// type (e.g,. int, double, Time.</typeparam>
+    /// type (e.g,. int, double, Time).</typeparam>
     /// <typeparam name="I">Represents generic type of the interval.
     /// (e.g., time span, interval on natural numbers)
     /// <para>For intervals of possibly different types,
@@ -25,9 +27,10 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    internal class Lambda<C, I, M>
-        where C : ICoordinate<C>
-        where I : IInterval<C, M>
+    public class Lambda<C, M>//I, M>
+        where C : IComparable<C>
+        //where I : IInterval<C, M>
+        where M : IMetaData<C>
     {
         /// <summary>
         /// Represents the interval intersecting with 
@@ -65,13 +68,13 @@ namespace DI3
         /// <para>[value] = M  ::>  Middle    intersecting the coordiante.</para>
         /// <para>[value] = R  ::>  Right-end intersecting the coordiante.</para>
         /// </summary>
-        public char tau { private set; get; }
+        internal char tau { private set; get; }
 
 
         /// <summary>
         /// Gets descriptive metadata of the intereval
         /// represented by generic type M.
         /// </summary>
-        public M atI { private set; get; }
+        internal M atI { private set; get; }
     }
 }

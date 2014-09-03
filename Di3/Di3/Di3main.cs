@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 
 
-namespace Di3Main
+namespace Di3BMain
 {
     /// <summary>
     /// Dynamic Interval Indexer
@@ -212,8 +212,8 @@ namespace Di3Main
         public int total_peaks_count { internal set; get; }
 
 
-        private int s { set; get; }
-        private int e { set; get; }
+        private int left { set; get; }
+        private int right { set; get; }
         private int Block_count { set; get; }
         private int mid { set; get; }
         private int insert_index { set; get; }
@@ -273,8 +273,8 @@ namespace Di3Main
         /// <para>1. It helps counting the number of the distinct sources of intervals.</para>        
         /// <para>2. It helps to map from sample index to array indexes that keep sample-wide information.
         /// <para>For example, if the first region being inserted has a sample index 5, then this sample will always
-        /// has it's data on 0-th index of arrays. If the second region being insered has sample index 2, 
-        /// then the sample will always has it's data on 1-th index of arrays.</para></para>
+        /// has it'left data on 0-th index of arrays. If the second region being insered has sample index 2, 
+        /// then the sample will always has it'left data on 1-th index of arrays.</para></para>
         /// </summary>
         public Hashtable sim_HT { set; get; }
 
@@ -302,13 +302,13 @@ namespace Di3Main
         /// <param name="start">Start position of the interval.</param>
         /// <param name="stop">Stop position of the interval.</param>
         /// <param name="interval">The interval to insert into Di2-space.</param>
-        /// <param name="sample_index">The interval's source index in cached data.</param>
+        /// <param name="sample_index">The interval'left source index in cached data.</param>
         /// <param name="interval_type">Intervals could be of different type. Following types are supported:
         /// <para>Regions/Peak      ->   interval_type = 0</para>
         /// <para>Refseq Gene       ->   interval_type = 1</para>
         /// <para>General Features  ->   interval_type = 2</para></param>
-        /// <param name="identifier">Intervals of the same type could represent different semantics (e.g., 
-        /// Stringent-Confirmed peaks, Weak-Confirmed peaks). Hence assigning different identifier's to 
+        /// <param name="identifier">Intervals of the same type could represent different semantics (right.g., 
+        /// Stringent-Confirmed peaks, Weak-Confirmed peaks). Hence assigning different identifier'left to 
         /// intervals of different type to facilitate the discrimination between them.</param>
         public void Insert(int start, int stop, object interval, int sample_index, byte interval_type, byte identifier)
         {
@@ -362,17 +362,17 @@ namespace Di3Main
         }
         private void Find_Start_Insert_Index()
         {
-            s = 0;
+            left = 0;
             Block_count = index.Count;
-            e = Block_count;
+            right = Block_count;
             mid = 0;
             insert_index = 0;
 
             while (true)
             {
-                mid = (int)Math.Floor((s + e) / 2.0);
+                mid = (int)Math.Floor((left + right) / 2.0);
 
-                if (mid == e)
+                if (mid == right)
                 {
                     insert_index = mid;
                     break;
@@ -386,7 +386,7 @@ namespace Di3Main
                     }
                     else
                     {
-                        e = mid;
+                        right = mid;
                     }
                 }
                 else if (_position == index[mid].index)
@@ -396,33 +396,33 @@ namespace Di3Main
                 }
                 else
                 {
-                    s = mid;
+                    left = mid;
 
-                    if (s == e - 1)
+                    if (left == right - 1)
                     {
-                        if (_position < index[s].index)
+                        if (_position < index[left].index)
                         {
-                            insert_index = s;
+                            insert_index = left;
                             break;
                         }
                         else
                         {
-                            if (e < Block_count)
+                            if (right < Block_count)
                             {
-                                if (_position < index[e].index)
+                                if (_position < index[right].index)
                                 {
-                                    insert_index = e;
+                                    insert_index = right;
                                     break;
                                 }
                                 else
                                 {
-                                    insert_index = e + 1;
+                                    insert_index = right + 1;
                                     break;
                                 }
                             }
                             else
                             {
-                                insert_index = e;
+                                insert_index = right;
                                 break;
                             }
                         }
@@ -603,35 +603,35 @@ namespace Di3Main
 
             Similarity[] rtv = new Similarity[] { new Similarity(index_source_count), new Similarity(index_source_count) };
 
-            int[] Int_Peak = new int[] { -1, -1 }; // 0: index , 1: value
+            int[] markedRegion = new int[] { -1, -1 }; // 0: index , 1: value
 
-            byte index_cout = 0;
+            byte accumulation = 0;
 
             for (int k = 0; k < index.Count; k++)
             {
-                index_cout = (byte)(index[k].peaks.Count - index[k].introduced_stops_count);
+                accumulation = (byte)(index[k].peaks.Count - index[k].introduced_stops_count);
 
-                if (Int_Peak[1] == -1 &&
-                    index_cout >= min_Acc &&
-                    index_cout <= max_Acc)
+                if (markedRegion[1] == -1 &&
+                    accumulation >= min_Acc &&
+                    accumulation <= max_Acc)
                 {
-                    Int_Peak[0] = k;
-                    Int_Peak[1] = index_cout;
+                    markedRegion[0] = k;
+                    markedRegion[1] = accumulation;
 
                     /// This line is new and guarantees to count a region only once
                     Update_intervals_wise_similarity(k);
                 }
-                else if (Int_Peak[1] != -1 && (
-                    index_cout < min_Acc ||
-                    index_cout > max_Acc))
+                else if (markedRegion[1] != -1 && (
+                    accumulation < min_Acc ||
+                    accumulation > max_Acc))
                 {
                     /// This line is new and guarantees to count a region only once
                     Update_intervals_wise_similarity(k);
 
-                    similarity[1].intersecting_units += (index[k].index - index[Int_Peak[0]].index);
+                    similarity[1].intersecting_units += (index[k].index - index[markedRegion[0]].index);
 
-                    Int_Peak[0] = -1;
-                    Int_Peak[1] = -1;
+                    markedRegion[0] = -1;
+                    markedRegion[1] = -1;
                 }
             }
 

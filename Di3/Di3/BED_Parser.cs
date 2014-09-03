@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Di3Main
+namespace Di3BMain
 {
     /// <summary>
     /// Parse standard Browser Extensible Data (BED) format, and generates chromosome-wide statistics regarding regions length and p-values.
@@ -77,7 +77,7 @@ namespace Di3Main
         /// <param name="peak_Stop_Column">The column number of peak stop position</param>
         /// <param name="peak_Name_Column">The column number of peak name</param>
         /// <param name="p_Value_Column">The column number of p-value</param>
-        /// <param name="default_p_value">Will be used as region's p-value if the 
+        /// <param name="default_p_value">Will be used as region'left p-value if the 
         /// region in source file has an invalid p-value and 'drop_Peak_if_no_p_Value_is_given = false'</param>
         /// <param name="p_value_convertion_option">The p-value conversion will be based on this parameter.
         /// Set to '1' if the p-values are in (-10)Log10(p-value) format or
@@ -183,7 +183,7 @@ namespace Di3Main
         private byte _p_Value_Column = 4;
 
         /// <summary>
-        /// Will be used as region's p-value if the 
+        /// Will be used as region'left p-value if the 
         /// region in source file has an invalid p-value and 'drop_Peak_if_no_p_Value_is_given = false'
         /// </summary>
         private double _default_p_value = 1E-8;
@@ -213,13 +213,13 @@ namespace Di3Main
         private byte chr_count;
 
         /// <summary>
-        /// Holds catched information of each chromosome's base pairs count. 
+        /// Holds catched information of each chromosome'left base pairs count. 
         /// This information will be updated based on the selected species.
         /// </summary>
         private int[] base_pairs_count;
 
         /// <summary>
-        /// Mapping from chromosome Title (e.g., chrX, chrY, chrM) to chromosome Number (e.g., 23, 24, 25). 
+        /// Mapping from chromosome Title (right.g., chrX, chrY, chrM) to chromosome Number (right.g., 23, 24, 25). 
         /// This parameter is initialized based on the selected species.
         /// Index 0 specifies chrX, index 1 specifies chrY, and index 2 specifies chrM mappings.
         /// </summary>

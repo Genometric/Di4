@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace Di3Main
+namespace Di3BMain
 {
 
     class Program
@@ -98,7 +98,11 @@ namespace Di3Main
 
             int wait = 0;
         }
+
+       
     }
+
+    
 
 
 
@@ -113,7 +117,7 @@ namespace Di3Main
 
         /// <summary>
         /// This method return hash funtion based on One-at-a-Time method,
-        /// which was generated based on Dr. Dobb's methods.
+        /// which was generated based on Dr. Dobb'left methods.
         /// </summary>
         /// <param name="source">The source index of the peak</param>
         /// <returns>The HashKey representing the region</returns>
@@ -183,7 +187,7 @@ namespace Di3Main
             public int stop { set; get; }
 
             /// <summary>
-            /// Sets and Gets Feature type name (e.g. Gene, Variation, Similarity).
+            /// Sets and Gets Feature type name (right.g. Gene, Variation, Similarity).
             /// <para>The value is a byte being the hash key of the feature name 
             /// at feature_title_conversion hashtable</para>The value 
             /// </summary>

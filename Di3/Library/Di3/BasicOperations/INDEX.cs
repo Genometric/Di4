@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IInterval;
+using ICPMD;
 
 namespace DI3
 {
@@ -11,7 +13,7 @@ namespace DI3
     /// interval to Di3; i.e., di3 indexding.
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
-    /// type (e.g,. int, double, Time.</typeparam>
+    /// type (e.g,. int, double, Time).</typeparam>
     /// <typeparam name="I">Represents generic type of the interval.
     /// (e.g., time span, interval on natural numbers)
     /// <para>For intervals of possibly different types,
@@ -21,10 +23,32 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    internal class INDEX<C, I, M> : Di3DataStructure<C, I, M>
-        where C : ICoordinate<C>
+    internal class INDEX<C, I, M>
+        where C : IComparable<C>
         where I : IInterval<C, M>
+        where M : IMetaData<C>
     {
+        /// <summary>
+        /// Provides efficient means of inserting an 
+        /// interval to Di3; i.e., di3 indexding.
+        /// </summary>
+        /// <param name="di3">The reference di3 to be 
+        /// manipulated.</param>
+        internal INDEX(List<B<C, M>> di3)
+        {
+            this.di3 = di3;
+            newIndexes = new int[2];
+            preIndexes = new int[2];
+        }
+
+        /// <summary>
+        /// Sets and gets the di3 data structure
+        /// to be manipulated. This data structure
+        /// is in common between all classes of 
+        /// namespace.
+        /// </summary>
+        private List<B<C, M>> di3 { set; get; }
+
         /// <summary>
         /// Represents the coordinate (right or left-end) of interval being
         /// inserted to di3.
@@ -51,24 +75,52 @@ namespace DI3
         /// </summary>
         private int di3Cardinality { set; get; }
 
+        /// <summary>
+        /// The left and right ends of an indexed 
+        /// interval update at least two blocks. 
+        /// This variable holds the index of left
+        /// and right end indexes of such updated 
+        /// blocks cause by the "NEW" interval index.
+        /// <para>This information is used to improve
+        /// indexing performance for sorted input.</para>
+        /// </summary>
+        private int[] newIndexes { set; get; }
+
+        /// <summary>
+        /// The left and right ends of an indexed 
+        /// interval update at least two blocks. 
+        /// This variable holds the index of left
+        /// and right end indexes of such updated 
+        /// blocks cause by the "PREVIOUS" interval index.
+        /// <para>This information is used to improve
+        /// indexing performance for sorted input.</para>
+        /// </summary>
+        private int[] preIndexes { set; get; }
+
 
         /// <summary>
         /// Indexes the provided interval. 
         /// </summary>
         /// <param name="interval">The interval to be index.</param>
-        public void Index(I interval)
+        public int[] Index(I Interval, int[] previousIndexes)
         {
-            this.interval = interval;
+            preIndexes = previousIndexes;
+
+            interval = Interval;
 
             c = interval.left;
 
             b = FindLeftendInsertCoordinate();
             Insert_into_di3('L');
+            newIndexes[0] = b;
             b++;
 
             c = interval.right;
             FindRightendInsertCoordinate();
             Insert_into_di3('R');
+            newIndexes[1] = b;
+
+            return newIndexes;
         }
 
 
@@ -80,9 +132,25 @@ namespace DI3
         {
             di3Cardinality = di3.Count;
 
+            if (di3Cardinality == 0) return 0;
+
             int left = 0;
             int mid = 0;
             int right = di3Cardinality;
+
+            if (c.CompareTo(di3[preIndexes[0]].e) == -1)
+            {
+                right = preIndexes[0];
+            }
+            else if (c.CompareTo(di3[preIndexes[1]].e) == 1)
+            {
+                left = preIndexes[1];
+            }
+            else
+            {
+                left = preIndexes[0];
+                right = preIndexes[1];
+            }
 
             while (left < right)
             {
@@ -92,7 +160,7 @@ namespace DI3
                 {
                     return mid;
                 }
-                else if (c.CompareTo(di3[mid].e) == 2) // e is less than Di3DataStructure[mid].e
+                else if (c.CompareTo(di3[mid].e) == -1) // c is less than di3[mid].e
                 {
                     if (mid == 0)
                     {
@@ -103,7 +171,7 @@ namespace DI3
                         right = mid;
                     }
                 }
-                else if (c.CompareTo(di3[mid].e) == 1) // e is equal to Di3DataStructure[mid].e
+                else if (c.CompareTo(di3[mid].e) == 0) // c is equal to di3[mid].e
                 {
                     return mid;
                 }
@@ -113,7 +181,7 @@ namespace DI3
 
                     if (left == right - 1)
                     {
-                        if (c.CompareTo(di3[mid].e) == 2) // e is less than Di3DataStructure[mid].e
+                        if (c.CompareTo(di3[left].e) == -1) // c is less than di3[mid].e
                         {
                             return left;
                         }
@@ -121,7 +189,7 @@ namespace DI3
                         {
                             if (right < di3Cardinality)
                             {
-                                if (c.CompareTo(di3[mid].e) == 2) // e is less than Di3DataStructure[mid].e
+                                if (c.CompareTo(di3[right].e) == -1) // c is less than di3[mid].e
                                 {
                                     return right;
                                 }
@@ -139,65 +207,8 @@ namespace DI3
                 }
             }
 
+            // This value will be returned when di3 is empty. 
             return di3Cardinality;
-        }
-
-
-        /// <summary>
-        /// Inserts right/left -end of the interval to 
-        /// determined position on di3 by either updating
-        /// present block or creating a new block.
-        /// </summary>
-        /// <param name="tau">The intersection type of interval
-        /// wtih c of corresponding block.</param>
-        private void Insert_into_di3(char tau)
-        {
-            // Shall new Block be added to the end of list ?
-            if (b < di3Cardinality) // No
-            {
-                // Does the same index already available ?
-                if (c.CompareTo(di3[b].e) != 1) // No, add new index then
-                {
-                    di3.Insert(b, GetNewBlock(tau));
-                    di3Cardinality++;
-                }
-                else // Yes, then update the available index with new region
-                {
-                    UpdateBlock(tau);
-                }
-            }
-            else // Yes, then add new index
-            {
-                di3.Insert(b, GetNewBlock(tau));
-                di3Cardinality++;
-            }
-        }
-
-
-        /// <summary>
-        /// Initializes and returns a new block
-        /// to be added to di3.
-        /// </summary>
-        /// <param name="tau">The intersection type of interval
-        /// wtih c of corresponding block.</param>
-        /// <returns>A new block to be added to di3.</returns>
-        private B<C, I, M> GetNewBlock(char tau)
-        {
-            B<C, I, M> newB = new B<C, I, M>(c) { };
-
-            // Will new Block be added to the end of di3 list ?
-            if (b < di3Cardinality) // No, then copy data from subsequent Block
-            {
-                foreach (var d in di3[b].lambda)
-                {
-                    if (d.tau != 'L')
-                    {
-                        newB.lambda.Add(new Lambda<C, I, M>('M', d.atI) { });
-                    }
-                }
-            }
-
-            return newB;
         }
 
 
@@ -208,14 +219,14 @@ namespace DI3
         /// </summary>
         private void FindRightendInsertCoordinate()
         {
-            for (int i = b + 1; i < di3Cardinality; i++)
+            for (int i = b; i < di3Cardinality; i++)
             {
-                if (c.CompareTo(di3[i].e) == 'L')
+                if (c.CompareTo(di3[i].e) == -1)
                 {
                     b = i;
                     break;
                 }
-                else if (c.CompareTo(di3[i].e) == 'G')
+                else if (c.CompareTo(di3[i].e) == 1)
                 {
                     UpdateBlock('M');
 
@@ -230,6 +241,59 @@ namespace DI3
 
 
         /// <summary>
+        /// Inserts right/left -end of the interval to 
+        /// determined position on di3 by either updating
+        /// present block or creating a new block.
+        /// </summary>
+        /// <param name="tau">The intersection type of interval
+        /// wtih c of corresponding block.</param>
+        private void Insert_into_di3(char tau)
+        {
+            // Shall new Block be added to the end of list ? OR: Does the same index already available ?
+            if (b >= di3Cardinality || c.CompareTo(di3[b].e) != 0) // Condition satisfied: add new index
+            {
+                di3.Insert(b, GetNewBlock(tau));
+                di3Cardinality++;
+            }
+            else // update the available index with new region
+            {
+                UpdateBlock(tau);
+            }
+        }
+
+
+        /// <summary>
+        /// Initializes and returns a new block
+        /// to be added to di3.
+        /// </summary>
+        /// <param name="tau">The intersection type of interval
+        /// wtih c of corresponding block.</param>
+        /// <returns>A new block to be added to di3.</returns>
+        private B<C, M> GetNewBlock(char tau)
+        {
+            B<C, M> newB = new B<C, M>(c) { };
+
+            newB.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
+
+            if (tau == 'R') newB.omega = 1;
+
+            // Will new Block be added to the end of di3 list ?
+            if (b < di3Cardinality) // No, then copy data from subsequent Block
+            {
+                foreach (var d in di3[b].lambda)
+                {
+                    if (d.tau != 'L')
+                    {
+                        newB.lambda.Add(new Lambda<C, M>('M', d.atI) { });
+                    }
+                }
+            }
+
+            return newB;
+        }
+
+
+        /// <summary>
         /// Updates the di3 block specified by 'b' 
         /// to represent the interval being indexed as well. 
         /// </summary>
@@ -237,7 +301,7 @@ namespace DI3
         /// wtih c of corresponding block.</param>
         private void UpdateBlock(char tau)
         {
-            di3[b].lambda.Add(new Lambda<C, I, M>(tau, interval.metadata) { });
+            di3[b].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
 
             if (tau == 'R')
             {

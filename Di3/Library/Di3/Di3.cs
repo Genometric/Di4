@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IInterval;
+using ICPMD;
 
 namespace DI3
 {
@@ -14,7 +16,7 @@ namespace DI3
     /// tasks.
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
-    /// type (e.g,. int, double, Time.</typeparam>
+    /// type (e.g,. int, double, Time).</typeparam>
     /// <typeparam name="I">Represents generic type of the interval.
     /// (e.g., time span, interval on natural numbers)
     /// <para>For intervals of possibly different types,
@@ -24,9 +26,10 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    internal sealed class Di3<C, I, M> : Di3DataStructure<C, I, M>
-        where C : ICoordinate<C>
+    public sealed class Di3<C, I, M> : Di3DataStructure<C, I, M>
+        where C : IComparable<C>
         where I : IInterval<C, M>
+        where M : IMetaData<C>
     {
         /// <summary>
         /// Dynamic intervals inverted index (Di3) 
@@ -35,18 +38,47 @@ namespace DI3
         /// it indexes for common information retrieval 
         /// tasks.
         /// </summary>
-        internal Di3()
+        public Di3()
         {
-            di3 = new List<B<C, I, M>>();
-            insertNewInterval = new INDEX<C, I, M>();
+            di3 = new List<B<C, M>>();
+            INDEX = new INDEX<C, I, M>(di3);
+            FIND = new FIND<C, I, M>(di3);
+            preIndexes = new int[2];
         }
 
 
         /// <summary>
-        /// This instance of the INDEX class is used
-        /// for inserting a new interval into di3
+        /// The left and right ends of an indexed 
+        /// interval update at least two blocks. 
+        /// This variable holds the index of left
+        /// and right end indexes of such updated 
+        /// blocks cause by the "PREVIOUS" interval index.
+        /// <para>This information is used to improve
+        /// indexing performance for sorted input.</para>
         /// </summary>
-        private INDEX<C, I, M> insertNewInterval { set; get; }
+        private int[] preIndexes { set; get; }
+
+
+        /// <summary>
+        /// Is an instance of INDEX class which 
+        /// provides efficient means of inserting an 
+        /// interval to Di3; i.e., di3 indexding.
+        /// </summary>
+        private INDEX<C, I, M> INDEX { set; get; }
+
+
+        /// <summary>
+        /// Is an instance of FIND class which
+        /// provides efficient means for searching for 
+        /// a key in di3.
+        /// </summary>
+        private FIND<C, I, M> FIND { set; get; }
+
+
+        /// <summary>
+        /// Gets the number of blocks contained in Di3.
+        /// </summary>
+        public int blockCount { private set { } get { return di3.Count; } }
 
 
         /// <summary>
@@ -54,9 +86,33 @@ namespace DI3
         /// </summary>
         /// <param name="interval">The interval
         /// to be added to the di3.</param>
-        public void AddInterval(I interval)
+        public void Add(I interval)
         {
-            insertNewInterval.Index(interval);
+            preIndexes = INDEX.Index(interval, preIndexes);
+        }
+
+
+        public int FindIndex(C Key)
+        {
+            return FIND.FindIndex(Key);
+        }
+
+
+        public B<C, M> FindBlock(C Key)
+        {
+            return null;
+        }
+
+        public List<O> Cover<O>(ICSOutput<C, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        {
+            SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
+            return SetOps.Cover(OutputStrategy, minAccumulation, maxAccumulation);
+        }
+
+        public List<O> Summit<O>(ICSOutput<C, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        {
+            SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
+            return SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);
         }
     }
 }

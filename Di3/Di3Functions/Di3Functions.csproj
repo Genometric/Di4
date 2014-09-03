@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7CAFE7BE-5EF5-4B25-9C01-CDF793626F11}</ProjectGuid>
+    <ProjectGuid>{5260907C-DDB1-471E-84D5-C14966EF9EBE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DI3</RootNamespace>
-    <AssemblyName>Di3</AssemblyName>
+    <RootNamespace>Di3Functions</RootNamespace>
+    <AssemblyName>Di3Functions</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -43,14 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="B.cs" />
-    <Compile Include="Di3DataStructure.cs" />
-    <Compile Include="Di3.cs" />
-    <Compile Include="ICoordinate.cs" />
-    <Compile Include="IInterval.cs" />
-    <Compile Include="INDEX.cs" />
-    <Compile Include="Lambda.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Library\Di3\Di3Core.csproj">
+      <Project>{7cafe7be-5ef5-4b25-9c01-cdf793626f11}</Project>
+      <Name>Di3Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

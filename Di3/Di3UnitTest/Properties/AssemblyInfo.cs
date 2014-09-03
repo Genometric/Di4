@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Di3")]
-[assembly: AssemblyDescription("Dynamic intervals inverted index (Vahid.Jalili@polimi.it)")]
+[assembly: AssemblyTitle("Di3UnitTest")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Di3")]
-[assembly: AssemblyCopyright("Copyright © 2014")]
+[assembly: AssemblyProduct("Di3UnitTest")]
+[assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7e7546ad-1c69-44ee-947e-fcaaa21bcd70")]
+[assembly: Guid("0fb327a9-7a7f-46e1-8998-53f9d0eedbb8")]
 
 // Version information for an assembly consists of the following four values:
 //
