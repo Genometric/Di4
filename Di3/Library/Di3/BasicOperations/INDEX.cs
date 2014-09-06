@@ -137,7 +137,7 @@ namespace DI3
             int left = 0;
             int mid = 0;
             int right = di3Cardinality;
-
+            
             if (c.CompareTo(di3[preIndexes[0]].e) == -1)
             {
                 right = preIndexes[0];
