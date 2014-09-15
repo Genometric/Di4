@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
+using CSharpTest.Net.Collections;
+using CSharpTest.Net.Serialization;
+using System.IO;
 
 namespace DI3
 {
@@ -44,6 +47,37 @@ namespace DI3
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
             preIndexes = new int[2];
+
+            BPlusTree<string, DateTime>.OptionsV2 options = new BPlusTree<string, DateTime>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.DateTime);
+            options.CalcBTreeOrder(16, 24);
+            options.CreateFile = CreatePolicy.Always;
+            options.FileName = Path.GetTempFileName();
+            using (var tree = new BPlusTree<string, DateTime>(options))
+            {
+                var tempDir = new DirectoryInfo(Path.GetTempPath());
+                foreach (var file in tempDir.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    tree.Add(file.FullName, file.LastWriteTimeUtc);
+                }
+            }
+            options.CreateFile = CreatePolicy.Never;
+            using(var tree = new BPlusTree<string, DateTime>(options))
+            {
+                var tempDir = new DirectoryInfo(Path.GetTempPath());
+                foreach(var file in tempDir.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    DateTime cmpDate;
+                    if (!tree.TryGetValue(file.FullName, out cmpDate))
+                        Console.WriteLine("New file: {0}", file.FullName);
+                    else if (cmpDate != file.LastWriteTimeUtc)
+                        Console.WriteLine("Modified: {0}", file.FullName);
+                    tree.Remove(file.FullName);
+                }
+                foreach(var item in tree)
+                {
+                    Console.WriteLine("Removed: {0}", item.Key);
+                }
+            }
         }
 
 

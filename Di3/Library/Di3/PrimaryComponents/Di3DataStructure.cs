@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
+using CSharpTest.Net.Collections;
 
 namespace DI3
 {
@@ -24,12 +25,13 @@ namespace DI3
     /// to the interval.</typeparam>
     public class Di3DataStructure<C, I, M> : B<C,  M>
         where C : IComparable<C>
-        //where I : IInterval<C, M>
         where M : IMetaData<C>
     {
         /// <summary>
         /// Di3 primary data structure; a list of Di3 blocks.
         /// </summary>
         internal List<B<C,  M>> di3 { set; get; }
+
+        
     }
 }
