@@ -15,6 +15,7 @@ namespace Di3BMain
             Console.WriteLine("");
             Console.WriteLine(".::.   I'm Di3, Welcome.");
             Console.WriteLine("");
+            Console.WriteLine(".::.   Running Directory : {0}", Environment.CurrentDirectory);
 
             Orchestrator orchestrator = new Orchestrator();
 
