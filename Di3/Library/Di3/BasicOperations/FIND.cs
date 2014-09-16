@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
+using CSharpTest.Net.Collections;
+using CSharpTest.Net.Serialization;
+using System.IO;
 
 namespace DI3
 {
@@ -34,7 +37,7 @@ namespace DI3
         /// </summary>
         /// <param name="di3">The reference di3 to be 
         /// manipulated.</param>
-        internal FIND(List<B<C,  M>> di3)
+        internal FIND(BPlusTree<C, B<C,  M>> di3)
         {
             this.di3 = di3;
         }
@@ -45,7 +48,7 @@ namespace DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private List<B<C,  M>> di3 { set; get; }
+        private BPlusTree<C, B<C,  M>> di3 { set; get; }
 
         /// <summary>
         /// The key to run a search for on Di3.

@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
+using CSharpTest.Net.Collections;
+using CSharpTest.Net.Serialization;
+using System.IO;
 
 namespace DI3
 {
@@ -34,7 +37,7 @@ namespace DI3
         /// </summary>
         /// <param name="di3">The reference di3 to be 
         /// manipulated.</param>
-        internal INDEX(List<B<C, M>> di3)
+        internal INDEX(BPlusTree<C, B<C, M>> di3)
         {
             this.di3 = di3;
             newIndexes = new int[2];
@@ -47,7 +50,7 @@ namespace DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private List<B<C, M>> di3 { set; get; }
+        private BPlusTree<C, B<C, M>> di3 { set; get; }
 
         /// <summary>
         /// Represents the coordinate (right or left-end) of interval being
@@ -138,7 +141,7 @@ namespace DI3
             int mid = 0;
             int right = di3Cardinality;
             
-            if (c.CompareTo(di3[preIndexes[0]].e) == -1)
+            /*if (c.CompareTo(di3[preIndexes[0]].e) == -1)
             {
                 right = preIndexes[0];
             }
@@ -150,7 +153,7 @@ namespace DI3
             {
                 left = preIndexes[0];
                 right = preIndexes[1];
-            }
+            }*/
 
             while (left < right)
             {

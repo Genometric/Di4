@@ -43,7 +43,7 @@ namespace DI3
         /// </summary>
         public Di3()
         {
-            di3 = new List<B<C, M>>();
+            //di3 = new List<B<C, M>>();
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
             preIndexes = new int[2];
