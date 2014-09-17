@@ -37,7 +37,7 @@ namespace DI3
         /// </summary>
         /// <param name="di3">The reference di3 to be 
         /// manipulated.</param>
-        internal INDEX(BPlusTree<C, B<C, M>> di3)
+        internal INDEX(List<B<C, M>> di3)//BPlusTree<C, B<C, M>> di3)
         {
             this.di3 = di3;
             newIndexes = new int[2];
@@ -50,7 +50,7 @@ namespace DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private BPlusTree<C, B<C, M>> di3 { set; get; }
+        private List<B<C, M>> di3 { set; get; }
 
         /// <summary>
         /// Represents the coordinate (right or left-end) of interval being
