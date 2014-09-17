@@ -96,7 +96,8 @@ namespace TestMain
                 // calling "GetEnumerator" function.
                 // starting from first item to last.
                 foreach (var item in tree)
-                {                    
+                {
+  
                 }
 
 
@@ -125,14 +126,34 @@ namespace TestMain
                 var element_at_2 = tree.ElementAtOrDefault(2);
                 var element_at_3 = tree.ElementAtOrDefault(3);
                 var element_at_100 = tree.ElementAtOrDefault(100);
+            }
+
+            // A Runtime test for multiple insertions. 
+            TimeSpan elapsed = RunTime(5);
+
+            double millisec = elapsed.TotalSeconds;
 
 
-                
+            using (BPlusTree<double, string> data = new BPlusTree<double, string>(options))
+            {
+                bool sT1 = data.TryAdd(1, "a");
+                bool sF1 = data.TryAdd(1, "a");
 
-                // A Runtime test for multiple insertions. 
-                TimeSpan elapsed = RunTime(100);
+                data[1] = "did it";
 
-                double millisec = elapsed.TotalSeconds;
+                bool sT2 = data.TryUpdate(1, "a");
+                bool sT3 = data.TryUpdate(1, "c");
+                bool sT4 = data.TryUpdate(1, "d", "c");
+                bool sF2 = data.TryUpdate(1, "f", "c");
+                bool equality1 = "d".Equals(data[1]);
+                bool sT5 = data.TryUpdate(1, "a", data[1]);
+                bool equality2 = "a".Equals(data[1]);
+                bool sF3 = data.TryUpdate(2, "b");
+
+                string val;
+                bool st6 = data.TryRemove(1, out val) && val == "a";
+                bool sF4 = data.TryRemove(2, out val);
+                bool notEqual = val.Equals("a");
             }
         }
 
@@ -152,19 +173,16 @@ namespace TestMain
                 new BPlusTree<double, string>.OptionsV2(PrimitiveSerializer.Double, PrimitiveSerializer.String);
 
             //options.CalcBTreeOrder(16, 20);
-            options.CalcBTreeOrder(16, longStringSize);
-            
+            options.CalcBTreeOrder(16, longStringSize);           
 
 
             // to write to RAM:
-            options.CreateFile = CreatePolicy.Never;
-            
-
+            //options.CreateFile = CreatePolicy.Never;
 
 
             // to write to disk:
-            //options.CreateFile = CreatePolicy.Always;
-            //options.FileName = Path.GetTempFileName();
+            options.CreateFile = CreatePolicy.Always;
+            options.FileName = Path.GetTempFileName();
 
 
             using (var tree = new BPlusTree<double, string>(options))
@@ -178,6 +196,8 @@ namespace TestMain
 
                 watch.Stop();
             }
+
+            
 
             return watch.Elapsed;
         }

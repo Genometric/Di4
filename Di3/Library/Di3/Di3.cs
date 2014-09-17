@@ -43,7 +43,7 @@ namespace DI3
         /// </summary>
         public Di3()
         {
-            //di3 = new List<B<C, M>>();
+            di3 = new BPlusTree<C, B<C, M>>();
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
             preIndexes = new int[2];
@@ -107,6 +107,10 @@ namespace DI3
         /// a key in di3.
         /// </summary>
         private FIND<C, I, M> FIND { set; get; }
+
+
+
+        private BPlusTree<string, DateTime>.OptionsV2 options { set; get; }
 
 
         /// <summary>

@@ -37,7 +37,7 @@ namespace DI3
         /// </summary>
         /// <param name="di3">The reference di3 to be 
         /// manipulated.</param>
-        internal INDEX(List<B<C, M>> di3)//BPlusTree<C, B<C, M>> di3)
+        internal INDEX(BPlusTree<C, B<C, M>> di3)
         {
             this.di3 = di3;
             newIndexes = new int[2];
@@ -50,7 +50,7 @@ namespace DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private List<B<C, M>> di3 { set; get; }
+        private BPlusTree<C, B<C, M>> di3 { set; get; }
 
         /// <summary>
         /// Represents the coordinate (right or left-end) of interval being
@@ -113,7 +113,7 @@ namespace DI3
 
             c = interval.left;
 
-            b = FindLeftendInsertCoordinate();
+            //b = FindLeftendInsertCoordinate();
             Insert_into_di3('L');
             newIndexes[0] = b;
             b++;
@@ -154,7 +154,7 @@ namespace DI3
                 left = preIndexes[0];
                 right = preIndexes[1];
             }*/
-
+            /*
             while (left < right)
             {
                 mid = (int)Math.Floor((left + right) / 2.0);
@@ -208,7 +208,7 @@ namespace DI3
                         }
                     }
                 }
-            }
+            }*/
 
             // This value will be returned when di3 is empty. 
             return di3Cardinality;
@@ -253,14 +253,15 @@ namespace DI3
         private void Insert_into_di3(char tau)
         {
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
-            if (b >= di3Cardinality || c.CompareTo(di3[b].e) != 0) // Condition satisfied: add new index
+            if (di3.ContainsKey(c))// b >= di3Cardinality || c.CompareTo(di3[b].e) != 0) // Condition satisfied: add new index
             {
-                di3.Insert(b, GetNewBlock(tau));
-                di3Cardinality++;
+                UpdateBlock(tau);
             }
             else // update the available index with new region
             {
-                UpdateBlock(tau);
+                di3.Add(c, GetNewBlock(tau));
+                //di3.Insert(b, GetNewBlock(tau));
+                //di3Cardinality++;
             }
         }
 
@@ -283,7 +284,7 @@ namespace DI3
             // Will new Block be added to the end of di3 list ?
             if (b < di3Cardinality) // No, then copy data from subsequent Block
             {
-                foreach (var d in di3[b].lambda)
+                foreach (var d in di3[c].lambda)
                 {
                     if (d.tau != 'L')
                     {
@@ -304,11 +305,19 @@ namespace DI3
         /// wtih c of corresponding block.</param>
         private void UpdateBlock(char tau)
         {
-            di3[b].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
+            // Following line seems to be updating the "value" of "key = c"
+            // and based on my tests it works fine both with in-memory and 
+            // out-of-memory policies; however, still it need further assessment.
+            di3[c].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
+
+            //2nd strategy (not recommended):
+            //List<Lambda<C, M>> tempLambda = di3[c].lambda;
+            //tempLambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
+            //di3.TryUpdate(c, tempLambda);
 
             if (tau == 'R')
             {
-                di3[b].omega++;
+                di3[c].omega++;
             }
         }
     }

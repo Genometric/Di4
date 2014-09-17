@@ -4,8 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IInterval;
-using System.Collections;
 using ICPMD;
+using CSharpTest.Net.Collections;
+using CSharpTest.Net.Serialization;
+using System.IO;
+using System.Collections;
+
 
 
 namespace DI3
@@ -15,7 +19,7 @@ namespace DI3
         //where I : IInterval<C, M>
         where M : IMetaData<C>
     {
-        internal SetOperations(List<B<C, M>> di3)
+        internal SetOperations(BPlusTree<C, B<C, M>> di3)
         {
             this.di3 = di3;
             intervalsKeys = new Hashtable();
@@ -23,7 +27,7 @@ namespace DI3
 
         //private ICSOutput<C, I, M, O> IOutput { set; get; }
 
-        private List<B<C, M>> di3 { set; get; }
+        private BPlusTree<C, B<C, M>> di3 { set; get; }
 
         private Hashtable intervalsKeys { set; get; }
 

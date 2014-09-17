@@ -32,9 +32,9 @@ namespace DI3
         /// <summary>
         /// Di3 primary data structure; a list of Di3 blocks.
         /// </summary>
-        internal List<B<C,  M>> di3 { set; get; }
+        internal List<B<C,  M>> di3_old { set; get; }
 
-        internal BPlusTree<C, B<C, M>> di3_new { set; get; }
+        internal BPlusTree<C, B<C, M>> di3 { set; get; }
 
         internal BPlusTree<int, int>.OptionsV2 options { set; get; }
 
@@ -44,7 +44,7 @@ namespace DI3
             options.CalcBTreeOrder(16, 24);
             options.CreateFile = CreatePolicy.Always;
             options.FileName = Path.GetTempFileName();
-            //di3 = new BPlusTree<C, B<C, M>>(options);
+            di3 = new BPlusTree<C, B<C, M>>(options);
         }
     }
 }
