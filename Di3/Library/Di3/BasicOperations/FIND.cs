@@ -87,10 +87,10 @@ namespace DI3
             key = Key;
 
             int index = DichotomicSearch(0, di3.Count);
-
+            /*
             if (index != -1)
                 return di3[index];
-            else
+            else*/
                 return null;
         }
 
@@ -103,12 +103,12 @@ namespace DI3
                 // code must guarantee the interval is reduced at each iteration
                 // assert(imid < imax);
                 // note: 0 <= imin < imax implies imid will always be less than imax
-
+                /*
                 // reduce the search
                 if (di3[mid].e.CompareTo(key) == 'L')
                     left = mid + 1;
                 else
-                    right = mid;
+                    right = mid;*/
             }
 
             // At exit of while:
@@ -116,9 +116,9 @@ namespace DI3
             // otherwise right == left
 
             // deferred test for equality
-            if ((right == left) && (di3[left].e.CompareTo(key) == 'E'))
+            /*if ((right == left) && (di3[left].e.CompareTo(key) == 'E'))
                 return left;
-            else
+            else*/
                 return -1;
         }
     }

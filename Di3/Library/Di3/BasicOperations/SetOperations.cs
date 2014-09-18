@@ -42,7 +42,7 @@ namespace DI3
 
             for (int b = 0; b < di3Cardinality; b++)
             {
-                accumulation = (byte)(di3[b].lambda.Count - di3[b].omega);
+                //accumulation = (byte)(di3[b].lambda.Count - di3[b].omega);
 
                 if (markedRegion[1] == -1 &&
                     accumulation >= minAcc &&
@@ -55,7 +55,7 @@ namespace DI3
                     accumulation < minAcc ||
                     accumulation > maxAcc))
                 {
-                    OutputStrategy.Output(di3[markedRegion[0]].e, di3[b].e, GetLambdaSet(markedRegion[0], b));
+                    //OutputStrategy.Output(di3[markedRegion[0]].e, di3[b].e, GetLambdaSet(markedRegion[0], b));
 
                     markedRegion[0] = -1;
                     markedRegion[1] = -1;
@@ -77,7 +77,7 @@ namespace DI3
 
             for (int b = 0; b < di3Cardinality; b++)
             {
-                accumulation = (byte)(di3[b].lambda.Count - di3[b].omega);
+                //accumulation = (byte)(di3[b].lambda.Count - di3[b].omega);
 
                 if (markedRegion[1] < accumulation &&
                     accumulation >= minAcc &&
@@ -92,7 +92,7 @@ namespace DI3
                     accumulation > maxAcc) &&
                     markedRegion[1] != -1))
                 {
-                    OutputStrategy.Output(di3[markedRegion[0]].e, di3[b].e, GetLambdaSet(markedRegion[0], b));
+                    //OutputStrategy.Output(di3[markedRegion[0]].e, di3[b].e, GetLambdaSet(markedRegion[0], b));
 
                     markedRegion[0] = -1;
                     markedRegion[1] = -1;
@@ -110,7 +110,7 @@ namespace DI3
 
             for (int b = left; b <= right; b++)
             {
-                foreach (var lItem in di3[b].lambda)
+                /*foreach (var lItem in di3[b].lambda)
                 {
                     if (lItem.tau != 'R' &&
                         intervalsKeys.ContainsKey(lItem.atI.GetHashKey()) == false)
@@ -118,7 +118,7 @@ namespace DI3
                         rtv.Add(lItem);
                         intervalsKeys.Add(lItem.atI.GetHashKey(), "Hamed");
                     }
-                }
+                }*/
             }
 
             return rtv;

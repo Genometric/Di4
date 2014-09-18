@@ -65,6 +65,9 @@ namespace DI3
         private int b { set; get; }
 
 
+        private C marshalPoint { set; get; }
+
+
         /// <summary>
         /// Sets and Gets the interval to 
         /// be added to di3. 
@@ -111,17 +114,18 @@ namespace DI3
 
             interval = Interval;
 
-            c = interval.left;
+            //c = interval.left;
+            marshalPoint = interval.left;
 
             //b = FindLeftendInsertCoordinate();
             Insert_into_di3('L');
-            newIndexes[0] = b;
-            b++;
+            //newIndexes[0] = b;
+            //b++;
 
             c = interval.right;
             FindRightendInsertCoordinate();
             Insert_into_di3('R');
-            newIndexes[1] = b;
+            //newIndexes[1] = b;
 
             return newIndexes;
         }
@@ -133,13 +137,13 @@ namespace DI3
         /// </summary>
         private int FindLeftendInsertCoordinate()
         {
-            di3Cardinality = di3.Count;
+            //di3Cardinality = di3.Count;
 
-            if (di3Cardinality == 0) return 0;
+            /*if (di3Cardinality == 0) return 0;
 
             int left = 0;
             int mid = 0;
-            int right = di3Cardinality;
+            int right = di3Cardinality;*/
             
             /*if (c.CompareTo(di3[preIndexes[0]].e) == -1)
             {
@@ -222,23 +226,34 @@ namespace DI3
         /// </summary>
         private void FindRightendInsertCoordinate()
         {
-            for (int i = b; i < di3Cardinality; i++)
-            {
-                if (c.CompareTo(di3[i].e) == -1)
-                {
-                    b = i;
-                    break;
-                }
-                else if (c.CompareTo(di3[i].e) == 1)
-                {
-                    UpdateBlock('M');
+            // Enumerator starts enumeration from given coordinate (i.e., e); 
+            // however, this modification does not apply to the block corresponding
+            // coordinate "c". Hence, this boolean value is used to  "exclusively" 
+            // enumerate from coordinate "c". 
+            bool skip = true;
 
-                    b++;
-                }
-                else
+            foreach (var block in di3.EnumerateFrom(c))
+            {
+                if (!skip)
                 {
-                    break;
+                    if (c.CompareTo(block.Value.e) == -1)
+                    {
+                        marshalPoint = block.Key;
+                        //b = i;
+                        break;
+                    }
+                    else if (c.CompareTo(block.Value.e) == 1)
+                    {
+                        UpdateBlock('M');
+                        marshalPoint = block.Key;
+                        //b++;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
+                else { skip = false; }
             }
         }
 
@@ -253,13 +268,13 @@ namespace DI3
         private void Insert_into_di3(char tau)
         {
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
-            if (di3.ContainsKey(c))// b >= di3Cardinality || c.CompareTo(di3[b].e) != 0) // Condition satisfied: add new index
+            if (di3.ContainsKey(marshalPoint))// b >= di3Cardinality || c.CompareTo(di3[b].e) != 0) // Condition satisfied: add new index
             {
                 UpdateBlock(tau);
             }
             else // update the available index with new region
             {
-                di3.Add(c, GetNewBlock(tau));
+                di3.Add(marshalPoint, GetNewBlock(tau));
                 //di3.Insert(b, GetNewBlock(tau));
                 //di3Cardinality++;
             }
@@ -275,12 +290,31 @@ namespace DI3
         /// <returns>A new block to be added to di3.</returns>
         private B<C, M> GetNewBlock(char tau)
         {
-            B<C, M> newB = new B<C, M>(c) { };
+            B<C, M> newB = new B<C, M>(marshalPoint) { };
 
             newB.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
 
             if (tau == 'R') newB.omega = 1;
+            
+            // I need to access one item ahead, but since I could not 
+            // find any proper way to do so with BPlusTree, I'm using 
+            // following ramblings :)
+            foreach (var block in di3.EnumerateFrom(marshalPoint))
+            {
+                foreach (var d in block.Value.lambda)
+                {
+                    if (d.tau != 'L')
+                    {
+                        newB.lambda.Add(new Lambda<C, M>('M', d.atI) { });
+                    }
+                }
 
+                // only one object :) 
+                break;
+            }
+
+            
+            /*
             // Will new Block be added to the end of di3 list ?
             if (b < di3Cardinality) // No, then copy data from subsequent Block
             {
@@ -291,7 +325,7 @@ namespace DI3
                         newB.lambda.Add(new Lambda<C, M>('M', d.atI) { });
                     }
                 }
-            }
+            }*/
 
             return newB;
         }
@@ -308,7 +342,7 @@ namespace DI3
             // Following line seems to be updating the "value" of "key = c"
             // and based on my tests it works fine both with in-memory and 
             // out-of-memory policies; however, still it need further assessment.
-            di3[c].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
+            di3[marshalPoint].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
 
             //2nd strategy (not recommended):
             //List<Lambda<C, M>> tempLambda = di3[c].lambda;
@@ -317,7 +351,7 @@ namespace DI3
 
             if (tau == 'R')
             {
-                di3[c].omega++;
+                di3[marshalPoint].omega++;
             }
         }
     }

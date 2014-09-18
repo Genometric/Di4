@@ -103,10 +103,12 @@ namespace TestMain
 
                 // Iterates through items starting from given key: 40.1 (inclusively) 
                 // and goes till the last item.
-                foreach(var item in tree.EnumerateFrom(40.1))
+                foreach(var item in tree.EnumerateFrom(39.1))
                 {
 
                 }
+
+                
 
 
                 // Iterates through items starting from given index: 2 (inclusively)
