@@ -11,7 +11,7 @@ namespace Di3BMain
     /// <summary>
     /// Representing ChIP-seq Peak Metadata.
     /// </summary>
-    public class PeakData : ICPMetadata<int>
+    public class PeakDataClass : ICPMetadata<int>
     {
         /// <summary>
         /// Sets and gets zero-based chromosome number.

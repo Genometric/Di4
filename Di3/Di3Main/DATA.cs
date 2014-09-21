@@ -11,6 +11,6 @@ namespace Di3BMain
     {
         internal static List<string> inputSamples = new List<string>();
 
-        internal static List<ParsedBED<Peak, PeakData>> parsedSamples = new List<ParsedBED<Peak, PeakData>>();
+        internal static List<ParsedBED<PeakClass, PeakDataClass>> parsedSamples = new List<ParsedBED<PeakClass, PeakDataClass>>();
     }
 }

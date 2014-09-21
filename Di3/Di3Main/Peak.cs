@@ -9,11 +9,11 @@ using ICPMD;
 
 namespace Di3BMain
 {
-    internal class Peak : IInterval<int, PeakData>
+    public class PeakClass : IInterval<int, PeakDataClass>
     {
-        public Peak()
+        public PeakClass()
         {
-            metadata = new PeakData();
+            metadata = new PeakDataClass();
         }
 
         /// <summary>
@@ -32,6 +32,6 @@ namespace Di3BMain
         /// to a memory object, or a pointer, or 
         /// an entry ID on database, or etc. 
         /// </summary>
-        public PeakData metadata { set; get; }
+        public PeakDataClass metadata { set; get; }
     }
 }

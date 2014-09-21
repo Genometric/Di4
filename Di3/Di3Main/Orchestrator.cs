@@ -8,6 +8,7 @@ using BEDParser;
 using DI3;
 using Di3Bioinformatics;
 using System.Diagnostics;
+using Di3BMain.Serializers;
 
 namespace Di3BMain
 {
@@ -15,12 +16,12 @@ namespace Di3BMain
     {
         internal Orchestrator()
         {
-            di3B = new Di3B<int, Peak, PeakData>(23);
+            di3B = new Di3B<int, PeakClass, PeakDataClass>(23, DataSerializers.Int32, DataSerializers.Peak);
             samplesHashtable = new Hashtable();
             stopWatch = new Stopwatch();
         }
 
-        Di3B<int, Peak, PeakData> di3B { set; get; }
+        Di3B<int, PeakClass, PeakDataClass> di3B { set; get; }
 
         Hashtable samplesHashtable { set; get; }
 
@@ -75,7 +76,7 @@ namespace Di3BMain
         private void Load(string[] args)
         {
             DATA.inputSamples.Add(args[1]);
-            BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(args[1], "Human");
+            BEDParser<PeakClass, PeakDataClass> bedParser = new BEDParser<PeakClass, PeakDataClass>(args[1], "Human");
             DATA.parsedSamples.Add(bedParser.Parse());
             samplesHashtable.Add(args[1], DATA.parsedSamples.Count - 1);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DI3;
+using DI3.Interfaces;
 using IInterval;
 using ICPMD;
 
@@ -20,9 +21,9 @@ namespace Di3Bioinformatics
         where I : IInterval<C, M>
         where M : ICPMetadata<C>, IMetaData<C>
     {
-        public Di3B(byte chrCount)
+        public Di3B(byte chrCount, ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
         {
-            genome = new Genome<C, I, M>(chrCount);
+            genome = new Genome<C, I, M>(chrCount, CSerializer, MSerializer);
         }
 
         

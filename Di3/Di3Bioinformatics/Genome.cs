@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
 using DI3;
+using DI3.Interfaces;
 
 namespace Di3Bioinformatics
 {
@@ -14,8 +15,8 @@ namespace Di3Bioinformatics
         where I : IInterval<C, M>
         where M : ICPMetadata<C>, IMetaData<C>
     {
-        internal Genome(byte chrCount)
-            : base(chrCount)
+        internal Genome(byte chrCount, ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
+            : base(chrCount, CSerializer, MSerializer)
         {
             int cpuCount = Environment.ProcessorCount;
         }

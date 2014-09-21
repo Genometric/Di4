@@ -8,6 +8,7 @@ using ICPMD;
 using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using System.IO;
+using DI3.Interfaces;
 
 namespace DI3
 {
@@ -41,18 +42,24 @@ namespace DI3
         /// it indexes for common information retrieval 
         /// tasks.
         /// </summary>
-        public Di3()
+        public Di3(ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
         {
             di3 = new BPlusTree<C, B<C, M>>();
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
             preIndexes = new int[2];
 
-            BPlusTree<string, DateTime>.OptionsV2 options = new BPlusTree<string, DateTime>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.DateTime);
-            options.CalcBTreeOrder(16, 24);
-            options.CreateFile = CreatePolicy.Always;
-            options.FileName = Path.GetTempFileName();
-            using (var tree = new BPlusTree<string, DateTime>(options))
+            // CAUTION:
+            // CAUTION:
+            // CAUTION: this line is modified to be <C, M> instead of <C, B<C, M>> to temporary reasons; 
+            // you should return it back to original format when you have defined a serilizer for B. 
+            BPlusTree<C, M>.OptionsV2 options222 = new BPlusTree<C,M>.OptionsV2(CSerializer, MSerializer);
+
+            BPlusTree<string, DateTime>.OptionsV2 optionsTest = new BPlusTree<string, DateTime>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.DateTime, /*put also comparer here*/);
+            optionsTest.CalcBTreeOrder(16, 24);
+            optionsTest.CreateFile = CreatePolicy.Always;
+            optionsTest.FileName = Path.GetTempFileName();
+            using (var tree = new BPlusTree<string, DateTime>(optionsTest))
             {
                 var tempDir = new DirectoryInfo(Path.GetTempPath());
                 foreach (var file in tempDir.GetFiles("*", SearchOption.AllDirectories))
@@ -60,8 +67,8 @@ namespace DI3
                     tree.Add(file.FullName, file.LastWriteTimeUtc);
                 }
             }
-            options.CreateFile = CreatePolicy.Never;
-            using(var tree = new BPlusTree<string, DateTime>(options))
+            optionsTest.CreateFile = CreatePolicy.Never;
+            using(var tree = new BPlusTree<string, DateTime>(optionsTest))
             {
                 var tempDir = new DirectoryInfo(Path.GetTempPath());
                 foreach(var file in tempDir.GetFiles("*", SearchOption.AllDirectories))
@@ -107,10 +114,6 @@ namespace DI3
         /// a key in di3.
         /// </summary>
         private FIND<C, I, M> FIND { set; get; }
-
-
-
-        private BPlusTree<string, DateTime>.OptionsV2 options { set; get; }
 
 
         /// <summary>

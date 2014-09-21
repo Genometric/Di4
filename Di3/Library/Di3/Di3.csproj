@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ICSOutput.cs" />
+    <Compile Include="Interfaces\ICSerializer.cs" />
+    <Compile Include="Interfaces\IMSerializer.cs" />
     <Compile Include="PrimaryComponents\B.cs" />
     <Compile Include="BasicOperations\SetOperations.cs" />
     <Compile Include="PrimaryComponents\Di3DataStructure.cs" />
