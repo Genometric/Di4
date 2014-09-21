@@ -76,6 +76,9 @@
     <Reference Include="Google.ProtocolBuffers.Serialization">
       <HintPath>..\..\..\..\..\..\VJGoogleDrive\01 - Di3\7 - Packages\protobuf\tools\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -85,16 +88,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoordinateClass.cs" />
     <Compile Include="Orchestrator.cs" />
     <Compile Include="DATA.cs" />
     <Compile Include="Peak.cs" />
     <Compile Include="PeakData.cs" />
-    <Compile Include="Serializers\CSerializer.cs" />
-    <Compile Include="Serializers\MSerializer.cs" />
-    <Compile Include="Serializers\PeakUmbrellaClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serializers\Serializers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

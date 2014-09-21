@@ -8,6 +8,7 @@ using ICPMD;
 using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using System.IO;
+using DI3.Di3Serializers;
 
 namespace DI3
 {
@@ -32,19 +33,31 @@ namespace DI3
         /// <summary>
         /// Di3 primary data structure; a list of Di3 blocks.
         /// </summary>
-        internal List<B<C,  M>> di3_old { set; get; }
-
         internal BPlusTree<C, B<C, M>> di3 { set; get; }
 
-        internal BPlusTree<int, int>.OptionsV2 options { set; get; }
+        //internal BPlusTree<Int32, B<C, M>>.OptionsV2 options { set; get; }
+
+        internal int Comparer(int This, int That)
+        {
+            return This.CompareTo(That);
+        }
+
+        public BlockSerializer<C, M> BlockSerializer { set; get; }
+
+        // but should not be here ! 
+        // think better, do I know how to seralize the coordinate ?
+        public CoordinateSerializer<C> CoorSeri { set; get; }
+
 
         public Di3DataStructure()
         {
-            options = new BPlusTree<int, int>.OptionsV2(PrimitiveSerializer.Int32, PrimitiveSerializer.Int32);
-            options.CalcBTreeOrder(16, 24);
-            options.CreateFile = CreatePolicy.Always;
-            options.FileName = Path.GetTempFileName();
-            di3 = new BPlusTree<C, B<C, M>>(options);
+            //options = new BPlusTree<int, int>.OptionsV2(PrimitiveSerializer.Int32, PrimitiveSerializer.Int32);
+            //options.CalcBTreeOrder(16, 24);
+            //options.CreateFile = CreatePolicy.Always;
+            //options.FileName = Path.GetTempFileName();
+            //di3 = new BPlusTree<C, B<C, M>>(options);
+            BlockSerializer = new BlockSerializer<C, M>();
+            CoorSeri = new CoordinateSerializer<C>();
         }
     }
 }

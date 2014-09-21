@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
+using ProtoBuf;
 
 namespace DI3
 {
@@ -27,6 +28,7 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
+    [ProtoContract]
     public class Lambda<C, M>//I, M>
         where C : IComparable<C>
         //where I : IInterval<C, M>
@@ -68,6 +70,7 @@ namespace DI3
         /// <para>[value] = M  ::>  Middle    intersecting the coordiante.</para>
         /// <para>[value] = R  ::>  Right-end intersecting the coordiante.</para>
         /// </summary>
+        [ProtoMember(1)]
         internal char tau { private set; get; }
 
 
@@ -75,6 +78,7 @@ namespace DI3
         /// Gets descriptive metadata of the intereval
         /// represented by generic type M.
         /// </summary>
+        [ProtoMember(2)]
         internal M atI { private set; get; }
     }
 }

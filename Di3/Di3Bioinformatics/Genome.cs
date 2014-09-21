@@ -15,8 +15,8 @@ namespace Di3Bioinformatics
         where I : IInterval<C, M>
         where M : ICPMetadata<C>, IMetaData<C>
     {
-        internal Genome(byte chrCount, ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
-            : base(chrCount, CSerializer, MSerializer)
+        internal Genome(byte chrCount)
+            : base(chrCount)
         {
             int cpuCount = Environment.ProcessorCount;
         }

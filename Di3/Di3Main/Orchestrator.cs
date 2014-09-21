@@ -8,7 +8,6 @@ using BEDParser;
 using DI3;
 using Di3Bioinformatics;
 using System.Diagnostics;
-using Di3BMain.Serializers;
 
 namespace Di3BMain
 {
@@ -16,7 +15,7 @@ namespace Di3BMain
     {
         internal Orchestrator()
         {
-            di3B = new Di3B<int, PeakClass, PeakDataClass>(23, DataSerializers.Int32, DataSerializers.Peak);
+            di3B = new Di3B<int, PeakClass, PeakDataClass>(23);
             samplesHashtable = new Hashtable();
             stopWatch = new Stopwatch();
         }

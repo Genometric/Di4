@@ -26,11 +26,11 @@ namespace Di3Bioinformatics
         /// </summary>
         /// <param name="chrCount">The number of possible chromosomes
         /// of the genome.</param>
-        public BaseGenome(byte chrCount, ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
+        public BaseGenome(byte chrCount)
         {
             chrs = new List<Chromosome>();
             for (byte i = 0; i < chrCount; i++)
-                chrs.Add(new Chromosome(CSerializer, MSerializer));
+                chrs.Add(new Chromosome());
         }
 
         /// <summary>
@@ -48,11 +48,11 @@ namespace Di3Bioinformatics
             /// Represents a chromosome with different strands
             /// (i.e., positive/negative/un-stranded).
             /// </summary>
-            internal Chromosome(ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
+            internal Chromosome()
             {
-                di3PositiveStrand = new Di3<C, I, M>(CSerializer, MSerializer);
-                di3NegativeStrand = new Di3<C, I, M>(CSerializer, MSerializer);
-                di3Unstranded = new Di3<C, I, M>(CSerializer, MSerializer);
+                di3PositiveStrand = new Di3<C, I, M>();
+                di3NegativeStrand = new Di3<C, I, M>();
+                di3Unstranded = new Di3<C, I, M>();
             }
 
             /// <summary>

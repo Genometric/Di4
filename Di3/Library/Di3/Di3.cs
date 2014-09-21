@@ -9,6 +9,7 @@ using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using System.IO;
 using DI3.Interfaces;
+using DI3.Di3Serializers;
 
 namespace DI3
 {
@@ -42,21 +43,23 @@ namespace DI3
         /// it indexes for common information retrieval 
         /// tasks.
         /// </summary>
-        public Di3(ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
+        public Di3()
         {
-            di3 = new BPlusTree<C, B<C, M>>();
+            BPlusTree<C, B<C, M>>.OptionsV2 options =
+            options = new BPlusTree<C, B<C, M>>.OptionsV2(CoorSeri, BlockSerializer/*, put also the comparer here*/);
+            options.CalcBTreeOrder(16, 24);
+            options.CreateFile = CreatePolicy.Always;
+            options.FileName = Path.GetTempFileName();
+
+            di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
             preIndexes = new int[2];
 
-            // CAUTION:
-            // CAUTION:
-            // CAUTION: this line is modified to be <C, M> instead of <C, B<C, M>> to temporary reasons; 
-            // you should return it back to original format when you have defined a serilizer for B. 
-            BPlusTree<C, M>.OptionsV2 options222 = new BPlusTree<C,M>.OptionsV2(CSerializer, MSerializer);
-
-            BPlusTree<string, DateTime>.OptionsV2 optionsTest = new BPlusTree<string, DateTime>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.DateTime, /*put also comparer here*/);
-            optionsTest.CalcBTreeOrder(16, 24);
+            
+            
+            //BPlusTree<string, DateTime>.OptionsV2 optionsTest = new BPlusTree<string, DateTime>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.DateTime /*,put also comparer here*/);
+            /*optionsTest.CalcBTreeOrder(16, 24);
             optionsTest.CreateFile = CreatePolicy.Always;
             optionsTest.FileName = Path.GetTempFileName();
             using (var tree = new BPlusTree<string, DateTime>(optionsTest))
@@ -84,7 +87,7 @@ namespace DI3
                 {
                     Console.WriteLine("Removed: {0}", item.Key);
                 }
-            }
+            }*/
         }
 
 

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using BEDParser;
 using IInterval;
 using ICPMD;
+using ProtoBuf;
 
 namespace Di3BMain
 {
+    [ProtoContract]
     public class PeakClass : IInterval<int, PeakDataClass>
     {
         public PeakClass()
@@ -19,11 +21,13 @@ namespace Di3BMain
         /// <summary>
         /// Sets and gets the left-end of the interval.
         /// </summary>
+        [ProtoMember(1)]
         public int left { set; get; }
 
         /// <summary>
         /// Sets and gets the right-end of the interval.
         /// </summary>
+        [ProtoMember(2)]
         public int right { set; get; }
 
         /// <summary>
@@ -32,6 +36,7 @@ namespace Di3BMain
         /// to a memory object, or a pointer, or 
         /// an entry ID on database, or etc. 
         /// </summary>
+        [ProtoMember(3)]
         public PeakDataClass metadata { set; get; }
     }
 }

@@ -21,9 +21,9 @@ namespace Di3Bioinformatics
         where I : IInterval<C, M>
         where M : ICPMetadata<C>, IMetaData<C>
     {
-        public Di3B(byte chrCount, ICSerializer<C> CSerializer, IMSerializer<M> MSerializer)
+        public Di3B(byte chrCount)
         {
-            genome = new Genome<C, I, M>(chrCount, CSerializer, MSerializer);
+            genome = new Genome<C, I, M>(chrCount);
         }
 
         

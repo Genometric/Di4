@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
+using ProtoBuf;
 
 namespace DI3
 {
@@ -23,6 +24,7 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
+    [ProtoContract]
     public class B<C,/* I,*/ M> : Lambda<C, M>//I, M>
         where C : IComparable<C>
         //where I : IInterval<C, M>
@@ -59,13 +61,15 @@ namespace DI3
         /// <summary>
         /// Gets the element of domain which the block refers to.
         /// </summary>
-        internal C e { private set; get; }
+        [ProtoMember(1)]
+        internal C e { set; get; }
 
 
         /// <summary>
         /// Represents the interval intersecting with 
         /// the c of corresponding block.
         /// </summary>
+        [ProtoMember(2)]
         internal List<Lambda<C, M>> lambda { private set; get; }
 
 
@@ -73,6 +77,7 @@ namespace DI3
         /// Denotes the number of intervals whose
         /// right-end intersects with e. 
         /// </summary>
+        [ProtoMember(3)]
         internal int omega { set; get; }
     }
 }
