@@ -48,13 +48,13 @@ namespace DI3
             BPlusTree<C, B<C, M>>.OptionsV2 options =
             options = new BPlusTree<C, B<C, M>>.OptionsV2(CoorSeri, BlockSerializer/*, put also the comparer here*/);
             options.CalcBTreeOrder(16, 24);
-            options.CreateFile = CreatePolicy.Always;
-            options.FileName = Path.GetTempFileName();
+            options.CreateFile = CreatePolicy.Never;
+            //options.FileName = Path.GetTempFileName();
 
             di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
-            preIndexes = new int[2];
+            //preIndexes = new int[2];
 
             
             
@@ -100,7 +100,7 @@ namespace DI3
         /// <para>This information is used to improve
         /// indexing performance for sorted input.</para>
         /// </summary>
-        private int[] preIndexes { set; get; }
+        //private int[] preIndexes { set; get; }
 
 
         /// <summary>
@@ -132,7 +132,8 @@ namespace DI3
         /// to be added to the di3.</param>
         public void Add(I interval)
         {
-            preIndexes = INDEX.Index(interval, preIndexes);
+            //preIndexes = 
+            INDEX.Index(interval);//, preIndexes);
         }
 
 

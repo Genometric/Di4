@@ -40,8 +40,8 @@ namespace DI3
         internal INDEX(BPlusTree<C, B<C, M>> di3)
         {
             this.di3 = di3;
-            newIndexes = new int[2];
-            preIndexes = new int[2];
+            //newIndexes = new int[2];
+            //preIndexes = new int[2];
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace DI3
         /// <para>This information is used to improve
         /// indexing performance for sorted input.</para>
         /// </summary>
-        private int[] newIndexes { set; get; }
+        //private int[] newIndexes { set; get; }
 
         /// <summary>
         /// The left and right ends of an indexed 
@@ -101,16 +101,16 @@ namespace DI3
         /// <para>This information is used to improve
         /// indexing performance for sorted input.</para>
         /// </summary>
-        private int[] preIndexes { set; get; }
+        //private int[] preIndexes { set; get; }
 
 
         /// <summary>
         /// Indexes the provided interval. 
         /// </summary>
         /// <param name="interval">The interval to be index.</param>
-        public int[] Index(I Interval, int[] previousIndexes)
+        public void Index(I Interval)//, int[] previousIndexes)
         {
-            preIndexes = previousIndexes;
+            //preIndexes = previousIndexes;
 
             interval = Interval;
 
@@ -122,12 +122,12 @@ namespace DI3
             //newIndexes[0] = b;
             //b++;
 
-            c = interval.right;
-            FindRightendInsertCoordinate();
+            marshalPoint = interval.right;
+            MarchForRightEnd();
             Insert_into_di3('R');
             //newIndexes[1] = b;
 
-            return newIndexes;
+            //return newIndexes;
         }
 
 
@@ -224,7 +224,7 @@ namespace DI3
         /// insertion index of the interval toward di3 end for 
         /// proper postion for the interval's right-end insertion.
         /// </summary>
-        private void FindRightendInsertCoordinate()
+        private void MarchForRightEnd()
         {
             // Enumerator starts enumeration from given coordinate (i.e., e); 
             // however, this modification does not apply to the block corresponding
@@ -232,26 +232,37 @@ namespace DI3
             // enumerate from coordinate "c". 
             bool skip = true;
 
-            foreach (var block in di3.EnumerateFrom(c))
+            foreach (var block in di3.EnumerateFrom(interval.left))
             {
                 if (!skip)
                 {
-                    if (c.CompareTo(block.Value.e) == -1)
+                    switch(marshalPoint.CompareTo(block.Key))
                     {
-                        marshalPoint = block.Key;
+                        case 0:  // equal
+                        case -1: // greater than
+                            return;
+
+                        case 1:  // less than
+                            UpdateBlock(block.Key, 'M');
+                            break;
+
+                    }
+                    /*if (marshalPoint.CompareTo(block.Key) == -1)
+                    {
+                        //marshalPoint = block.Key;
                         //b = i;
                         break;
                     }
-                    else if (c.CompareTo(block.Value.e) == 1)
+                    else if (marshalPoint.CompareTo(block.Key) == 1)
                     {
-                        UpdateBlock('M');
-                        marshalPoint = block.Key;
+                        UpdateBlock(block.Key, 'M');
+                        //marshalPoint = block.Key;
                         //b++;
                     }
                     else
                     {
                         break;
-                    }
+                    }*/
                 }
                 else { skip = false; }
             }
@@ -270,7 +281,7 @@ namespace DI3
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
             if (di3.ContainsKey(marshalPoint))// b >= di3Cardinality || c.CompareTo(di3[b].e) != 0) // Condition satisfied: add new index
             {
-                UpdateBlock(tau);
+                UpdateBlock(marshalPoint, tau);
             }
             else // update the available index with new region
             {
@@ -337,12 +348,12 @@ namespace DI3
         /// </summary>
         /// <param name="tau">The intersection type of interval
         /// wtih c of corresponding block.</param>
-        private void UpdateBlock(char tau)
+        private void UpdateBlock(C key, char tau)
         {
-            // Following line seems to be updating the "value" of "key = c"
+            // Following line seems to be updating the "value" of "this.key = the key"
             // and based on my tests it works fine both with in-memory and 
             // out-of-memory policies; however, still it need further assessment.
-            di3[marshalPoint].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
+            di3[key].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
 
             //2nd strategy (not recommended):
             //List<Lambda<C, M>> tempLambda = di3[c].lambda;
@@ -351,7 +362,7 @@ namespace DI3
 
             if (tau == 'R')
             {
-                di3[marshalPoint].omega++;
+                di3[key].omega++;
             }
         }
     }
