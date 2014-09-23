@@ -48,8 +48,8 @@ namespace DI3
             BPlusTree<C, B<C, M>>.OptionsV2 options =
             options = new BPlusTree<C, B<C, M>>.OptionsV2(CoorSeri, BlockSerializer/*, put also the comparer here*/);
             options.CalcBTreeOrder(16, 24);
-            options.CreateFile = CreatePolicy.Never;
-            //options.FileName = Path.GetTempFileName();
+            options.CreateFile = CreatePolicy.Always;
+            options.FileName = Path.GetTempFileName();
 
             di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);

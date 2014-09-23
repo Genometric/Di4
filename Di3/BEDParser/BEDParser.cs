@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using IInterval;
 using ICPMD;
+using System.Text.RegularExpressions;
 
 
 namespace BEDParser
@@ -259,7 +260,7 @@ namespace BEDParser
         /// Holds catched information of each chromosome's base pairs count. 
         /// This information will be updated based on the selected species.
         /// </summary>
-        private int[] _basePairsCount;
+        private Dictionary<string, int> _basePairsCount;
 
         /// <summary>
         /// Mapping from chromosome Title (e.g., chrX, chrY, chrM) to chromosome Number (e.g., 23, 24, 25). 
@@ -289,37 +290,37 @@ namespace BEDParser
         /// <summary>
         /// Contains chromosome wide information and statistics of the sample
         /// </summary>
-        private List<ChrStatistics> _Chrs = new List<ChrStatistics>();
+        private Dictionary<string, ChrStatistics> _Chrs = new Dictionary<string, ChrStatistics>();
 
         /// <summary>
         /// Holds the width sum of all read peaks chromosome wide.
         /// </summary>
-        private List<uint> _pw__Sum = new List<uint>();
+        private Dictionary<string, uint> _pw__Sum = new Dictionary<string, uint>();
 
         /// <summary>
         /// Holds the width mean of all read peaks chromosome wide.
         /// </summary>
-        private List<double> _pw_Mean = new List<double>();
+        private Dictionary<string, double> _pw_Mean = new Dictionary<string, double>();
 
         /// <summary>
         /// Holds the width standard deviation of all read peaks chromosome wide.
         /// </summary>
-        private List<double> _pw_STDV = new List<double>();
+        private Dictionary<string, double> _pw_STDV = new Dictionary<string, double>();
 
         /// <summary>
         /// Holds the p-value sum of all read peaks chromosome wide.
         /// </summary>
-        private List<double> _pV__Sum = new List<double>();
+        private Dictionary<string, double> _pV__Sum = new Dictionary<string, double>();
 
         /// <summary>
         /// Holds the p-value mean of all read peaks chromosome wide.
         /// </summary>
-        private List<double> _pV_Mean = new List<double>();
+        private Dictionary<string, double> _pV_Mean = new Dictionary<string, double>();
 
         /// <summary>
         /// Hold the p-value standard deviation of all read peaks chromosome wide
         /// </summary>
-        private List<double> _pV_STDV = new List<double>();
+        private Dictionary<string, double> _pV_STDV = new Dictionary<string, double>();
 
         #endregion
 
@@ -349,44 +350,31 @@ namespace BEDParser
             // Assembly : GRCh37.p13
             // Gencode version : GENCODE 19
             // hm19
-            _basePairsCount = new int[]
-            {249250621, // chr1
-            243199373,  // chr2
-            198022430,  // chr3
-            191154276,  // chr4
-            180915260,  // chr5
-            171115067,  // chr6
-            159138663,  // chr7
-            146364022,  // chr8
-            141213431,  // chr9
-            135534747,  // chr10
-            135006516,  // chr11
-            133851895,  // chr12
-            115169878,  // chr13
-            107349540,  // chr14
-            102531392,  // chr15
-            90354753,   // chr16
-            81195210,   // chr17
-            78077248,   // chr18
-            59128983,   // chr19
-            63025520,   // chr20
-            48129895,   // chr21
-            51304566,   // chr22
-            155270560,  // chrX
-            59373566,   // chrY
-            16569};     // chrMT
-
-            _chrCount = 25;
-
-            InitializeDataStructures();
-
-            _chrT2N[0] = 22; // chrX
-            _chrT2N[1] = 23; // chrY
-            _chrT2N[2] = 24; // chrM
-
-            _Chrs[22].chrTitle = "chrX";
-            _Chrs[23].chrTitle = "chrY";
-            _Chrs[24].chrTitle = "chrM";
+            _basePairsCount.Add("chr1",249250621);
+            _basePairsCount.Add("chr2", 243199373);
+            _basePairsCount.Add("chr3", 198022430);
+            _basePairsCount.Add("chr4", 191154276);
+            _basePairsCount.Add("chr5", 180915260);
+            _basePairsCount.Add("chr6", 171115067);
+            _basePairsCount.Add("chr7", 159138663);
+            _basePairsCount.Add("chr8", 146364022);
+            _basePairsCount.Add("chr9", 141213431);
+            _basePairsCount.Add("chr10", 135534747);
+            _basePairsCount.Add("chr11", 135006516);
+            _basePairsCount.Add("chr12", 133851895);
+            _basePairsCount.Add("chr13", 115169878);
+            _basePairsCount.Add("chr14", 107349540);
+            _basePairsCount.Add("chr15", 102531392);
+            _basePairsCount.Add("chr16", 90354753);
+            _basePairsCount.Add("chr17", 81195210);
+            _basePairsCount.Add("chr18", 78077248);
+            _basePairsCount.Add("chr19", 59128983);
+            _basePairsCount.Add("chr20", 63025520);
+            _basePairsCount.Add("chr21", 48129895);
+            _basePairsCount.Add("chr22", 51304566);
+            _basePairsCount.Add("chrX", 155270560);
+            _basePairsCount.Add("chrY", 59373566);
+            _basePairsCount.Add("chrM", 16569);
 
             _data.species = "Homo sapiens";
         }
@@ -395,84 +383,35 @@ namespace BEDParser
         {
             // Assembly : GRCm38.p2
             // Gencode version : GENCODE M2
-            // mm10
-            _basePairsCount = new int[]
-            {195471971, // chr1
-            182113224 , // chr2
-            160039680 , // chr3
-            156508116 , // chr4
-            151834684 , // chr5
-            149736546 , // chr6
-            145441459 , // chr7
-            129401213 , // chr8
-            124595110 , // chr9
-            130694993 , // chr10
-            122082543 , // chr11
-            120129022 , // chr12
-            120421639 , // chr13
-            124902244 , // chr14
-            104043685 , // chr15
-            98207768 ,  // chr16
-            94987271 ,  // chr17
-            90702639 ,  // chr18
-            90702639 ,  // chr19
-            61431566 ,  // chr20
-            171031299 , // chrX
-            91744698 ,  // chrY
-            16299};     // chrM            
-
-            _chrCount = 22;
-
-            InitializeDataStructures();
-
-            _chrT2N[0] = 19; // chrX
-            _chrT2N[1] = 20; // chrY
-            _chrT2N[2] = 21; // chrM
-
-            _Chrs[19].chrTitle = "chrX";
-            _Chrs[20].chrTitle = "chrY";
-            _Chrs[21].chrTitle = "chrM";
+            // mm10            
+            _basePairsCount.Add("chr1",195471971);
+            _basePairsCount.Add("chr2",182113224);
+            _basePairsCount.Add("chr3",160039680);
+            _basePairsCount.Add("chr4",156508116);
+            _basePairsCount.Add("chr5",151834684);
+            _basePairsCount.Add("chr6",149736546);
+            _basePairsCount.Add("chr7",145441459);
+            _basePairsCount.Add("chr8",129401213);
+            _basePairsCount.Add("chr9",124595110);
+            _basePairsCount.Add("chr10",130694993);
+            _basePairsCount.Add("chr11",122082543);
+            _basePairsCount.Add("chr12",120129022);
+            _basePairsCount.Add("chr13",120421639);
+            _basePairsCount.Add("chr14",124902244);
+            _basePairsCount.Add("chr15",104043685);
+            _basePairsCount.Add("chr16",98207768);
+            _basePairsCount.Add("chr17",94987271);
+            _basePairsCount.Add("chr18",90702639);
+            _basePairsCount.Add("chr19",90702639);
+            _basePairsCount.Add("chr20",61431566);
+            _basePairsCount.Add("chrX",171031299);
+            _basePairsCount.Add("chrY", 91744698);
+            _basePairsCount.Add("chrM", 16299);
 
             _data.species = "Mus musculus";
         }
 
-        /// <summary>
-        /// Based on the chromosome count, initializes "_Chrs" and statistics _data structures
-        /// </summary>
-        private void InitializeDataStructures()
-        {
-            for (byte i = 0; i < _chrCount; i++)
-            {
-                _Chrs.Add(new ChrStatistics()
-                {
-                    chrTitle = "chr" + (i + 1).ToString(),
-                    count = 0,
-                    percentage = "0 %",
 
-                    pValueMax = 0,
-                    pValueMin = 1,
-                    pValueMean = 0,
-                    pValueSTDV = 0,
-
-                    peakWidthMax = 0,
-                    peakWidthMin = uint.MaxValue,
-                    peakWidthMean = 0,
-                    peakWidth_STDV = 0,
-
-                    coverage = 0,
-                });
-
-                _data.peaks.Add(new List<Peak>());
-
-                _pw__Sum.Add(0);
-                _pw_Mean.Add(0.0);
-                _pw_STDV.Add(0.0);
-
-                _pV__Sum.Add(0.0);
-                _pV_Mean.Add(0.0);
-                _pV_STDV.Add(0.0);
-            }
-        }
 
         /// <summary>
         /// Reads the regions presented in source file and generates chromosome-wide statistics regarding regions length and values. 
@@ -488,13 +427,13 @@ namespace BEDParser
                 start = 0,
                 stop = 0;
 
-            UInt32 line_counter = 0;
+            UInt32 lineCounter = 0;
 
             double p_value = 0.0;
 
             char strand = '*';
 
-            List<string> line_drop_msg = new List<string>();
+            List<string> lineDropMsg = new List<string>();
 
             string line;
 
@@ -503,72 +442,73 @@ namespace BEDParser
                 FileInfo file_info = new FileInfo(_source);
                 long file_size = file_info.Length;
                 int line_size = 0;
+                string chrTitle = "";
 
-                using (StreamReader file_Reader = new StreamReader(_source))
+                using (StreamReader fileReader = new StreamReader(_source))
                 {
                     for (int i = 0; i < _startOffset; i++)
                     {
-                        line = file_Reader.ReadLine();
-                        line_counter++;
+                        line = fileReader.ReadLine();
+                        lineCounter++;
                     }
 
-                    while ((line = file_Reader.ReadLine()) != null)
+                    while ((line = fileReader.ReadLine()) != null)
                     {
-                        line_counter++;
+                        lineCounter++;
 
-                        line_size += file_Reader.CurrentEncoding.GetByteCount(line);
+                        line_size += fileReader.CurrentEncoding.GetByteCount(line);
                         status = (Math.Round((line_size * 100.0) / file_size, 0)).ToString();
 
-                        if (line.Trim().Length > 0 && line_counter <= maxLinesToBeRead)
+                        if (line.Trim().Length > 0 && lineCounter <= maxLinesToBeRead)
                         {
-                            Peak reading_Peak = new Peak();
+                            Peak readingPeak = new Peak();
 
                             _dropLine = false;
 
-                            string[] splitted_Line = line.Split('\t');
+                            string[] splittedLine = line.Split('\t');
 
                             #region -_-     Process Start/Stop      -_-
 
-                            if (_leftColumn < splitted_Line.Length && _rightColumn < splitted_Line.Length)
+                            if (_leftColumn < splittedLine.Length && _rightColumn < splittedLine.Length)
                             {
-                                if (int.TryParse(splitted_Line[_leftColumn], out start) &&
-                                    int.TryParse(splitted_Line[_rightColumn], out stop))
+                                if (int.TryParse(splittedLine[_leftColumn], out start) &&
+                                    int.TryParse(splittedLine[_rightColumn], out stop))
                                 {
-                                    reading_Peak.left = start;
-                                    reading_Peak.right = stop;
-                                    reading_Peak.metadata.left = start;
-                                    reading_Peak.metadata.right = stop;
+                                    readingPeak.left = start;
+                                    readingPeak.right = stop;
+                                    readingPeak.metadata.left = start;
+                                    readingPeak.metadata.right = stop;
                                 }
                                 else
                                 {
                                     _dropLine = true;
-                                    line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid Start\\Stop column number");
+                                    lineDropMsg.Add("\tLine " + lineCounter.ToString() + "\t:\tInvalid Start\\Stop column number");
                                 }
                             }
                             else
                             {
                                 _dropLine = true;
-                                line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid Start\\Stop column number");
+                                lineDropMsg.Add("\tLine " + lineCounter.ToString() + "\t:\tInvalid Start\\Stop column number");
                             }
 
                             #endregion
 
                             #region -_-     Process p-value         -_-
 
-                            if (_valueColumn < splitted_Line.Length)
+                            if (_valueColumn < splittedLine.Length)
                             {
-                                if (double.TryParse(splitted_Line[_valueColumn], out p_value))
+                                if (double.TryParse(splittedLine[_valueColumn], out p_value))
                                 {
-                                    reading_Peak.metadata.value = pValueConvertor(p_value);
+                                    readingPeak.metadata.value = pValueConvertor(p_value);
                                 }
                                 else if (_dropPeakIfInvalidValue == true)
                                 {
                                     _dropLine = true;
-                                    line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid p-value ( " + splitted_Line[_valueColumn] + " )");
+                                    lineDropMsg.Add("\tLine " + lineCounter.ToString() + "\t:\tInvalid p-value ( " + splittedLine[_valueColumn] + " )");
                                 }
                                 else
                                 {
-                                    reading_Peak.metadata.value = _defaultValue;
+                                    readingPeak.metadata.value = _defaultValue;
                                     _defaultValueUtilizationCount++;
                                 }
                             }
@@ -577,11 +517,11 @@ namespace BEDParser
                                 if (_dropPeakIfInvalidValue == true)
                                 {
                                     _dropLine = true;
-                                    line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid p-value column number");
+                                    lineDropMsg.Add("\tLine " + lineCounter.ToString() + "\t:\tInvalid p-value column number");
                                 }
                                 else
                                 {
-                                    reading_Peak.metadata.value = _defaultValue;
+                                    readingPeak.metadata.value = _defaultValue;
                                     _defaultValueUtilizationCount++;
                                 }
                             }
@@ -590,154 +530,105 @@ namespace BEDParser
 
                             #region -_-     Process Peak Name       -_-
 
-                            if (_nameColumn < splitted_Line.Length)
+                            if (_nameColumn < splittedLine.Length)
                             {
-                                reading_Peak.metadata.name = splitted_Line[_nameColumn];
+                                readingPeak.metadata.name = splittedLine[_nameColumn];
                             }
                             else
                             {
-                                reading_Peak.metadata.name = "null";
+                                readingPeak.metadata.name = "null";
                             }
 
                             #endregion
 
                             #region -_-     Process Peak Strand     -_-
 
-                            if (_strandColumn != -1 && _strandColumn < splitted_Line.Length)
+                            if (_strandColumn != -1 && _strandColumn < splittedLine.Length)
                             {
-                                if (char.TryParse(splitted_Line[_strandColumn], out strand))
+                                if (char.TryParse(splittedLine[_strandColumn], out strand))
                                 {
-                                    reading_Peak.metadata.strand = strand;
+                                    readingPeak.metadata.strand = strand;
                                 }
                                 else
                                 {
-                                    reading_Peak.metadata.strand = '*';
+                                    readingPeak.metadata.strand = '*';
                                 }
                             }
                             else
                             {
-                                reading_Peak.metadata.strand = '*';
+                                readingPeak.metadata.strand = '*';
                             }
 
                             #endregion
 
                             #region -_-     Get chromosome index    -_-
 
-                            if (_chrColumn < splitted_Line.Length)
+                            if (_chrColumn < splittedLine.Length &&
+                                Regex.IsMatch(splittedLine[_chrColumn].ToLower(), "chr"))
                             {
-                                string[] splitted_chromosome_number = splitted_Line[_chrColumn].Split('r');
-
-                                if (splitted_chromosome_number.Length == 2 && splitted_chromosome_number[0] == "ch")
-                                {
-                                    switch (splitted_chromosome_number[1])
-                                    {
-                                        case "X":
-                                        case "x":
-                                            chr_No = _chrT2N[0];
-                                            break;
-
-                                        case "Y":
-                                        case "y":
-                                            chr_No = _chrT2N[1];
-                                            break;
-
-                                        case "M":
-                                        case "m":
-                                            chr_No = _chrT2N[2];
-                                            break;
-
-                                        default:
-                                            if (byte.TryParse(splitted_chromosome_number[1], out chr_No))
-                                            {
-                                                chr_No--;
-
-                                                // This condition is applied to avoid chromosome numbers more than chromosome count.
-                                                // The number is subtracted by 3, to avoid any chromosome numbers that overlap with
-                                                // chrX, chrY or chrM. For example, if species is chosen as human and chr22 is observed
-                                                // it should be mapped to chrX
-                                                if (chr_No >= _chrCount - 3)
-                                                {
-                                                    _dropLine = true;
-                                                    line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid chromosome number ( " + splitted_Line[_chrColumn].ToString() + " )");
-
-                                                    if (excessChrs.Find(x => x.Equals("chr" + splitted_chromosome_number[1])) == null)
-                                                    {
-                                                        excessChrs.Add("chr" + splitted_chromosome_number[1]);
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                _dropLine = true;
-                                                line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid chromosome number ( " + splitted_Line[_chrColumn].ToString() + " )");
-                                            }
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    _dropLine = true;
-                                    line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid chromosome number ( " + splitted_Line[_chrColumn].ToString() + " )");
-                                }
+                                chrTitle = splittedLine[_chrColumn].ToLower();
                             }
                             else
                             {
                                 _dropLine = true;
-                                line_drop_msg.Add("\tLine " + line_counter.ToString() + "\t:\tInvalid chromosome number ( " + splitted_Line[_chrColumn].ToString() + " )");
+                                lineDropMsg.Add("\tLine " + lineCounter.ToString() + "\t:\tInvalid chromosome number ( " + splittedLine[_chrColumn].ToString() + " )");
                             }
                             #endregion
 
                             if (!_dropLine)
                             {
-                                _data.peaks[chr_No].Add(reading_Peak);
+                                if (!_data.peaks.ContainsKey(chrTitle))
+                                    AddNewChromosome(chrTitle);
 
-                                _Chrs[chr_No].count++;
+                                _data.peaks[chrTitle].Add(readingPeak);
+
+                                _Chrs[chrTitle].count++;
 
                                 #region -_-     Check for Widest and Narrowest Peaks    -_-
 
-                                if (reading_Peak.right - reading_Peak.left > _Chrs[chr_No].peakWidthMax)
+                                if (readingPeak.right - readingPeak.left > _Chrs[chrTitle].peakWidthMax)
                                 {
-                                    _Chrs[chr_No].peakWidthMax = (uint)(reading_Peak.right - reading_Peak.left);
+                                    _Chrs[chrTitle].peakWidthMax = (uint)(readingPeak.right - readingPeak.left);
                                 }
 
-                                if (reading_Peak.right - reading_Peak.left < _Chrs[chr_No].peakWidthMin)
+                                if (readingPeak.right - readingPeak.left < _Chrs[chrTitle].peakWidthMin)
                                 {
-                                    _Chrs[chr_No].peakWidthMin = (uint)(reading_Peak.right - reading_Peak.left);
+                                    _Chrs[chrTitle].peakWidthMin = (uint)(readingPeak.right - readingPeak.left);
                                 }
 
                                 #endregion
 
                                 #region -_-     Check for Max and Min of p-value        -_-
 
-                                if (reading_Peak.metadata.value > _Chrs[chr_No].pValueMax)
+                                if (readingPeak.metadata.value > _Chrs[chrTitle].pValueMax)
                                 {
-                                    _Chrs[chr_No].pValueMax = reading_Peak.metadata.value;
+                                    _Chrs[chrTitle].pValueMax = readingPeak.metadata.value;
                                 }
 
-                                if (reading_Peak.metadata.value < _Chrs[chr_No].pValueMin)
+                                if (readingPeak.metadata.value < _Chrs[chrTitle].pValueMin)
                                 {
-                                    _Chrs[chr_No].pValueMin = reading_Peak.metadata.value;
+                                    _Chrs[chrTitle].pValueMin = readingPeak.metadata.value;
                                 }
 
                                 #endregion
 
                                 #region -_-     Maximum and Minimum p-value             -_-
 
-                                if (reading_Peak.metadata.value > _data.pValueMax.metadata.value)
+                                if (readingPeak.metadata.value > _data.pValueMax.metadata.value)
                                 {
-                                    _data.pValueMax = reading_Peak;
+                                    _data.pValueMax = readingPeak;
                                 }
 
-                                if (reading_Peak.metadata.value < _data.pValueMin.metadata.value)
+                                if (readingPeak.metadata.value < _data.pValueMin.metadata.value)
                                 {
-                                    _data.pValueMin = reading_Peak;
+                                    _data.pValueMin = readingPeak;
                                 }
 
                                 #endregion
 
-                                _pw__Sum[chr_No] = (uint)(_pw__Sum[chr_No] + (reading_Peak.right - reading_Peak.left));
+                                _pw__Sum[chrTitle] = (uint)(_pw__Sum[chrTitle] + (readingPeak.right - readingPeak.left));
 
-                                _pV__Sum[chr_No] += reading_Peak.metadata.value;
+                                _pV__Sum[chrTitle] += readingPeak.metadata.value;
                             }
                             else
                             {
@@ -750,12 +641,12 @@ namespace BEDParser
                 #region -_-                Dropped Lines                -_-
 
                 if (_defaultValueUtilizationCount > 0)
-                    line_drop_msg.Insert(0, "\tDefault p-value used for " + _defaultValueUtilizationCount.ToString() + " times");
+                    lineDropMsg.Insert(0, "\tDefault p-value used for " + _defaultValueUtilizationCount.ToString() + " times");
 
                 if (_dropedLinesCount > 0)
-                    line_drop_msg.Insert(0, "\t" + _dropedLinesCount.ToString() + " Lines droped");
+                    lineDropMsg.Insert(0, "\t" + _dropedLinesCount.ToString() + " Lines droped");
 
-                _data.messages = line_drop_msg;
+                _data.messages = lineDropMsg;
                 #endregion
 
                 _data.chrCount = _chrCount;
@@ -778,42 +669,42 @@ namespace BEDParser
 
             #region -_-     chromosome Statistics preparation       -_-
 
-            for (int i = 0; i < _Chrs.Count; i++)
+            foreach (KeyValuePair<string, ChrStatistics> entry in _Chrs)
             {
-                total_Peak_count += (uint)_Chrs[i].count;
+                total_Peak_count += (uint)entry.Value.count;
 
-                if ((uint)_Chrs[i].count != 0)
+                if ((uint)entry.Value.count != 0)
                 {
-                    _pw_Mean[i] = Math.Round(_pw__Sum[i] / (double)_Chrs[i].count, decimalPlaces);
-                    _pV_Mean[i] = _pV__Sum[i] / (double)_Chrs[i].count;
+                    _pw_Mean[entry.Key] = Math.Round(_pw__Sum[entry.Key] / (double)_Chrs[entry.Key].count, decimalPlaces);
+                    _pV_Mean[entry.Key] = _pV__Sum[entry.Key] / (double)_Chrs[entry.Key].count;
                 }
                 else
                 {
-                    _pw_Mean[i] = 0;
-                    _pV_Mean[i] = 0;
+                    _pw_Mean[entry.Key] = 0;
+                    _pV_Mean[entry.Key] = 0;
                 }
             }
 
-            for (int i = 0; i < _Chrs.Count; i++)
+            foreach (KeyValuePair<string, ChrStatistics> entry in _Chrs)
             {
-                foreach (Peak P in _data.peaks[i])
+                foreach (Peak P in _data.peaks[entry.Key])
                 {
-                    _pw_STDV[i] += Math.Pow((P.right - P.left) - _pw_Mean[i], 2.0);
-                    _pV_STDV[i] += Math.Pow(P.metadata.value - _pV_Mean[i], 2.0);
+                    _pw_STDV[entry.Key] += Math.Pow((P.right - P.left) - _pw_Mean[entry.Key], 2.0);
+                    _pV_STDV[entry.Key] += Math.Pow(P.metadata.value - _pV_Mean[entry.Key], 2.0);
                 }
             }
 
-            for (int i = 0; i < _Chrs.Count; i++)
+            foreach (KeyValuePair<string, ChrStatistics> entry in _Chrs)
             {
-                if ((double)_Chrs[i].count != 0)
+                if ((double)entry.Value.count != 0)
                 {
-                    _pw_STDV[i] = Math.Sqrt(_pw_STDV[i] / (double)_Chrs[i].count);
-                    _pV_STDV[i] = Math.Sqrt(_pV_STDV[i] / (double)_Chrs[i].count);
+                    _pw_STDV[entry.Key] = Math.Sqrt(_pw_STDV[entry.Key] / (double)entry.Value.count);
+                    _pV_STDV[entry.Key] = Math.Sqrt(_pV_STDV[entry.Key] / (double)entry.Value.count);
                 }
                 else
                 {
-                    _pw_STDV[i] = 0;
-                    _pV_STDV[i] = 0;
+                    _pw_STDV[entry.Key] = 0;
+                    _pV_STDV[entry.Key] = 0;
                 }
             }
 
@@ -821,50 +712,49 @@ namespace BEDParser
 
             if (total_Peak_count > 0)
             {
-                double p_Values_Sum = 0;
+                double pValuesSum = 0;
 
                 #region -_-        Store chromosome wide statistics         -_-
 
-                for (byte i = 0; i < _Chrs.Count; i++)
+                foreach (KeyValuePair<string, ChrStatistics> entry in _Chrs)
                 {
-                    if (_Chrs[i].peakWidthMin == uint.MaxValue) _Chrs[i].peakWidthMin = 0;
+                    if (entry.Value.peakWidthMin == uint.MaxValue) entry.Value.peakWidthMin = 0;
 
-                    if (_Chrs[i].pValueMin == 1) _Chrs[i].pValueMin = 0;
+                    if (entry.Value.pValueMin == 1) entry.Value.pValueMin = 0;
 
-                    _data.chrStatistics.Add(new ChrStatistics()
+                    _data.chrStatistics.Add(entry.Key, new ChrStatistics()
                     {
-                        chrTitle = _Chrs[i].chrTitle,
-                        count = _Chrs[i].count,
-                        percentage = (Math.Round((double)((_Chrs[i].count * 100) / total_Peak_count), decimalPlaces)).ToString() + " %",
+                        chrTitle = FixChrCasing(entry.Key),
+                        count = entry.Value.count,
+                        percentage = (Math.Round((double)((entry.Value.count * 100) / total_Peak_count), decimalPlaces)).ToString() + " %",
 
-                        peakWidthMax = _Chrs[i].peakWidthMax,
-                        peakWidthMin = _Chrs[i].peakWidthMin,
-                        peakWidthMean = Math.Round((float)_pw_Mean[i], decimalPlaces),
-                        peakWidth_STDV = Math.Round((float)_pw_STDV[i], decimalPlaces),
+                        peakWidthMax = entry.Value.peakWidthMax,
+                        peakWidthMin = entry.Value.peakWidthMin,
+                        peakWidthMean = Math.Round((float)_pw_Mean[entry.Key], decimalPlaces),
+                        peakWidth_STDV = Math.Round((float)_pw_STDV[entry.Key], decimalPlaces),
 
+                        pValueMax = entry.Value.pValueMax,
+                        pValueMin = entry.Value.pValueMin,
+                        pValueMean = _pV_Mean[entry.Key],
+                        pValueSTDV = _pV_STDV[entry.Key],
 
-                        pValueMax = _Chrs[i].pValueMax,
-                        pValueMin = _Chrs[i].pValueMin,
-                        pValueMean = _pV_Mean[i],
-                        pValueSTDV = _pV_STDV[i],
-
-                        coverage = (float)Math.Round(((int)_pw__Sum[i] * 100.0) / _basePairsCount[i], decimalPlaces)
+                        coverage = (float)Math.Round(((int)_pw__Sum[entry.Key] * 100.0) / _basePairsCount[FixChrCasing(entry.Key)], decimalPlaces)
                     });
 
-                    if (!double.IsNaN(_pV_Mean[i]))
+                    if (!double.IsNaN(_pV_Mean[entry.Key]))
                     {
-                        p_Values_Sum += (double)_pV_Mean[i];
+                        pValuesSum += (double)_pV_Mean[entry.Key];
                     }
 
-                    if (i != _chrCount - 1 && i != _chrCount - 2 && _Chrs[i].count == 0)
+                    /*if (i != _chrCount - 1 && i != _chrCount - 2 && _Chrs[i].count == 0)
                     {
                         missingChrs.Add(_Chrs[i].chrTitle);
-                    }
+                    }*/
                 }
 
                 #endregion
 
-                _data.pValueMean = p_Values_Sum / total_Peak_count;
+                _data.pValueMean = pValuesSum / total_Peak_count;
                 _data.peaksCount = Convert.ToInt32(total_Peak_count);
             }
         }
@@ -883,6 +773,55 @@ namespace BEDParser
                 case '1': return Math.Pow(10.0, value / (-10.0));
                 case '2': return Math.Pow(10.0, value / (-1.0));
                 default: return 0;
+            }
+        }
+
+        private void AddNewChromosome(string newChr)
+        {
+            _data.peaks.Add(newChr, new List<Peak>());
+            _Chrs.Add(newChr, new ChrStatistics()
+            {
+                chrTitle = newChr,
+                count = 0,
+                percentage = "0 %",
+
+                pValueMax = 0,
+                pValueMin = 1,
+                pValueMean = 0,
+                pValueSTDV = 0,
+
+                peakWidthMax = 0,
+                peakWidthMin = uint.MaxValue,
+                peakWidthMean = 0,
+                peakWidth_STDV = 0,
+
+                coverage = 0,
+            });
+
+            _pw__Sum.Add(newChr, 0);
+            _pw_Mean.Add(newChr, 0.0);
+            _pw_STDV.Add(newChr, 0.0);
+            _pV__Sum.Add(newChr, 0.0);
+            _pV_Mean.Add(newChr, 0.0);
+            _pV_STDV.Add(newChr, 0.0);
+        }
+
+        /// <summary>
+        /// Returns case-fixed chr title. 
+        /// <para>During parsing process all chr title are changed to
+        /// lower-case. However, it is prefered to have chrX, chrY and 
+        /// chrM in camel casing. This function will do conversion.</para>
+        /// </summary>
+        /// <param name="allLowerCaseChr">camel-cased chr titles.</param>
+        /// <returns></returns>
+        private string FixChrCasing(string allLowerCaseChr)
+        {
+            switch (allLowerCaseChr)
+            {
+                case "chrx": return "chrX";
+                case "chry": return "chrY";
+                case "chrm": return "chrM";
+                default: return allLowerCaseChr;
             }
         }
     }

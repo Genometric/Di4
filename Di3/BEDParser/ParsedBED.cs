@@ -16,22 +16,22 @@ namespace BEDParser
         public string filePath { set; get; }
         public byte chrCount { set; get; }
         public int peaksCount { set; get; }
-        public List<ChrStatistics> chrStatistics { set; get; }
+        public Dictionary<string, ChrStatistics> chrStatistics { set; get; }
         public I pValueMax { set; get; }
         public I pValueMin { set; get; }
         public double pValueMean { set; get; }
         public List<string> messages { set; get; }
-        public List<List<I>> peaks { set; get; }
+        public Dictionary<string, List<I>> peaks { set; get; }
         public string species { set; get; }
 
 
         public ParsedBED()
         {
-            chrStatistics = new List<ChrStatistics>();
+            chrStatistics = new Dictionary<string, ChrStatistics>();
 
             messages = new List<string>();
 
-            peaks = new List<List<I>>();
+            peaks = new Dictionary<string, List<I>>();
 
             pValueMax = new I() { left = 0, right = 0, metadata = { chrNo = 0, name = null, value = 0, strand = '*' } };
 
