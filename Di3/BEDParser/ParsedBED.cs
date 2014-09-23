@@ -14,6 +14,7 @@ namespace BEDParser
     {
         public string fileName { set; get; }
         public string filePath { set; get; }
+        public UInt64 fileHashKey { set; get; }
         public byte chrCount { set; get; }
         public int peaksCount { set; get; }
         public Dictionary<string, ChrStatistics> chrStatistics { set; get; }

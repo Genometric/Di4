@@ -330,6 +330,7 @@ namespace BEDParser
         {
             _data.filePath = System.IO.Path.GetFullPath(_source);
             _data.fileName = System.IO.Path.GetFileName(_source);
+            _data.fileHashKey = GetFileHashKey(_data.filePath);
 
             switch (_species.ToLower().Trim())
             {
@@ -823,6 +824,25 @@ namespace BEDParser
                 case "chrm": return "chrM";
                 default: return allLowerCaseChr;
             }
+        }
+
+        private UInt64 GetFileHashKey(string file)
+        {
+            int len = file.Length;
+
+            UInt64 hashKey = 0;
+            for (int i = 0; i < len; i++)
+            {
+                hashKey += file[i];
+                hashKey += (hashKey << 10);
+                hashKey ^= (hashKey >> 6);
+            }
+
+            hashKey += (hashKey << 3);
+            hashKey ^= (hashKey >> 11);
+            hashKey += (hashKey << 15);
+
+            return hashKey;
         }
     }
 }
