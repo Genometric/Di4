@@ -29,9 +29,8 @@ namespace DI3
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
     [ProtoContract]
-    public class Lambda<C, M>//I, M>
+    public class Lambda<C, M>
         where C : IComparable<C>
-        //where I : IInterval<C, M>
         where M : IMetaData<C>
     {
         /// <summary>

@@ -35,8 +35,6 @@ namespace DI3
         /// </summary>
         internal BPlusTree<C, B<C, M>> di3 { set; get; }
 
-        //internal BPlusTree<Int32, B<C, M>>.OptionsV2 options { set; get; }
-
         internal int Comparer(int This, int That)
         {
             return This.CompareTo(That);
@@ -51,11 +49,6 @@ namespace DI3
 
         public Di3DataStructure()
         {
-            //options = new BPlusTree<int, int>.OptionsV2(PrimitiveSerializer.Int32, PrimitiveSerializer.Int32);
-            //options.CalcBTreeOrder(16, 24);
-            //options.CreateFile = CreatePolicy.Always;
-            //options.FileName = Path.GetTempFileName();
-            //di3 = new BPlusTree<C, B<C, M>>(options);
             BlockSerializer = new BlockSerializer<C, M>();
             CoorSeri = new CoordinateSerializer<C>();
         }

@@ -17,6 +17,9 @@ namespace Di3BMain
             Console.WriteLine("");
             Console.WriteLine(".::.   Running Directory : {0}", Environment.CurrentDirectory);
 
+            Herald.Initialize(Herald.Destination.Both, "E:\\myTestLog.log");
+
+
             Orchestrator orchestrator = new Orchestrator();
 
             string runResult = "";
@@ -26,9 +29,11 @@ namespace Di3BMain
                 Console.Write("> ");
 
                 runResult = orchestrator.CommandParse(Console.ReadLine());
-                Console.WriteLine("-: Done ...    Runtime: {0}", runResult);
-                Console.WriteLine();
+                Herald.Announce(String.Format("-: Done ...    Runtime: {0}", runResult));
+                Herald.Announce("");
             }
+
+            Herald.Dispose();
         }
     }
 }

@@ -8,21 +8,23 @@ namespace Di3Bioinformatics
 {
     public class FunctionOutput<O>
     {
+        public Dictionary<string, Chromosome> chrs { set; get; }
+
         public FunctionOutput(int chrCount)
         {
-            chrs = new List<chr>();
-            for (int chr = 0; chr < chrCount; chr++)
-                chrs.Add(new chr());
+            chrs = new Dictionary<string, Chromosome>();
         }
 
-        public List<chr> chrs { set; get; }
-
-        public class chr
+        public class Chromosome
         {
             public List<O> outputPositiveStrand { set; get; }
             public List<O> outputNegativeStrand { set; get; }
             public List<O> outputUnstranded { set; get; }
+        }
 
+        public void addChromosome(string chr)
+        {
+            chrs.Add(chr, new Chromosome());
         }
     }
 }

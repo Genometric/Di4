@@ -37,8 +37,7 @@ namespace DI3
         /// </summary>
         internal B()
         {
-            lambda = new List<Lambda<C, M>>();//I, M>>();
-            //e = e.defaultValue;
+            lambda = new List<Lambda<C, M>>();
             omega = 0;
         }
 
@@ -52,7 +51,7 @@ namespace DI3
         /// domain</param>
         internal B(C coordinate)
         {
-            lambda = new List<Lambda<C, M>>();//I, M>>();
+            lambda = new List<Lambda<C, M>>();
             e = coordinate;
             omega = 0;
         }

@@ -31,7 +31,7 @@ namespace Di3Bioinformatics
         Genome<C, I, M> genome { set; get; }
 
 
-        public void Add(List<List<I>> peaks)
+        public void Add(Dictionary<string, List<I>> peaks)
         {
             genome.Add(peaks);
         }

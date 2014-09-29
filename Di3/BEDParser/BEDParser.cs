@@ -331,6 +331,7 @@ namespace BEDParser
             _data.filePath = System.IO.Path.GetFullPath(_source);
             _data.fileName = System.IO.Path.GetFileName(_source);
             _data.fileHashKey = GetFileHashKey(_data.filePath);
+            _basePairsCount = new Dictionary<string, int>();
 
             switch (_species.ToLower().Trim())
             {
@@ -826,11 +827,11 @@ namespace BEDParser
             }
         }
 
-        private UInt64 GetFileHashKey(string file)
+        private UInt32 GetFileHashKey(string file)
         {
             int len = file.Length;
 
-            UInt64 hashKey = 0;
+            UInt32 hashKey = 0;
             for (int i = 0; i < len; i++)
             {
                 hashKey += file[i];

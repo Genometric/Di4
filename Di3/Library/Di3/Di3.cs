@@ -54,53 +54,7 @@ namespace DI3
             di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
-            //preIndexes = new int[2];
-
-            
-            
-            //BPlusTree<string, DateTime>.OptionsV2 optionsTest = new BPlusTree<string, DateTime>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.DateTime /*,put also comparer here*/);
-            /*optionsTest.CalcBTreeOrder(16, 24);
-            optionsTest.CreateFile = CreatePolicy.Always;
-            optionsTest.FileName = Path.GetTempFileName();
-            using (var tree = new BPlusTree<string, DateTime>(optionsTest))
-            {
-                var tempDir = new DirectoryInfo(Path.GetTempPath());
-                foreach (var file in tempDir.GetFiles("*", SearchOption.AllDirectories))
-                {
-                    tree.Add(file.FullName, file.LastWriteTimeUtc);
-                }
-            }
-            optionsTest.CreateFile = CreatePolicy.Never;
-            using(var tree = new BPlusTree<string, DateTime>(optionsTest))
-            {
-                var tempDir = new DirectoryInfo(Path.GetTempPath());
-                foreach(var file in tempDir.GetFiles("*", SearchOption.AllDirectories))
-                {
-                    DateTime cmpDate;
-                    if (!tree.TryGetValue(file.FullName, out cmpDate))
-                        Console.WriteLine("New file: {0}", file.FullName);
-                    else if (cmpDate != file.LastWriteTimeUtc)
-                        Console.WriteLine("Modified: {0}", file.FullName);
-                    tree.Remove(file.FullName);
-                }
-                foreach(var item in tree)
-                {
-                    Console.WriteLine("Removed: {0}", item.Key);
-                }
-            }*/
         }
-
-
-        /// <summary>
-        /// The left and right ends of an indexed 
-        /// interval update at least two blocks. 
-        /// This variable holds the index of left
-        /// and right end indexes of such updated 
-        /// blocks cause by the "PREVIOUS" interval index.
-        /// <para>This information is used to improve
-        /// indexing performance for sorted input.</para>
-        /// </summary>
-        //private int[] preIndexes { set; get; }
 
 
         /// <summary>
@@ -132,8 +86,7 @@ namespace DI3
         /// to be added to the di3.</param>
         public void Add(I interval)
         {
-            //preIndexes = 
-            INDEX.Index(interval);//, preIndexes);
+            INDEX.Index(interval);
         }
 
 

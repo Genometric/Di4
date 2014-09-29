@@ -16,29 +16,31 @@ namespace Di3Bioinformatics
         where M : ICPMetadata<C>, IMetaData<C>
     {
         internal Genome(byte chrCount)
-            : base(chrCount)
         {
             int cpuCount = Environment.ProcessorCount;
         }
 
-        internal void Add(List<List<I>> peaks)
+        internal void Add(Dictionary<string, List<I>> peaks)
         {
-            for (int chr = 0; chr < peaks.Count; chr++)
+            foreach(var chrKey in peaks)
             {
-                for (int p = 0; p < peaks[chr].Count; p++)
+                var chrPeaks = chrKey.Value;
+                AddChromosome(chrKey.Key);
+
+                for (int p = 0; p < chrPeaks.Count; p++)
                 {
-                    switch (peaks[chr][p].metadata.strand)
+                    switch (chrPeaks[p].metadata.strand)
                     {
                         case '+':
-                            chrs[chr].di3PositiveStrand.Add(peaks[chr][p]);
+                            chrs[chrKey.Key].di3PositiveStrand.Add(chrPeaks[p]);
                             break;
 
                         case '-':
-                            chrs[chr].di3NegativeStrand.Add(peaks[chr][p]);
+                            chrs[chrKey.Key].di3NegativeStrand.Add(chrPeaks[p]);
                             break;
 
                         case '*':
-                            chrs[chr].di3Unstranded.Add(peaks[chr][p]);
+                            chrs[chrKey.Key].di3Unstranded.Add(chrPeaks[p]);
                             break;
                     }
                 }
@@ -51,64 +53,65 @@ namespace Di3Bioinformatics
 
             AggregateFactory<C, I, M> aggFactory = new AggregateFactory<C, I, M>();
 
-            for (int chr = 0; chr < chrs.Count; chr++)
+            foreach(var chrKey in chrs)
             {
                 switch (strand)
                 {
                     case '+':
-                        if (chrs[chr].di3PositiveStrand.blockCount > 0)
+                        if (chrKey.Value.di3PositiveStrand.blockCount > 0)
                         {
-                            switch(function)
+                            switch (function)
                             {
                                 case "cover":
-                                    output.chrs[chr].outputPositiveStrand = 
-                                        chrs[chr].di3PositiveStrand.Cover<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+                                    output.chrs[chrKey.Key].outputPositiveStrand =
+                                        chrs[chrKey.Key].di3PositiveStrand.Cover<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
                                     break;
 
                                 case "summit":
-                                    output.chrs[chr].outputPositiveStrand = 
-                                        chrs[chr].di3PositiveStrand.Summit<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+                                    output.chrs[chrKey.Key].outputPositiveStrand =
+                                        chrs[chrKey.Key].di3PositiveStrand.Summit<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
                                     break;
                             }
                         }
                         break;
 
                     case '-':
-                        if (chrs[chr].di3NegativeStrand.blockCount > 0)
+                        if (chrs[chrKey.Key].di3NegativeStrand.blockCount > 0)
                         {
                             switch (function)
                             {
                                 case "cover":
-                                    output.chrs[chr].outputNegativeStrand = 
-                                        chrs[chr].di3NegativeStrand.Cover<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+                                    output.chrs[chrKey.Key].outputNegativeStrand =
+                                        chrs[chrKey.Key].di3NegativeStrand.Cover<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
                                     break;
 
                                 case "summit":
-                                    output.chrs[chr].outputNegativeStrand = 
-                                        chrs[chr].di3NegativeStrand.Summit<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+                                    output.chrs[chrKey.Key].outputNegativeStrand =
+                                        chrs[chrKey.Key].di3NegativeStrand.Summit<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
                                     break;
                             }
-                        }   
+                        }
                         break;
 
                     case '*':
-                        if (chrs[chr].di3Unstranded.blockCount > 0)
+                        if (chrs[chrKey.Key].di3Unstranded.blockCount > 0)
                         {
-                            switch(function)
+                            switch (function)
                             {
                                 case "cover":
-                                    output.chrs[chr].outputUnstranded = 
-                                        chrs[chr].di3Unstranded.Cover<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+                                    output.chrs[chrKey.Key].outputUnstranded =
+                                        chrs[chrKey.Key].di3Unstranded.Cover<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
                                     break;
 
                                 case "summit":
-                                    output.chrs[chr].outputUnstranded = 
-                                        chrs[chr].di3Unstranded.Summit<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+                                    output.chrs[chrKey.Key].outputUnstranded =
+                                        chrs[chrKey.Key].di3Unstranded.Summit<Output<C>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
                                     break;
                             }
-                        }   
+                        }
                         break;
                 }
+
             }
 
             return output;

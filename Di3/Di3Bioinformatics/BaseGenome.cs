@@ -26,17 +26,15 @@ namespace Di3Bioinformatics
         /// </summary>
         /// <param name="chrCount">The number of possible chromosomes
         /// of the genome.</param>
-        public BaseGenome(byte chrCount)
+        public BaseGenome()
         {
-            chrs = new List<Chromosome>();
-            for (byte i = 0; i < chrCount; i++)
-                chrs.Add(new Chromosome());
+            chrs = new Dictionary<string, Chromosome>();
         }
 
         /// <summary>
         /// Sets and Gets all chromosomes of the genome.
         /// </summary>
-        internal List<Chromosome> chrs { set; get; }
+        internal Dictionary<string, Chromosome> chrs { set; get; }
 
         /// <summary>
         /// Represents a chromosome with different strands
@@ -69,6 +67,12 @@ namespace Di3Bioinformatics
             /// Dynamic intervals inverted index for Un-Stranded.
             /// </summary>
             internal Di3<C, I, M> di3Unstranded { set; get; }
+        }
+
+        public void AddChromosome(string chr)
+        {
+            if (!chrs.ContainsKey(chr))
+                chrs.Add(chr, new Chromosome());
         }
     }
 }

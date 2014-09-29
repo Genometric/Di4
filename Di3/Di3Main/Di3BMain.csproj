@@ -70,12 +70,6 @@
     <Reference Include="CSharpTest.Net.Collections">
       <HintPath>..\packages\CSharpTest.Net.Collections.14.906.1403.1082\lib\net40\CSharpTest.Net.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Google.ProtocolBuffers">
-      <HintPath>..\..\..\..\..\..\VJGoogleDrive\01 - Di3\7 - Packages\protobuf\tools\Google.ProtocolBuffers.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.ProtocolBuffers.Serialization">
-      <HintPath>..\..\..\..\..\..\VJGoogleDrive\01 - Di3\7 - Packages\protobuf\tools\Google.ProtocolBuffers.Serialization.dll</HintPath>
-    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
@@ -89,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoordinateClass.cs" />
+    <Compile Include="Herald.cs" />
     <Compile Include="Orchestrator.cs" />
     <Compile Include="DATA.cs" />
     <Compile Include="Peak.cs" />
@@ -139,6 +134,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
