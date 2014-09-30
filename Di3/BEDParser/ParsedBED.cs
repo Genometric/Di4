@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
+using IParsableNS;
 
 namespace BEDParser
 {
-    public class ParsedBED<I, M>
-        where I : IInterval<int, M>, new()
-        where M : ICPMetadata<int>
+    public class ParsedBED<C, I, M>
+        where C : IComparable<C>, IParsable
+        where I : IInterval<C, M>, new()
+        where M : ICPMetadata<C>
     {
         public string fileName { set; get; }
         public string filePath { set; get; }
@@ -34,9 +36,9 @@ namespace BEDParser
 
             peaks = new Dictionary<string, List<I>>();
 
-            pValueMax = new I() { left = 0, right = 0, metadata = { chrNo = 0, name = null, value = 0, strand = '*' } };
+            pValueMax = new I() { left = default(C), right = default(C), metadata = { chrNo = 0, name = null, value = 0, strand = '*' } };
 
-            pValueMin = new I() { left = 0, right = 0, metadata = { chrNo = 0, name = null, value = 1, strand = '*' } };
+            pValueMin = new I() { left = default(C), right = default(C), metadata = { chrNo = 0, name = null, value = 1, strand = '*' } };
         }
     }
 }

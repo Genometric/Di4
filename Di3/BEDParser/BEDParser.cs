@@ -7,13 +7,16 @@ using System.IO;
 using IInterval;
 using ICPMD;
 using System.Text.RegularExpressions;
+using IParsableNS;
+
 
 
 namespace BEDParser
 {
-    public class BEDParser<Peak, Metadata>
-        where Peak : IInterval<int, Metadata>, new()
-        where Metadata : ICPMetadata<int>//, IMetaData<int>
+    public class BEDParser<C, Peak, Metadata>
+        where C : IComparable<C>, IParsable
+        where Peak : IInterval<C, Metadata>, new()
+        where Metadata : ICPMetadata<C>//, IMetaData<int>
     {
         /// <summary>
         /// Parse standard Browser Extensible Data (BED) format.
@@ -285,7 +288,7 @@ namespace BEDParser
         /// Contains all read information from the input BED file, and 
         /// will be retured as read process result.
         /// </summary>
-        private ParsedBED<Peak, Metadata> _data = new ParsedBED<Peak, Metadata>();
+        private ParsedBED<C, Peak, Metadata> _data = new ParsedBED<C, Peak, Metadata>();
 
         /// <summary>
         /// Contains chromosome wide information and statistics of the sample
@@ -419,7 +422,7 @@ namespace BEDParser
         /// Reads the regions presented in source file and generates chromosome-wide statistics regarding regions length and values. 
         /// </summary>
         /// <returns>Returns an object of Input_BED_Data class</returns>
-        public ParsedBED<Peak, Metadata> Parse()
+        public ParsedBED<C, Peak, Metadata> Parse()
         {
             _dropLine = false;
 
@@ -473,6 +476,8 @@ namespace BEDParser
 
                             if (_leftColumn < splittedLine.Length && _rightColumn < splittedLine.Length)
                             {
+                                
+
                                 if (int.TryParse(splittedLine[_leftColumn], out start) &&
                                     int.TryParse(splittedLine[_rightColumn], out stop))
                                 {

@@ -14,6 +14,7 @@ namespace DI3.Di3Serializers
         where C : IComparable<C>
         where M : IMetaData<C>
     {
+        //int writerCounterTEST = -1;
         public B<C, M> ReadFrom(System.IO.Stream stream)
         {
             return Serializer.Deserialize<B<C, M>>(stream);
@@ -22,7 +23,8 @@ namespace DI3.Di3Serializers
         public void WriteTo(B<C, M> value, System.IO.Stream stream)
         {
             // for test only: 
-            string theProto = Serializer.GetProto<B<C, M>>();
+            //string theProto = Serializer.GetProto<B<C, M>>();
+            //Console.Write("\rWriter is called {0}", ++writerCounterTEST);
 
             Serializer.Serialize<B<C, M>>(stream, value);
         }
@@ -30,10 +32,17 @@ namespace DI3.Di3Serializers
 
     public class CoordinateSerializer<C> : ISerializer<C>
     {
-
         public C ReadFrom(System.IO.Stream stream)
         {
-            return Serializer.Deserialize<C>(stream);
+            try
+            {
+                return Serializer.Deserialize<C>(stream);
+            }
+            catch(Exception exp)
+            {
+                //var dump = EncodeTo64UTF8(exp.Data.ToString());
+            }
+            return default(C);
         }
 
         public void WriteTo(C value, System.IO.Stream stream)

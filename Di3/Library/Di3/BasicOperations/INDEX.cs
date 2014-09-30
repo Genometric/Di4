@@ -40,8 +40,6 @@ namespace DI3
         internal INDEX(BPlusTree<C, B<C, M>> di3)
         {
             this.di3 = di3;
-            //newIndexes = new int[2];
-            //preIndexes = new int[2];
         }
 
         /// <summary>

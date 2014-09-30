@@ -87,12 +87,13 @@
     <Compile Include="Orchestrator.cs" />
     <Compile Include="DATA.cs" />
     <Compile Include="Peak.cs" />
-    <Compile Include="PeakData.cs" />
+    <Compile Include="MetaData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Di3BMain_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -104,6 +105,10 @@
     <ProjectReference Include="..\Di3Bioinformatics\Di3Bioinformatics.csproj">
       <Project>{8e9d275f-0148-40ce-8f23-94cd0b32bbc5}</Project>
       <Name>Di3Bioinformatics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IConvertable\IParsable.csproj">
+      <Project>{f09cc224-98e0-4b2f-af38-03e15f266f80}</Project>
+      <Name>IParsable</Name>
     </ProjectReference>
     <ProjectReference Include="..\IInterval\IInterval.csproj">
       <Project>{a22001fa-a30d-4027-832c-9ebcfd6aa8c7}</Project>

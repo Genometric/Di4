@@ -16,12 +16,12 @@ namespace Di3BMain
     {
         internal Orchestrator()
         {
-            di3B = new Di3B<int, PeakClass, PeakDataClass>(23);
+            di3B = new Di3B<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>>(23);
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
         }
 
-        Di3B<int, PeakClass, PeakDataClass> di3B { set; get; }
+        Di3B<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>> di3B { set; get; }
 
         Dictionary<string, UInt32> samplesHashtable { set; get; }
 
@@ -90,7 +90,7 @@ namespace Di3BMain
         private void Load(string[] args)
         {
             DATA.inputSamples.Add(args[1]);
-            BEDParser<PeakClass, PeakDataClass> bedParser = new BEDParser<PeakClass, PeakDataClass>(args[1], "Human");
+            BEDParser<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>> bedParser = new BEDParser<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>>(args[1], "Human");
             var parsedSample = bedParser.Parse();
             DATA.parsedSamples.Add(parsedSample.fileHashKey, parsedSample);
             samplesHashtable.Add(args[1], parsedSample.fileHashKey);

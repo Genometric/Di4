@@ -10,6 +10,6 @@ namespace ICPMD
     {
         C left { set; get; }
         C right { set; get; }
-        UInt64 GetHashKey();
+        UInt64 hashKey { set; get; }
     }
 }

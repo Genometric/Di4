@@ -4,18 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProtoBuf;
+using IParsableNS;
 
 namespace Di3BMain
 {
     [ProtoContract]
-    public class CoordinateClass<C> : IComparable<C>
+    public class CoordinateClass : IComparable<CoordinateClass>, IParsable
     {
         [ProtoMember(1)]
-        C coordinate { set; get; }
+        int coordinate { set; get; }
 
-        public int CompareTo(C other)
+        public int CompareTo(CoordinateClass that)
         {
-            throw new NotImplementedException();
+            return this.coordinate.CompareTo(that.coordinate);
+        }
+
+        public static bool TryParse(string s, out int result)
+        {
+            return int.TryParse(s, out result);
         }
     }
 }

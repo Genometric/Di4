@@ -13,7 +13,7 @@ namespace Di3BMain
     /// Representing ChIP-seq Peak Metadata.
     /// </summary>
     [ProtoContract]
-    public class PeakDataClass : ICPMetadata<int>
+    public class PeakDataClass<C> : ICPMetadata<C>
     {
         /// <summary>
         /// Sets and gets zero-based chromosome number.
@@ -43,13 +43,13 @@ namespace Di3BMain
         /// Gets the left-end of the interval.
         /// </summary>
         [ProtoMember(5)]
-        public int left { set; get; }
+        public C left { set; get; }
 
         /// <summary>
         /// Gets the right-end of the interval.
         /// </summary>
         [ProtoMember(6)]
-        public int right { set; get; }
+        public C right { set; get; }
 
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace Di3BMain
         /// One-at-a-Time method based on 
         /// Dr. Dobb's left method.
         /// </summary>
-        [ProtoMember(7)]
-        public Int64 hashKey { set; get; }
+        //[ProtoMember(7)]
+        //public Int64 hashKey { set; get; }
 
 
 
@@ -68,7 +68,7 @@ namespace Di3BMain
         /// generated based on Dr. Dobb's left methods.
         /// </summary>
         /// <returns>Hashkey of the interval.</returns>
-        public UInt64 GetHashKey()
+        /*public UInt64 GetHashKey()
         {
             string key = chrNo.ToString() + "|" + strand.ToString() + "|" + name + "|" + left.ToString() + "|" + right.ToString() + "|";
             int len = key.Length;
@@ -86,6 +86,20 @@ namespace Di3BMain
             hashKey += (hashKey << 15);
 
             return hashKey;
+        }*/
+
+
+        [ProtoMember(7)]
+        ulong IMetaData<int>.hashKey
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

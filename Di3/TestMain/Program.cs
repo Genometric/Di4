@@ -7,6 +7,7 @@ using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace TestMain
 {
@@ -131,7 +132,7 @@ namespace TestMain
             }
 
             // A Runtime test for multiple insertions. 
-            TimeSpan elapsed = RunTime(5);
+            TimeSpan elapsed = RunTime(500000000);
 
             double millisec = elapsed.TotalSeconds;
 
@@ -193,6 +194,7 @@ namespace TestMain
 
                 while (inputSize-- > 0)
                 {
+                    Console.Write("\rRemaining: {0}", inputSize.ToString("N0", CultureInfo.InvariantCulture));
                     tree.Add(inputSize, longString);
                 }
 

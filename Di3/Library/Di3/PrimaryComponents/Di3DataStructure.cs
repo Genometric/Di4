@@ -35,11 +35,6 @@ namespace DI3
         /// </summary>
         internal BPlusTree<C, B<C, M>> di3 { set; get; }
 
-        internal int Comparer(int This, int That)
-        {
-            return This.CompareTo(That);
-        }
-
         public BlockSerializer<C, M> BlockSerializer { set; get; }
 
         // but should not be here ! 

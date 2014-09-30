@@ -86,7 +86,12 @@ namespace DI3
         /// to be added to the di3.</param>
         public void Add(I interval)
         {
-            INDEX.Index(interval);
+            // testing purpose only: 
+            if (!di3.ContainsKey(interval.left))
+                di3.Add(interval.left, new B<C, M>() { omega = 1, /*e = interval.left */});
+
+            // uncomment after test
+            //INDEX.Index(interval);
         }
 
 

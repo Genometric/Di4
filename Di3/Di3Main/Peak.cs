@@ -11,24 +11,24 @@ using ProtoBuf;
 namespace Di3BMain
 {
     [ProtoContract]
-    public class PeakClass : IInterval<int, PeakDataClass>
+    public class PeakClass<C> : IInterval<C, PeakDataClass<C>>
     {
         public PeakClass()
         {
-            metadata = new PeakDataClass();
+            metadata = new PeakDataClass<C>();
         }
 
         /// <summary>
         /// Sets and gets the left-end of the interval.
         /// </summary>
         [ProtoMember(1)]
-        public int left { set; get; }
+        public C left { set; get; }
 
         /// <summary>
         /// Sets and gets the right-end of the interval.
         /// </summary>
         [ProtoMember(2)]
-        public int right { set; get; }
+        public C right { set; get; }
 
         /// <summary>
         /// Sets and gets the descriptive metadata
@@ -37,6 +37,30 @@ namespace Di3BMain
         /// an entry ID on database, or etc. 
         /// </summary>
         [ProtoMember(3)]
-        public PeakDataClass metadata { set; get; }
+        public PeakDataClass<C> metadata { set; get; }
+
+        int IInterval<int, PeakDataClass<C>>.left
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        int IInterval<int, PeakDataClass<C>>.right
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
