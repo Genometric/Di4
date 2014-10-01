@@ -30,6 +30,8 @@ namespace Di3BMain
         [ProtoMember(2)]
         public C right { set; get; }
 
+        
+
         /// <summary>
         /// Sets and gets the descriptive metadata
         /// of the interval. It could be a reference
@@ -38,29 +40,5 @@ namespace Di3BMain
         /// </summary>
         [ProtoMember(3)]
         public PeakDataClass<C> metadata { set; get; }
-
-        int IInterval<int, PeakDataClass<C>>.left
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        int IInterval<int, PeakDataClass<C>>.right
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
     }
 }

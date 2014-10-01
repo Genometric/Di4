@@ -88,9 +88,8 @@ namespace Di3BMain
             return hashKey;
         }*/
 
-
         [ProtoMember(7)]
-        ulong IMetaData<int>.hashKey
+        ulong IMetaData<C>.hashKey
         {
             get
             {

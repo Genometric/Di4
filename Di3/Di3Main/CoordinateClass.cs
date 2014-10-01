@@ -4,24 +4,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProtoBuf;
-using IParsableNS;
+using Di3Interfaces;
+
 
 namespace Di3BMain
 {
     [ProtoContract]
-    public class CoordinateClass : IComparable<CoordinateClass>, IParsable
+    public class CoordinateClass<C> : ICoordinate<C>
+        where C: IComparable
     {
         [ProtoMember(1)]
-        int coordinate { set; get; }
+        public C Value { get; set; }
 
-        public int CompareTo(CoordinateClass that)
+        public CoordinateClass(C value)
         {
-            return this.coordinate.CompareTo(that.coordinate);
+            Value = value;
         }
 
-        public static bool TryParse(string s, out int result)
+        public static implicit operator C(CoordinateClass<C> v)
         {
-            return int.TryParse(s, out result);
+            return v.Value;
+        }
+
+        public void GetValueFrom(int value)
+        {
+            Value = (C)(object)value;
+        }
+
+
+        public int CompareTo(ICoordinate<C> other)
+        {
+            return this.Value.CompareTo(other.Value);
         }
     }
 }

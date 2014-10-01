@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using IInterval;
 using ICPMD;
-using IParsableNS;
+using Di3Interfaces;
 
 namespace BEDParser
 {
     public class ParsedBED<C, I, M>
-        where C : IComparable<C>, IParsable
+        //where C : ICoordinate
         where I : IInterval<C, M>, new()
         where M : ICPMetadata<C>
     {

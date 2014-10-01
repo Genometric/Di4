@@ -10,6 +10,7 @@ using CSharpTest.Net.Serialization;
 using System.IO;
 using DI3.Interfaces;
 using DI3.Di3Serializers;
+using ProtoBuf;
 
 namespace DI3
 {
@@ -54,6 +55,23 @@ namespace DI3
             di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);
             FIND = new FIND<C, I, M>(di3);
+
+
+            TESTCLASSSSSS = new TESTCLASSSerializer();
+            INTWRAPEEERRR = new INTWRAPPERSERIALZER<int>();
+            BPlusTree<INTWRAPPER<int>, TESTCLASS>.OptionsV2 TESToptions =
+            TESToptions = new BPlusTree<INTWRAPPER<int>, TESTCLASS>.OptionsV2(INTWRAPEEERRR, TESTCLASSSSSS/*, put also the comparer here*/);
+            TESToptions.CalcBTreeOrder(16, 24);
+            TESToptions.CreateFile = CreatePolicy.Always;
+            TESToptions.FileName = Path.GetTempFileName();
+
+            var TESTdi3 = new BPlusTree<INTWRAPPER<int>, TESTCLASS>(TESToptions);
+
+            for (int i = 0; i < 100000000; i++)
+            {
+                TESTdi3.Add(new INTWRAPPER<int>() { THEKEY = i }, new TESTCLASS() { TESTVALUE1 = 10, TESTVALUE2 = "HAMEDJALILIVAHIDFARZANEJALILIYAZDANI." });
+            }
+
         }
 
 
@@ -116,6 +134,68 @@ namespace DI3
         {
             SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
             return SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);
+        }
+
+        public TESTCLASSSerializer TESTCLASSSSSS { set; get; }
+        public INTWRAPPERSERIALZER<int> INTWRAPEEERRR { set; get; }
+    }
+
+
+    [ProtoContract]
+    public class TESTCLASS
+    {
+        [ProtoMember(1)]
+        public int TESTVALUE1 { set; get; }
+
+        [ProtoMember(2)]
+        public string TESTVALUE2 { set; get; }
+    }
+
+    [ProtoContract]
+    public class INTWRAPPER<C> : IComparable<INTWRAPPER<C>>
+        where C : IComparable<C>
+    {
+        [ProtoMember(1)]
+        public C THEKEY { set; get; }
+
+        public int CompareTo(INTWRAPPER<C> other)
+        {
+            return this.THEKEY.CompareTo(other.THEKEY);
+        }
+    }
+
+
+
+    public class TESTCLASSSerializer : ISerializer<TESTCLASS>
+    {
+        TESTCLASS ISerializer<TESTCLASS>.ReadFrom(Stream stream)
+        {
+            return Serializer.Deserialize<TESTCLASS>(stream);
+        }
+        public void WriteTo(TESTCLASS value, Stream stream)
+        {
+            Serializer.Serialize<TESTCLASS>(stream, value);
+        }
+    }
+
+    public class INTWRAPPERSERIALZER<C> : ISerializer<INTWRAPPER<C>>
+        where C : IComparable<C>
+    {
+        INTWRAPPER<C> ISerializer<INTWRAPPER<C>>.ReadFrom(Stream stream)
+        {
+            try
+            {
+                return Serializer.Deserialize<INTWRAPPER<C>>(stream);
+            }
+            catch(Exception exp)
+            {
+
+            }
+            return null;
+        }
+        public void WriteTo(INTWRAPPER<C> value, Stream stream)
+        {
+            Serializer.Serialize<INTWRAPPER<C>>(stream, value);
         }
     }
 }

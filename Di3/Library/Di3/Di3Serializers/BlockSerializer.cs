@@ -31,6 +31,7 @@ namespace DI3.Di3Serializers
     }
 
     public class CoordinateSerializer<C> : ISerializer<C>
+        where C : IComparable<C>
     {
         public C ReadFrom(System.IO.Stream stream)
         {

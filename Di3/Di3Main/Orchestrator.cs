@@ -16,12 +16,12 @@ namespace Di3BMain
     {
         internal Orchestrator()
         {
-            di3B = new Di3B<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>>(23);
+            di3B = new Di3B<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>>(23);
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
         }
 
-        Di3B<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>> di3B { set; get; }
+        Di3B<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>> di3B { set; get; }
 
         Dictionary<string, UInt32> samplesHashtable { set; get; }
 
@@ -90,10 +90,10 @@ namespace Di3BMain
         private void Load(string[] args)
         {
             DATA.inputSamples.Add(args[1]);
-            BEDParser<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>> bedParser = new BEDParser<CoordinateClass, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>>(args[1], "Human");
-            var parsedSample = bedParser.Parse();
-            DATA.parsedSamples.Add(parsedSample.fileHashKey, parsedSample);
-            samplesHashtable.Add(args[1], parsedSample.fileHashKey);
+            //BEDParser<int, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>> bedParser = new BEDParser<int, PeakClass<CoordinateClass>, PeakDataClass<CoordinateClass>>(args[1], "Human");
+            //var parsedSample = bedParser.Parse();
+            //DATA.parsedSamples.Add(parsedSample.fileHashKey, parsedSample);
+            //samplesHashtable.Add(args[1], parsedSample.fileHashKey);
         }
 
         private void LoadAll(string[] args)
@@ -129,7 +129,35 @@ namespace Di3BMain
 
         private void Index(string[] args)
         {
-            di3B.Add(DATA.parsedSamples[samplesHashtable[args[1]]].peaks);
+            // FOR TEST PURPOSE ONLY/////////////////////////////
+            var parsedBED = new ParsedBED<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>>();
+            parsedBED.chrCount = 1;            
+            var peaks = new List<PeakClass<CoordinateClass<int>>>();
+            int preValue = 0;
+            for (int i = 0; i < 1; i++)
+            {
+                peaks.Add(new PeakClass<CoordinateClass<int>>()
+                {
+                    left = new CoordinateClass<int>(preValue),
+                    right = new CoordinateClass<int>(preValue + 10),
+                    metadata = new PeakDataClass<CoordinateClass<int>>()
+                    {
+                        strand = '*',
+                        left = new CoordinateClass<int>(preValue),
+                        right = new CoordinateClass<int>(preValue + 10),
+                        value = 0,
+                        name = "Hamed"
+                    }
+                });
+
+                preValue = preValue + 12;
+            }
+            parsedBED.peaks.Add("chr1", peaks);
+            DATA.parsedSamples.Add(120, parsedBED);
+            /////////////////////////////////////////////////////
+
+
+            di3B.Add(DATA.parsedSamples[120].peaks);
         }
 
         private void Cover(string[] args)

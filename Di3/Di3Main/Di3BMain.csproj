@@ -106,9 +106,9 @@
       <Project>{8e9d275f-0148-40ce-8f23-94cd0b32bbc5}</Project>
       <Name>Di3Bioinformatics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IConvertable\IParsable.csproj">
-      <Project>{f09cc224-98e0-4b2f-af38-03e15f266f80}</Project>
-      <Name>IParsable</Name>
+    <ProjectReference Include="..\Di3Interfaces\Di3Interfaces.csproj">
+      <Project>{1159f7f9-561b-4d81-9708-62a26e80554e}</Project>
+      <Name>Di3Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\IInterval\IInterval.csproj">
       <Project>{a22001fa-a30d-4027-832c-9ebcfd6aa8c7}</Project>
