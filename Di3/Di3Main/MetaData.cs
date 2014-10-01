@@ -89,16 +89,6 @@ namespace Di3BMain
         }*/
 
         [ProtoMember(7)]
-        ulong IMetaData<C>.hashKey
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public ulong hashKey { set; get; }
     }
 }

@@ -57,20 +57,41 @@ namespace DI3
             FIND = new FIND<C, I, M>(di3);
 
 
+            #region TEST1
+            /*
             TESTCLASSSSSS = new TESTCLASSSerializer();
             INTWRAPEEERRR = new INTWRAPPERSERIALZER<int>();
-            BPlusTree<INTWRAPPER<int>, TESTCLASS>.OptionsV2 TESToptions =
-            TESToptions = new BPlusTree<INTWRAPPER<int>, TESTCLASS>.OptionsV2(INTWRAPEEERRR, TESTCLASSSSSS/*, put also the comparer here*/);
+            BPlusTree<int, TESTCLASS>.OptionsV2 TESToptions =
+            TESToptions = new BPlusTree<int, TESTCLASS>.OptionsV2(PrimitiveSerializer.Int32, TESTCLASSSSSS/*, put also the comparer here*///);
+            /*TESToptions.CalcBTreeOrder(16, 24);
+            TESToptions.CreateFile = CreatePolicy.Always;
+            TESToptions.FileName = Path.GetTempFileName();
+
+            var TESTdi3 = new BPlusTree<int, TESTCLASS>(TESToptions);
+
+            for (int i = 0; i < 100000000; i++)
+            {
+                TESTdi3.Add(i, new TESTCLASS() { TESTVALUE1 = 10, TESTVALUE2 = "HAMEDJALILIVAHIDFARZANEJALILIYAZDANI." });
+            }*/
+            #endregion
+
+            #region TEST2
+            TESTCLASSSSSS = new TESTCLASSSerializer();
+            INTWRAPEEERRR = new INTWRAPPERSERIALZER<int>();
+            BPlusTree<int, B<C, M>>.OptionsV2 TESToptions =
+            TESToptions = new BPlusTree<int, B<C, M>>.OptionsV2(PrimitiveSerializer.Int32, BlockSerializer/*, put also the comparer here*/);
             TESToptions.CalcBTreeOrder(16, 24);
             TESToptions.CreateFile = CreatePolicy.Always;
             TESToptions.FileName = Path.GetTempFileName();
 
-            var TESTdi3 = new BPlusTree<INTWRAPPER<int>, TESTCLASS>(TESToptions);
+            var TESTdi3 = new BPlusTree<int, B<C, M>>(TESToptions);
 
             for (int i = 0; i < 100000000; i++)
             {
-                TESTdi3.Add(new INTWRAPPER<int>() { THEKEY = i }, new TESTCLASS() { TESTVALUE1 = 10, TESTVALUE2 = "HAMEDJALILIVAHIDFARZANEJALILIYAZDANI." });
+                Lambda<C, M> TESTLambda = new Lambda<C, M>('M', default(M));
+                TESTdi3.Add(i, new B<C, M>(default(C)) { omega = 1 });
             }
+            #endregion
 
         }
 
