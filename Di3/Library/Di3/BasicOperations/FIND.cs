@@ -29,7 +29,7 @@ namespace DI3
     internal class FIND<C, I, M> //: Di3DataStructure<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         /// <summary>
         /// Provides efficient means for searching for 

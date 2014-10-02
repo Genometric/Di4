@@ -16,12 +16,12 @@ namespace Di3BMain
     {
         internal Orchestrator()
         {
-            di3B = new Di3B<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>>(23);
+            di3B = new Di3B<int, PeakClass<int>, PeakDataClass<int>>(23);
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
         }
 
-        Di3B<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>> di3B { set; get; }
+        Di3B<int, PeakClass<int>, PeakDataClass<int>> di3B { set; get; }
 
         Dictionary<string, UInt32> samplesHashtable { set; get; }
 
@@ -130,7 +130,7 @@ namespace Di3BMain
         private void Index(string[] args)
         {
             // FOR TEST PURPOSE ONLY/////////////////////////////
-            var parsedBED = new ParsedBED<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>>();
+            /*var parsedBED = new ParsedBED<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>>();
             parsedBED.chrCount = 1;            
             var peaks = new List<PeakClass<CoordinateClass<int>>>();
             int preValue = 0;
@@ -151,13 +151,43 @@ namespace Di3BMain
                 });
 
                 preValue = preValue + 12;
-            }
-            parsedBED.peaks.Add("chr1", peaks);
-            DATA.parsedSamples.Add(120, parsedBED);
+            }*/
+            //parsedBED.peaks.Add("chr1", peaks);
+            //DATA.parsedSamples.Add(120, parsedBED);
             /////////////////////////////////////////////////////
 
 
-            di3B.Add(DATA.parsedSamples[120].peaks);
+            var parsedBED2 = new ParsedBED<int, PeakClass<int>, PeakDataClass<int>>();
+            parsedBED2.chrCount = 1;
+            var peaks2 = new List<PeakClass<int>>();
+            int preValue2 = 0;
+            for (int i = 0; i < 250000; i++)
+            {
+                peaks2.Add(new PeakClass<int>()
+                {
+                    left = preValue2,
+                    right = preValue2 + 10,
+                    metadata = new PeakDataClass<int>()
+                    {
+                        strand = '*',
+                        left = preValue2,
+                        right = preValue2 + 10,
+                        value = 0,
+                        name = "Hamed"
+                    }
+                });
+
+                preValue2 = preValue2 + 12;
+            }
+
+            parsedBED2.peaks.Add("chr1", peaks2);
+            //DATA.parsedSamples.Add(120, parsedBED2);            
+
+            var parsedSamples2 = new Dictionary<uint, ParsedBED<int, PeakClass<int>, PeakDataClass<int>>>();
+            parsedSamples2.Add(120, parsedBED2);
+
+            //di3B.Add(DATA.parsedSamples[120].peaks);
+            di3B.Add(parsedSamples2[120].peaks);
         }
 
         private void Cover(string[] args)

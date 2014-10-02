@@ -18,8 +18,8 @@ namespace Di3Bioinformatics
     /// <typeparam name="M"></typeparam>
     public class Di3B<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>
-        where M : ICPMetadata<C>, IMetaData<C>
+        where I : IInterval<int, M>
+        where M : ICPMetadata<int>, IMetaData<int>
     {
         public Di3B(byte chrCount)
         {

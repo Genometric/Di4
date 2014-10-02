@@ -11,8 +11,8 @@ namespace Di3Bioinformatics
 {
     class AggregateFactory<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>
-        where M : IMetaData<C>
+        where I : IInterval<int, M>
+        where M : IMetaData<int>
     {
         public ICSOutput<C,  M, Output<C>> GetAggregateFunction(string aggregate)
         {

@@ -12,7 +12,7 @@ namespace DI3.Di3Serializers
 {
     public class BlockSerializer<C, M> : ISerializer<B<C, M>>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         //int writerCounterTEST = -1;
         public B<C, M> ReadFrom(System.IO.Stream stream)

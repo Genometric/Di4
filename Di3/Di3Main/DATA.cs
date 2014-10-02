@@ -11,6 +11,6 @@ namespace Di3BMain
     {
         internal static List<string> inputSamples = new List<string>();
 
-        internal static Dictionary<UInt32, ParsedBED<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>>> parsedSamples = new Dictionary<uint, ParsedBED<CoordinateClass<int>, PeakClass<CoordinateClass<int>>, PeakDataClass<CoordinateClass<int>>>>();
+        internal static Dictionary<UInt32, ParsedBED<int, PeakClass<int>, PeakDataClass<int>>> parsedSamples = new Dictionary<uint, ParsedBED<int, PeakClass<int>, PeakDataClass<int>>>();
     }
 }

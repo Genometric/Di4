@@ -13,7 +13,7 @@ namespace DI3
     /// </summary>
     public interface ICSOutput<C,  M, O>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         void Output(C left, C right, List<Lambda<C,  M>> intervals);
 

@@ -13,7 +13,7 @@ namespace DI3.Di3Serializers
 {
     public class DataSerializers<C, M> //: ISerializer<B<C, M>>  //, IMSerializer<PeakDataClass>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         //public static readonly CSerializer<int> Int32;
 

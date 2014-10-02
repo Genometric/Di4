@@ -18,8 +18,8 @@ namespace Di3Bioinformatics
     /// descriptive metadata cooresponding to the interval.</typeparam>
     internal class BaseGenome<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>
-        where M : ICPMetadata<C>, IMetaData<C>
+        where I : IInterval<int, M>
+        where M : ICPMetadata<int>, IMetaData<int>
     {
         /// <summary>
         /// Represents a Genome with multiple chromosomes and strands.
@@ -48,25 +48,25 @@ namespace Di3Bioinformatics
             /// </summary>
             internal Chromosome()
             {
-                di3PositiveStrand = new Di3<C, I, M>();
-                di3NegativeStrand = new Di3<C, I, M>();
-                di3Unstranded = new Di3<C, I, M>();
+                di3PositiveStrand = new Di3</*C,*/ I, M>();
+                di3NegativeStrand = new Di3</*C,*/ I, M>();
+                di3Unstranded = new Di3</*C,*/ I, M>();
             }
 
             /// <summary>
             /// Dynamic intervals inverted index for Positive Strand.
             /// </summary>
-            internal Di3<C, I, M> di3PositiveStrand { set; get; }
+            internal Di3</*C,*/ I, M> di3PositiveStrand { set; get; }
 
             /// <summary>
             /// Dynamic intervals inverted index for Negative Strand.
             /// </summary>
-            internal Di3<C, I, M> di3NegativeStrand { set; get; }
+            internal Di3</*C,*/ I, M> di3NegativeStrand { set; get; }
 
             /// <summary>
             /// Dynamic intervals inverted index for Un-Stranded.
             /// </summary>
-            internal Di3<C, I, M> di3Unstranded { set; get; }
+            internal Di3</*C,*/ I, M> di3Unstranded { set; get; }
         }
 
         public void AddChromosome(string chr)

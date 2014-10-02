@@ -17,7 +17,7 @@ namespace DI3
     internal class SetOperations<C, M, O>// : Di3DataStructure<C, I, M>
         where C : IComparable<C>
         //where I : IInterval<C, M>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         internal SetOperations(BPlusTree<C, B<C, M>> di3)
         {

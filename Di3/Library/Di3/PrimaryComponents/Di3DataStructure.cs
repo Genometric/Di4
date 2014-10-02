@@ -28,12 +28,12 @@ namespace DI3
     /// to the interval.</typeparam>
     public class Di3DataStructure<C, I, M> : B<C,  M>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         /// <summary>
         /// Di3 primary data structure; a list of Di3 blocks.
         /// </summary>
-        internal BPlusTree<C, B<C, M>> di3 { set; get; }
+        internal BPlusTree<int, B<C, M>> di3 { set; get; }
 
         public BlockSerializer<C, M> BlockSerializer { set; get; }
 

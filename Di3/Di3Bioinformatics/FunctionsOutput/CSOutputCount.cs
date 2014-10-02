@@ -16,7 +16,7 @@ namespace Di3Bioinformatics
     /// </summary>
     public class CSOutputCount<C, M> : ICSOutput<C, M, Output<C>>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         public CSOutputCount()
         {

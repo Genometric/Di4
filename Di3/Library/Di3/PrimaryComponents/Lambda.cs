@@ -31,7 +31,7 @@ namespace DI3
     [ProtoContract]
     public class Lambda<C, M>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         /// <summary>
         /// Represents the interval intersecting with 

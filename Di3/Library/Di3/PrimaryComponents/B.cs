@@ -28,7 +28,7 @@ namespace DI3
     public class B<C,/* I,*/ M> : Lambda<C, M>//I, M>
         where C : IComparable<C>
         //where I : IInterval<C, M>
-        where M : IMetaData<C>
+        where M : IMetaData<int>
     {
         /// <summary>
         /// A Block representing relative information of intervals
