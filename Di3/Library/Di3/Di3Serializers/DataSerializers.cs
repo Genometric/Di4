@@ -11,7 +11,7 @@ using ICPMD;
 
 namespace DI3.Di3Serializers
 {
-    public class DataSerializers<C, M> //: ISerializer<B<C, M>>  //, IMSerializer<PeakDataClass>
+    public class DataSerializers<C, M> : ISerializer<B<C, M>> // , IMSerializer<PeakDataClass>
         where C : IComparable<C>
         where M : IMetaData<int>
     {

@@ -26,26 +26,31 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    public class Di3DataStructure<C, I, M> : B<C,  M>
+    public class Di3DataStructure<C, I, M> : B<C, M>
         where C : IComparable<C>
-        where M : IMetaData<int>
+        where M : IMetaData<C>
     {
         /// <summary>
         /// Di3 primary data structure; a list of Di3 blocks.
         /// </summary>
-        internal BPlusTree<int, B<C, M>> di3 { set; get; }
+        internal BPlusTree<C, B<C, M>> di3 { set; get; }
+
+        internal int Comparer(C This, C That)
+        {
+            return This.CompareTo(That);
+        }
 
         public BlockSerializer<C, M> BlockSerializer { set; get; }
 
         // but should not be here ! 
         // think better, do I know how to seralize the coordinate ?
-        public CoordinateSerializer<C> CoorSeri { set; get; }
+        //public CoordinateSerializer<C> CoorSeri { set; get; }
 
 
         public Di3DataStructure()
         {
             BlockSerializer = new BlockSerializer<C, M>();
-            CoorSeri = new CoordinateSerializer<C>();
+            //CoorSeri = new CoordinateSerializer<C>();
         }
     }
 }

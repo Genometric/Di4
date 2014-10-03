@@ -10,7 +10,6 @@ using CSharpTest.Net.Serialization;
 using System.IO;
 using DI3.Interfaces;
 using DI3.Di3Serializers;
-using ProtoBuf;
 
 namespace DI3
 {
@@ -32,10 +31,10 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    public sealed class Di3</*C,*/ I, M> : Di3DataStructure<int, I, M>
-        //where C : IComparable<C>
-        where I : IInterval<int, M>
-        where M : IMetaData<int>
+    public sealed class Di3<C, I, M> : Di3DataStructure<C, I, M>
+        where C : IComparable<C>
+        where I : IInterval<C, M>
+        where M : IMetaData<C>
     {
         /// <summary>
         /// Dynamic intervals inverted index (Di3) 
@@ -44,64 +43,37 @@ namespace DI3
         /// it indexes for common information retrieval 
         /// tasks.
         /// </summary>
-        public Di3()
+        //public Di3()
+        //{
+            //var options = new BPlusTree<C, B<C, M>>.OptionsV2(CoorSeri, BlockSerializer/*, put also the comparer here*/);
+            //options.CalcBTreeOrder(16, 24);
+            //options.CreateFile = CreatePolicy.Always;
+            //options.FileName = Path.GetTempFileName();
+
+            //di3 = new BPlusTree<C, B<C, M>>(options);
+            //INDEX = new INDEX<C, I, M>(di3);
+            //FIND = new FIND<C, I, M>(di3);
+        //}
+
+        /// <summary>
+        /// WRITE BETTER DESCRIPTION.
+        /// this is used when the coordiante is of primitive type and 
+        /// can't be defined using protobuf-net serialization; hence 
+        /// a seprate serializer is passed to di3. 
+        /// </summary>
+        /// <param name="coordinateSerializer"></param>
+        public Di3(ISerializer<C> coordinateSerializer)
         {
-            BPlusTree<int, B<int, M>>.OptionsV2 options =
-            options = new BPlusTree<int, B<int, M>>.OptionsV2(PrimitiveSerializer.Int32, BlockSerializer/*, put also the comparer here*/);
+            var options = new BPlusTree<C, B<C, M>>.OptionsV2(coordinateSerializer, BlockSerializer/*, put also the comparer here*/);
             options.CalcBTreeOrder(16, 24);
             options.CreateFile = CreatePolicy.Always;
             options.FileName = Path.GetTempFileName();
 
-            di3 = new BPlusTree<int, B<int, M>>(options);
-            INDEX = new INDEX<int, I, M>(di3);
-            FIND = new FIND<int, I, M>(di3);
-
-
-            #region TEST1
-            /*
-            TESTCLASSSSSS = new TESTCLASSSerializer();
-            INTWRAPEEERRR = new INTWRAPPERSERIALZER<int>();
-            BPlusTree<int, TESTCLASS>.OptionsV2 TESToptions =
-            TESToptions = new BPlusTree<int, TESTCLASS>.OptionsV2(PrimitiveSerializer.Int32, TESTCLASSSSSS/*, put also the comparer here*///);
-            /*TESToptions.CalcBTreeOrder(16, 24);
-            TESToptions.CreateFile = CreatePolicy.Always;
-            TESToptions.FileName = Path.GetTempFileName();
-
-            var TESTdi3 = new BPlusTree<int, TESTCLASS>(TESToptions);
-
-            for (int i = 0; i < 100000000; i++)
-            {
-                TESTdi3.Add(i, new TESTCLASS() { TESTVALUE1 = 10, TESTVALUE2 = "HAMEDJALILIVAHIDFARZANEJALILIYAZDANI." });
-            }*/
-            #endregion
-
-            #region TEST2
-            /*TESTCLASSSSSS = new TESTCLASSSerializer();
-            INTWRAPEEERRR = new INTWRAPPERSERIALZER<int>();
-            BPlusTree<int, B<C, M>>.OptionsV2 TESToptions =
-            TESToptions = new BPlusTree<int, B<C, M>>.OptionsV2(PrimitiveSerializer.Int32, BlockSerializer/*, put also the comparer here*///);
-            /*TESToptions.CalcBTreeOrder(16, 24);
-            TESToptions.CreateFile = CreatePolicy.Always;
-            TESToptions.FileName = Path.GetTempFileName();
-
-            var TESTdi3 = new BPlusTree<int, B<C, M>>(TESToptions);
-
-            for (int i = 0; i < 100000000; i++)
-            {
-                Lambda<C, M> TESTLambda = new Lambda<C, M>('M', default(M));
-                TESTdi3.Add(i, new B<C, M>(default(C)) { omega = 1 });
-            }*/
-            #endregion
-
-
-            #region TEST3
-            for (int i = 0; i < 1; i++)
-            {
-                //di3.Add(i, new B<int, M>(0) { omega = 1 });
-            }
-
-            #endregion
+            di3 = new BPlusTree<C, B<C, M>>(options);
+            INDEX = new INDEX<C, I, M>(di3);
+            FIND = new FIND<C, I, M>(di3);
         }
+
 
 
         /// <summary>
@@ -109,7 +81,7 @@ namespace DI3
         /// provides efficient means of inserting an 
         /// interval to Di3; i.e., di3 indexding.
         /// </summary>
-        private INDEX<int, I, M> INDEX { set; get; }
+        private INDEX<C, I, M> INDEX { set; get; }
 
 
         /// <summary>
@@ -117,7 +89,7 @@ namespace DI3
         /// provides efficient means for searching for 
         /// a key in di3.
         /// </summary>
-        private FIND<int, I, M> FIND { set; get; }
+        private FIND<C, I, M> FIND { set; get; }
 
 
         /// <summary>
@@ -126,115 +98,39 @@ namespace DI3
         public int blockCount { private set { } get { return di3.Count; } }
 
 
-        private int TESTCounter { set; get; }
-
-
         /// <summary>
         /// Adds the provided interval to di3.
         /// </summary>
         /// <param name="interval">The interval
         /// to be added to the di3.</param>
-        public void Add()//I interval)
+        public void Add(I interval)
         {
-            // testing purpose only: 
-            //if (!di3.ContainsKey(interval.left))
-                //di3.Add(interval.left, new B<int, M>() { omega = 1, /*e = interval.left */});
-            di3.Add(++TESTCounter, new B<int, M>(0) { omega = 1 });
-            
-
-
-
-
-
-
-            // uncomment after test
-            //INDEX.Index(interval);
+            //di3.Add(interval.left, new B<M> { omega = 10, e = 10000000 });
+            INDEX.Index(interval);
         }
 
 
-        public int FindIndex(int Key)
+        public int FindIndex(C Key)
         {
             return FIND.FindIndex(Key);
         }
 
 
-        public B<int, M> FindBlock(int Key)
+        public B<C, M> FindBlock(C Key)
         {
             return null;
         }
 
-        public List<O> Cover<O>(ICSOutput<int, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        public List<O> Cover<O>(ICSOutput<M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
         {
-            //SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
-            return null;//SetOps.Cover(OutputStrategy, minAccumulation, maxAccumulation);
+            SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
+            return SetOps.Cover(OutputStrategy, minAccumulation, maxAccumulation);
         }
 
-        public List<O> Summit<O>(ICSOutput<int, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        public List<O> Summit<O>(ICSOutput<M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
         {
-            //SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
-            return null;// SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);
-        }
-
-        public TESTCLASSSerializer TESTCLASSSSSS { set; get; }
-        public INTWRAPPERSERIALZER<int> INTWRAPEEERRR { set; get; }
-    }
-
-
-    [ProtoContract]
-    public class TESTCLASS
-    {
-        [ProtoMember(1)]
-        public int TESTVALUE1 { set; get; }
-
-        [ProtoMember(2)]
-        public string TESTVALUE2 { set; get; }
-    }
-
-    [ProtoContract]
-    public class INTWRAPPER<C> : IComparable<INTWRAPPER<C>>
-        where C : IComparable<C>
-    {
-        [ProtoMember(1)]
-        public C THEKEY { set; get; }
-
-        public int CompareTo(INTWRAPPER<C> other)
-        {
-            return this.THEKEY.CompareTo(other.THEKEY);
-        }
-    }
-
-
-
-    public class TESTCLASSSerializer : ISerializer<TESTCLASS>
-    {
-        TESTCLASS ISerializer<TESTCLASS>.ReadFrom(Stream stream)
-        {
-            return Serializer.Deserialize<TESTCLASS>(stream);
-        }
-        public void WriteTo(TESTCLASS value, Stream stream)
-        {
-            Serializer.Serialize<TESTCLASS>(stream, value);
-        }
-    }
-
-    public class INTWRAPPERSERIALZER<C> : ISerializer<INTWRAPPER<C>>
-        where C : IComparable<C>
-    {
-        INTWRAPPER<C> ISerializer<INTWRAPPER<C>>.ReadFrom(Stream stream)
-        {
-            try
-            {
-                return Serializer.Deserialize<INTWRAPPER<C>>(stream);
-            }
-            catch(Exception exp)
-            {
-
-            }
-            return null;
-        }
-        public void WriteTo(INTWRAPPER<C> value, Stream stream)
-        {
-            Serializer.Serialize<INTWRAPPER<C>>(stream, value);
+            SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
+            return SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);
         }
     }
 }

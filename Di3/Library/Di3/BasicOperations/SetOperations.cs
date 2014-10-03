@@ -17,7 +17,7 @@ namespace DI3
     internal class SetOperations<C, M, O>// : Di3DataStructure<C, I, M>
         where C : IComparable<C>
         //where I : IInterval<C, M>
-        where M : IMetaData<int>
+        where M : IMetaData<C>
     {
         internal SetOperations(BPlusTree<C, B<C, M>> di3)
         {
@@ -31,7 +31,7 @@ namespace DI3
 
         private Hashtable intervalsKeys { set; get; }
 
-        internal List<O> Cover(ICSOutput<C, M, O> OutputStrategy, byte minAcc, byte maxAcc)
+        internal List<O> Cover(ICSOutput<M, O> OutputStrategy, byte minAcc, byte maxAcc)
         {
             // 0 : Marked block index
             // 1 : Marked block accumulation
@@ -65,7 +65,7 @@ namespace DI3
             return OutputStrategy.output;
         }
 
-        internal List<O> Summit(ICSOutput<C, M, O> OutputStrategy, byte minAcc, byte maxAcc)
+        internal List<O> Summit(ICSOutput<M, O> OutputStrategy, byte minAcc, byte maxAcc)
         {
             // 0 : Marked block index
             // 1 : Marked block accumulation

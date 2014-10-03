@@ -7,17 +7,19 @@ using IInterval;
 using ICPMD;
 using DI3;
 using DI3.Interfaces;
+using CSharpTest.Net.Serialization;
 
 namespace Di3Bioinformatics
 {
     internal class Genome<C, I, M> : BaseGenome<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<int, M>
-        where M : ICPMetadata<int>, IMetaData<int>
+        where I : IInterval<C, M>
+        where M : ICPMetadata<C>, IMetaData<C>
     {
-        internal Genome(byte chrCount)
+        internal Genome(byte chrCount, ISerializer<C> CoordinateSerializer)
         {
             int cpuCount = Environment.ProcessorCount;
+            coordinateSerializer = CoordinateSerializer;
         }
 
         
@@ -118,13 +120,13 @@ namespace Di3Bioinformatics
             // Peaks is tested with 2,000 & 20,000 & 200,000 & 2,000,000 & 
             // 20,000,000 & 25,000,000 objects in it. more than 25,000,000
             // raises insufficient memory exception.
-            foreach (var chrKey in peaks)
+            /*foreach (var chrKey in peaks)
             {
                 AddChromosome(chrKey.Key);
 
                 for (int i = 0; i < 100000000; i++)
                     chrs[chrKey.Key].di3Unstranded.Add();//chrPeaks[p]);
-            }
+            }*/
 
 
             foreach (var chrKey in peaks)
@@ -137,30 +139,18 @@ namespace Di3Bioinformatics
                     switch (chrPeaks[p].metadata.strand)
                     {
                         case '+':
-                            chrs[chrKey.Key].di3PositiveStrand.Add();//chrPeaks[p]);
+                            chrs[chrKey.Key].di3PositiveStrand.Add(chrPeaks[p]);
                             break;
 
                         case '-':
-                            chrs[chrKey.Key].di3NegativeStrand.Add();//chrPeaks[p]);
+                            chrs[chrKey.Key].di3NegativeStrand.Add(chrPeaks[p]);
                             break;
 
                         case '*':
-                            chrs[chrKey.Key].di3Unstranded.Add();//chrPeaks[p]);
+                            chrs[chrKey.Key].di3Unstranded.Add(chrPeaks[p]);
                             break;
                     }
                 }
-            }
-        }
-
-        internal class TESTCLASS
-        {
-            internal Di3<I, M> di3A { set; get; }
-            internal Di3<I, M> di3B { set; get; }
-
-            internal TESTCLASS()
-            {
-                di3A = new Di3<I, M>();
-                di3B = new Di3<I, M>();
             }
         }
 
@@ -233,33 +223,6 @@ namespace Di3Bioinformatics
 
             return output;
         }
-    }
-
-
-    public class TESTPeakClass<C> : IInterval<C, TESTPeakDataClass<C>>
-    {
-        public C left { set; get; }
-
-        public C right { set; get; }
-
-        public TESTPeakDataClass<C> metadata { set; get; }
-    }
-
-    public class TESTPeakDataClass<C> : ICPMetadata<C>
-    {
-        public byte chrNo { set; get; }
-
-        public string name { set; get; }
-
-        public double value { set; get; }
-
-        public char strand { set; get; }
-
-        public C left { set; get; }
-
-        public C right { set; get; }
-
-        public ulong hashKey { set; get; }
     }
 }
 

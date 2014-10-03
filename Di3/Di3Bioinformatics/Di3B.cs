@@ -7,6 +7,7 @@ using DI3;
 using DI3.Interfaces;
 using IInterval;
 using ICPMD;
+using CSharpTest.Net.Serialization;
 
 
 namespace Di3Bioinformatics
@@ -18,12 +19,12 @@ namespace Di3Bioinformatics
     /// <typeparam name="M"></typeparam>
     public class Di3B<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<int, M>
-        where M : ICPMetadata<int>, IMetaData<int>
+        where I : IInterval<C, M>
+        where M : ICPMetadata<C>, IMetaData<C>
     {
-        public Di3B(byte chrCount)
+        public Di3B(byte chrCount, ISerializer<C> CoordinateSerializer)
         {
-            genome = new Genome<C, I, M>(chrCount);
+            genome = new Genome<C, I, M>(chrCount, CoordinateSerializer);
         }
 
         

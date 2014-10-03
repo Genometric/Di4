@@ -7,6 +7,7 @@ using DI3;
 using DI3.Interfaces;
 using IInterval;
 using ICPMD;
+using CSharpTest.Net.Serialization;
 
 namespace Di3Bioinformatics
 {
@@ -18,8 +19,8 @@ namespace Di3Bioinformatics
     /// descriptive metadata cooresponding to the interval.</typeparam>
     internal class BaseGenome<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<int, M>
-        where M : ICPMetadata<int>, IMetaData<int>
+        where I : IInterval<C, M>
+        where M : ICPMetadata<C>, IMetaData<C>
     {
         /// <summary>
         /// Represents a Genome with multiple chromosomes and strands.
@@ -46,33 +47,35 @@ namespace Di3Bioinformatics
             /// Represents a chromosome with different strands
             /// (i.e., positive/negative/un-stranded).
             /// </summary>
-            internal Chromosome()
+            internal Chromosome(ISerializer<C> coordinateSerializer)
             {
-                di3PositiveStrand = new Di3</*C,*/ I, M>();
-                di3NegativeStrand = new Di3</*C,*/ I, M>();
-                di3Unstranded = new Di3</*C,*/ I, M>();
+                di3PositiveStrand = new Di3<C, I, M>(coordinateSerializer);
+                di3NegativeStrand = new Di3<C, I, M>(coordinateSerializer);
+                di3Unstranded = new Di3<C, I, M>(coordinateSerializer);
             }
 
             /// <summary>
             /// Dynamic intervals inverted index for Positive Strand.
             /// </summary>
-            internal Di3</*C,*/ I, M> di3PositiveStrand { set; get; }
+            internal Di3<C, I, M> di3PositiveStrand { set; get; }
 
             /// <summary>
             /// Dynamic intervals inverted index for Negative Strand.
             /// </summary>
-            internal Di3</*C,*/ I, M> di3NegativeStrand { set; get; }
+            internal Di3<C, I, M> di3NegativeStrand { set; get; }
 
             /// <summary>
             /// Dynamic intervals inverted index for Un-Stranded.
             /// </summary>
-            internal Di3</*C,*/ I, M> di3Unstranded { set; get; }
+            internal Di3<C, I, M> di3Unstranded { set; get; }
         }
+
+        internal ISerializer<C> coordinateSerializer { set; get; }
 
         public void AddChromosome(string chr)
         {
             if (!chrs.ContainsKey(chr))
-                chrs.Add(chr, new Chromosome());
+                chrs.Add(chr, new Chromosome(coordinateSerializer));
         }
     }
 }

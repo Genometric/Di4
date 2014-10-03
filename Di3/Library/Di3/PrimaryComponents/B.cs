@@ -25,10 +25,10 @@ namespace DI3
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
     [ProtoContract]
-    public class B<C,/* I,*/ M> : Lambda<C, M>//I, M>
+    public class B<C, /*I,*/ M> : Lambda<C, M>
         where C : IComparable<C>
         //where I : IInterval<C, M>
-        where M : IMetaData<int>
+        where M : IMetaData<C>
     {
         /// <summary>
         /// A Block representing relative information of intervals
