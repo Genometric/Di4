@@ -8,7 +8,7 @@ using System.IO;
 using System.Reflection;
 using CSharpTest.Net.Serialization;
 
-namespace Di3BMain.Serializers
+namespace Di3Bioinformatics
 {
     class PrimitiveSerializer : ISerializer<int>, ISerializer<uint>
     {

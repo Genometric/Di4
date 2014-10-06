@@ -7,11 +7,8 @@ using ICPMD;
 using DI3;
 using ProtoBuf;
 
-namespace Di3BMain
+namespace Di3Bioinformatics
 {
-    /// <summary>
-    /// Representing ChIP-seq Peak Metadata.
-    /// </summary>
     [ProtoContract]
     public class PeakDataClass : ICPMetadata<int>, IDisposable
     {

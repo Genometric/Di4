@@ -50,10 +50,6 @@
     <Compile Include="ValueEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Di3Interfaces\Di3Interfaces.csproj">
-      <Project>{1159f7f9-561b-4d81-9708-62a26e80554e}</Project>
-      <Name>Di3Interfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IInterval\IInterval.csproj">
       <Project>{a22001fa-a30d-4027-832c-9ebcfd6aa8c7}</Project>
       <Name>IInterval</Name>

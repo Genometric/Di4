@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BEDParser;
 using IInterval;
 using ICPMD;
 using ProtoBuf;
 
-namespace Di3BMain
+
+namespace Di3Bioinformatics
 {
     [ProtoContract]
     public class PeakClass : IInterval<int, PeakDataClass>, IDisposable
@@ -30,7 +30,7 @@ namespace Di3BMain
         [ProtoMember(2)]
         public int right { set; get; }
 
-        
+
 
         /// <summary>
         /// Sets and gets the descriptive metadata

@@ -13,14 +13,8 @@ namespace Di3BMain
     /// Representing ChIP-seq Peak Metadata.
     /// </summary>
     [ProtoContract]
-    public class PeakDataClass : ICPMetadata<int>, IDisposable
+    public class PeakDataClass : ICPMetadata<int>
     {
-        public PeakDataClass()
-        {
-            // This prameter-less constructure is required for 
-            // new() constraint asked in Di3B and Genome.
-        }
-
         /// <summary>
         /// Sets and gets zero-based chromosome number.
         /// </summary>
@@ -63,8 +57,8 @@ namespace Di3BMain
         /// One-at-a-Time method based on 
         /// Dr. Dobb's left method.
         /// </summary>
-        //[ProtoMember(7)]
-        //public Int64 hashKey { set; get; }
+        [ProtoMember(7)]
+        public Int64 hashKey { set; get; }
 
 
 
@@ -74,7 +68,7 @@ namespace Di3BMain
         /// generated based on Dr. Dobb's left methods.
         /// </summary>
         /// <returns>Hashkey of the interval.</returns>
-        /*public UInt64 GetHashKey()
+        public UInt64 GetHashKey()
         {
             string key = chrNo.ToString() + "|" + strand.ToString() + "|" + name + "|" + left.ToString() + "|" + right.ToString() + "|";
             int len = key.Length;
@@ -92,36 +86,6 @@ namespace Di3BMain
             hashKey += (hashKey << 15);
 
             return hashKey;
-        }*/
-
-        [ProtoMember(7)]
-        public ulong hashKey { set; get; }
-
-
-        bool disposed = false;
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed) return;
-
-            if (disposing) //Free any other managed objects here. 
-            {
-                chrNo = default(byte);
-                name = null;
-                value = default(double);
-                strand = default(char);
-                left = default(int);
-                right = default(int);
-                hashKey = default(ulong);
-            }
-
-            // Free any unmanaged objects here. 
-
-            disposed = true;
         }
     }
 }

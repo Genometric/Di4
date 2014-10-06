@@ -17,7 +17,8 @@ namespace Di3BMain
     {
         internal Orchestrator()
         {
-            di3B = new Di3B<int, PeakClass, PeakDataClass>(23, PrimitiveSerializer.Int32);
+            INTComparer = new IntComparer();
+            di3B = new Di3B<int, PeakClass, PeakDataClass>(PrimitiveSerializer.Int32, INTComparer);
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
         }
@@ -27,6 +28,8 @@ namespace Di3BMain
         Dictionary<string, UInt32> samplesHashtable { set; get; }
 
         Stopwatch stopWatch { set; get; }
+
+        IntComparer INTComparer { set; get; }
 
 
         internal string CommandParse(string command)
@@ -125,22 +128,35 @@ namespace Di3BMain
                 Index(new string[] { "null", file.FullName });
 
                 DATA.parsedSamples.Remove(samplesHashtable[file.FullName]);
+                GC.Collect();
+                GC.SuppressFinalize(this);
+                GC.WaitForPendingFinalizers();
             }
         }
 
         private void Index(string[] args)
         {
-            di3B.Add(DATA.parsedSamples[samplesHashtable[args[1]]].peaks);
+            var peaks = DATA.parsedSamples[samplesHashtable[args[1]]].peaks;
+            di3B.Add(peaks);
+            //GC.Collect();
         }
 
         private void Cover(string[] args)
         {
-            di3B.Cover(Convert.ToChar(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]), args[4]);
+            //di3B.Cover(Convert.ToChar(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]), args[4]);
         }
 
         private void Summit(string[] args)
         {
-            di3B.Summit(Convert.ToChar(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]), args[4]);
+            //di3B.Summit(Convert.ToChar(args[1]), Convert.ToByte(args[2]), Convert.ToByte(args[3]), args[4]);
+        }
+    }
+
+    public class IntComparer : IComparer<int>
+    {
+        public int Compare(int x, int y)
+        {
+            return x.CompareTo(y);
         }
     }
 }

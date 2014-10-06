@@ -4,23 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ICPMD;
-using DI3;
 using ProtoBuf;
 
-namespace Di3BMain
+namespace DI3
 {
     /// <summary>
     /// Representing ChIP-seq Peak Metadata.
     /// </summary>
     [ProtoContract]
-    public class PeakDataClass : ICPMetadata<int>, IDisposable
+    public class PeakDataClass : IMetaData<int>, IDisposable
     {
-        public PeakDataClass()
-        {
-            // This prameter-less constructure is required for 
-            // new() constraint asked in Di3B and Genome.
-        }
-
         /// <summary>
         /// Sets and gets zero-based chromosome number.
         /// </summary>

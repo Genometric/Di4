@@ -11,18 +11,18 @@ using CSharpTest.Net.Serialization;
 
 namespace Di3Bioinformatics
 {
-    internal class Genome<C, I, M> : BaseGenome<C, I, M>
+    public class Genome<C, I, M> : BaseGenome<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>
-        where M : ICPMetadata<C>, IMetaData<C>
+        where I : IInterval<C, M>, new()
+        where M : ICPMetadata<C>, IMetaData<C>, new()
     {
-        internal Genome(byte chrCount, ISerializer<C> CoordinateSerializer)
+        /*internal Genome(byte chrCount, ISerializer<C> CoordinateSerializer)
         {
             int cpuCount = Environment.ProcessorCount;
             coordinateSerializer = CoordinateSerializer;
-        }
+        }*/
 
-        
+
 
         internal void Add(Dictionary<string, List<I>> peaks)
         {
@@ -30,7 +30,7 @@ namespace Di3Bioinformatics
             //Di3</*C,*/ I, M> di3 = new Di3<I, M>();
             //for (int i = 0; i < 1000000; i++)
             //{
-              //  di3.Add();
+            //  di3.Add();
             //}
 
 
@@ -39,7 +39,7 @@ namespace Di3Bioinformatics
             //TESTDIC.Add("chr", new Di3<I, M>());
             //for (int i = 0; i < 1000000; i++)
             //{
-                //TESTDIC["chr"].Add();
+            //TESTDIC["chr"].Add();
             //}
 
 
@@ -70,14 +70,14 @@ namespace Di3Bioinformatics
 
 
             // TEST 6 : OK
-            //foreach (var chrKey in peaks)
-            //{
-            //    AddChromosome(chrKey.Key);
-            //    for (int p = 0; p < 100000000; p++)
-            //    {
-            //        chrs[chrKey.Key].di3Unstranded.Add();//chrPeaks[p]);
-            //    }
-            //}
+            /*foreach (var chrKey in peaks)
+            {
+                AddChromosome(chrKey.Key);
+                for (int p = 0; p < 100000000; p++)
+                {
+                    chrs[chrKey.Key].di3Unstranded.Add();//chrPeaks[p]);
+                }
+            }*/
 
             // TEST 7 : NO NO NO
             /*foreach (var chrKey in peaks)
@@ -129,7 +129,232 @@ namespace Di3Bioinformatics
             }*/
 
 
+
+            // TEST 11: NO NO NO
+            //di3Unstranded is not owned by this function rather it is owned by the class.
+            /*AddChromosome("chr1");
+            for (int i = 0; i < 10000000; i++)
+            {
+                chrs["chr1"].di3Unstranded.Add(
+                    new I()
+                            {
+                                left = default(C),//chrPeaks[p].left,
+                                right = default(C),//chrPeaks[p].right,
+                                metadata = default(M)
+                            });
+            }*/
+
+            // TEST 12: OK ------- WORKED GREAT
+            // use a proprietary instance of Di3. 
+            // Occupies memory up to 100MB. 
+            /*ISerializer<Int32> MycoordinateSerializer = PrimitiveSerializer.Int32;
+
+            var myDi3 = new Di3<int, PeakClass, PeakDataClass>(MycoordinateSerializer);
+            for (int i = 0; i < 10000000; i++)
+            {
+                myDi3.Add(new PeakClass()
+                {
+                    left = i,
+                    right = i + 2,
+                    metadata = new PeakDataClass()
+                    {
+                        chrNo = 1,
+                        left = i,
+                        right = i + 2,
+                        name = "Hamed",
+                        strand = '*',
+                        hashKey = 100000,
+                        value = 100
+                    }
+                });
+
+                Console.Write("\rAdded : {0:N0}", i);
+            }*/
+
+
+
+
+
+            // TEST 13: NO NO NO
+            /*var myDi313 = new Di3<C, I, M>(coordinateSerializer);
+            for (int i = 0; i < 10000000; i++)
+            {
+                myDi313.Add(new I()
+                {
+                    left = default(C),
+                    right = default(C),
+                    metadata = new M()
+                    {
+                        chrNo = 1,
+                        left = default(C),
+                        right = default(C),
+                        name = "ksdjhfkshf",
+                        strand = '*',
+                        value = 23984293,
+                        hashKey = 9328578329
+                    }
+                });
+
+                Console.Write("\rAdded : {0:N0}", i);
+            }*/
+
+
+
+
+
+            // Test 14: OK, worked fine. 
+            // Here I have my proprietary classes and serializer
+            // and data are generate in place. 
+            /*AddChromosome("chr1");
+            int tst13Counter = -1;
+
+            int loopCounter = 0;
             foreach (var chrKey in peaks)
+            {
+                loopCounter = (50 * chrKey.Value.Count);
+
+                ISerializer<Int32> MycoordinateSerializer14 = PrimitiveSerializer.Int32;
+                var myDi314 = new Di3<int, PeakClass, PeakDataClass>(MycoordinateSerializer14);
+
+                for (int p = 0; p < loopCounter; p++)
+                {
+                    myDi314.Add(new PeakClass()
+                    {
+                        left = p,
+                        right = p + 2,
+                        metadata = new PeakDataClass()
+                        {
+                            chrNo = 1,
+                            left = p,
+                            right = p + 10,
+                            name = "Hamed",
+                            strand = '*',
+                            hashKey = 100000,
+                            value = 100
+                        }
+                    });
+
+                    Console.Write("\rAdded : {0:N0}", ++tst13Counter);
+                }
+            }*/
+
+
+            // Test 15: OK, worked fine.
+            /*AddChromosome("chr1");
+            int tst13Counter = -1;
+
+            foreach (var chrKey in peaks)
+            {
+                ISerializer<Int32> MycoordinateSerializer14 = PrimitiveSerializer.Int32;
+                var myDi314 = new Di3<int, PeakClass, PeakDataClass>(MycoordinateSerializer14);
+
+                for (int p = 0; p < 50 * chrKey.Value.Count; p++)
+                {
+                    myDi314.Add(new PeakClass()
+                    {
+                        left = p,
+                        right = p + 2,
+                        metadata = new PeakDataClass()
+                        {
+                            chrNo = 1,
+                            left = p,
+                            right = p + 10,
+                            name = "Hamed",
+                            strand = '*',
+                            hashKey = 100000,
+                            value = 100
+                        }
+                    });
+
+                    Console.Write("\rAdded : {0:N0}", ++tst13Counter);
+                }
+            }*/
+
+
+            // TEST 16: OK, worked perfect. Memory fixed at 140MB
+            // This test adds Di3 to dictionary.
+            /*AddChromosome("chr1");
+            int tst16Counter = -1;
+
+            var myDi316 = new Dictionary<string, Di3<int, PeakClass, PeakDataClass>>();
+            ISerializer<Int32> MycoordinateSerializer16 = PrimitiveSerializer.Int32;            
+
+            foreach (var chrKey in peaks)
+            {
+                myDi316.Add(chrKey.Key, new Di3<int, PeakClass, PeakDataClass>(MycoordinateSerializer16));
+
+                for (int p = 0; p < 10 * chrKey.Value.Count; p++)
+                {
+                    myDi316[chrKey.Key].Add(new PeakClass()
+                    {
+                        left = p,
+                        right = p + 2,
+                        metadata = new PeakDataClass()
+                        {
+                            chrNo = 1,
+                            left = p,
+                            right = p + 10,
+                            name = "Hamed",
+                            strand = '*',
+                            hashKey = 100000,
+                            value = 100
+                        }
+                    });
+
+                    Console.Write("\rAdded : {0:N0}", ++tst16Counter);
+                }
+            }*/
+
+
+
+
+            // not working example : 
+
+            // TEST 17: 
+            AddChromosome("chr1");
+            int tst13Counter = -1;
+
+            var myDi317 = new Dictionary<string, Di3<C, I, M>>();
+            myDi317.Add("chr", new Di3<C, I, M>(coordinateSerializer, coordinateComparer));
+
+            foreach (var chrKey in peaks)
+            {
+                //myDi317.Add(chrKey.Key, new Di3<C, I, M>(coordinateSerializer));
+
+                for (int p = 0; p < chrKey.Value.Count; p++)
+                {
+                    myDi317["chr"].Add(new I()
+                    {
+                        left = chrKey.Value[p].left,
+                        right = chrKey.Value[p].right,
+                        metadata = new M()
+                        {
+                            chrNo = chrKey.Value[p].metadata.chrNo,
+                            left = chrKey.Value[p].metadata.left,
+                            right = chrKey.Value[p].metadata.right,
+                            name = chrKey.Value[p].metadata.name,
+                            strand = chrKey.Value[p].metadata.strand,
+                            hashKey = chrKey.Value[p].metadata.hashKey,
+                            value = chrKey.Value[p].metadata.value
+                        }
+                    });
+
+                    Console.Write("\rAdded : {0:N0}", ++tst13Counter);
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+            int i2 = -1;
+            /*foreach (var chrKey in peaks)
             {
                 var chrPeaks = chrKey.Value;
                 AddChromosome(chrKey.Key);
@@ -139,19 +364,50 @@ namespace Di3Bioinformatics
                     switch (chrPeaks[p].metadata.strand)
                     {
                         case '+':
-                            chrs[chrKey.Key].di3PositiveStrand.Add(chrPeaks[p]);
+                            //chrs[chrKey.Key].di3PositiveStrand.Add(chrPeaks[p]);
                             break;
 
                         case '-':
-                            chrs[chrKey.Key].di3NegativeStrand.Add(chrPeaks[p]);
+                            //chrs[chrKey.Key].di3NegativeStrand.Add(chrPeaks[p]);
                             break;
 
                         case '*':
                             chrs[chrKey.Key].di3Unstranded.Add(chrPeaks[p]);
-                            break;
-                    }
-                }
-            }
+                            chrs[chrKey.Key].di3Unstranded.Add(new I()
+                            {
+                                left = default(C),//chrPeaks[p].left,
+                                right = default(C),//chrPeaks[p].right,
+                                metadata = default(M)/* new M()
+                                {
+                                    chrNo = chrPeaks[p].metadata.chrNo,
+                                    left = chrPeaks[p].metadata.left,
+                                    right = chrPeaks[p].metadata.right,
+                                    name = chrPeaks[p].metadata.name,
+                                    value = chrPeaks[p].metadata.value,
+                                    strand = chrPeaks[p].metadata.strand,
+                                    hashKey = chrPeaks[p].metadata.hashKey
+                                }*/
+            //});
+
+            //break;
+            //}
+
+            // Console.Write("\rAdded : {0:N0}", ++i2);
+
+            /*if (++gcCounter >= 10000)
+            {
+                chrs[chrKey.Key].di3PositiveStrand.Clean();
+                chrs[chrKey.Key].di3NegativeStrand.Clean();
+                chrs[chrKey.Key].di3Unstranded.Clean();
+                GC.Collect();
+                gcCounter = -1;
+            }*/
+            //}
+
+            //chrs[chrKey.Key].di3PositiveStrand.Clean();
+            //chrs[chrKey.Key].di3NegativeStrand.Clean();
+            //chrs[chrKey.Key].di3Unstranded.Clean();
+            //}
         }
 
         internal FunctionOutput<Output<C>> CoverSummit(string function, char strand, byte minAcc, byte maxAcc, string aggregate)

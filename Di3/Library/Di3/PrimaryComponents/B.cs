@@ -25,7 +25,7 @@ namespace DI3
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
     [ProtoContract]
-    public class B<C, /*I,*/ M> : Lambda<C, M>
+    public class B<C, /*I,*/ M> : Lambda<C, M>, IDisposable
         where C : IComparable<C>
         //where I : IInterval<C, M>
         where M : IMetaData<C>
@@ -78,5 +78,30 @@ namespace DI3
         /// </summary>
         [ProtoMember(3)]
         internal int omega { set; get; }
+
+
+        bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing) //Free any other managed objects here. 
+            {
+                e = default(C);
+                omega = default(int);
+                lambda = null;
+            }
+
+            // Free any unmanaged objects here. 
+
+            disposed = true;
+
+            base.Dispose(disposing);
+        }
     }
 }

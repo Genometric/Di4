@@ -29,9 +29,9 @@ namespace DI3
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
     [ProtoContract]
-    public class Lambda<C, M>
+    public class Lambda<C, M> : IDisposable
         where C : IComparable<C>
-        where M : IMetaData<int>
+        where M : IMetaData<C>
     {
         /// <summary>
         /// Represents the interval intersecting with 
@@ -79,5 +79,27 @@ namespace DI3
         /// </summary>
         [ProtoMember(2)]
         internal M atI { private set; get; }
+
+
+        bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing) //Free any other managed objects here. 
+            {
+                atI = default(M);
+                tau = default(Char);
+            }
+
+            // Free any unmanaged objects here. 
+            
+            disposed = true;
+        }
     }
 }

@@ -17,10 +17,10 @@ namespace Di3Bioinformatics
     /// <typeparam name="I">Represents generic type of the interval.</typeparam>
     /// <typeparam name="M">Represents generic type of pointer to
     /// descriptive metadata cooresponding to the interval.</typeparam>
-    internal class BaseGenome<C, I, M>
+    public class BaseGenome<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : ICPMetadata<C>, IMetaData<C>
+        where M : ICPMetadata<C>
     {
         /// <summary>
         /// Represents a Genome with multiple chromosomes and strands.
@@ -47,11 +47,11 @@ namespace Di3Bioinformatics
             /// Represents a chromosome with different strands
             /// (i.e., positive/negative/un-stranded).
             /// </summary>
-            internal Chromosome(ISerializer<C> coordinateSerializer)
+            internal Chromosome(ISerializer<C> coordinateSerializer, IComparer<C> CoordinateComparer)
             {
-                di3PositiveStrand = new Di3<C, I, M>(coordinateSerializer);
-                di3NegativeStrand = new Di3<C, I, M>(coordinateSerializer);
-                di3Unstranded = new Di3<C, I, M>(coordinateSerializer);
+                di3PositiveStrand = new Di3<C, I, M>(coordinateSerializer, CoordinateComparer);
+                di3NegativeStrand = new Di3<C, I, M>(coordinateSerializer, CoordinateComparer);
+                di3Unstranded = new Di3<C, I, M>(coordinateSerializer, CoordinateComparer);
             }
 
             /// <summary>
@@ -72,10 +72,12 @@ namespace Di3Bioinformatics
 
         internal ISerializer<C> coordinateSerializer { set; get; }
 
+        public IComparer<C> coordinateComparer { set; get; }
+
         public void AddChromosome(string chr)
         {
             if (!chrs.ContainsKey(chr))
-                chrs.Add(chr, new Chromosome(coordinateSerializer));
+                chrs.Add(chr, new Chromosome(coordinateSerializer, coordinateComparer));
         }
     }
 }

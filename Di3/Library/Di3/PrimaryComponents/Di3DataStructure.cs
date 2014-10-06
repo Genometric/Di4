@@ -26,7 +26,7 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    public class Di3DataStructure<C, I, M> : B<C, M>
+    public class Di3DataStructure<C, I, M> : B<C, M>, IDisposable
         where C : IComparable<C>
         where M : IMetaData<C>
     {
@@ -51,6 +51,29 @@ namespace DI3
         {
             BlockSerializer = new BlockSerializer<C, M>();
             //CoorSeri = new CoordinateSerializer<C>();
+        }
+
+        bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing) //Free any other managed objects here. 
+            {
+                di3 = null;
+                BlockSerializer = null;
+            }
+
+            // Free any unmanaged objects here. 
+
+            disposed = true;
+
+            base.Dispose(disposing);
         }
     }
 }

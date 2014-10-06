@@ -29,7 +29,7 @@ namespace DI3
     internal class INDEX<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData<int>
+        where M : IMetaData<C>
     {
         /// <summary>
         /// Provides efficient means of inserting an 
@@ -276,6 +276,10 @@ namespace DI3
         /// wtih c of corresponding block.</param>
         private void Insert_into_di3(char tau)
         {
+            // CAUTION:
+            // Following check some times causes an excpetion from 
+            // protobuf-net. 
+
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
             if (di3.ContainsKey(marshalPoint))// b >= di3Cardinality || c.CompareTo(di3[b].e) != 0) // Condition satisfied: add new index
             {
@@ -283,7 +287,12 @@ namespace DI3
             }
             else // update the available index with new region
             {
+                //-----------------------------------------------//
+                // THIS PART COMMENTED-OUT FOR TEST PURPOSE ONLY //
+                //-----------------------------------------------//
                 di3.Add(marshalPoint, GetNewBlock(tau));
+
+
                 //di3.Insert(b, GetNewBlock(tau));
                 //di3Cardinality++;
             }

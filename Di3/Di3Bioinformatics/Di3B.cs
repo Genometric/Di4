@@ -17,34 +17,37 @@ namespace Di3Bioinformatics
     /// </summary>
     /// <typeparam name="I"></typeparam>
     /// <typeparam name="M"></typeparam>
-    public class Di3B<C, I, M>
+    public class Di3B<C, I, M> : Genome<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>
-        where M : ICPMetadata<C>, IMetaData<C>
+        where I : IInterval<C, M>, new()
+        where M : ICPMetadata<C>, IMetaData<C>, new()
     {
-        public Di3B(byte chrCount, ISerializer<C> CoordinateSerializer)
+        public Di3B(ISerializer<C> CoordinateSerializer, IComparer<C> CoordinateComparer)
         {
-            genome = new Genome<C, I, M>(chrCount, CoordinateSerializer);
+            //genome = new Genome<C, I, M>(chrCount, CoordinateSerializer);
+
+            coordinateSerializer = CoordinateSerializer;
+            coordinateComparer = CoordinateComparer;
         }
 
         
 
-        Genome<C, I, M> genome { set; get; }
+        //Genome<C, I, M> genome { set; get; }
 
 
         public void Add(Dictionary<string, List<I>> peaks)
         {
-            genome.Add(peaks);
+            base.Add(peaks);
         }
 
         public FunctionOutput<Output<C>> Cover(char strand, byte minAcc, byte maxAcc, string aggregate)
         {
-            return genome.CoverSummit("cover", strand, minAcc, maxAcc, aggregate);
+            return base.CoverSummit("cover", strand, minAcc, maxAcc, aggregate);
         }
 
         public FunctionOutput<Output<C>> Summit(char strand, byte minAcc, byte maxAcc, string aggregate)
         {
-            return genome.CoverSummit("summit", strand, minAcc, maxAcc, aggregate);
+            return base.CoverSummit("summit", strand, minAcc, maxAcc, aggregate);
         }
     }
 }

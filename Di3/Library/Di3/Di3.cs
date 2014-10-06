@@ -62,9 +62,9 @@ namespace DI3
         /// a seprate serializer is passed to di3. 
         /// </summary>
         /// <param name="coordinateSerializer"></param>
-        public Di3(ISerializer<C> coordinateSerializer)
+        public Di3(ISerializer<C> coordinateSerializer, IComparer<C> comparer)
         {
-            var options = new BPlusTree<C, B<C, M>>.OptionsV2(coordinateSerializer, BlockSerializer/*, put also the comparer here*/);
+            var options = new BPlusTree<C, B<C, M>>.OptionsV2(coordinateSerializer, BlockSerializer, comparer);
             options.CalcBTreeOrder(16, 24);
             options.CreateFile = CreatePolicy.Always;
             options.FileName = Path.GetTempFileName();
@@ -105,8 +105,42 @@ namespace DI3
         /// to be added to the di3.</param>
         public void Add(I interval)
         {
-            //di3.Add(interval.left, new B<M> { omega = 10, e = 10000000 });
-            INDEX.Index(interval);
+            //di3.Add(interval.left, new B<C, M> { omega = 10 });
+
+            //------------------------------------------------------
+            // Following line is commented-out only for test purpose
+            //------------------------------------------------------
+            //INDEX.Index(interval);
+
+
+            #region Test Section: AAAA
+            /*var options = new BPlusTree<int, B<int, PeakDataClass>>.OptionsV2(PrimitiveSerializer.Int32, TESTBlockSerializer);
+            options.CalcBTreeOrder(16, 24);
+            options.CreateFile = CreatePolicy.Always;
+            options.FileName = Path.GetTempFileName();
+
+
+            var di3TEST = new BPlusTree<int, B<int, PeakDataClass>>(options);
+
+            for (int i = 0; i < 10000000; i++)
+            {
+                var data = new PeakDataClass(){ chrNo = 0, hashKey = 100000000, left = i, right = i+2, name = "Hamed", strand = '+', value = 123.456};
+                var lambda = new List<Lambda<int, PeakDataClass>>();
+                lambda.Add(new Lambda<int, PeakDataClass>('M', data));
+                di3TEST.Add(i, new B<int, PeakDataClass>(i) { omega = 0});
+            }*/ 
+            #endregion
+        }
+
+        public void Clean()
+        {
+            //GC.Collect();
+            //GC.SuppressFinalize(this);
+            //GC.WaitForPendingFinalizers();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
         }
 
 
@@ -121,13 +155,13 @@ namespace DI3
             return null;
         }
 
-        public List<O> Cover<O>(ICSOutput<M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        public List<O> Cover<O>(ICSOutput<C, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
         {
             SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
             return SetOps.Cover(OutputStrategy, minAccumulation, maxAccumulation);
         }
 
-        public List<O> Summit<O>(ICSOutput<M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        public List<O> Summit<O>(ICSOutput<C, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
         {
             SetOperations<C, M, O> SetOps = new SetOperations<C, M, O>(di3);
             return SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);

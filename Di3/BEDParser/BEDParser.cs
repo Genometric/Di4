@@ -7,15 +7,15 @@ using System.IO;
 using IInterval;
 using ICPMD;
 using System.Text.RegularExpressions;
-using Di3Interfaces;
+//using Di3Interfaces;
 
 
 
 namespace BEDParser
 {
-    public class BEDParser<C, Peak, Metadata>
-        where Peak : IInterval<C, Metadata>, new()
-        where Metadata : ICPMetadata<C>//, IMetaData<int>
+    public class BEDParser<Peak, Metadata>
+        where Peak : IInterval<int, Metadata>, new()
+        where Metadata : ICPMetadata<int>//, IMetaData<int>
     {
         /// <summary>
         /// Parse standard Browser Extensible Data (BED) format.
@@ -287,7 +287,7 @@ namespace BEDParser
         /// Contains all read information from the input BED file, and 
         /// will be retured as read process result.
         /// </summary>
-        private ParsedBED<C, Peak, Metadata> _data = new ParsedBED<C, Peak, Metadata>();
+        private ParsedBED<int, Peak, Metadata> _data = new ParsedBED<int, Peak, Metadata>();
 
         /// <summary>
         /// Contains chromosome wide information and statistics of the sample
@@ -421,12 +421,11 @@ namespace BEDParser
         /// Reads the regions presented in source file and generates chromosome-wide statistics regarding regions length and values. 
         /// </summary>
         /// <returns>Returns an object of Input_BED_Data class</returns>
-        public ParsedBED<C, Peak, Metadata> Parse()
+        public ParsedBED<int, Peak, Metadata> Parse()
         {
             _dropLine = false;            
 
-            byte chr_No = 0;
-
+            //byte chr_No = 0;
             
             int left = 0;
             int right = 0;
@@ -471,17 +470,17 @@ namespace BEDParser
 
                             string[] splittedLine = line.Split('\t');
 
-                            #region -_-     Process Start/Stop      -_-                            
+                            #region -_-     Process Start/Stop      -_-
 
                             if (_leftColumn < splittedLine.Length && _rightColumn < splittedLine.Length)
                             {
                                 if (int.TryParse(splittedLine[_leftColumn], out left) &&
                                     int.TryParse(splittedLine[_rightColumn], out right))
                                 {
-                                    //readingPeak.left = left;
-                                    //readingPeak.right = right;
-                                    //readingPeak.metadata.left = left;
-                                    //readingPeak.metadata.right = right;
+                                    readingPeak.left = left;
+                                    readingPeak.right = right;
+                                    readingPeak.metadata.left = left;
+                                    readingPeak.metadata.right = right;
                                 }
                                 else
                                 {
@@ -590,7 +589,7 @@ namespace BEDParser
 
                                 #region -_-     Check for Widest and Narrowest Peaks    -_-
 
-                                /*if (readingPeak.right - readingPeak.left > _Chrs[chrTitle].peakWidthMax)
+                                if (readingPeak.right - readingPeak.left > _Chrs[chrTitle].peakWidthMax)
                                 {
                                     _Chrs[chrTitle].peakWidthMax = (uint)(readingPeak.right - readingPeak.left);
                                 }
@@ -598,7 +597,7 @@ namespace BEDParser
                                 if (readingPeak.right - readingPeak.left < _Chrs[chrTitle].peakWidthMin)
                                 {
                                     _Chrs[chrTitle].peakWidthMin = (uint)(readingPeak.right - readingPeak.left);
-                                }*/
+                                }
 
                                 #endregion
 
@@ -630,7 +629,7 @@ namespace BEDParser
 
                                 #endregion
 
-                                //_pw__Sum[chrTitle] = (uint)(_pw__Sum[chrTitle] + (readingPeak.right - readingPeak.left));
+                                _pw__Sum[chrTitle] = (uint)(_pw__Sum[chrTitle] + (readingPeak.right - readingPeak.left));
 
                                 _pV__Sum[chrTitle] += readingPeak.metadata.value;
                             }
@@ -664,7 +663,7 @@ namespace BEDParser
 
             status = "100";
 
-            return null;//_data;
+            return _data;
         }
 
         private void EstimateStatistics()
@@ -693,7 +692,7 @@ namespace BEDParser
             {
                 foreach (Peak P in _data.peaks[entry.Key])
                 {
-                    //_pw_STDV[entry.Key] += Math.Pow((P.right - P.left) - _pw_Mean[entry.Key], 2.0);
+                    _pw_STDV[entry.Key] += Math.Pow((P.right - P.left) - _pw_Mean[entry.Key], 2.0);
                     _pV_STDV[entry.Key] += Math.Pow(P.metadata.value - _pV_Mean[entry.Key], 2.0);
                 }
             }

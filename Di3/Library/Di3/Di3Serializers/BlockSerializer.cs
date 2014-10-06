@@ -16,6 +16,16 @@ namespace DI3.Di3Serializers
     {
         public B<C, M> ReadFrom(System.IO.Stream stream)
         {
+            /*var b0 = stream.ReadByte();
+            var b1 = stream.ReadByte();
+            var b2 = stream.ReadByte();
+            var b3 = stream.ReadByte();
+            var b4 = stream.ReadByte();
+            var b5 = stream.ReadByte();
+            var b6 = stream.ReadByte();
+            var b7 = stream.ReadByte();
+            var b8 = stream.ReadByte();
+            var b9 = stream.ReadByte();*/
             return Serializer.Deserialize<B<C, M>>(stream);
         }
 
@@ -24,9 +34,11 @@ namespace DI3.Di3Serializers
             // for test only: 
             //string theProto = Serializer.GetProto<B<C, M>>();
 
-            Serializer.Serialize<B<C, M>>(stream, value);
+            try { Serializer.Serialize<B<C, M>>(stream, value); }
+            catch (Exception exp) { }
         }
     }
+
 
     /*public class CoordinateSerializer<C> : ISerializer<C>
     {
