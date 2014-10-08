@@ -23,11 +23,11 @@ namespace Di3B
         //private Dictionary<string, Di3<C, I, M>> Chrs { set; get; }
 
         private Genome<C, I, M> genome { set; get; }
-        public Di3B(ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Di3B(string IndexPath, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
-            genome = new Genome<C, I, M>(CSerializer, CComparer);
+            genome = new Genome<C, I, M>(IndexPath, CSerializer, CComparer);
 
 
             ////// ------- moved to genome.
@@ -79,7 +79,7 @@ namespace Di3B
             return genome.CoverSummit("summit", strand, minAcc, maxAcc, aggregate);
         }
 
-        public FunctionOutput<Output<C, I, M>> Map(char strand, List<I> references, string aggregate)
+        public FunctionOutput<Output<C, I, M>> Map(char strand, Dictionary<string, List<I>> references, string aggregate)
         {
             return genome.Map(references, strand, aggregate);
         }

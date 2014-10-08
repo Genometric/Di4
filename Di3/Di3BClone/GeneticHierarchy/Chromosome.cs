@@ -19,11 +19,11 @@ namespace Di3B
         /// Represents a chromosome with different strands
         /// (i.e., positive/negative/un-stranded).
         /// </summary>
-        public Chromosome(ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Chromosome(string FileName, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             //di3PS = new Di3<C, I, M>(CSerializer, CComparer);
             //di3NS = new Di3<C, I, M>(CSerializer, CComparer);
-            di3US = new Di3<C, I, M>(CSerializer, CComparer);
+            di3US = new Di3<C, I, M>(FileName, CSerializer, CComparer);
         }
 
         /// <summary>

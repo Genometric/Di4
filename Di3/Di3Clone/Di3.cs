@@ -61,13 +61,13 @@ namespace DI3
         /// </summary>
         /// <param name="CSerializer"></param>
         /// <param name="comparer"></param>
-        public Di3(ISerializer<C> CSerializer, IComparer<C> comparer)
+        public Di3(string FileName, ISerializer<C> CSerializer, IComparer<C> comparer)
         {
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
             options.CalcBTreeOrder(16, 24);
-            options.CreateFile = CreatePolicy.Always;
-            options.FileName = Path.GetTempFileName();
+            options.CreateFile = CreatePolicy.IfNeeded;
+            options.FileName = FileName;
 
             di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);

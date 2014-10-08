@@ -19,12 +19,14 @@ namespace Di3BMain
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
-            di3B = new Di3B<int, Peak, PeakData>(PrimitiveSerializer.Int32, int32Comparer);
+            di3B = new Di3B<int, Peak, PeakData>(@"E:\TestIndex", PrimitiveSerializer.Int32, int32Comparer);
 
 
+            ///------ TEST A
             //Load_and_Add();
 
-            LID(new string[] { "", @"h:\hg", "narrowPeak" });
+            ///------ TEST B
+            //LID(new string[] { "", @"E:\hgnp", "narrowPeak" });
         }
 
         Stopwatch stopWatch { set; get; }
@@ -199,7 +201,11 @@ namespace Di3BMain
 
         private void Map(string[] args)
         {
-            
+            string FileName = @"E:\reference\reference.narrowpeak";
+            Load(new string[] { "", FileName });
+
+            var referencePeaks = Repository.parsedSamples[samplesHashtable[FileName]].peaks;
+            di3B.Map('*', referencePeaks, "count");
         }
 
 

@@ -7,6 +7,7 @@ using Interfaces;
 using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using DI3;
+using System.IO;
 
 namespace Di3B
 {
@@ -15,10 +16,11 @@ namespace Di3B
         where I : IInterval<C, M>, new()
         where M : IMetaData<C>, new()
     {
-        public Genome(ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Genome(string FilePath, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
+            FileName = FilePath + Path.DirectorySeparatorChar + "Di3";
             Chrs = new Dictionary<string, Chromosome<C, I, M>>();
         }
 
@@ -27,6 +29,8 @@ namespace Di3B
 
         private ISerializer<C> CSerializer { set; get; }
         private IComparer<C> CComparer { set; get; }
+        private string FileName { set; get; }
+
 
         /// <summary>
         /// Sets and Gets all chromosomes of the genome.
@@ -39,7 +43,7 @@ namespace Di3B
             foreach (var chr in peaks)
             {
                 if (!Chrs.ContainsKey(chr.Key))
-                    Chrs.Add(chr.Key, new Chromosome<C, I, M>(CSerializer, CComparer));
+                    Chrs.Add(chr.Key, new Chromosome<C, I, M>(FileName + chr.Key + ".indx", CSerializer, CComparer));
 
                 foreach (var peak in chr.Value)
                 {
@@ -118,38 +122,49 @@ namespace Di3B
             return output;
         }
 
-        internal FunctionOutput<Output<C, I, M>> Map(List<I> references, char strand, string aggregate)
+        internal FunctionOutput<Output<C, I, M>> Map(Dictionary<string, List<I>> references, char strand, string aggregate)
         {
-            FunctionOutput<Output<C, I, M>> output = new FunctionOutput<Output<C, I, M>>(Chrs.Count);
+            FunctionOutput<Output<C, I, M>> output = new FunctionOutput<Output<C, I, M>>(references.Count);
 
             AggregateFactory<C, I, M> aggFactory = new AggregateFactory<C, I, M>();
 
-            foreach (var chrKey in Chrs)
+            foreach (var reference in references)
             {
+                if (!Chrs.ContainsKey(reference.Key))
+                    Chrs.Add(reference.Key, new Chromosome<C, I, M>(FileName + reference.Key + ".indx", CSerializer, CComparer));
+                if (!output.Chrs.ContainsKey(reference.Key))
+                    output.Chrs.Add(reference.Key, new FunctionOutput<Output<C, I, M>>.Chromosome());
+
                 switch (strand)
                 {
                     case '+':
-                        if (chrKey.Value.di3PS.blockCount > 0)
-                        {
-                            output.Chrs[chrKey.Key].outputPS =
-                                Chrs[chrKey.Key].di3PS.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references);
-                        }
+                        //if (chr.Value.di3PS.blockCount > 0)
+                        //{
+                            ///////////////// ----------------- there will be an error here, because this is reading chr title from chrs but searching 
+                            ////////////////------------------- for it in references ! e.g., there might be chrM in chrs but not in refrences. 
+                        output.Chrs[reference.Key].outputPS =
+                                Chrs[reference.Key].di3PS.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                        //}
                         break;
 
                     case '-':
-                        if (Chrs[chrKey.Key].di3NS.blockCount > 0)
-                        {
-                            output.Chrs[chrKey.Key].outputNS =
-                                Chrs[chrKey.Key].di3NS.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references);
-                        }
+                        //if (Chrs[chr.Key].di3NS.blockCount > 0)
+                        //{
+                            ///////////////// ----------------- there will be an error here, because this is reading chr title from chrs but searching 
+                            ////////////////------------------- for it in references ! e.g., there might be chrM in chrs but not in refrences. 
+                        output.Chrs[reference.Key].outputNS =
+                                Chrs[reference.Key].di3NS.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                        //}
                         break;
 
                     case '*':
-                        if (Chrs[chrKey.Key].di3US.blockCount > 0)
-                        {
-                            output.Chrs[chrKey.Key].outputUS =
-                                Chrs[chrKey.Key].di3US.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references);
-                        }
+                        //if (Chrs[chr.Key].di3US.blockCount > 0)
+                        //{
+                            ///////////////// ----------------- there will be an error here, because this is reading chr title from chrs but searching 
+                            ////////////////------------------- for it in references ! e.g., there might be chrM in chrs but not in refrences. 
+                        output.Chrs[reference.Key].outputUS =
+                                Chrs[reference.Key].di3US.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                        //}
                         break;
                 }
             }
