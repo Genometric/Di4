@@ -15,7 +15,7 @@ namespace DirectDi3TEST
     {
         static void Main(string[] args)
         {
-            var di3 = new Di3<PeakClass, PeakDataClass>(PrimitiveSerializer.Int32);
+            var di3 = new Di3<int, PeakClass, PeakDataClass>(PrimitiveSerializer.Int32);
 
             var peaks = new List<PeakClass>();
             for (int i = 0; i < 90000000; i = i + 3)

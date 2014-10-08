@@ -5,14 +5,6 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3Main2", "Di3\Di3Main2.csproj", "{B0070604-2123-481A-8E5B-BA6BF11DC1FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3", "Library\Di3\Di3.csproj", "{7CAFE7BE-5EF5-4B25-9C01-CDF793626F11}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3BMain", "Di3Main\Di3BMain.csproj", "{A7C13FAB-6459-48F3-ACE3-661A4936CCC0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3Bioinformatics", "Di3Bioinformatics\Di3Bioinformatics.csproj", "{8E9D275F-0148-40CE-8F23-94CD0B32BBC5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEDParser", "BEDParser\BEDParser.csproj", "{1391808F-1F1D-4F8F-9EAF-C4030E040B3A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IInterval", "IInterval\IInterval.csproj", "{A22001FA-A30D-4027-832C-9EBCFD6AA8C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICPMetadata", "IMetadata\ICPMetadata.csproj", "{0A7BC7E5-D0A2-49FD-9574-0AA84900E948}"
@@ -21,39 +13,69 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMain", "TestMain\TestMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectDi3TEST", "DirectDi3TEST\DirectDi3TEST.csproj", "{EF0029E2-FC61-4E08-9E1D-E27799A4F18A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{4B5E9874-3D0B-4EBC-8347-CB6C18D518BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{182F5584-F44D-4656-B359-0FE2AE1249AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{F3767FB7-4E9D-4F66-960D-3B6970F19299}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEDParser", "BEDParserClone\BEDParser.csproj", "{DD67BBCA-0C1A-4897-9E66-E54A0AC59F5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3B", "Di3BClone\Di3B.csproj", "{C5BA307C-57F1-4744-80B7-25510B75CAD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3", "Di3Clone\Di3.csproj", "{5A568492-F768-49F2-A3D9-956DD80E6E67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3BMain", "Di3BMainClone\Di3BMain.csproj", "{A9D02F27-2232-4346-A9CC-84A02CEFC03B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TesT Packages", "TesT Packages", "{E7AB1DDC-637D-4BCB-BD30-112C00254BEF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Old Version", "Old Version", "{F3718BC3-929B-498D-8287-D2014CB3C1F9}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 10
+		SccNumberOfProjects = 11
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = Library\\Di3\\Di3.csproj
-		SccProjectName1 = Library/Di3
-		SccLocalPath1 = Library\\Di3
-		SccProjectUniqueName2 = Di3\\Di3Main2.csproj
-		SccProjectName2 = Di3
-		SccLocalPath2 = Di3
-		SccProjectUniqueName3 = Di3Bioinformatics\\Di3Bioinformatics.csproj
-		SccProjectName3 = Di3Bioinformatics
-		SccLocalPath3 = Di3Bioinformatics
-		SccProjectUniqueName4 = Di3Main\\Di3BMain.csproj
-		SccProjectName4 = Di3Main
-		SccLocalPath4 = Di3Main
-		SccProjectUniqueName5 = BEDParser\\BEDParser.csproj
-		SccProjectName5 = BEDParser
-		SccLocalPath5 = BEDParser
-		SccProjectUniqueName6 = IInterval\\IInterval.csproj
-		SccProjectName6 = IInterval
-		SccLocalPath6 = IInterval
-		SccProjectUniqueName7 = IMetadata\\ICPMetadata.csproj
-		SccProjectName7 = IMetadata
-		SccLocalPath7 = IMetadata
-		SccProjectUniqueName8 = TestMain\\TestMain.csproj
-		SccProjectName8 = TestMain
-		SccLocalPath8 = TestMain
-		SccProjectUniqueName9 = DirectDi3TEST\\DirectDi3TEST.csproj
-		SccProjectName9 = DirectDi3TEST
-		SccLocalPath9 = DirectDi3TEST
+		SccProjectUniqueName1 = Di3\\Di3Main2.csproj
+		SccProjectTopLevelParentUniqueName1 = Di3.sln
+		SccProjectName1 = Di3
+		SccLocalPath1 = Di3
+		SccProjectUniqueName2 = IInterval\\IInterval.csproj
+		SccProjectTopLevelParentUniqueName2 = Di3.sln
+		SccProjectName2 = IInterval
+		SccLocalPath2 = IInterval
+		SccProjectUniqueName3 = IMetadata\\ICPMetadata.csproj
+		SccProjectTopLevelParentUniqueName3 = Di3.sln
+		SccProjectName3 = IMetadata
+		SccLocalPath3 = IMetadata
+		SccProjectUniqueName4 = TestMain\\TestMain.csproj
+		SccProjectTopLevelParentUniqueName4 = Di3.sln
+		SccProjectName4 = TestMain
+		SccLocalPath4 = TestMain
+		SccProjectUniqueName5 = DirectDi3TEST\\DirectDi3TEST.csproj
+		SccProjectTopLevelParentUniqueName5 = Di3.sln
+		SccProjectName5 = DirectDi3TEST
+		SccLocalPath5 = DirectDi3TEST
+		SccProjectUniqueName6 = Interfaces\\Interfaces.csproj
+		SccProjectTopLevelParentUniqueName6 = Di3.sln
+		SccProjectName6 = Interfaces
+		SccLocalPath6 = Interfaces
+		SccProjectUniqueName7 = Di3Clone\\Di3.csproj
+		SccProjectTopLevelParentUniqueName7 = Di3.sln
+		SccProjectName7 = Di3Clone
+		SccLocalPath7 = Di3Clone
+		SccProjectUniqueName8 = Di3BClone\\Di3B.csproj
+		SccProjectTopLevelParentUniqueName8 = Di3.sln
+		SccProjectName8 = Di3BClone
+		SccLocalPath8 = Di3BClone
+		SccProjectUniqueName9 = BEDParserClone\\BEDParser.csproj
+		SccProjectTopLevelParentUniqueName9 = Di3.sln
+		SccProjectName9 = BEDParserClone
+		SccLocalPath9 = BEDParserClone
+		SccProjectUniqueName10 = Di3BMainClone\\Di3BMain.csproj
+		SccProjectName10 = Di3BMainClone
+		SccLocalPath10 = Di3BMainClone
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,22 +86,6 @@ Global
 		{B0070604-2123-481A-8E5B-BA6BF11DC1FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0070604-2123-481A-8E5B-BA6BF11DC1FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0070604-2123-481A-8E5B-BA6BF11DC1FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7CAFE7BE-5EF5-4B25-9C01-CDF793626F11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CAFE7BE-5EF5-4B25-9C01-CDF793626F11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CAFE7BE-5EF5-4B25-9C01-CDF793626F11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CAFE7BE-5EF5-4B25-9C01-CDF793626F11}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7C13FAB-6459-48F3-ACE3-661A4936CCC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7C13FAB-6459-48F3-ACE3-661A4936CCC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7C13FAB-6459-48F3-ACE3-661A4936CCC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7C13FAB-6459-48F3-ACE3-661A4936CCC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E9D275F-0148-40CE-8F23-94CD0B32BBC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E9D275F-0148-40CE-8F23-94CD0B32BBC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E9D275F-0148-40CE-8F23-94CD0B32BBC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E9D275F-0148-40CE-8F23-94CD0B32BBC5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1391808F-1F1D-4F8F-9EAF-C4030E040B3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1391808F-1F1D-4F8F-9EAF-C4030E040B3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1391808F-1F1D-4F8F-9EAF-C4030E040B3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1391808F-1F1D-4F8F-9EAF-C4030E040B3A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A22001FA-A30D-4027-832C-9EBCFD6AA8C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A22001FA-A30D-4027-832C-9EBCFD6AA8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A22001FA-A30D-4027-832C-9EBCFD6AA8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -96,8 +102,39 @@ Global
 		{EF0029E2-FC61-4E08-9E1D-E27799A4F18A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF0029E2-FC61-4E08-9E1D-E27799A4F18A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF0029E2-FC61-4E08-9E1D-E27799A4F18A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{182F5584-F44D-4656-B359-0FE2AE1249AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{182F5584-F44D-4656-B359-0FE2AE1249AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{182F5584-F44D-4656-B359-0FE2AE1249AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{182F5584-F44D-4656-B359-0FE2AE1249AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD67BBCA-0C1A-4897-9E66-E54A0AC59F5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD67BBCA-0C1A-4897-9E66-E54A0AC59F5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD67BBCA-0C1A-4897-9E66-E54A0AC59F5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD67BBCA-0C1A-4897-9E66-E54A0AC59F5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5BA307C-57F1-4744-80B7-25510B75CAD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5BA307C-57F1-4744-80B7-25510B75CAD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5BA307C-57F1-4744-80B7-25510B75CAD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5BA307C-57F1-4744-80B7-25510B75CAD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A568492-F768-49F2-A3D9-956DD80E6E67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A568492-F768-49F2-A3D9-956DD80E6E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A568492-F768-49F2-A3D9-956DD80E6E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A568492-F768-49F2-A3D9-956DD80E6E67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9D02F27-2232-4346-A9CC-84A02CEFC03B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9D02F27-2232-4346-A9CC-84A02CEFC03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9D02F27-2232-4346-A9CC-84A02CEFC03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9D02F27-2232-4346-A9CC-84A02CEFC03B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B0070604-2123-481A-8E5B-BA6BF11DC1FF} = {F3718BC3-929B-498D-8287-D2014CB3C1F9}
+		{A22001FA-A30D-4027-832C-9EBCFD6AA8C7} = {E7AB1DDC-637D-4BCB-BD30-112C00254BEF}
+		{0A7BC7E5-D0A2-49FD-9574-0AA84900E948} = {E7AB1DDC-637D-4BCB-BD30-112C00254BEF}
+		{18CC73BF-90B2-4D61-B5CE-C75E29854D71} = {E7AB1DDC-637D-4BCB-BD30-112C00254BEF}
+		{EF0029E2-FC61-4E08-9E1D-E27799A4F18A} = {E7AB1DDC-637D-4BCB-BD30-112C00254BEF}
+		{182F5584-F44D-4656-B359-0FE2AE1249AB} = {4B5E9874-3D0B-4EBC-8347-CB6C18D518BE}
+		{DD67BBCA-0C1A-4897-9E66-E54A0AC59F5F} = {F3767FB7-4E9D-4F66-960D-3B6970F19299}
+		{C5BA307C-57F1-4744-80B7-25510B75CAD3} = {F3767FB7-4E9D-4F66-960D-3B6970F19299}
+		{5A568492-F768-49F2-A3D9-956DD80E6E67} = {F3767FB7-4E9D-4F66-960D-3B6970F19299}
 	EndGlobalSection
 EndGlobal

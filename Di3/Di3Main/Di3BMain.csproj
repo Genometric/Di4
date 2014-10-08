@@ -100,14 +100,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BEDParser\BEDParser.csproj">
-      <Project>{1391808f-1f1d-4f8f-9eaf-c4030e040b3a}</Project>
-      <Name>BEDParser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Di3Bioinformatics\Di3Bioinformatics.csproj">
-      <Project>{8e9d275f-0148-40ce-8f23-94cd0b32bbc5}</Project>
-      <Name>Di3Bioinformatics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IInterval\IInterval.csproj">
       <Project>{a22001fa-a30d-4027-832c-9ebcfd6aa8c7}</Project>
       <Name>IInterval</Name>
@@ -115,10 +107,6 @@
     <ProjectReference Include="..\IMetadata\ICPMetadata.csproj">
       <Project>{0a7bc7e5-d0a2-49fd-9574-0aa84900e948}</Project>
       <Name>ICPMetadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Library\Di3\Di3.csproj">
-      <Project>{7cafe7be-5ef5-4b25-9c01-cdf793626f11}</Project>
-      <Name>Di3</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

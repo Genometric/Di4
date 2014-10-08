@@ -120,6 +120,15 @@ namespace TestMain
                 }
 
 
+
+                // Iterate from an item that is NOT available in collection
+                // to the item which is neither available.
+                foreach(var item in tree.EnumerateRange(20.5, 40.9))
+                {
+
+                }
+
+
                 // Gets the item at specific index. 
                 // All return valid values, but the last one which is
                 // refereing to an index out-of-bound; the return of this 

@@ -73,10 +73,6 @@
       <Project>{0a7bc7e5-d0a2-49fd-9574-0aa84900e948}</Project>
       <Name>ICPMetadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Library\Di3\Di3.csproj">
-      <Project>{7cafe7be-5ef5-4b25-9c01-cdf793626f11}</Project>
-      <Name>Di3</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
