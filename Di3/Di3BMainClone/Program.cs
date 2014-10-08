@@ -17,8 +17,7 @@ namespace Di3BMain
 
             Herald.Initialize(Herald.Destination.Both, "E:\\myTestLog.log");
 
-
-            Orchestrator orchestrator = new Orchestrator();
+            Orchestrator orchestrator = new Orchestrator(@"E:\TestIndex");
 
             string runResult = "";
 

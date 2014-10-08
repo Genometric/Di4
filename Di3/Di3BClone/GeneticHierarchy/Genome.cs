@@ -21,6 +21,7 @@ namespace Di3B
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
             FileName = FilePath + Path.DirectorySeparatorChar + "Di3";
+            if (!Directory.Exists(FilePath)) Directory.CreateDirectory(FilePath);
             Chrs = new Dictionary<string, Chromosome<C, I, M>>();
         }
 

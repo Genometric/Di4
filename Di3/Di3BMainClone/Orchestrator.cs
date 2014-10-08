@@ -14,12 +14,12 @@ namespace Di3BMain
 {
     public class Orchestrator
     {
-        public Orchestrator()
+        public Orchestrator(string workingDirectory)
         {
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
-            di3B = new Di3B<int, Peak, PeakData>(@"E:\TestIndex", PrimitiveSerializer.Int32, int32Comparer);
+            di3B = new Di3B<int, Peak, PeakData>(workingDirectory, PrimitiveSerializer.Int32, int32Comparer);
 
 
             ///------ TEST A
@@ -68,17 +68,17 @@ namespace Di3BMain
 
                     case "summit":
                         stopWatch.Restart();
-                        // summit function.
+                        Summit(splittedCommand);
                         stopWatch.Stop();
                         return stopWatch.Elapsed.ToString();
 
-                    case "map":
+                    case "map": // example: Map E:\reference.bed * count
                         stopWatch.Restart();
                         Map(splittedCommand);
                         stopWatch.Stop();
                         return stopWatch.Elapsed.ToString();
 
-                    case "lif":
+                    case "lid":
                         stopWatch.Restart();
                         LID(splittedCommand);
                         stopWatch.Stop();
@@ -201,11 +201,9 @@ namespace Di3BMain
 
         private void Map(string[] args)
         {
-            string FileName = @"E:\reference\reference.narrowpeak";
-            Load(new string[] { "", FileName });
-
-            var referencePeaks = Repository.parsedSamples[samplesHashtable[FileName]].peaks;
-            di3B.Map('*', referencePeaks, "count");
+            Load(new string[] { "", args[1] });
+            var referencePeaks = Repository.parsedSamples[samplesHashtable[args[1]]].peaks;
+            di3B.Map(Char.Parse(args[2]), referencePeaks, args[3]);
         }
 
 
