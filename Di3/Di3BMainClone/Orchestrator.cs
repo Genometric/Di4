@@ -19,14 +19,14 @@ namespace Di3BMain
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
-            di3B = new Di3B<int, Peak, PeakData>(workingDirectory, PrimitiveSerializer.Int32, int32Comparer);
+            di3B = new Di3B<int, Peak, PeakData>(workingDirectory, Memory.HDD, PrimitiveSerializer.Int32, int32Comparer);
 
 
             ///------ TEST A
             //Load_and_Add();
 
             ///------ TEST B
-            //LID(new string[] { "", @"E:\hgnp", "narrowPeak" });
+            LID(new string[] { "", @"H:\hg", "narrowPeak" });
         }
 
         Stopwatch stopWatch { set; get; }
@@ -60,13 +60,13 @@ namespace Di3BMain
                         stopWatch.Stop();
                         return stopWatch.Elapsed.ToString();
 
-                    case "cover":
+                    case "cover": // example: cover * 1 4 count
                         stopWatch.Restart();
                         Cover(splittedCommand);
                         stopWatch.Stop();
                         return stopWatch.Elapsed.ToString();
 
-                    case "summit":
+                    case "summit": // example: summit * 2 4 count
                         stopWatch.Restart();
                         Summit(splittedCommand);
                         stopWatch.Stop();
@@ -166,7 +166,7 @@ namespace Di3BMain
         {
             DirectoryInfo dirInfo = new DirectoryInfo(args[1]);
 
-            int counter = -1;
+            int counter = 0;
 
             foreach (var file in dirInfo.GetFiles("*." + args[2]))
             {
@@ -233,7 +233,7 @@ namespace Di3BMain
                             right = r,
                             name = "Hamedlkjlslkfjlksdjvlksdjvdsjfe",
                             value = rnd.NextDouble(),
-                            hashKey = (ulong)rnd.Next(10000, 100000000)
+                            hashKey = (UInt32)rnd.Next(10000, 100000000)
                         }
                     });
 

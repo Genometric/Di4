@@ -53,7 +53,8 @@ namespace DI3
                     accumulation > maxAcc))
                 {
                     UpdateLambdas(block.Value.lambda);
-                    OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
+                    //OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
+                    OutputStrategy.Output(markedKey, block.Key, lambdas);
 
                     markedKey = default(C);
                     markedAcc = -1;
@@ -92,7 +93,8 @@ namespace DI3
                     markedAcc != -1))
                 {
                     UpdateLambdas(block.Value.lambda);
-                    OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
+                    //OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
+                    OutputStrategy.Output(markedKey, block.Key, lambdas);
 
                     markedKey = default(C);
                     markedAcc = -1;
@@ -106,7 +108,7 @@ namespace DI3
 
         internal List<O> Map(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
         {
-            foreach(var reference in references)
+            foreach (var reference in references)
             {
                 lambdas.Clear();
                 intervalsKeys.Clear();
@@ -128,12 +130,12 @@ namespace DI3
             return OutputStrategy.output;
         }
 
-        private void UpdateLambdas(List<Lambda<C,M>> newLambdas)
+        private void UpdateLambdas(List<Lambda<C, M>> newLambdas)
         {
-            foreach(var item in newLambdas)
+            foreach (var item in newLambdas)
             {
-                if (item.tau != 'R' &&
-                        !intervalsKeys.ContainsKey(item.atI.hashKey))
+                if (//item.tau != 'R' &&
+                    !intervalsKeys.ContainsKey(item.atI.hashKey))
                 {
                     lambdas.Add(item);
                     intervalsKeys.Add(item.atI.hashKey, "Hmd");

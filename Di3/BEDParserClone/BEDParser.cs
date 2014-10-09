@@ -580,6 +580,8 @@ namespace BEDParser
                                 if (!_data.peaks.ContainsKey(chrTitle))
                                     AddNewChromosome(chrTitle);
 
+                                readingPeak.metadata.hashKey = GetPeakHashKey(readingPeak, chrTitle);
+                                
                                 _data.peaks[chrTitle].Add(readingPeak);
 
                                 _Chrs[chrTitle].count++;
@@ -833,6 +835,31 @@ namespace BEDParser
             for (int i = 0; i < len; i++)
             {
                 hashKey += file[i];
+                hashKey += (hashKey << 10);
+                hashKey ^= (hashKey >> 6);
+            }
+
+            hashKey += (hashKey << 3);
+            hashKey ^= (hashKey >> 11);
+            hashKey += (hashKey << 15);
+
+            return hashKey;
+        }
+
+        /// <summary>
+        /// Returns hash key based on One-at-a-Time method
+        /// generated based on Dr. Dobb's left methods.
+        /// </summary>
+        /// <returns>Hashkey of the interval.</returns>
+        private UInt32 GetPeakHashKey(I readingPeak, string chr)
+        {
+            string key = chr + "|" + readingPeak.metadata.name + "|" + readingPeak.left.ToString() + "|" + readingPeak.right.ToString() + "|";
+            int len = key.Length;
+
+            UInt32 hashKey = 0;
+            for (int i = 0; i < len; i++)
+            {
+                hashKey += key[i];
                 hashKey += (hashKey << 10);
                 hashKey ^= (hashKey >> 6);
             }

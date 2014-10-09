@@ -44,33 +44,6 @@ namespace Di3BMain
         /// Dr. Dobb's left method.
         /// </summary>
         [ProtoMember(5)]
-        public ulong hashKey { set; get; }
-
-
-
-        /// <summary>
-        /// Returns hash key based on One-at-a-Time method
-        /// generated based on Dr. Dobb's left methods.
-        /// </summary>
-        /// <returns>Hashkey of the interval.</returns>
-        /*public UInt64 GetHashKey()
-        {
-            string key = chrNo.ToString() + "|" + strand.ToString() + "|" + name + "|" + left.ToString() + "|" + right.ToString() + "|";
-            int len = key.Length;
-
-            UInt64 hashKey = 0;
-            for (int i = 0; i < len; i++)
-            {
-                hashKey += key[i];
-                hashKey += (hashKey << 10);
-                hashKey ^= (hashKey >> 6);
-            }
-
-            hashKey += (hashKey << 3);
-            hashKey ^= (hashKey >> 11);
-            hashKey += (hashKey << 15);
-
-            return hashKey;
-        }*/
+        public UInt32 hashKey { set; get; }
     }
 }

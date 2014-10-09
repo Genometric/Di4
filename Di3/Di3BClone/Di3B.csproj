@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Di3B.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="FunctionsOutput\AggregateFactory.cs" />
     <Compile Include="FunctionsOutput\CSOutputCount.cs" />
     <Compile Include="FunctionsOutput\FunctionOutput.cs" />

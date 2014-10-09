@@ -30,7 +30,7 @@ namespace Di3B
             output.Add(new Output<C, I, M>(left, right, intervals.Count));
         }
 
-        public void Output(I interval, List<Lambda<C, M>> intervals)
+        void ICSOutput<C, I, M, Output<C, I, M>>.Output(I interval, List<Lambda<C, M>> intervals)
         {
             output.Add(new Output<C, I, M>(interval, intervals.Count));
         }

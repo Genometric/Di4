@@ -36,9 +36,16 @@ namespace DI3
         /// <param name="coordinate">Represents the c on domain.</param>
         internal B(C coordinate)
         {
-            e = coordinate;
+            //e = coordinate;
             omega = 0;
             lambda = new List<Lambda<C, M>>();
+        }
+
+
+
+        public object TESTGETTotalMemory()
+        {
+            return GC.GetTotalMemory(true);
         }
 
 
@@ -46,21 +53,21 @@ namespace DI3
         /// <summary>
         /// Gets the element of domain which the block refers to.
         /// </summary>
-        [ProtoMember(1)]
-        internal C e { set; get; }
+        //[ProtoMember(1)]
+        //internal C e { set; get; }
 
         /// <summary>
         /// Denotes the number of intervals whose
         /// right-end intersects with e. 
         /// </summary>
-        [ProtoMember(2)]
+        [ProtoMember(1)]
         internal int omega { set; get; }
 
         /// <summary>
         /// Represents the interval intersecting with 
         /// the c of corresponding block.
         /// </summary>
-        [ProtoMember(3)]
+        [ProtoMember(2)]
         internal List<Lambda<C, M>> lambda { set; get; }
     }
 }

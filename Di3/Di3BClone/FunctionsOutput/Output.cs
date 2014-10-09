@@ -42,6 +42,7 @@ namespace Di3B
         internal Output(I Interval, int Count)
         {
             interval = Interval;
+            count = Count;
         }
 
         //public C left { private set; get; }

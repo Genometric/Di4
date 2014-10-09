@@ -30,7 +30,7 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    public class Di3<C, I, M>
+    public class Di3<C, I, M> : IDisposable
         where C : IComparable<C>
         where I : IInterval<C, M>
         where M : IMetaData<C>
@@ -61,13 +61,20 @@ namespace DI3
         /// </summary>
         /// <param name="CSerializer"></param>
         /// <param name="comparer"></param>
-        public Di3(string FileName, ISerializer<C> CSerializer, IComparer<C> comparer)
+        public Di3(string FileName, CreatePolicy createPolicy, ISerializer<C> CSerializer, IComparer<C> comparer)
         {
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
-            options.CalcBTreeOrder(16, 24);
-            options.CreateFile = CreatePolicy.IfNeeded;
-            options.FileName = FileName;
+
+            options.CalcBTreeOrder(16, 1400); //24);
+            options.CreateFile = createPolicy;
+            options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
+            options.StoragePerformance = StoragePerformance.Fastest;
+
+            options.FileBlockSize = 512;
+
+            if (createPolicy != CreatePolicy.Never)
+                options.FileName = FileName;
 
             di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);
@@ -94,6 +101,35 @@ namespace DI3
         {
             HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
             return SetOps.Map(OutputStrategy, references);
+        }
+
+
+
+        bool disposed = false;
+
+        // Public implementation of Dispose pattern callable by consumers. 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern. 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here. 
+                di3.Commit();
+                di3.Dispose();
+            }
+
+            // Free any unmanaged objects here. 
+            //
+            disposed = true;
         }
     }
 }

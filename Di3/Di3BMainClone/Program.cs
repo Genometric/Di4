@@ -15,9 +15,9 @@ namespace Di3BMain
             Console.WriteLine("");
             Console.WriteLine(".::.   Running Directory : {0}", Environment.CurrentDirectory);
 
-            Herald.Initialize(Herald.Destination.Both, "E:\\myTestLog.log");
+            Herald.Initialize(Herald.Destination.Both, "I:\\ts\\myTestLog.log");
 
-            Orchestrator orchestrator = new Orchestrator(@"E:\TestIndex");
+            Orchestrator orchestrator = new Orchestrator(@"I:\ts");
 
             string runResult = "";
 

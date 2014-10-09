@@ -23,7 +23,7 @@ namespace Di3B
         {
             //di3PS = new Di3<C, I, M>(CSerializer, CComparer);
             //di3NS = new Di3<C, I, M>(CSerializer, CComparer);
-            di3US = new Di3<C, I, M>(FileName, CSerializer, CComparer);
+            di3US = new Di3<C, I, M>(FileName, CreatePolicy.Never, CSerializer, CComparer);
         }
 
         /// <summary>

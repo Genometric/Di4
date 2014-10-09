@@ -12,6 +12,6 @@ namespace Interfaces
         C left { set; get; }
         C right { set; get; }
         double value { set; get; }
-        UInt64 hashKey { set; get; }
+        UInt32 hashKey { set; get; }
     }
 }

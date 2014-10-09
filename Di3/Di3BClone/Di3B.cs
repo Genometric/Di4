@@ -23,11 +23,11 @@ namespace Di3B
         //private Dictionary<string, Di3<C, I, M>> Chrs { set; get; }
 
         private Genome<C, I, M> genome { set; get; }
-        public Di3B(string IndexPath, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Di3B(string IndexPath, Memory Memory, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
-            genome = new Genome<C, I, M>(IndexPath, CSerializer, CComparer);
+            genome = new Genome<C, I, M>(IndexPath, Memory, CSerializer, CComparer);
 
 
             ////// ------- moved to genome.
