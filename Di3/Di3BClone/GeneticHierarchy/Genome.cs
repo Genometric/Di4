@@ -8,28 +8,33 @@ using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using DI3;
 using System.IO;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace Di3B
 {
-    public class Genome<C, I, M> 
+    public class Genome<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>, new()
         where M : IMetaData<C>, new()
     {
-        public Genome(string FilePath, Memory Memory, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Genome(string Di3Path, Memory Memory, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.memory = Memory;
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
 
-            FileName = FilePath + Path.DirectorySeparatorChar + "Di3";
-            if (!Directory.Exists(FilePath)) Directory.CreateDirectory(FilePath);
+            config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            Di3Path = Di3Path + Path.DirectorySeparatorChar;
+            settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
+            if (settings["WorkingDirectory"] == null) settings.Add("WorkingDirectory", Di3Path);
+            else settings["WorkingDirectory"].Value = Di3Path;
+
+            //FileName = Di3Path + Path.DirectorySeparatorChar + "Di3";
+            if (!Directory.Exists(settings["WorkingDirectory"].Value)) Directory.CreateDirectory(settings["WorkingDirectory"].Value);
 
             if (memory == Memory.RAM)
-            {
-                //Chrs = new Dictionary<string, Chromosome<C, I, M>>();
                 Chrs = new Dictionary<string, Dictionary<char, Di3<C, I, M>>>();
-            }
         }
 
 
@@ -37,8 +42,12 @@ namespace Di3B
 
         private ISerializer<C> CSerializer { set; get; }
         private IComparer<C> CComparer { set; get; }
-        private string FileName { set; get; }
+        //private string FileName { set; get; }
         private Memory memory { set; get; }
+        private KeyValueConfigurationCollection settings { set; get; }
+        string sectionName = "Chromosome";
+        ChrSection chrSection { set; get; }
+        Configuration config { set; get; }
 
         /// <summary>
         /// Sets and Gets all chromosomes of the genome.
@@ -46,89 +55,124 @@ namespace Di3B
         //internal Dictionary<string, Chromosome<C, I, M>> Chrs { set; get; }
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> Chrs { set; get; }
 
-        internal void Add(Dictionary<string, List<I>> peaks)
-        {
-            int counter = 0;
-            foreach (var chr in peaks)
-            {
-                switch (memory)
-                {
-                    case Memory.HDD:
-                        using (var di3 = new Di3<C, I, M>(FileName + chr.Key + ".indx", CreatePolicy.IfNeeded, CSerializer, CComparer))
-                            foreach (var peak in chr.Value)
-                            {
-                                di3.Add(Clone(peak));
-                                Console.Write("\r Added: {0} - {1:N0}", chr.Key, counter++);
-                            }
-                        break;
 
-                    case Memory.RAM:
-                        if (!Chrs.ContainsKey(chr.Key))
-                            Chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
-                        Chrs[chr.Key].Add('*', new Di3<C, I, M>(FileName, CreatePolicy.Never, CSerializer, CComparer));
 
-                        foreach (var peak in chr.Value)
-                        {
-                            Chrs[chr.Key]['*'].Add(Clone(peak));
-                            Console.Write("\r Added: {0} - {1:N0}", chr.Key, counter++);
-                        }
-                        break;
-                }
-            }
-        }
+
+
 
         internal FunctionOutput<Output<C, I, M>> CoverSummit(string function, char strand, byte minAcc, byte maxAcc, string aggregate)
         {
             FunctionOutput<Output<C, I, M>> output = new FunctionOutput<Output<C, I, M>>();
 
-            AggregateFactory<C, I, M> aggFactory = new AggregateFactory<C, I, M>();
-
-            foreach (var chr in Chrs)
+            switch (memory)
             {
-                switch (memory)
-                {
-                    case Memory.HDD:
-                        using (var di3 = new Di3<C, I, M>(FileName + chr.Key + ".indx", CreatePolicy.IfNeeded, CSerializer, CComparer))
+                case Memory.HDD:
+                    chrSection = (ChrSection)ConfigurationManager.GetSection(sectionName);
+                    if (chrSection == null) chrSection = new ChrSection();
+                    ConfigurationManager.RefreshSection(sectionName);
+
+                    foreach (ChrConfigElement element in chrSection.genomeChrs)
+                    {
+                        if (!output.Chrs.ContainsKey(element.chr)) output.Chrs.Add(element.chr, new Dictionary<char, List<Output<C, I, M>>>());
+                        if (!output.Chrs[element.chr].ContainsKey(strand)) output.Chrs[element.chr].Add(strand, new List<Output<C, I, M>>());
+                        
+                        using (var di3 = new Di3<C, I, M>(element.index, CreatePolicy.IfNeeded, CSerializer, CComparer))
                         {
-                            switch (function)
-                            {
-                                case "cover":
-                                    output.Chrs[chr.Key]['*'] = di3.Cover<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
-                                    break;
-
-                                case "summit":
-                                    output.Chrs[chr.Key]['*'] = di3.Summit<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
-                                    break;
-                            }
+                            output.Chrs[element.chr][element.strand] = ExecuteCoverSummit(function, di3, strand, minAcc, maxAcc, aggregate);
                         }
-                        break;
+                    }
 
-                    case Memory.RAM:
-                        if (!Chrs.ContainsKey(chr.Key))
-                            Chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
-                        Chrs[chr.Key].Add('*', new Di3<C, I, M>(FileName, CreatePolicy.Never, CSerializer, CComparer));
+                    // string sectionName = "Chromosome";                    
+                    // var allChrs = config.Sections[sectionName];
+                    break;
 
-                        switch (function)
-                        {
-                            case "cover":
-                                output.Chrs[chr.Key]['*'] = Chrs[chr.Key]['*'].Cover<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
-                                break;
 
-                            case "summit":
-                                output.Chrs[chr.Key]['*'] = Chrs[chr.Key]['*'].Summit<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
-                                break;
-                        }
-                        break;
-                }
+                case Memory.RAM:
+                    foreach (var chr in Chrs)
+                    {
+                        Chrs[chr.Key].Add('*', new Di3<C, I, M>(GetDi3File(chr.Key, strand), CreatePolicy.Never, CSerializer, CComparer));
+                        output.Chrs[chr.Key][strand] = ExecuteCoverSummit(function, Chrs[chr.Key][strand], strand, minAcc, maxAcc, aggregate);
+                    }
+                    break;
             }
 
             return output;
         }
 
+        private List<Output<C, I, M>> ExecuteCoverSummit(string function, Di3<C, I, M> di3, char strand, byte minAcc, byte maxAcc, string aggregate)
+        {
+            AggregateFactory<C, I, M> aggFactory = new AggregateFactory<C, I, M>();
+
+            switch (function)
+            {
+                case "cover":
+                    return di3.Cover<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+
+                case "summit":
+                    return di3.Summit<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
+            }
+
+            return null;
+        }
+
+
+
+
+        internal void Add(Dictionary<string, List<I>> peaks, char strand)
+        {
+            int counter = 0;
+
+            switch (memory)
+            {
+                case Memory.HDD:
+                    chrSection = (ChrSection)ConfigurationManager.GetSection(sectionName);
+                    if (chrSection == null) chrSection = new ChrSection();
+                    ConfigurationManager.RefreshSection(sectionName);
+
+                    foreach (var chr in peaks)
+                    {
+                        string di3File = GetDi3File(chr.Key, strand);
+                        using (var di3 = new Di3<C, I, M>(di3File, CreatePolicy.IfNeeded, CSerializer, CComparer))
+                        {
+                            counter = ExecuteAdd(chr.Value, di3, chr.Key, counter);
+                        }
+                    }
+
+                    if (config.Sections[sectionName] == null)
+                        config.Sections.Add(sectionName, chrSection);
+
+                    config.Save(ConfigurationSaveMode.Modified);
+                    ConfigurationManager.RefreshSection(sectionName);
+                    break;
+
+                case Memory.RAM:
+                    foreach (var chr in peaks)
+                    {
+                        if (!Chrs.ContainsKey(chr.Key))
+                            Chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
+                        Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3File(chr.Key, strand), CreatePolicy.Never, CSerializer, CComparer));
+
+                        counter = ExecuteAdd(chr.Value, Chrs[chr.Key][strand], chr.Key, counter);
+                    }
+                    break;
+            }
+        }
+
+        private int ExecuteAdd(List<I> peaks, Di3<C, I, M> di3, string chr, int counter)
+        {
+            foreach (var peak in peaks)
+            {
+                di3.Add(Clone(peak));
+                Console.Write("\r Added: {0} - {1:N0}", chr, counter++);
+            }
+
+            return counter;
+        }
+
+
         internal FunctionOutput<Output<C, I, M>> Map(Dictionary<string, List<I>> references, char strand, string aggregate)
         {
             FunctionOutput<Output<C, I, M>> output = new FunctionOutput<Output<C, I, M>>();
-
             AggregateFactory<C, I, M> aggFactory = new AggregateFactory<C, I, M>();
 
             foreach (var reference in references)
@@ -136,19 +180,24 @@ namespace Di3B
                 if (!output.Chrs.ContainsKey(reference.Key))
                     output.Chrs.Add(reference.Key, new Dictionary<char, List<Output<C, I, M>>>());
 
-                switch(memory)
+                switch (memory)
                 {
                     case Memory.HDD:
-                        using (var di3 = new Di3<C, I, M>(FileName + reference.Key + ".indx", CreatePolicy.IfNeeded, CSerializer, CComparer))
-                            output.Chrs[reference.Key]['*'] = di3.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                        chrSection = (ChrSection)ConfigurationManager.GetSection(sectionName);
+                        if (chrSection == null) chrSection = new ChrSection();
+                        ConfigurationManager.RefreshSection(sectionName);
+                        using (var di3 = new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.IfNeeded, CSerializer, CComparer))
+                        {
+                            Console.WriteLine("... proecssing {0} now.", reference.Key);
+                            output.Chrs[reference.Key][strand] = di3.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                        }
                         break;
 
                     case Memory.RAM:
                         if (!Chrs.ContainsKey(reference.Key))
                             Chrs.Add(reference.Key, new Dictionary<char, Di3<C, I, M>>());
-                        Chrs[reference.Key].Add('*', new Di3<C, I, M>(FileName, CreatePolicy.Never, CSerializer, CComparer));
-
-                        output.Chrs[reference.Key]['*'] = Chrs[reference.Key]['*'].Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                        Chrs[reference.Key].Add(strand, new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.Never, CSerializer, CComparer));
+                        output.Chrs[reference.Key][strand] = Chrs[reference.Key][strand].Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
                         break;
                 }
 
@@ -210,6 +259,29 @@ namespace Di3B
                     name = i.metadata.name
                 }
             };
+        }
+
+        private string GetDi3File(string chr, char strand)
+        {
+            if (memory == Memory.HDD)
+                foreach (ChrConfigElement element in chrSection.genomeChrs)
+                    if (element.chr == chr)
+                        return element.index;
+
+
+            /// Following codes will be met in two conditions:
+            /// 1. memory = RAM 
+            /// 2. memory = HDD but no index for the defined chromosome is defined in config file.
+            if (settings[chr] == null) settings.Add(chr, settings["WorkingDirectory"].Value + "Di3" + chr + ".indx");
+            else settings[chr].Value = settings["WorkingDirectory"].Value + "Di3" + chr + ".indx";
+            chrSection.genomeChrs.Add(new ChrConfigElement() { chr = chr, strand = strand, index = settings[chr].Value });
+
+            /// There might be better way to wipe-out the default value, even in different position with different strategy; 
+            /// however, this method was the simplest I found and is a possible target of cleaning code.
+            var initialDataIndex = chrSection.genomeChrs.IndexOf(new ChrConfigElement() { chr = "Initial", index = "Initial", strand = '*' });
+            if (initialDataIndex != -1) chrSection.genomeChrs.RemoveAt(initialDataIndex);
+
+            return settings[chr].Value;
         }
     }
 }

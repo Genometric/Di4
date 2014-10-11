@@ -26,7 +26,7 @@ namespace Di3BMain
             //Load_and_Add();
 
             ///------ TEST B
-            LID(new string[] { "", @"H:\hg", "narrowPeak" });
+            //LID(new string[] { "", @"H:\hg", "narrowPeak" });
         }
 
         Stopwatch stopWatch { set; get; }

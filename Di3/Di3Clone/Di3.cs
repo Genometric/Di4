@@ -71,6 +71,8 @@ namespace DI3
             options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             options.StoragePerformance = StoragePerformance.Fastest;
 
+            options.CachePolicy = CachePolicy.All;
+
             options.FileBlockSize = 512;
 
             if (createPolicy != CreatePolicy.Never)

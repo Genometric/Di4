@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
+using System.IO;
 
 namespace Di3BMain
 {
@@ -10,14 +12,22 @@ namespace Di3BMain
     {
         static void Main(string[] args)
         {
+            var confingFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var settings = confingFile.AppSettings.Settings;
+            if (settings["WorkingDirectory"] == null)
+                settings.Add("WorkingDirectory", @"I:" + Path.DirectorySeparatorChar + "Di3Data");
+            if (settings["LogFile"] == null)
+                settings.Add("LogFile", @"I:" + Path.DirectorySeparatorChar + "Di3Data" + Path.DirectorySeparatorChar + "Di3.log");
+            confingFile.Save();
+
             Console.WriteLine("");
             Console.WriteLine(".::.   I'm Di3, Welcome.");
             Console.WriteLine("");
             Console.WriteLine(".::.   Running Directory : {0}", Environment.CurrentDirectory);
 
-            Herald.Initialize(Herald.Destination.Both, "I:\\ts\\myTestLog.log");
+            Herald.Initialize(Herald.Destination.Both, settings["LogFile"].Value);
 
-            Orchestrator orchestrator = new Orchestrator(@"I:\ts");
+            Orchestrator orchestrator = new Orchestrator(settings["WorkingDirectory"].Value);
 
             string runResult = "";
 

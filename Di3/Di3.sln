@@ -31,9 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TesT Packages", "TesT Packa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Old Version", "Old Version", "{F3718BC3-929B-498D-8287-D2014CB3C1F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexSpeedTest", "IndexSpeedTest\IndexSpeedTest.csproj", "{842D8921-636D-4DF5-A946-4092EEFAF44E}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -76,6 +78,10 @@ Global
 		SccProjectUniqueName10 = Di3BMainClone\\Di3BMain.csproj
 		SccProjectName10 = Di3BMainClone
 		SccLocalPath10 = Di3BMainClone
+		SccProjectUniqueName11 = IndexSpeedTest\\IndexSpeedTest.csproj
+		SccProjectTopLevelParentUniqueName11 = Di3.sln
+		SccProjectName11 = IndexSpeedTest
+		SccLocalPath11 = IndexSpeedTest
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +128,10 @@ Global
 		{A9D02F27-2232-4346-A9CC-84A02CEFC03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9D02F27-2232-4346-A9CC-84A02CEFC03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9D02F27-2232-4346-A9CC-84A02CEFC03B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{842D8921-636D-4DF5-A946-4092EEFAF44E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{842D8921-636D-4DF5-A946-4092EEFAF44E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{842D8921-636D-4DF5-A946-4092EEFAF44E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{842D8921-636D-4DF5-A946-4092EEFAF44E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,5 +146,9 @@ Global
 		{DD67BBCA-0C1A-4897-9E66-E54A0AC59F5F} = {F3767FB7-4E9D-4F66-960D-3B6970F19299}
 		{C5BA307C-57F1-4744-80B7-25510B75CAD3} = {F3767FB7-4E9D-4F66-960D-3B6970F19299}
 		{5A568492-F768-49F2-A3D9-956DD80E6E67} = {F3767FB7-4E9D-4F66-960D-3B6970F19299}
+		{842D8921-636D-4DF5-A946-4092EEFAF44E} = {E7AB1DDC-637D-4BCB-BD30-112C00254BEF}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

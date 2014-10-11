@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C5BA307C-57F1-4744-80B7-25510B75CAD3}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{842D8921-636D-4DF5-A946-4092EEFAF44E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Di3B</RootNamespace>
-    <AssemblyName>Di3B</AssemblyName>
+    <RootNamespace>IndexSpeedTest</RootNamespace>
+    <AssemblyName>IndexSpeedTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -17,6 +17,7 @@
     <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -26,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -44,7 +46,6 @@
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -53,32 +54,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChrConfig.cs" />
-    <Compile Include="Di3B.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="FunctionsOutput\AggregateFactory.cs" />
-    <Compile Include="FunctionsOutput\CSOutputCount.cs" />
-    <Compile Include="FunctionsOutput\FunctionOutput.cs" />
-    <Compile Include="FunctionsOutput\Output.cs" />
-    <Compile Include="GeneticHierarchy\Chromosome.cs" />
-    <Compile Include="GeneticHierarchy\Genome.cs" />
-    <Compile Include="MessageElement.cs" />
+    <Compile Include="IndexSpeed_01.cs" />
+    <Compile Include="Int32Comparer.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Di3BMainClone\Di3BMain.csproj">
+      <Project>{a9d02f27-2232-4346-a9cc-84a02cefc03b}</Project>
+      <Name>Di3BMain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Di3Clone\Di3.csproj">
       <Project>{5a568492-f768-49f2-a3d9-956dd80e6e67}</Project>
       <Name>Di3</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{182f5584-f44d-4656-b359-0fe2ae1249ab}</Project>
-      <Name>Interfaces</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Di3B.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

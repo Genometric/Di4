@@ -9,7 +9,7 @@ namespace Di3B
 {
     public class Output<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>
+        where I : IInterval<C, M>, new() // new is new
         where M : IMetaData<C>
     {
         /// ----------------------------------------
@@ -29,6 +29,7 @@ namespace Di3B
         {
             //left = Left;
             //right = Right;
+            interval = new I();
             interval.left = Left;
             interval.right = Right;
             count = Count;

@@ -48,18 +48,25 @@ namespace DI3
                     markedAcc = accumulation;
                     UpdateLambdas(block.Value.lambda);
                 }
-                else if (markedAcc != -1 && (
-                    accumulation < minAcc ||
-                    accumulation > maxAcc))
+                else if (markedAcc != -1)
                 {
-                    UpdateLambdas(block.Value.lambda);
-                    //OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
-                    OutputStrategy.Output(markedKey, block.Key, lambdas);
+                    if (accumulation < minAcc ||
+                        accumulation > maxAcc)
+                    {
+                        UpdateLambdas(block.Value.lambda);
+                        //OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
+                        OutputStrategy.Output(markedKey, block.Key, lambdas);
 
-                    markedKey = default(C);
-                    markedAcc = -1;
-                    lambdas.Clear();
-                    intervalsKeys.Clear();
+                        markedKey = default(C);
+                        markedAcc = -1;
+                        lambdas.Clear();
+                        intervalsKeys.Clear();
+                    }
+                    else if (accumulation >= minAcc &&
+                        accumulation <= maxAcc)
+                    {
+                        UpdateLambdas(block.Value.lambda);
+                    }
                 }
             }
 
@@ -101,6 +108,12 @@ namespace DI3
                     lambdas.Clear();
                     intervalsKeys.Clear();
                 }
+                else if (accumulation >= minAcc &&
+                    accumulation <= maxAcc &&
+                    markedAcc != -1)
+                {
+                    UpdateLambdas(block.Value.lambda);
+                }
             }
 
             return OutputStrategy.output;
@@ -108,8 +121,10 @@ namespace DI3
 
         internal List<O> Map(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
         {
+            int i = 0;
             foreach (var reference in references)
             {
+                Console.Write("\r ... processing regions: {0} / {1}", ++i, references.Count);
                 lambdas.Clear();
                 intervalsKeys.Clear();
 
