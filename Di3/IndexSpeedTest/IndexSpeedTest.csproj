@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IndexSpeed_01.cs" />
+    <Compile Include="IndexSpeed_02.cs" />
+    <Compile Include="IndexSpeed_03.cs" />
     <Compile Include="Int32Comparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,6 +73,10 @@
     <ProjectReference Include="..\Di3Clone\Di3.csproj">
       <Project>{5a568492-f768-49f2-a3d9-956dd80e6e67}</Project>
       <Name>Di3</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{182f5584-f44d-4656-b359-0fe2ae1249ab}</Project>
+      <Name>Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

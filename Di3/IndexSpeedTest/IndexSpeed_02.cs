@@ -12,7 +12,7 @@ using Di3BMain;
 
 namespace IndexSpeedTest
 {
-    public class IndexSpeed_01
+    public class IndexSpeed_02
     {
         Random rnd = new Random();
 
@@ -43,8 +43,8 @@ namespace IndexSpeedTest
 
                     for (int intervals = 1; intervals <= regionCount; intervals++)
                     {
-                        left = right + rnd.Next(5, 50);
-                        right = left + rnd.Next(50, 100);
+                        left = right + rnd.Next(5, 500);
+                        right = left + rnd.Next(500, 1000);
 
                         di3.Add(new Peak()
                         {

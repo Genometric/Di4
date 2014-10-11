@@ -12,7 +12,10 @@ using Di3BMain;
 
 namespace IndexSpeedTest
 {
-    public class IndexSpeed_01
+    /// <summary>
+    /// This test is tweaking min/max child nodes count
+    /// </summary>
+    class IndexSpeed_03
     {
         Random rnd = new Random();
 
@@ -37,14 +40,14 @@ namespace IndexSpeedTest
                 /// Why am I diconstructing bplustree at each iteration ? 
                 /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
                 /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer))
+                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, 200, 100, 200, 100))
                 {
                     stopWatch.Restart();
 
                     for (int intervals = 1; intervals <= regionCount; intervals++)
                     {
-                        left = right + rnd.Next(5, 50);
-                        right = left + rnd.Next(50, 100);
+                        left = right + rnd.Next(5, 500);
+                        right = left + rnd.Next(500, 1000);
 
                         di3.Add(new Peak()
                         {

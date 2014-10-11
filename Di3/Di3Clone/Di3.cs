@@ -82,6 +82,41 @@ namespace DI3
             INDEX = new INDEX<C, I, M>(di3);
         }
 
+
+        public Di3(
+            string FileName,
+            CreatePolicy createPolicy,
+            ISerializer<C> CSerializer,
+            IComparer<C> comparer,
+            int maximumChildNodes,
+            int minimumChildNodes,
+            int maximumValueNodes,
+            int minimumValueNodes)
+        {
+            bSerializer = new BSerializer<C, M>();
+            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+
+            options.CalcBTreeOrder(16, 1400); //24);
+            options.CreateFile = createPolicy;
+            options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
+            options.StoragePerformance = StoragePerformance.Fastest;
+            options.MaximumChildNodes = maximumChildNodes;
+            options.MinimumChildNodes = minimumChildNodes;
+            options.MaximumValueNodes = maximumValueNodes;
+            options.MinimumValueNodes = minimumValueNodes;
+
+            options.CachePolicy = CachePolicy.Recent;
+
+            options.FileBlockSize = 512;
+
+            if (createPolicy != CreatePolicy.Never)
+                options.FileName = FileName;
+
+            di3 = new BPlusTree<C, B<C, M>>(options);
+            INDEX = new INDEX<C, I, M>(di3);
+        }
+
+
         public void Add(I interval)
         {
             INDEX.Index(interval);

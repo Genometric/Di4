@@ -10,7 +10,8 @@ namespace IndexSpeedTest
     {
         static void Main(string[] args)
         {
-
+            IndexSpeed_03 test_02 = new IndexSpeed_03();
+            test_02.Run();
         }
     }
 }
