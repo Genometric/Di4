@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Di3B;
-using Interfaces;
 using System.IO;
 using BEDParser;
-using CSharpTest.Net.Serialization;
 using System.Diagnostics;
 
 namespace Di3BMain

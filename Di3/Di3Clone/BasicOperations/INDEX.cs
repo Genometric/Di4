@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interfaces;
 using CSharpTest.Net.Collections;
-using CSharpTest.Net.Serialization;
-using System.IO;
+
 
 namespace DI3
 {
@@ -74,7 +70,7 @@ namespace DI3
         {
             interval = Interval;
 
-            //Console.WriteLine("I'm at J");
+            //Console.WriteLine("I'm at at J");
             marshalPoint = interval.left;
             Insert('L');
 
@@ -119,14 +115,16 @@ namespace DI3
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
             if (di3.ContainsKey(marshalPoint)) // Condition satisfied: add new index
             {
-                //Console.WriteLine("I'm at K");
+                //Console.WriteLine("I'm at at K");
                 UpdateBlock(marshalPoint, tau);
             }
             else // update the available index with new region
             {
-                //Console.WriteLine("I'm at L");
+                //Console.WriteLine("I'm at at L");
 
                 var TEST = GetNewBlock(tau);
+
+                //Console.WriteLine("I'm at at L2");
 
                 di3.Add(marshalPoint, GetNewBlock(tau));
             }
@@ -142,26 +140,26 @@ namespace DI3
         /// <returns>A new block to be added to di3.</returns>
         private B<C, M> GetNewBlock(char tau)
         {
-            //Console.WriteLine("I'm at M");
+            //Console.WriteLine("I'm at at M");
 
             B<C, M> newB = new B<C, M>(marshalPoint) { };
 
-            //Console.WriteLine("I'm at N");
+            //Console.WriteLine("I'm at at N");
 
             newB.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
 
-            //Console.WriteLine("I'm at O");
+            //Console.WriteLine("I'm at at O");
 
             if (tau == 'R') newB.omega = 1;
 
-            //Console.WriteLine("I'm at P");
+            //Console.WriteLine("I'm at at P");
 
             // I need to access one item ahead, but since I could not 
             // find any proper way to do so with BPlusTree, I'm using 
             // following ramblings :)
             foreach (var block in di3.EnumerateFrom(marshalPoint).Skip(0))
             {
-                //Console.WriteLine("I'm at Q");
+                //Console.WriteLine("I'm at at Q");
 
                 foreach (var d in block.Value.lambda)
                 {

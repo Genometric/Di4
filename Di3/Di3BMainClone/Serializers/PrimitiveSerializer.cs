@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
 using CSharpTest.Net.Serialization;
-using CSharpTest.Net.Collections;
-using CSharpTest.Net.Interfaces;
-using CSharpTest;
 
 namespace Di3BMain
 {

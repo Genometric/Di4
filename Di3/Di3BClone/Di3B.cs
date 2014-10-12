@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interfaces;
-using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using DI3;
 
 
 namespace Di3B
