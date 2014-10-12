@@ -17,6 +17,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
+                true,     // Keep or Dispose Di3?
                 path,     // output path
                 "Test_1", // Test Name
                 5,        // min gap
@@ -34,6 +35,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
+                true,     // Keep or Dispose Di3?
                 path,     // output path
                 "Test_2", // Test Name
                 50,       // min gap
@@ -51,6 +53,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
+                true,     // Keep or Dispose Di3?
                 path,     // output path
                 "Test_3", // Test Name
                 50,       // min gap
@@ -72,6 +75,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
+                true,     // Keep or Dispose Di3?
                 path,     // output path
                 "Test_4", // Test Name
                 50,       // min gap
@@ -93,6 +97,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
+                true,     // Keep or Dispose Di3?
                 path,     // output path
                 "Test_5", // Test Name
                 5,        // min gap
@@ -110,6 +115,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,        // sample count
                 200000,      // region count
+                true,        // Keep or Dispose Di3?
                 path,        // output path
                 "Test_6",    // Test Name
                 5,           // min gap
@@ -129,6 +135,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,        // sample count
                 200000,      // region count
+                true,        // Keep or Dispose Di3?
                 path,        // output path
                 "Test_7",    // Test Name
                 5,           // min gap
@@ -148,6 +155,7 @@ namespace IndexSpeedTest
             SpeedTest.Run(
                 2000,        // sample count
                 200000,      // region count
+                true,        // Keep or Dispose Di3?
                 path,        // output path
                 "Test_9",    // Test Name
                 5,           // min gap

@@ -26,6 +26,7 @@ namespace IndexSpeedTest
         public void Run(
             int SampleCount,
             int RegionCount,
+            bool disposeDi3atEachSample,
             string OutputPath,
             string TestName,
             int MinGap,
@@ -47,16 +48,30 @@ namespace IndexSpeedTest
             writer = new StreamWriter(outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".txt");
             writer.WriteLine("Di3 indexing speed test: " + TestName);
 
-            for (int sample = 0; sample < sampleCount; sample++)
+            if (disposeDi3atEachSample)
             {
-                Console.WriteLine("processing sample   : {0:N0}", sample);
-                string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
-
-                /// Why am I diconstructing bplustree at each iteration ? 
-                /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
-                /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer))
+                for (int sample = 0; sample < sampleCount; sample++)
                 {
+                    Console.WriteLine("processing sample   : {0:N0}", sample);
+                    string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
+
+                    /// Why am I diconstructing bplustree at each iteration ? 
+                    /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
+                    /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
+                    using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer))
+                    {
+                        Generate_and_Add_Regions(di3);
+                    }
+                }
+            }
+            else
+            {
+                string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
+                var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer);
+
+                for (int sample = 0; sample < sampleCount; sample++)
+                {
+                    Console.WriteLine("processing sample   : {0:N0}", sample);
                     Generate_and_Add_Regions(di3);
                 }
             }
@@ -65,6 +80,7 @@ namespace IndexSpeedTest
         public void Run(
             int SampleCount,
             int RegionCount,
+            bool disposeDi3atEachSample,
             string OutputPath,
             string TestName,
             int MinGap,
@@ -88,16 +104,30 @@ namespace IndexSpeedTest
             writer = new StreamWriter(outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".txt");
             writer.WriteLine("Di3 indexing speed test: " + TestName);
 
-            for (int sample = 0; sample < sampleCount; sample++)
+            if (disposeDi3atEachSample)
             {
-                Console.WriteLine("processing sample   : {0:N0}", sample);
-                string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
-
-                /// Why am I diconstructing bplustree at each iteration ? 
-                /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
-                /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                for (int sample = 0; sample < sampleCount; sample++)
                 {
+                    Console.WriteLine("processing sample   : {0:N0}", sample);
+                    string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
+
+                    /// Why am I diconstructing bplustree at each iteration ? 
+                    /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
+                    /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
+                    using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                    {
+                        Generate_and_Add_Regions(di3);
+                    }
+                }
+            }
+            else
+            {
+                string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
+                var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize);
+
+                for (int sample = 0; sample < sampleCount; sample++)
+                {
+                    Console.WriteLine("processing sample   : {0:N0}", sample);
                     Generate_and_Add_Regions(di3);
                 }
             }
@@ -106,6 +136,7 @@ namespace IndexSpeedTest
         public void Run(
             int SampleCount,
             int RegionCount,
+            bool disposeDi3atEachSample,
             string OutputPath,
             string TestName,
             int MinGap,
@@ -131,17 +162,31 @@ namespace IndexSpeedTest
             writer = new StreamWriter(outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".txt");
             writer.WriteLine("Di3 indexing speed test: " + TestName);
 
-            for (int sample = 0; sample < sampleCount; sample++)
+            if (disposeDi3atEachSample)
             {
-                Console.WriteLine("processing sample   : {0:N0}", sample);
-                string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
-
-                /// Why am I diconstructing bplustree at each iteration ? 
-                /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
-                /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer,
-                    MaxChildNodes, MinChildNodes, MaxValueNodes, MinValueNodes))
+                for (int sample = 0; sample < sampleCount; sample++)
                 {
+                    Console.WriteLine("processing sample   : {0:N0}", sample);
+                    string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
+
+                    /// Why am I diconstructing bplustree at each iteration ? 
+                    /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
+                    /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
+                    using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer,
+                        MaxChildNodes, MinChildNodes, MaxValueNodes, MinValueNodes))
+                    {
+                        Generate_and_Add_Regions(di3);
+                    }
+                }
+            }
+            else
+            {
+                string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
+                var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer,
+                        MaxChildNodes, MinChildNodes, MaxValueNodes, MinValueNodes);
+                for (int sample = 0; sample < sampleCount; sample++)
+                {
+                    Console.WriteLine("processing sample   : {0:N0}", sample);
                     Generate_and_Add_Regions(di3);
                 }
             }
