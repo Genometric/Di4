@@ -15,7 +15,7 @@ namespace IndexSpeedTest
     /// <summary>
     /// This test is tweaking min/max child nodes count
     /// </summary>
-    class IndexSpeed_03
+    class IndexSpeed_04
     {
         Random rnd = new Random();
 
@@ -42,7 +42,7 @@ namespace IndexSpeedTest
                 /// Why am I diconstructing bplustree at each iteration ? 
                 /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
                 /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, 200, 100, 200, 100))
+                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, 8, 4, 8, 4))
                 {
                     stopWatch.Restart();
 

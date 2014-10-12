@@ -74,6 +74,7 @@ namespace DI3
         {
             interval = Interval;
 
+            //Console.WriteLine("I'm at J");
             marshalPoint = interval.left;
             Insert('L');
 
@@ -118,10 +119,15 @@ namespace DI3
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
             if (di3.ContainsKey(marshalPoint)) // Condition satisfied: add new index
             {
+                //Console.WriteLine("I'm at K");
                 UpdateBlock(marshalPoint, tau);
             }
             else // update the available index with new region
             {
+                //Console.WriteLine("I'm at L");
+
+                var TEST = GetNewBlock(tau);
+
                 di3.Add(marshalPoint, GetNewBlock(tau));
             }
         }
@@ -136,17 +142,27 @@ namespace DI3
         /// <returns>A new block to be added to di3.</returns>
         private B<C, M> GetNewBlock(char tau)
         {
+            //Console.WriteLine("I'm at M");
+
             B<C, M> newB = new B<C, M>(marshalPoint) { };
+
+            //Console.WriteLine("I'm at N");
 
             newB.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
 
+            //Console.WriteLine("I'm at O");
+
             if (tau == 'R') newB.omega = 1;
+
+            //Console.WriteLine("I'm at P");
 
             // I need to access one item ahead, but since I could not 
             // find any proper way to do so with BPlusTree, I'm using 
             // following ramblings :)
-            foreach (var block in di3.EnumerateFrom(marshalPoint))
+            foreach (var block in di3.EnumerateFrom(marshalPoint).Skip(0))
             {
+                //Console.WriteLine("I'm at Q");
+
                 foreach (var d in block.Value.lambda)
                 {
                     if (d.tau != 'L')                    

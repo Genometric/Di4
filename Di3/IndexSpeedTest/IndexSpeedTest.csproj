@@ -57,6 +57,7 @@
     <Compile Include="IndexSpeed_01.cs" />
     <Compile Include="IndexSpeed_02.cs" />
     <Compile Include="IndexSpeed_03.cs" />
+    <Compile Include="IndexSpeed_04.cs" />
     <Compile Include="Int32Comparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

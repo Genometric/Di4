@@ -52,8 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicOperations\INDEX.cs" />
     <Compile Include="BasicOperations\HigherOrderFuncs.cs" />
+    <Compile Include="BasicOperations\INDEX.cs" />
     <Compile Include="Di3.cs" />
     <Compile Include="Interfaces\ICSOutput.cs" />
     <Compile Include="PrimaryComponents\B.cs" />

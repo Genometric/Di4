@@ -10,6 +10,7 @@ using ProtoBuf;
 using Interfaces;
 
 
+
 namespace DI3
 {
     /// <summary>
@@ -63,13 +64,19 @@ namespace DI3
         /// <param name="comparer"></param>
         public Di3(string FileName, CreatePolicy createPolicy, ISerializer<C> CSerializer, IComparer<C> comparer)
         {
+            Console.WriteLine("I'm in di3");
+
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+
+            //Console.WriteLine("I'm at A");
 
             options.CalcBTreeOrder(16, 1400); //24);
             options.CreateFile = createPolicy;
             options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             options.StoragePerformance = StoragePerformance.Fastest;
+
+            //Console.WriteLine("I'm at B");
 
             options.CachePolicy = CachePolicy.All;
 
@@ -78,8 +85,21 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
-            INDEX = new INDEX<C, I, M>(di3);
+            //Console.WriteLine("I'm at C");
+
+            try
+            {
+                //Console.WriteLine("I'm at D");
+                di3 = new BPlusTree<C, B<C, M>>(options);
+                //Console.WriteLine("I'm at E");
+                INDEX = new INDEX<C, I, M>(di3);
+                //Console.WriteLine("I'm at F");
+            }
+            catch(Exception ext)
+            {
+                Console.WriteLine("Invalid File");
+                Console.WriteLine(ext);
+            }
         }
 
 
@@ -93,8 +113,12 @@ namespace DI3
             int maximumValueNodes,
             int minimumValueNodes)
         {
+            //Console.WriteLine("I'm in di3");
+
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+
+            //Console.WriteLine("I'm at A");
 
             options.CalcBTreeOrder(16, 1400); //24);
             options.CreateFile = createPolicy;
@@ -105,6 +129,8 @@ namespace DI3
             options.MaximumValueNodes = maximumValueNodes;
             options.MinimumValueNodes = minimumValueNodes;
 
+            //Console.WriteLine("I'm at B");
+
             options.CachePolicy = CachePolicy.Recent;
 
             options.FileBlockSize = 512;
@@ -112,13 +138,27 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
-            INDEX = new INDEX<C, I, M>(di3);
+            //Console.WriteLine("I'm at C");
+
+            try
+            {
+                //Console.WriteLine("I'm at D");
+                di3 = new BPlusTree<C, B<C, M>>(options);
+                //Console.WriteLine("I'm at E");
+                INDEX = new INDEX<C, I, M>(di3);
+                //Console.WriteLine("I'm at F");
+            }
+            catch (Exception ext)
+            {
+                Console.WriteLine("Invalid File");
+                Console.WriteLine(ext);
+            }
         }
 
 
         public void Add(I interval)
         {
+            //Console.WriteLine("I'm at I");
             INDEX.Index(interval);
         }
 
