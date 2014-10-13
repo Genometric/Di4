@@ -26,6 +26,83 @@ namespace IndexSpeedTest
         public void Run(
             int SampleCount,
             int RegionCount,
+            string OutputPath,
+            string TestName,
+            int MinGap,
+            int MaxGap,
+            int MinLenght,
+            int MaxLenght)
+        {
+            int right = 0;
+            int left = 0;
+
+            regionCount = RegionCount;
+            sampleCount = SampleCount;
+            outputPath = OutputPath;
+            minGap = MinGap;
+            maxGap = MaxGap;
+            minLenght = MinLenght;
+            maxLenght = MaxLenght;
+
+            if (!Directory.Exists(outputPath) && outputPath.Trim() != string.Empty) Directory.CreateDirectory(outputPath);
+            //StreamWriter writer = new StreamWriter(@"E:\VahidsTest\speed.txt");
+            writer = new StreamWriter(outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".txt");
+            writer.WriteLine("Di3 indexing speed test: " + TestName);
+
+            Stopwatch stopWatch = new Stopwatch();
+            string path = @"E:\VahidsTest";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+            string file = path + "\\bplusTree.bpt";
+
+            for (int sample = 0; sample < sampleCount; sample++)
+            {
+                Console.WriteLine("processing sample   : {0:N0}", sample);                
+
+                /// Why am I diconstructing bplustree at each iteration ? 
+                /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
+                /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
+                using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer))
+                {
+                    stopWatch.Restart();
+
+                    for (int intervals = 1; intervals <= regionCount; intervals++)
+                    {
+                        left = right + rnd.Next(MinGap, MaxGap);
+                        right = left + rnd.Next(MinLenght, MaxLenght);
+
+                        di3.Add(new Peak()
+                        {
+                            left = left,
+                            right = right,
+                            metadata = new PeakData()
+                            {
+                                left = left,
+                                right = right,
+                                name = RandomName(),
+                                value = rnd.NextDouble(),
+                                hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
+                            }
+                        });
+
+                        Console.Write("\r#Inserted intervals : {0:N0}", intervals);
+                    }
+
+                    stopWatch.Stop();
+                    Console.WriteLine("");
+                    Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                    Console.WriteLine("");
+
+                    writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                    writer.Flush();
+                }
+            }
+        }
+
+
+        public void Run(
+            int SampleCount,
+            int RegionCount,
             bool disposeDi3atEachSample,
             string OutputPath,
             string TestName,
@@ -53,7 +130,7 @@ namespace IndexSpeedTest
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
                     Console.WriteLine("processing sample   : {0:N0}", sample);
-                    string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
+                    string file = outputPath + Path.DirectorySeparatorChar + "bplusTree2.bpt";
 
                     /// Why am I diconstructing bplustree at each iteration ? 
                     /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
@@ -201,9 +278,6 @@ namespace IndexSpeedTest
 
             for (int intervals = 1; intervals <= regionCount; intervals++)
             {
-                //left = right + rnd.Next(5, 50);
-                //right = left + rnd.Next(50, 100);
-
                 left = right + rnd.Next(minGap, maxGap);
                 right = left + rnd.Next(minLenght, maxLenght);
 

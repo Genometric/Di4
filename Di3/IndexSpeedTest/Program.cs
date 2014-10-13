@@ -8,7 +8,12 @@ namespace IndexSpeedTest
         {
             IndexSpeedTest SpeedTest = new IndexSpeedTest();
 
-            string path = @"D:\Vahid Test\";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"E:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+
+            //SpeedTest.Run(2000, 200000, path, "TEST_11", 5, 500, 500, 1000);
+            SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
+
+            
 
             #region .::.          Test 1          .::.
 
@@ -148,7 +153,6 @@ namespace IndexSpeedTest
 
             #endregion
 
-
             #region .::.          Test 8          .::.
 
             /// Sparse regions; tweak key-value sizes.
@@ -167,8 +171,6 @@ namespace IndexSpeedTest
                 14000);      // Size of Value
             */
             #endregion
-
-
 
             #region .::.          Test 9          .::.
 
@@ -189,8 +191,6 @@ namespace IndexSpeedTest
             */
             #endregion
 
-
-
             #region .::.          Test 10         .::.
 
             /// Sparse regions; tweak key-value sizes.
@@ -200,7 +200,7 @@ namespace IndexSpeedTest
                 200000,          // region count
                 true,            // Keep or Dispose Di3?
                 path,            // output path
-                "Test_10",        // Test Name
+                "Test_10",       // Test Name
                 5,               // min gap
                 10,              // max gap
                 20,              // min lenght
@@ -209,7 +209,6 @@ namespace IndexSpeedTest
                 4000);          // Size of Value
             */
             #endregion
-
         }
     }
 }

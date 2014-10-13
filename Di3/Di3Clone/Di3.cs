@@ -65,19 +65,13 @@ namespace DI3
             int avgKeySize,
             int avgValueSize)
         {
-            Console.WriteLine("I'm in di3");
-
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            //Console.WriteLine("I'm at at A");
 
             options.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
             options.CreateFile = createPolicy;
             options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             options.StoragePerformance = StoragePerformance.Fastest;
-
-            //Console.WriteLine("I'm at at B");
 
             options.CachePolicy = CachePolicy.All;
 
@@ -86,14 +80,8 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            //Console.WriteLine("I'm at at C");
-
-            //Console.WriteLine("I'm at at D");
             di3 = new BPlusTree<C, B<C, M>>(options);
-            //Console.WriteLine("I'm at at E");
             INDEX = new INDEX<C, I, M>(di3);
-            //Console.WriteLine("I'm at at F");
-
         }
 
 
@@ -103,19 +91,13 @@ namespace DI3
             ISerializer<C> CSerializer,
             IComparer<C> comparer)
         {
-            Console.WriteLine("I'm in di3");
-
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            //Console.WriteLine("I'm at at A");
 
             options.CalcBTreeOrder(16, 1400); //24);
             options.CreateFile = createPolicy;
             options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             options.StoragePerformance = StoragePerformance.Fastest;
-
-            //Console.WriteLine("I'm at at B");
 
             options.CachePolicy = CachePolicy.All;
 
@@ -124,14 +106,8 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            //Console.WriteLine("I'm at at C");
-
-            //Console.WriteLine("I'm at at D");
             di3 = new BPlusTree<C, B<C, M>>(options);
-            //Console.WriteLine("I'm at at E");
             INDEX = new INDEX<C, I, M>(di3);
-            //Console.WriteLine("I'm at at F");
-
         }
 
 
@@ -145,12 +121,8 @@ namespace DI3
             int maximumValueNodes,
             int minimumValueNodes)
         {
-            //Console.WriteLine("I'm at in di3");
-
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            //Console.WriteLine("I'm at at A");
 
             //options.CalcBTreeOrder(16, 1400); //24);
             options.CreateFile = createPolicy;
@@ -161,8 +133,6 @@ namespace DI3
             options.MaximumValueNodes = maximumValueNodes;
             options.MinimumValueNodes = minimumValueNodes;
 
-            //Console.WriteLine("I'm at at B");
-
             options.CachePolicy = CachePolicy.Recent;
 
             options.FileBlockSize = 512;
@@ -170,13 +140,8 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            //Console.WriteLine("I'm at at C");
-
-            //Console.WriteLine("I'm at at D");
             di3 = new BPlusTree<C, B<C, M>>(options);
-            //Console.WriteLine("I'm at at E");
             INDEX = new INDEX<C, I, M>(di3);
-            //Console.WriteLine("I'm at at F");
         }
 
 
@@ -192,12 +157,8 @@ namespace DI3
             int avgKeySize,
             int avgValueSize)
         {
-            //Console.WriteLine("I'm at in di3");
-
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            //Console.WriteLine("I'm at at A");
 
             options.CalcBTreeOrder(avgKeySize, avgValueSize);
             options.CreateFile = createPolicy;
@@ -208,8 +169,6 @@ namespace DI3
             options.MaximumValueNodes = maximumValueNodes;
             options.MinimumValueNodes = minimumValueNodes;
 
-            //Console.WriteLine("I'm at at B");
-
             options.CachePolicy = CachePolicy.Recent;
 
             options.FileBlockSize = 512;
@@ -217,19 +176,13 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            //Console.WriteLine("I'm at at C");
-
-            //Console.WriteLine("I'm at at D");
             di3 = new BPlusTree<C, B<C, M>>(options);
-            //Console.WriteLine("I'm at at E");
             INDEX = new INDEX<C, I, M>(di3);
-            //Console.WriteLine("I'm at at F");
         }
 
 
         public void Add(I interval)
         {
-            //Console.WriteLine("I'm at at I");
             INDEX.Index(interval);
         }
 
