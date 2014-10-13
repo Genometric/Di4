@@ -8,12 +8,12 @@ namespace IndexSpeedTest
         {
             IndexSpeedTest SpeedTest = new IndexSpeedTest();
 
-            string path = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"D:\Vahid Test\";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
 
             #region .::.          Test 1          .::.
 
             /// Condensed Regions
-            /*
+            
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
@@ -24,7 +24,7 @@ namespace IndexSpeedTest
                 50,       // max gap
                 50,       // min lenght
                 100);     // max lenght
-            */
+            
 
             #endregion
 
@@ -152,6 +152,7 @@ namespace IndexSpeedTest
             #region .::.          Test 8          .::.
 
             /// Sparse regions; tweak key-value sizes.
+            /*
             SpeedTest.Run(
                 2000,        // sample count
                 200000,      // region count
@@ -164,7 +165,49 @@ namespace IndexSpeedTest
                 60,          // max lenght
                 sizeof(uint),// Size of Key
                 14000);      // Size of Value
+            */
+            #endregion
 
+
+
+            #region .::.          Test 9          .::.
+
+            /// Sparse regions; tweak key-value sizes.            
+            /*
+            SpeedTest.Run(
+                2000,            // sample count
+                200000,          // region count
+                true,            // Keep or Dispose Di3?
+                path,            // output path
+                "Test_9",        // Test Name
+                5,               // min gap
+                10,              // max gap
+                20,              // min lenght
+                60,              // max lenght
+                2 * sizeof(uint),// Size of Key
+                14000);          // Size of Value
+            */
+            #endregion
+
+
+
+            #region .::.          Test 10         .::.
+
+            /// Sparse regions; tweak key-value sizes.
+            /*
+            SpeedTest.Run(
+                2000,            // sample count
+                200000,          // region count
+                true,            // Keep or Dispose Di3?
+                path,            // output path
+                "Test_10",        // Test Name
+                5,               // min gap
+                10,              // max gap
+                20,              // min lenght
+                60,              // max lenght
+                2 * sizeof(uint),// Size of Key
+                4000);          // Size of Value
+            */
             #endregion
 
         }

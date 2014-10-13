@@ -152,7 +152,7 @@ namespace DI3
 
             //Console.WriteLine("I'm at at A");
 
-            options.CalcBTreeOrder(16, 1400); //24);
+            //options.CalcBTreeOrder(16, 1400); //24);
             options.CreateFile = createPolicy;
             options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             options.StoragePerformance = StoragePerformance.Fastest;
