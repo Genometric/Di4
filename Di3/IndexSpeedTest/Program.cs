@@ -8,17 +8,17 @@ namespace IndexSpeedTest
         {
             IndexSpeedTest SpeedTest = new IndexSpeedTest();
 
-            string path = @"E:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
 
             //SpeedTest.Run(2000, 200000, path, "TEST_11", 5, 500, 500, 1000);
-            SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
+            //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
 
             
 
             #region .::.          Test 1          .::.
 
             /// Condensed Regions
-            
+            /*
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
@@ -30,7 +30,7 @@ namespace IndexSpeedTest
                 50,       // min lenght
                 100);     // max lenght
             
-
+            */
             #endregion
 
             #region .::.          Test 2          .::.
