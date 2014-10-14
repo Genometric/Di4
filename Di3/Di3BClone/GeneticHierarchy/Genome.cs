@@ -12,7 +12,7 @@ namespace Di3B
     public class Genome<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>, new()
-        where M : IMetaData<C>, new()
+        where M : IExtMetaData<C>/*IMetaData<C>*/, new()
     {
         public Genome(string Di3Path, Memory Memory, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {

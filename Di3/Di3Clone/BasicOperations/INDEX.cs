@@ -24,7 +24,7 @@ namespace DI3
     class INDEX<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData<C>
+        where M : IMetaData/*<C>*/
     {
         /// <summary>
         /// Provides efficient means of inserting an 

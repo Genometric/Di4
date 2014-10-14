@@ -8,7 +8,7 @@ namespace Di3BMain
     /// Representing ChIP-seq Peak Metadata.
     /// </summary>
     [ProtoContract]
-    public class PeakData : IMetaData<int>
+    public class PeakData : IExtMetaData<int>
     {
         /// <summary>
         /// Sets and gets peak name.

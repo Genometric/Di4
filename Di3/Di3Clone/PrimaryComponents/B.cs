@@ -17,7 +17,7 @@ namespace DI3
     [ProtoContract]
     public class B<C, M>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData/*<C>*/
     {
         /// <summary>
         /// A Block representing relative information of intervals

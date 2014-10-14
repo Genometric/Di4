@@ -29,7 +29,7 @@ namespace DI3
     public class Di3<C, I, M> : IDisposable
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData<C>
+        where M : IMetaData/*<C>*/
     {
         private BPlusTree<C, B<C, M>> di3 { set; get; }
         private BSerializer<C, M> bSerializer { set; get; }

@@ -7,7 +7,7 @@ namespace DI3
 {
     public class BSerializer<C, M> : ISerializer<B<C, M>>
         where C : IComparable<C>
-        where M : IMetaData<C>
+        where M : IMetaData/*<C>*/
     {
         public B<C, M> ReadFrom(System.IO.Stream stream)
         {

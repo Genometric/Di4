@@ -6,7 +6,7 @@ namespace BEDParser
 {
     public class ParsedBED<C, I, M>
         where I : IInterval<C, M>, new()
-        where M : IMetaData<C>, new()
+        where M : IExtMetaData<C>/*IMetaData<C>*/, new()
     {
         public string fileName { set; get; }
         public string filePath { set; get; }

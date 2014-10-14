@@ -6,7 +6,7 @@ namespace Di3B
     public class Output<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>, new() // new is new
-        where M : IMetaData<C>
+        where M : IMetaData/*<C>*/
     {
         /// ----------------------------------------
         /// ----- HIGH-LEVEL CAUTION ---------------

@@ -10,7 +10,7 @@ namespace ICPMD
     /// <summary>
     /// Interface representing ChIP-seq Peak Metadata.
     /// </summary>
-    public interface ICPMetadata<C> : IMetaData<C>
+    public interface ICPMetadata<C> : IMetaData/*<C>*/
     {
         /// <summary>
         /// Sets and gets zero-based chromosome number.

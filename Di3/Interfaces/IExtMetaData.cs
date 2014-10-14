@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ICPMD
+namespace Interfaces
 {
-    public interface IMetaData/*<C>*/
+    public interface IExtMetaData<C> : IMetaData
     {
+        string name { set; get; }
         C left { set; get; }
         C right { set; get; }
-        UInt64 hashKey { set; get; }
+        double value { set; get; }
     }
 }

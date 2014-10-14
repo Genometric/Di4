@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IExtMetaData.cs" />
     <Compile Include="IInterval.cs" />
     <Compile Include="IMetaData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

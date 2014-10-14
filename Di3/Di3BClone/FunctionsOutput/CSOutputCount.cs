@@ -13,7 +13,7 @@ namespace Di3B
     public class CSOutputCount<C, I, M> : ICSOutput<C, I, M, Output<C, I, M>>
         where C : IComparable<C>
         where I : IInterval<C, M>, new()
-        where M : IMetaData<C>
+        where M : IMetaData/*<C>*/
     {
         public CSOutputCount()
         {

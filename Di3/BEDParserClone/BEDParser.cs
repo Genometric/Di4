@@ -8,7 +8,7 @@ namespace BEDParser
 {
     public class BEDParser<I, M>
         where I : IInterval<int, M>, new()
-        where M : IMetaData<int>, new()
+        where M : IExtMetaData<int>/*IMetaData<int>*/, new()
     {
         /// <summary>
         /// Parse standard Browser Extensible Data (BED) format.

@@ -25,7 +25,7 @@ namespace DI3
     public interface ICSOutput<C, I, M, O>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData<C>
+        where M : IMetaData/*<C>*/
     {
         void Output(C left, C right, List<Lambda<C, M>> intervals);
 

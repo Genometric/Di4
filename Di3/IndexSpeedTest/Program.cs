@@ -29,14 +29,14 @@ namespace IndexSpeedTest
                 50,       // max gap
                 50,       // min lenght
                 100);     // max lenght
-            
             */
+            
             #endregion
 
             #region .::.          Test 2          .::.
 
             /// Spars Regions
-            /*
+            
             SpeedTest.Run(
                 2000,     // sample count
                 200000,   // region count
@@ -47,7 +47,7 @@ namespace IndexSpeedTest
                 500,      // max gap
                 500,      // min lenght
                 1000);    // max lenght
-            */
+            
 
             #endregion
 
