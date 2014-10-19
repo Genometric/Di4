@@ -56,9 +56,9 @@ namespace DI3
         /// <summary>
         /// Gets the intersection type of interval
         /// wtih c of corresponding block.
-        /// <para>[value] = L  ::>  Left-end  intersecting the coordiante.</para>
-        /// <para>[value] = M  ::>  Middle    intersecting the coordiante.</para>
-        /// <para>[value] = R  ::>  Right-end intersecting the coordiante.</para>
+        /// <para>[currentValue] = L  ::>  Left-end  intersecting the coordiante.</para>
+        /// <para>[currentValue] = M  ::>  Middle    intersecting the coordiante.</para>
+        /// <para>[currentValue] = R  ::>  Right-end intersecting the coordiante.</para>
         /// </summary>
         [ProtoMember(1)]
         internal char tau { private set; get; }

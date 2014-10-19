@@ -11,7 +11,7 @@ namespace Di3B
         private static readonly ConfigurationProperty messageName =
             new ConfigurationProperty("Name", typeof(string), string.Empty, ConfigurationPropertyOptions.IsRequired);
 
-        // Holds the Value attribute value of Message.
+        // Holds the newValue attribute currentValue of Message.
         private static readonly ConfigurationProperty messageValue =
             new ConfigurationProperty("Value", typeof(string), string.Empty, ConfigurationPropertyOptions.IsRequired);
 
@@ -31,7 +31,7 @@ namespace Di3B
         }
 
         /// <summary>
-        /// Value
+        /// newValue
         /// </summary>
         [ConfigurationProperty("Value", IsRequired = true)]
         public string Value

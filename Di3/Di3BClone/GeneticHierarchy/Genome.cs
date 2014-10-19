@@ -158,7 +158,7 @@ namespace Di3B
         {
             foreach (var peak in peaks)
             {
-                di3.Add(Clone(peak));
+                //di3.Add(Clone(peak)); // COMMENTED OUT ONLY FOR INDEX SPEED TESTERS. 
                 Console.Write("\r Added: {0} - {1:N0}", chr, counter++);
             }
 
@@ -206,7 +206,7 @@ namespace Di3B
                 switch (strand)
                 {
                     case '+':
-                        //if (chr.Value.di3PS.blockCount > 0)
+                        //if (chr.newValue.di3PS.blockCount > 0)
                         //{
                             ///////////////// ----------------- there will be an error here, because this is reading chr title from chrs but searching 
                             ////////////////------------------- for it in references ! e.g., there might be chrM in chrs but not in refrences. 
@@ -272,7 +272,7 @@ namespace Di3B
             else settings[chr].Value = settings["WorkingDirectory"].Value + "Di3" + chr + ".indx";
             chrSection.genomeChrs.Add(new ChrConfigElement() { chr = chr, strand = strand, index = settings[chr].Value });
 
-            /// There might be better way to wipe-out the default value, even in different position with different strategy; 
+            /// There might be better way to wipe-out the default currentValue, even in different position with different strategy; 
             /// however, this method was the simplest I found and is a possible target of cleaning code.
             var initialDataIndex = chrSection.genomeChrs.IndexOf(new ChrConfigElement() { chr = "Initial", index = "Initial", strand = '*' });
             if (initialDataIndex != -1) chrSection.genomeChrs.RemoveAt(initialDataIndex);

@@ -78,7 +78,7 @@ namespace IndexSpeedTest
                                 left = left,
                                 right = right,
                                 metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
-                            });
+                            }, sample, intervals);
                                 /*new Peak()
                             {
                                 left = left,
@@ -88,7 +88,7 @@ namespace IndexSpeedTest
                                     left = left,
                                     right = right,
                                     name = RandomName(),
-                                    value = rnd.NextDouble(),
+                                    currentValue = rnd.NextDouble(),
                                     hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
                                 }
                             });*/
@@ -109,7 +109,7 @@ namespace IndexSpeedTest
             else
             {
                 file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
-                var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer);
+                var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer);
 
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
@@ -122,6 +122,13 @@ namespace IndexSpeedTest
                         left = right + rnd.Next(MinGap, MaxGap);
                         right = left + rnd.Next(MinLenght, MaxLenght);
 
+                        di3.Add(new LightPeak()
+                        {
+                            left = left,
+                            right = right,
+                            metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
+                        }, sample, intervals);
+                        /*
                         di3.Add(new Peak()
                         {
                             left = left,
@@ -131,10 +138,10 @@ namespace IndexSpeedTest
                                 left = left,
                                 right = right,
                                 name = RandomName(),
-                                value = rnd.NextDouble(),
+                                currentValue = rnd.NextDouble(),
                                 hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
                             }
-                        });
+                        });*/
 
                         Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                     }
@@ -180,6 +187,9 @@ namespace IndexSpeedTest
             writer = new StreamWriter(outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".txt");
             writer.WriteLine("Di3 indexing speed test: " + TestName);
 
+
+            var Lambda_Count_Writer = new StreamWriter(outputPath + Path.DirectorySeparatorChar + "LambdaSize" + TestName + ".txt");
+
             if (disposeDi3atEachSample)
             {
                 for (int sample = 0; sample < sampleCount; sample++)
@@ -190,8 +200,11 @@ namespace IndexSpeedTest
                     /// Why am I diconstructing bplustree at each iteration ? 
                     /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
                     /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                    using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                    //using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                    using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
                     {
+                        int test_Maximum_Lambda_Count = 0;
+                        int couuuuuunt=0;
                         stopWatch.Restart();
 
                         for (int intervals = 1; intervals <= regionCount; intervals++)
@@ -199,6 +212,17 @@ namespace IndexSpeedTest
                             left = right + rnd.Next(MinGap, MaxGap);
                             right = left + rnd.Next(MinLenght, MaxLenght);
 
+                            
+                            couuuuuunt= di3.Add(new LightPeak()
+                            {
+                                left = left,
+                                right = right,
+                                metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
+                            }, sample, intervals);
+
+                            test_Maximum_Lambda_Count = Math.Max(test_Maximum_Lambda_Count, couuuuuunt);
+
+                            /*
                             di3.Add(new Peak()
                             {
                                 left = left,
@@ -208,20 +232,32 @@ namespace IndexSpeedTest
                                     left = left,
                                     right = right,
                                     name = RandomName(),
-                                    value = rnd.NextDouble(),
+                                    currentValue = rnd.NextDouble(),
                                     hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
                                 }
-                            });
+                            });*/
 
                             Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                         }
+
+                        stopWatch.Stop();
+                        Console.WriteLine("");
+                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine("");
+
+                        writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        writer.Flush();
+
+
+                        Lambda_Count_Writer.WriteLine(test_Maximum_Lambda_Count);
+                        Lambda_Count_Writer.Flush();
                     }
                 }
             }
             else
             {
                 string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
-                var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize);
+                var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize);
 
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
@@ -233,6 +269,14 @@ namespace IndexSpeedTest
                         left = right + rnd.Next(MinGap, MaxGap);
                         right = left + rnd.Next(MinLenght, MaxLenght);
 
+                        di3.Add(new LightPeak()
+                        {
+                            left = left,
+                            right = right,
+                            metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
+                        }, sample, intervals);
+
+                        /*
                         di3.Add(new Peak()
                         {
                             left = left,
@@ -242,13 +286,18 @@ namespace IndexSpeedTest
                                 left = left,
                                 right = right,
                                 name = RandomName(),
-                                value = rnd.NextDouble(),
+                                currentValue = rnd.NextDouble(),
                                 hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
                             }
-                        });
+                        });*/
 
                         Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                     }
+
+                    stopWatch.Stop();
+                    Console.WriteLine("");
+                    Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                    Console.WriteLine("");
                 }
             }
         }
@@ -295,7 +344,7 @@ namespace IndexSpeedTest
                     /// Why am I diconstructing bplustree at each iteration ? 
                     /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
                     /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                    using (var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer,
+                    using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer,
                         MaxChildNodes, MinChildNodes, MaxValueNodes, MinValueNodes))
                     {
                         stopWatch.Restart();
@@ -305,6 +354,14 @@ namespace IndexSpeedTest
                             left = right + rnd.Next(MinGap, MaxGap);
                             right = left + rnd.Next(MinLenght, MaxLenght);
 
+                            di3.Add(new LightPeak()
+                            {
+                                left = left,
+                                right = right,
+                                metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
+                            }, sample, intervals);
+
+                            /*
                             di3.Add(new Peak()
                             {
                                 left = left,
@@ -314,21 +371,27 @@ namespace IndexSpeedTest
                                     left = left,
                                     right = right,
                                     name = RandomName(),
-                                    value = rnd.NextDouble(),
+                                    currentValue = rnd.NextDouble(),
                                     hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
                                 }
-                            });
+                            });*/
 
                             Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                         }
+
+                        stopWatch.Stop();
+                        Console.WriteLine("");
+                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine("");
                     }
                 }
             }
             else
             {
                 string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
-                var di3 = new Di3<int, Peak, PeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer,
+                var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer,
                         MaxChildNodes, MinChildNodes, MaxValueNodes, MinValueNodes);
+
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
                     Console.WriteLine("processing sample   : {0:N0}", sample);
@@ -339,6 +402,14 @@ namespace IndexSpeedTest
                         left = right + rnd.Next(MinGap, MaxGap);
                         right = left + rnd.Next(MinLenght, MaxLenght);
 
+                        di3.Add(new LightPeak()
+                        {
+                            left = left,
+                            right = right,
+                            metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
+                        }, sample, intervals);
+
+                        /*
                         di3.Add(new Peak()
                         {
                             left = left,
@@ -348,13 +419,18 @@ namespace IndexSpeedTest
                                 left = left,
                                 right = right,
                                 name = RandomName(),
-                                value = rnd.NextDouble(),
+                                currentValue = rnd.NextDouble(),
                                 hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
                             }
-                        });
+                        });*/
 
                         Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                     }
+
+                    stopWatch.Stop();
+                    Console.WriteLine("");
+                    Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                    Console.WriteLine("");
                 }
             }
         }
@@ -370,7 +446,7 @@ namespace IndexSpeedTest
             {
                 left = right + rnd.Next(minGap, maxGap);
                 right = left + rnd.Next(minLenght, maxLenght);
-
+                /*
                 di3.Add(new Peak()
                 {
                     left = left,
@@ -380,10 +456,10 @@ namespace IndexSpeedTest
                         left = left,
                         right = right,
                         name = RandomName(),
-                        value = rnd.NextDouble(),
+                        currentValue = rnd.NextDouble(),
                         hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) // we won't use hashkey in this test, hence lets consider this "correct"
                     }
-                });
+                });*/
 
                 Console.Write("\r#Inserted intervals : {0:N0}", intervals);
             }

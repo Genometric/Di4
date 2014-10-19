@@ -145,7 +145,7 @@ namespace Di3B
         public ChrConfigElement ChrElement
         {
             get { return ((ChrConfigElement)this["Chromosome"]); }
-            set { this["Chromosome"] = value; }
+            set { this["Chromosome"] = currentValue; }
         }*/
     }
 

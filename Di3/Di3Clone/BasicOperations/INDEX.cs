@@ -35,6 +35,7 @@ namespace DI3
         internal INDEX(BPlusTree<C, B<C, M>> di3)
         {
             this.di3 = di3;
+            //update.di3 = di3;
         }
 
         /// <summary>
@@ -62,11 +63,21 @@ namespace DI3
         /// </summary>
         private int di3Cardinality { set; get; }
 
+        public int TEST_Sample_Number;
+        public int TEST_Region_Number;
+
+        //private AddUpdateValue update = new AddUpdateValue();
+
+
+
+        private int test_Maximum_Lambda_Lenght { set; get; }
+
+
         /// <summary>
         /// Indexes the provided interval.
         /// </summary>
         /// <param name="Interval">The interval to be index.</param>
-        public void Index(I Interval)
+        public int Index(I Interval)
         {
             interval = Interval;
 
@@ -74,8 +85,10 @@ namespace DI3
             Insert('L');
 
             marshalPoint = interval.right;
-            MarchForRightEnd();
+            //MarchForRightEnd();
             Insert('R');
+
+            return test_Maximum_Lambda_Lenght;
         }
 
 
@@ -86,7 +99,7 @@ namespace DI3
         /// </summary>
         private void MarchForRightEnd()
         {
-            foreach (var block in di3.EnumerateFrom(interval.left).Skip(1))
+            /*foreach (var block in di3.EnumerateFrom(interval.left).Skip(1))
             {
                 switch (marshalPoint.CompareTo(block.Key))
                 {
@@ -98,7 +111,7 @@ namespace DI3
                         UpdateBlock(block.Key, 'M');
                         break;
                 }
-            }
+            }*/
         }
 
 
@@ -111,15 +124,21 @@ namespace DI3
         /// wtih marshalPoint of corresponding block.</param>
         private void Insert(char tau)
         {
+            
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
             if (di3.ContainsKey(marshalPoint)) // Condition satisfied: add new index
             {
                 UpdateBlock(marshalPoint, tau);
             }
             else // update the available index with new region
-            {
-                di3.Add(marshalPoint, GetNewBlock(tau));
+            { // Test with TryAdd
+                //di3.Add(marshalPoint, GetNewBlock(tau));
+                di3.TryAdd(marshalPoint, GetNewBlock(tau));
             }
+
+            /*update.newTau = tau;
+            update.newMetadata = interval.metadata;
+            di3.AddOrUpdate(marshalPoint, ref update);*/
         }
 
 
@@ -140,9 +159,9 @@ namespace DI3
             // I need to access one item ahead, but since I could not 
             // find any proper way to do so with BPlusTree, I'm using 
             // following ramblings :)
-            foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
+            /*foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
             {
-                foreach (var d in block.Value.lambda)
+                foreach (var d in block.newValue.lambda)
                 {
                     if (d.tau != 'L')                    
                         newB.lambda.Add(new Lambda<C, M>('M', d.atI) { });                    
@@ -150,7 +169,9 @@ namespace DI3
 
                 // only one object :) 
                 break;
-            }
+            }*/
+
+            test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, newB.lambda.Count);
 
             return newB;
         }
@@ -164,6 +185,12 @@ namespace DI3
         /// wtih c of corresponding block.</param>
         private void UpdateBlock(C key, char tau)
         {
+            /*using(var sw = new System.IO.StreamWriter("D:\\UpdateCalls.txt", true))
+            {
+                sw.WriteLine("Updating at sample #{0:N0}   and Region #{1:N0}", TEST_Sample_Number, TEST_Region_Number);
+            }*/
+
+
             /// 1st Strategy: is the old version; it cause errors because it's not actually updateing. 
             //di3[key].lambda.Add(new Lambda<C, M>(tau, interval.metadata) { });
 
@@ -171,21 +198,75 @@ namespace DI3
             /// ------------------------------------------------------------------------------------
             /// KEEP GOING WITH THIS DIRTY ONE BECAUSE THE LATER RAISES SOME ISSUES IN SERIALIZATION
             /// ------------------------------------------------------------------------------------
-            B<C, M> removingValue;
+            /*B<C, M> removingValue;
             di3.TryRemove(key, out removingValue);
             removingValue.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
-            di3.Add(key, removingValue);
+            di3.Add(key, removingValue);*/
 
             /// 3rd strategy : based on test fuctions.
-            /*KeyValueUpdate<C, B<C, M>> updateFunction = delegate(C Key, B<C, M> Value)
+            /*KeyValueUpdate<C, B<C, M>> updateFunction = delegate(C Key, B<C, M> newValue)
             {
-                B<C, M> block = Value;
+                B<C, M> block = newValue;
                 block.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
                 return block;
             };
-            di3.TryUpdate(key, updateFunction);*/
+            di3.TryUpdate(key, updateFunction);
+            */
+            //if (tau == 'R') di3[key].omega++;
 
-            if (tau == 'R') di3[key].omega++;
+            //test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, removingValue.lambda.Count);
+        }
+
+        struct AddUpdateValue : ICreateOrUpdateValue<C, B<C, M>>, IRemoveValue<C, B<C, M>>
+        {
+            public B<C, M> oldValue;
+            public B<C, M> newValue;
+            public char newTau;
+            public M newMetadata;
+            public BPlusTree<C, B<C, M>> di3 { set; get; }
+            public C marshalPoint { set; get; }
+            public bool CreateValue(C key, out B<C, M> currentValue)
+            {
+                oldValue = null;
+                newValue = GetNewBlock();
+                currentValue = newValue;
+                return newValue != null;
+            }
+            public bool UpdateValue(C key, ref B<C, M> currentValue)
+            {
+                oldValue = currentValue;
+                currentValue.lambda.Add(new Lambda<C, M>(newTau, newMetadata));//  = newValue;
+                if (newTau == 'R') currentValue.omega++;
+                return true;//newValue != null;
+            }
+            public bool RemoveValue(C key, B<C, M> currentValue)
+            {
+                oldValue = currentValue;
+                return currentValue == newValue;
+            }
+
+            private B<C, M> GetNewBlock()
+            {
+                B<C, M> newB = new B<C, M>(marshalPoint) { };
+                newB.lambda.Add(new Lambda<C, M>(newTau, newMetadata));
+
+                if (newTau == 'R') newB.omega = 1;
+
+                // I need to access one item ahead, but since I could not 
+                // find any proper way to do so with BPlusTree, I'm using 
+                // following ramblings :)
+                foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
+                {
+                    foreach (var d in block.Value.lambda)
+                        if (d.tau != 'L')
+                            newB.lambda.Add(new Lambda<C, M>('M', d.atI) { });
+
+                    // only one object :) 
+                    break;
+                }
+
+                return newB;
+            }
         }
     }
 }

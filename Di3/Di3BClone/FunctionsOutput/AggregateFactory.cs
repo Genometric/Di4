@@ -4,7 +4,7 @@ using Interfaces;
 
 namespace Di3B
 {
-    class AggregateFactory<C, I, M>
+    public class AggregateFactory<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>, new() // new is new
         where M : IMetaData/*<C>*/

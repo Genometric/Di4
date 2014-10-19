@@ -81,7 +81,7 @@ static partial class Check
     }
 
     /// <summary>
-    /// Verifies that value is not null and returns the value or throws ArgumentNullException
+    /// Verifies that currentValue is not null and returns the currentValue or throws ArgumentNullException
     /// </summary>
     public static T NotNull<T>(T value)
     {
@@ -156,7 +156,7 @@ static partial class Check
     }
 
     /// <summary>
-    /// Verifies that the value is min, max, or between the two.
+    /// Verifies that the currentValue is min, max, or between the two.
     /// throws ArgumentOutOfRangeException
     /// </summary>
     public static T InRange<T>(T value, T min, T max) where T : IComparable<T>
@@ -170,7 +170,7 @@ static partial class Check
     }
 
     /// <summary>
-    /// Returns (T)value if the object provided can be assinged to a variable of type T
+    /// Returns (T)currentValue if the object provided can be assinged to a variable of type T
     /// throws ArgumentException
     /// </summary>
     public static T IsAssignable<T>(object value)
@@ -179,7 +179,7 @@ static partial class Check
     }
 
     /// <summary>
-    /// Returns value if the object provided can be assinged to a variable of type toType
+    /// Returns currentValue if the object provided can be assinged to a variable of type toType
     /// throws ArgumentException
     /// </summary>
     public static object IsAssignable(Type toType, object fromValue)

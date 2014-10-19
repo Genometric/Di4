@@ -38,7 +38,7 @@ namespace Di3B
                 if (!Chrs.ContainsKey(chr.Key))
                     Chrs.Add(chr.Key, new Di3<C, I, M>(CSerializer, CComparer));
 
-                foreach (var peak in chr.Value) // I create a new 'I' to avoid pass-by-reference.
+                foreach (var peak in chr.newValue) // I create a new 'I' to avoid pass-by-reference.
                 {
                     Chrs[chr.Key].Add(new I()
                     {
@@ -49,7 +49,7 @@ namespace Di3B
                             left = peak.metadata.left,
                             right = peak.metadata.right,
                             hashKey = peak.metadata.hashKey,
-                            value = peak.metadata.value,
+                            currentValue = peak.metadata.currentValue,
                             name = peak.metadata.name
                         }
                     });

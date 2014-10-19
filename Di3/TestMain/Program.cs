@@ -15,6 +15,8 @@ namespace TestMain
     {
         static void Main(string[] args)
         {
+            TEST_AddOrUpdate();
+
             BPlusTree<double, string>.OptionsV2 options =
                 new BPlusTree<double, string>.OptionsV2(PrimitiveSerializer.Double, PrimitiveSerializer.String);
 
@@ -213,6 +215,48 @@ namespace TestMain
             
 
             return watch.Elapsed;
+        }
+
+        private static void TEST_AddOrUpdate()
+        {
+            BPlusTree<int, string>.OptionsV2 options = new BPlusTree<int, string>.OptionsV2(PrimitiveSerializer.Int32, PrimitiveSerializer.String);
+            options.CreateFile = CreatePolicy.Never;
+
+            AddUpdateValue update = new AddUpdateValue();
+
+            var tree = new BPlusTree<int, string>(options);
+
+            update.Value = "Hamed";
+
+            //tree[1] = "a";
+            tree.AddOrUpdate(1, ref update);
+            tree.AddOrUpdate(2, ref update);
+
+            update.Value = "Vahid";
+            tree.AddOrUpdate(2, ref update);
+        }
+
+        struct AddUpdateValue : ICreateOrUpdateValue<int, string>, IRemoveValue<int, string>
+        {
+            public string OldValue;
+            public string Value;
+            public bool CreateValue(int key, out string value)
+            {
+                OldValue = null;
+                value = Value;
+                return Value != null;
+            }
+            public bool UpdateValue(int key, ref string value)
+            {
+                OldValue = value;
+                value = Value;
+                return Value != null;
+            }
+            public bool RemoveValue(int key, string value)
+            {
+                OldValue = value;
+                return value == Value;
+            }
         }
     }
 }
