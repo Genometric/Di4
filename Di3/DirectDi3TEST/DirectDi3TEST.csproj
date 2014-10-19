@@ -58,7 +58,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Di3Clone\Di3.csproj">
+    <ProjectReference Include="..\Di3\Di3.csproj">
       <Project>{5a568492-f768-49f2-a3d9-956dd80e6e67}</Project>
       <Name>Di3</Name>
     </ProjectReference>

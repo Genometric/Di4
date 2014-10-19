@@ -67,15 +67,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Di3BClone\Di3B.csproj">
+    <ProjectReference Include="..\Di3B\Di3B.csproj">
       <Project>{c5ba307c-57f1-4744-80b7-25510b75cad3}</Project>
       <Name>Di3B</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Di3BMainClone\Di3BMain.csproj">
+    <ProjectReference Include="..\Di3BMain\Di3BMain.csproj">
       <Project>{a9d02f27-2232-4346-a9cc-84a02cefc03b}</Project>
       <Name>Di3BMain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Di3Clone\Di3.csproj">
+    <ProjectReference Include="..\Di3\Di3.csproj">
       <Project>{5a568492-f768-49f2-a3d9-956dd80e6e67}</Project>
       <Name>Di3</Name>
     </ProjectReference>

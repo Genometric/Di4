@@ -74,11 +74,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BEDParserClone\BEDParser.csproj">
+    <ProjectReference Include="..\BEDParser\BEDParser.csproj">
       <Project>{dd67bbca-0c1a-4897-9e66-e54a0ac59f5f}</Project>
       <Name>BEDParser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Di3BClone\Di3B.csproj">
+    <ProjectReference Include="..\Di3B\Di3B.csproj">
       <Project>{c5ba307c-57f1-4744-80b7-25510b75cad3}</Project>
       <Name>Di3B</Name>
     </ProjectReference>

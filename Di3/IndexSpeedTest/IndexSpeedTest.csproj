@@ -65,11 +65,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Di3BMainClone\Di3BMain.csproj">
+    <ProjectReference Include="..\Di3BMain\Di3BMain.csproj">
       <Project>{A9D02F27-2232-4346-A9CC-84A02CEFC03B}</Project>
       <Name>Di3BMain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Di3Clone\Di3.csproj">
+    <ProjectReference Include="..\Di3\Di3.csproj">
       <Project>{5A568492-F768-49F2-A3D9-956DD80E6E67}</Project>
       <Name>Di3</Name>
     </ProjectReference>
