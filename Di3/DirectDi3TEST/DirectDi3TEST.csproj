@@ -62,14 +62,6 @@
       <Project>{5a568492-f768-49f2-a3d9-956dd80e6e67}</Project>
       <Name>Di3</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IInterval\IInterval.csproj">
-      <Project>{a22001fa-a30d-4027-832c-9ebcfd6aa8c7}</Project>
-      <Name>IInterval</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IMetadata\ICPMetadata.csproj">
-      <Project>{0a7bc7e5-d0a2-49fd-9574-0aa84900e948}</Project>
-      <Name>ICPMetadata</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
