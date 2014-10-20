@@ -66,7 +66,7 @@ namespace DI3
         public int TEST_Sample_Number;
         public int TEST_Region_Number;
 
-        //private AddUpdateValue update = new AddUpdateValue();
+        private AddUpdateValue update = new AddUpdateValue();
 
 
 
@@ -124,7 +124,7 @@ namespace DI3
         /// wtih marshalPoint of corresponding block.</param>
         private void Insert(char tau)
         {
-            
+            /*
             // Shall new Block be added to the end of list ? OR: Does the same index already available ?
             if (di3.ContainsKey(marshalPoint)) // Condition satisfied: add new index
             {
@@ -134,11 +134,11 @@ namespace DI3
             { // Test with TryAdd
                 //di3.Add(marshalPoint, GetNewBlock(tau));
                 di3.TryAdd(marshalPoint, GetNewBlock(tau));
-            }
+            }*/
 
-            /*update.newTau = tau;
-            update.newMetadata = interval.metadata;
-            di3.AddOrUpdate(marshalPoint, ref update);*/
+            update.Tau = tau;
+            update.Metadata = interval.metadata;
+            di3.AddOrUpdate(marshalPoint, ref update);
         }
 
 
@@ -152,9 +152,9 @@ namespace DI3
         private B<C, M> GetNewBlock(char tau)
         {
             B<C, M> newB = new B<C, M>(marshalPoint) { };
-            newB.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
+            //newB.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
 
-            if (tau == 'R') newB.omega = 1;
+            //if (tau == 'R') newB.omega = 1;
 
             // I need to access one item ahead, but since I could not 
             // find any proper way to do so with BPlusTree, I'm using 
@@ -217,56 +217,77 @@ namespace DI3
             //test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, removingValue.lambda.Count);
         }
 
+
         struct AddUpdateValue : ICreateOrUpdateValue<C, B<C, M>>, IRemoveValue<C, B<C, M>>
         {
-            public B<C, M> oldValue;
-            public B<C, M> newValue;
-            public char newTau;
-            public M newMetadata;
-            public BPlusTree<C, B<C, M>> di3 { set; get; }
-            public C marshalPoint { set; get; }
-            public bool CreateValue(C key, out B<C, M> currentValue)
+            public B<C, M> OldValue;
+            //public string Value;
+            public char Tau { set; get; }
+            public M Metadata { set; get; }
+
+            public bool CreateValue(C key, out B<C, M> value)
             {
-                oldValue = null;
-                newValue = GetNewBlock();
-                currentValue = newValue;
-                return newValue != null;
+                OldValue = null;
+
+                //value = Value;
+                value = GetNewBlock();
+
+                return !Metadata.Equals(default(M)) && Tau != default(char); // Value != null;
             }
-            public bool UpdateValue(C key, ref B<C, M> currentValue)
+            public bool UpdateValue(C key, ref B<C, M> value)
             {
-                oldValue = currentValue;
-                currentValue.lambda.Add(new Lambda<C, M>(newTau, newMetadata));//  = newValue;
-                if (newTau == 'R') currentValue.omega++;
-                return true;//newValue != null;
+                OldValue = value;
+
+                //value = Value;
+                if (Tau == 'R')
+                    value = value.Update(Omega: value.omega + 1, tau: Tau, metadata: Metadata);
+                else
+                    value = value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);
+
+
+                return !Metadata.Equals(default(M)) && Tau != default(char); // Value != null;
             }
-            public bool RemoveValue(C key, B<C, M> currentValue)
+            public bool RemoveValue(C key, B<C, M> value)
             {
-                oldValue = currentValue;
-                return currentValue == newValue;
+                OldValue = value;
+                
+                //return value == Value;
+                if (Tau == 'R')
+                    return value == value.Update(Omega: value.omega + 1, tau: Tau, metadata: Metadata);
+                else
+                    return value == value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);
             }
+
 
             private B<C, M> GetNewBlock()
             {
-                B<C, M> newB = new B<C, M>(marshalPoint) { };
-                newB.lambda.Add(new Lambda<C, M>(newTau, newMetadata));
+                B<C, M> newB;
+                if (Tau == 'R')
+                    newB = new B<C, M>(omega: 1, tau: Tau, metadata: Metadata);
+                else
+                    newB = new B<C, M>(omega: 0, tau: Tau, metadata: Metadata);
 
-                if (newTau == 'R') newB.omega = 1;
 
                 // I need to access one item ahead, but since I could not 
                 // find any proper way to do so with BPlusTree, I'm using 
                 // following ramblings :)
-                foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
+                /*foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
                 {
-                    foreach (var d in block.Value.lambda)
-                        if (d.tau != 'L')
-                            newB.lambda.Add(new Lambda<C, M>('M', d.atI) { });
+                    foreach (var d in block.newValue.lambda)
+                    {
+                        if (d.tau != 'L')                    
+                            newB.lambda.Add(new Lambda<C, M>('M', d.atI) { });                    
+                    }
 
                     // only one object :) 
                     break;
-                }
+                }*/
+
 
                 return newB;
             }
+
+
         }
     }
 }

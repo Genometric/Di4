@@ -205,6 +205,16 @@ namespace DI3
             INDEX.TEST_Sample_Number = TEST_Sample_Number;
             INDEX.TEST_Region_Number = TEST_Region_Number;
 
+
+            /// only test
+            /*var originalBlock = new B<C, M>();
+            //aBlock.lambda.Add(new Lambda<C, M>('M', default(M))); // this should be error
+            //aBlock.lambda.Add(new Lambda<C, M>('L', default(M))); // error
+            //aBlock.lambda.Add(new Lambda<C, M>('R', default(M))); // error
+            var anotherBlock = originalBlock.Update(new Lambda<C, M>('T', default(M)));
+            originalBlock = originalBlock.Update(new Lambda<C, M>('2', default(M)));*/
+
+
             return INDEX.Index(interval);
         }
 

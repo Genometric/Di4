@@ -234,6 +234,9 @@ namespace TestMain
 
             update.Value = "Vahid";
             tree.AddOrUpdate(2, ref update);
+
+            update.Value = "New";
+            tree.AddOrUpdate(3, ref update);
         }
 
         struct AddUpdateValue : ICreateOrUpdateValue<int, string>, IRemoveValue<int, string>

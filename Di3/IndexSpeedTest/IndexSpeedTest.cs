@@ -23,6 +23,30 @@ namespace IndexSpeedTest
         private StreamWriter writer { set; get; }
 
 
+        public void Run(string OutputPath, string TestName)
+        {
+            outputPath = OutputPath;
+            if (!Directory.Exists(outputPath) && outputPath.Trim() != string.Empty) Directory.CreateDirectory(outputPath);
+
+            if (!Directory.Exists(OutputPath)) Directory.CreateDirectory(OutputPath);
+
+            string file = OutputPath + "\\bplusTree.bpt";
+
+            /// Why am I diconstructing bplustree at each iteration ? 
+            /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
+            /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
+            using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer))
+            {
+                di3.Add(new LightPeak() { left = 010, right = 050, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+                di3.Add(new LightPeak() { left = 060, right = 100, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+                di3.Add(new LightPeak() { left = 110, right = 140, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+                di3.Add(new LightPeak() { left = 030, right = 055, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+                di3.Add(new LightPeak() { left = 060, right = 080, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+                di3.Add(new LightPeak() { left = 100, right = 110, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+                di3.Add(new LightPeak() { left = 140, right = 180, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+            }
+        }
+
         public void Run(
             int SampleCount,
             int RegionCount,
