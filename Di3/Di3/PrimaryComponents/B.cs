@@ -40,11 +40,23 @@ namespace DI3
             _lambda = new List<Lambda<C, M>>();
         }
 
-        internal B(int omega, char tau, M metadata)
+        internal B(char tau, M metadata)
         { // initializes a block and adds one Lambda to lambda according to tau and metadata.
-            this.omega = omega;
+            if (tau == 'R') omega = 1;
+            else omega = 0;
             _lambda = new List<Lambda<C, M>>();
-            _lambda.Add(new Lambda<C, M>(tau, metadata));
+            _lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+        }
+
+        internal B(char tau, M metadata, B<C, M> nextBlock) // check whether it is faster with ref or without ref for nextBlock. 
+        {
+            if (tau == 'R') omega = nextBlock.omega + 1;
+            else omega = nextBlock.omega;
+            _lambda = new List<Lambda<C, M>>();
+            _lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            foreach (var item in nextBlock.lambda)
+                if (item.tau != 'L')
+                    _lambda.Add(new Lambda<C, M>(tau: 'M', atI: item.atI));
         }
 
 

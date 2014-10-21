@@ -2,6 +2,7 @@
 using System.Linq;
 using Interfaces;
 using CSharpTest.Net.Collections;
+using System.Collections.Generic;
 
 
 namespace DI3
@@ -87,6 +88,58 @@ namespace DI3
             marshalPoint = interval.right;
             //MarchForRightEnd();
             Insert('R');
+
+
+            bool isFirst = true;
+            bool isSucesseded = false;
+            foreach (var item in di3.EnumerateFrom(Interval.left))//, Interval.right))
+            {
+                if(isFirst)
+                {
+                    if(Interval.left.Equals(item.Key))
+                    {
+                        update.NextBlock = null;
+                        update.Tau = 'L';
+                        update.Metadata = interval.metadata;
+                        di3.AddOrUpdate(marshalPoint, ref update);
+                    }
+                    else
+                    {
+                        update.NextBlock = item.Value;
+                        update.Tau = 'L';
+                        update.Metadata = interval.metadata;
+                        di3.AddOrUpdate(marshalPoint, ref update);
+                    }
+                    isFirst = false;
+                }
+                else
+                {
+                    if (Interval.right.Equals(item.Key) || Interval.right.CompareTo(item.Key)== -1)
+                    {
+                        update.Tau = 'R';
+                        update.Metadata = Interval.metadata;
+
+                    }
+                    else
+                    {
+                        update.Tau = 'M';
+                        update.Metadata = Interval.metadata;
+                        di3.AddOrUpdate(marshalPoint, ref update);
+                    }
+                }
+
+                isSucesseded = true;
+            }
+
+            if(!isSucesseded)
+            {
+                // means that the Enumerator did not find a range for Enumeration.
+            }
+
+
+
+
+
 
             return test_Maximum_Lambda_Lenght;
         }
@@ -225,6 +278,8 @@ namespace DI3
             public char Tau { set; get; }
             public M Metadata { set; get; }
 
+            public B<C, M> NextBlock { set; get; }
+
             public bool CreateValue(C key, out B<C, M> value)
             {
                 OldValue = null;
@@ -250,7 +305,7 @@ namespace DI3
             public bool RemoveValue(C key, B<C, M> value)
             {
                 OldValue = value;
-                
+
                 //return value == Value;
                 if (Tau == 'R')
                     return value == value.Update(Omega: value.omega + 1, tau: Tau, metadata: Metadata);
@@ -262,10 +317,10 @@ namespace DI3
             private B<C, M> GetNewBlock()
             {
                 B<C, M> newB;
-                if (Tau == 'R')
-                    newB = new B<C, M>(omega: 1, tau: Tau, metadata: Metadata);
+                if (NextBlock == null)
+                    newB = new B<C, M>(tau: Tau, metadata: Metadata);
                 else
-                    newB = new B<C, M>(omega: 0, tau: Tau, metadata: Metadata);
+                    newB = new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
 
 
                 // I need to access one item ahead, but since I could not 
