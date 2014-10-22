@@ -14,7 +14,7 @@ namespace IndexSpeedTest
             //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
 
 
-            SpeedTest.Run(path, "smallTest");
+            //SpeedTest.Run(path, "smallTest");
 
 
             #region .::.          Test 1          .::.
@@ -297,6 +297,28 @@ namespace IndexSpeedTest
             */
             #endregion
 
+
+            #region .::.          Test 20: Multi-Threading          .::.
+
+            /// Condensed Regions + Multi-Threading
+
+            SpeedTest.Run(
+                1000,     // sample count
+                200000,   // region count
+                true,     // Keep or Dispose Di3?
+                path,     // output path
+                "Test_20_MultiThread", // Test Name
+                50,        // min gap
+                500,       // max gap
+                500,       // min lenght
+                1000//,      // max lenght
+                //2,         // min child nodes
+                //256,       // max child nodes
+                //2,         // min currentValue nodes
+                //256);      // max currentValue nodes
+                , 4, 64, true);
+            
+            #endregion
         }
     }
 }

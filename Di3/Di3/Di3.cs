@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using Interfaces;
+using CSharpTest.Net.Threading;
+using System.Diagnostics;
 
 
 
@@ -93,6 +95,7 @@ namespace DI3
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
 
+            
             //options.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
             options.CreateFile = createPolicy;
             //options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
@@ -114,8 +117,7 @@ namespace DI3
             options.MinimumChildNodes = 2;//2;//10;
 
             options.MaximumValueNodes = 256; // 100;
-            options.MinimumValueNodes = 2;//2;//10;*/
-
+            options.MinimumValueNodes = 2;//2;//10;
 
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
@@ -199,6 +201,9 @@ namespace DI3
             INDEX = new INDEX<C, I, M>(di3);
         }
 
+        public void Add(I interval)
+        { }
+
 
         public int Add(I interval, int TEST_Sample_Number, int TEST_Region_Number)
         {
@@ -216,6 +221,32 @@ namespace DI3
 
 
             return INDEX.Index(interval);
+        }
+
+        public void Add(List<I> intervals)
+        {
+            Add(intervals, Environment.ProcessorCount);
+        }
+        public void Add(List<I> intervals, int threads)
+        {
+            Stopwatch watch = new Stopwatch();
+
+            int start = 0, stop = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
+            using (WorkQueue work = new WorkQueue(threads))
+            {
+                for (int i = 0; i < threads; i++)
+                {
+                    start = i * range;
+                    stop = (i + 1) * range;
+                    if (stop > intervals.Count) stop = intervals.Count;
+                    work.Enqueue(new INDEX<C, I, M>(di3, intervals, start, stop).Index);
+                }
+
+                watch.Restart();
+                work.Complete(true, -1);
+                watch.Stop();
+                Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
+            }
         }
 
         public List<O> Cover<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)

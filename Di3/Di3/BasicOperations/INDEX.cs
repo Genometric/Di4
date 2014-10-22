@@ -3,6 +3,7 @@ using System.Linq;
 using Interfaces;
 using CSharpTest.Net.Collections;
 using System.Collections.Generic;
+using CSharpTest.Net.Threading;
 
 
 namespace DI3
@@ -39,6 +40,14 @@ namespace DI3
             //update.di3 = di3;
         }
 
+        internal INDEX(BPlusTree<C, B<C,M>> di3, List<I> Intervals, int Start, int Stop)
+        {
+            this.di3 = di3;
+            this.intervals = Intervals;
+            this.Start = Start;
+            this.Stop = Stop;
+        }
+
         /// <summary>
         /// Sets and gets the di3 data structure
         /// to be manipulated. This data structure
@@ -58,6 +67,11 @@ namespace DI3
         /// be added to di3. 
         /// </summary>
         private I interval { set; get; }
+
+        private List<I> intervals { set; get; }
+
+        private int Start { set; get; }
+        private int Stop { set; get; }
 
         /// <summary>
         /// Sets and Gets the cardinality of di3.
@@ -152,6 +166,21 @@ namespace DI3
 
 
             return test_Maximum_Lambda_Lenght;
+        }
+
+        public void Index()
+        {
+            for (int i = Start; i < Stop; i++)
+            {
+                Index(intervals[i]);
+
+                /*update.Metadata = intervals[i].metadata;
+                update.Tau = 'L';
+                di3.AddOrUpdate(intervals[i].left, ref update);
+
+                update.Tau = 'R';
+                di3.AddOrUpdate(intervals[i].right, ref update);*/
+            }
         }
 
         private bool HandleFirstItem(KeyValuePair<C, B<C, M>> item)
