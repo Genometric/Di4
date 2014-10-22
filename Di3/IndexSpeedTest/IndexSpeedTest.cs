@@ -37,13 +37,30 @@ namespace IndexSpeedTest
             /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
             using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer))
             {
-                di3.Add(new LightPeak() { left = 010, right = 050, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
-                di3.Add(new LightPeak() { left = 060, right = 100, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
-                di3.Add(new LightPeak() { left = 110, right = 140, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
-                di3.Add(new LightPeak() { left = 030, right = 055, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
-                di3.Add(new LightPeak() { left = 060, right = 080, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
-                di3.Add(new LightPeak() { left = 100, right = 110, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
-                di3.Add(new LightPeak() { left = 140, right = 180, metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) } }, 1, 1);
+                //di3.Add(new LightPeak() { left = 010, right = 050, metadata = new LightPeakData() { hashKey = 0/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //di3.Add(new LightPeak() { left = 060, right = 100, metadata = new LightPeakData() { hashKey = 1/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //di3.Add(new LightPeak() { left = 110, right = 140, metadata = new LightPeakData() { hashKey = 2/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //di3.Add(new LightPeak() { left = 030, right = 055, metadata = new LightPeakData() { hashKey = 3/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //di3.Add(new LightPeak() { left = 060, right = 080, metadata = new LightPeakData() { hashKey = 4/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //di3.Add(new LightPeak() { left = 100, right = 110, metadata = new LightPeakData() { hashKey = 5/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //di3.Add(new LightPeak() { left = 140, right = 180, metadata = new LightPeakData() { hashKey = 6/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+
+                di3.Add(new LightPeak() { left = 100, right = 300, metadata = new LightPeakData() { hashKey = 1 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 200, right = 400, metadata = new LightPeakData() { hashKey = 2 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 500, right = 600, metadata = new LightPeakData() { hashKey = 3 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 1000, right = 1100, metadata = new LightPeakData() { hashKey = 4 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 80, right = 450, metadata = new LightPeakData() { hashKey = 5 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 460, right = 700, metadata = new LightPeakData() { hashKey = 6 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 800, right = 900, metadata = new LightPeakData() { hashKey = 7 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 1200, right = 1300, metadata = new LightPeakData() { hashKey = 8 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 10, right = 30, metadata = new LightPeakData() { hashKey = 9 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 110, right = 180, metadata = new LightPeakData() { hashKey = 10 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 80, right = 100, metadata = new LightPeakData() { hashKey = 11 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 455, right = 458, metadata = new LightPeakData() { hashKey = 12 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 780, right = 920, metadata = new LightPeakData() { hashKey = 13 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 770, right = 930, metadata = new LightPeakData() { hashKey = 14 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 1201, right = 1299, metadata = new LightPeakData() { hashKey = 15 } }, 1, 1);
+                di3.Add(new LightPeak() { left = 5, right = 10, metadata = new LightPeakData() { hashKey = 16 } }, 1, 1);
             }
         }
 

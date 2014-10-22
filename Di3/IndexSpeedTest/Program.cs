@@ -14,7 +14,7 @@ namespace IndexSpeedTest
             //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
 
 
-            //SpeedTest.Run(path, "smallTest");
+            SpeedTest.Run(path, "smallTest");
 
 
             #region .::.          Test 1          .::.
@@ -257,7 +257,7 @@ namespace IndexSpeedTest
             #region .::.          Test 17         .::.
 
             /// Condensed Regions
-            
+            /*
             SpeedTest.Run(
                 1000,     // sample count
                 200000,   // region count
@@ -273,7 +273,7 @@ namespace IndexSpeedTest
                 //2,         // min currentValue nodes
                 //256);      // max currentValue nodes
                 , 4, 64);
-            
+            */
             #endregion
 
             #region .::.          Test 18         .::.

@@ -80,60 +80,70 @@ namespace DI3
         /// <param name="Interval">The interval to be index.</param>
         public int Index(I Interval)
         {
+            
             interval = Interval;
-
+            /*
             marshalPoint = interval.left;
             Insert('L');
 
             marshalPoint = interval.right;
             //MarchForRightEnd();
             Insert('R');
+            */
 
-
-            bool isFirst = true;
-            bool isSucesseded = false;
-            foreach (var item in di3.EnumerateFrom(Interval.left))//, Interval.right))
+            bool isLeftEnd = true;
+            bool enumerated = false;
+            update.Tau = 'L';
+            update.Metadata = Interval.metadata;
+            foreach (var item in di3.EnumerateFrom(Interval.left))
             {
-                if(isFirst)
+                enumerated = true;
+                update.NextBlock = null;
+
+                if (isLeftEnd)
                 {
-                    if(Interval.left.Equals(item.Key))
-                    {
-                        update.NextBlock = null;
-                        update.Tau = 'L';
-                        update.Metadata = interval.metadata;
-                        di3.AddOrUpdate(marshalPoint, ref update);
-                    }
-                    else
-                    {
-                        update.NextBlock = item.Value;
-                        update.Tau = 'L';
-                        update.Metadata = interval.metadata;
-                        di3.AddOrUpdate(marshalPoint, ref update);
-                    }
-                    isFirst = false;
+                    if (HandleFirstItem(item)) break;
+                    isLeftEnd = false;
                 }
                 else
                 {
-                    if (Interval.right.Equals(item.Key) || Interval.right.CompareTo(item.Key)== -1)
+                    if (Interval.right.Equals(item.Key))
                     {
                         update.Tau = 'R';
-                        update.Metadata = Interval.metadata;
-
+                        break;
+                    }
+                    else if (Interval.right.CompareTo(item.Key) == 1) // Interval.right is bigger than item.Key
+                    {
+                        update.Tau = 'M';
+                        di3.AddOrUpdate(item.Key, ref update);
                     }
                     else
                     {
-                        update.Tau = 'M';
-                        update.Metadata = Interval.metadata;
-                        di3.AddOrUpdate(marshalPoint, ref update);
+                        update.Tau = 'R';
+                        update.NextBlock = item.Value;
+                        break;
                     }
                 }
 
-                isSucesseded = true;
+                /// this will be useful when the iteration reaches the 
+                /// end of collection while right-end is not handled yet. 
+                update.Tau = 'R'; 
             }
 
-            if(!isSucesseded)
+            if (enumerated)
             {
-                // means that the Enumerator did not find a range for Enumeration.
+                di3.AddOrUpdate(Interval.right, ref update);
+            }
+            else
+            {
+                update.NextBlock = null;
+                update.Tau = 'L';
+                update.Metadata = Interval.metadata;
+                di3.AddOrUpdate(Interval.left, ref update);
+
+                update.Tau = 'R';
+                update.Metadata = Interval.metadata;
+                di3.AddOrUpdate(Interval.right, ref update);
             }
 
 
@@ -142,6 +152,39 @@ namespace DI3
 
 
             return test_Maximum_Lambda_Lenght;
+        }
+
+        private bool HandleFirstItem(KeyValuePair<C, B<C, M>> item)
+        {
+            if (interval.left.Equals(item.Key))
+            {
+                di3.AddOrUpdate(interval.left, ref update);
+                return false;
+            }
+            else
+            {
+                update.NextBlock = item.Value;
+
+                switch (interval.right.CompareTo(item.Key))
+                {
+                    case 1: // interval.right is bigger than item.key
+                        di3.AddOrUpdate(interval.left, ref update);
+
+                        update.Tau = 'M';
+                        update.NextBlock = null;
+                        di3.AddOrUpdate(item.Key, ref update);
+                        return false;
+
+                    case 0:
+                    case -1:
+                        di3.AddOrUpdate(interval.left, ref update);
+
+                        update.Tau = 'R';
+                        return true;
+                }
+            }
+
+            return true;
         }
 
 
@@ -316,11 +359,13 @@ namespace DI3
 
             private B<C, M> GetNewBlock()
             {
-                B<C, M> newB;
+                //B<C, M> newB;
                 if (NextBlock == null)
-                    newB = new B<C, M>(tau: Tau, metadata: Metadata);
+                    //newB = new B<C, M>(tau: Tau, metadata: Metadata);
+                    return new B<C, M>(tau: Tau, metadata: Metadata);
                 else
-                    newB = new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
+                    //newB = new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
+                    return new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
 
 
                 // I need to access one item ahead, but since I could not 
@@ -339,7 +384,7 @@ namespace DI3
                 }*/
 
 
-                return newB;
+                //return newB;
             }
 
 

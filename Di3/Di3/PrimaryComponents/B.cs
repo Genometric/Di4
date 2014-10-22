@@ -50,8 +50,8 @@ namespace DI3
 
         internal B(char tau, M metadata, B<C, M> nextBlock) // check whether it is faster with ref or without ref for nextBlock. 
         {
-            if (tau == 'R') omega = nextBlock.omega + 1;
-            else omega = nextBlock.omega;
+            if (tau == 'R') omega = 1;//nextBlock.omega + 1;
+            //else omega = nextBlock.omega;
             _lambda = new List<Lambda<C, M>>();
             _lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
             foreach (var item in nextBlock.lambda)
