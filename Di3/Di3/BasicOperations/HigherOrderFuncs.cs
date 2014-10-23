@@ -150,7 +150,7 @@ namespace DI3
         {
             foreach (var item in newLambdas)
             {
-                if (//item.tau != 'R' &&
+                if (//block.tau != 'R' &&
                     !intervalsKeys.ContainsKey(item.atI.hashKey))
                 {
                     lambdas.Add(item);

@@ -5,6 +5,7 @@ using CSharpTest.Net.Serialization;
 using Interfaces;
 using CSharpTest.Net.Threading;
 using System.Diagnostics;
+using CSharpTest.Net.Synchronization;
 
 
 
@@ -112,6 +113,15 @@ namespace DI3
             options.MaximumValueNodes = 8;
             options.MinimumValueNodes = 2;
             */
+
+
+            /// There three lines added for multi-threading.
+            //options.CallLevelLock = new ReaderWriterLocking();
+            /////options.LockingFactory = new LockFactory<SimpleReadWriteLocking>(); //Test 1
+            /////options.LockingFactory = new LockFactory<WriterOnlyLocking>(); //Test 2
+            //options.LockingFactory = new LockFactory<ReaderWriterLocking>();
+            //options.LockTimeout = 10000;
+
 
             options.MaximumChildNodes = 256;// 100;
             options.MinimumChildNodes = 2;//2;//10;
@@ -247,6 +257,11 @@ namespace DI3
                 watch.Stop();
                 Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
+        }
+
+        public void SecondPass()
+        {
+            INDEX.SecondPass();
         }
 
         public List<O> Cover<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)

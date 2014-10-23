@@ -62,6 +62,8 @@ namespace IndexSpeedTest
                 di3.Add(new LightPeak() { left = 770, right = 930, metadata = new LightPeakData() { hashKey = 14 } }, 1, 1);
                 di3.Add(new LightPeak() { left = 1201, right = 1299, metadata = new LightPeakData() { hashKey = 15 } }, 1, 1);
                 di3.Add(new LightPeak() { left = 5, right = 10, metadata = new LightPeakData() { hashKey = 16 } }, 1, 1);
+
+                di3.SecondPass();
             }
         }
 
@@ -514,10 +516,10 @@ namespace IndexSpeedTest
 
             if (disposeDi3atEachSample)
             {
+                string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
                     Console.WriteLine("processing sample   : {0:N0}", sample);
-                    string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
 
                     /// Why am I diconstructing bplustree at each iteration ? 
                     /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
@@ -577,6 +579,14 @@ namespace IndexSpeedTest
                         //Lambda_Count_Writer.WriteLine(test_Maximum_Lambda_Count);
                         //Lambda_Count_Writer.Flush();
                     }
+                }
+
+                using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                {
+                    stopWatch.Restart();
+                    di3.SecondPass();
+                    stopWatch.Stop();
+                    Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round((sampleCount * regionCount) / stopWatch.Elapsed.TotalSeconds, 2));
                 }
             }
             else

@@ -301,9 +301,9 @@ namespace IndexSpeedTest
             #region .::.          Test 20: Multi-Threading          .::.
 
             /// Condensed Regions + Multi-Threading
-
+            
             SpeedTest.Run(
-                1000,     // sample count
+                10,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
                 path,     // output path

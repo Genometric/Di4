@@ -59,6 +59,8 @@ namespace DI3
                     _lambda.Add(new Lambda<C, M>(tau: 'M', atI: item.atI));
         }
 
+        
+
 
 
         /// <summary>
@@ -123,6 +125,17 @@ namespace DI3
 
             /// update it with new Lambda.
             newBlock._lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+
+            return newBlock;
+        }
+
+        internal B<C, M> Update(Dictionary<uint, Lambda<C, M>> lambdas)
+        {
+            B<C, M> newBlock = new B<C, M>();
+            newBlock.omega = this.omega;
+            newBlock._lambda = new List<Lambda<C, M>>();
+            foreach (var l in lambdas)
+                newBlock._lambda.Add(new Lambda<C, M>(tau: l.Value.tau, atI: l.Value.atI));
 
             return newBlock;
         }

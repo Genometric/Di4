@@ -126,7 +126,7 @@ namespace DI3
                         update.Tau = 'R';
                         break;
                     }
-                    else if (Interval.right.CompareTo(item.Key) == 1) // Interval.right is bigger than item.Key
+                    else if (Interval.right.CompareTo(item.Key) == 1) // Interval.right is bigger than block.Key
                     {
                         update.Tau = 'M';
                         di3.AddOrUpdate(item.Key, ref update);
@@ -172,14 +172,45 @@ namespace DI3
         {
             for (int i = Start; i < Stop; i++)
             {
-                Index(intervals[i]);
+                // single pass:
+                // Index(intervals[i]);
 
-                /*update.Metadata = intervals[i].metadata;
+                // double pass:
+                update.Metadata = intervals[i].metadata;
                 update.Tau = 'L';
                 di3.AddOrUpdate(intervals[i].left, ref update);
 
                 update.Tau = 'R';
-                di3.AddOrUpdate(intervals[i].right, ref update);*/
+                di3.AddOrUpdate(intervals[i].right, ref update);
+            }
+        }
+
+        public void SecondPass()
+        {
+            KeyValuePair<C, B<C, M>> firstItem;
+            di3.TryGetFirst(out firstItem);
+
+            Dictionary<uint, Lambda<C, M>> lambdaCarrier = new Dictionary<uint, Lambda<C, M>>();
+            KeyValueUpdate<C, B<C, M>> updateFunction = delegate(C k, B<C, M> i) { return i.Update(lambdaCarrier); };
+            List<uint> keysToRemove = new List<uint>();
+
+            foreach (var block in di3.EnumerateFrom(firstItem.Key))
+            {
+                foreach (var lambda in block.Value.lambda)
+                {
+                    if (lambdaCarrier.ContainsKey(lambda.atI.hashKey))
+                        lambdaCarrier[lambda.atI.hashKey] = lambda;
+                    else
+                        lambdaCarrier.Add(lambda.atI.hashKey, lambda);
+
+                    if (lambda.tau == 'R') keysToRemove.Add(lambda.atI.hashKey);
+                }
+
+                di3.TryUpdate(block.Key, updateFunction);
+
+                foreach (uint item in keysToRemove)
+                    lambdaCarrier.Remove(item);
+                keysToRemove.Clear();
             }
         }
 
@@ -196,7 +227,7 @@ namespace DI3
 
                 switch (interval.right.CompareTo(item.Key))
                 {
-                    case 1: // interval.right is bigger than item.key
+                    case 1: // interval.right is bigger than block.key
                         di3.AddOrUpdate(interval.left, ref update);
 
                         update.Tau = 'M';
@@ -281,7 +312,7 @@ namespace DI3
 
             //if (tau == 'R') newB.omega = 1;
 
-            // I need to access one item ahead, but since I could not 
+            // I need to access one block ahead, but since I could not 
             // find any proper way to do so with BPlusTree, I'm using 
             // following ramblings :)
             /*foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
@@ -397,7 +428,7 @@ namespace DI3
                     return new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
 
 
-                // I need to access one item ahead, but since I could not 
+                // I need to access one block ahead, but since I could not 
                 // find any proper way to do so with BPlusTree, I'm using 
                 // following ramblings :)
                 /*foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
