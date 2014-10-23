@@ -40,12 +40,16 @@ namespace DI3
             //update.di3 = di3;
         }
 
-        internal INDEX(BPlusTree<C, B<C,M>> di3, List<I> Intervals, int Start, int Stop)
+        
+        private Mode _mode { set; get; }
+
+        internal INDEX(BPlusTree<C, B<C,M>> di3, List<I> Intervals, int Start, int Stop, Mode mode)
         {
             this.di3 = di3;
             this.intervals = Intervals;
             this.Start = Start;
             this.Stop = Stop;
+            _mode = mode;
         }
 
         /// <summary>
@@ -96,6 +100,7 @@ namespace DI3
         {
             
             interval = Interval;
+
             /*
             marshalPoint = interval.left;
             Insert('L');
@@ -170,22 +175,29 @@ namespace DI3
 
         public void Index()
         {
-            for (int i = Start; i < Stop; i++)
+            int i;
+            switch (_mode)
             {
-                // single pass:
-                // Index(intervals[i]);
+                case Mode.SinglePass:
+                    for (i = Start; i < Stop; i++)                    
+                        Index(intervals[i]);                    
+                    break;
 
-                // double pass:
-                update.Metadata = intervals[i].metadata;
-                update.Tau = 'L';
-                di3.AddOrUpdate(intervals[i].left, ref update);
+                case Mode.MultiPass:
+                    for (i = Start; i < Stop; i++)
+                    {
+                        update.Metadata = intervals[i].metadata;
+                        update.Tau = 'L';
+                        di3.AddOrUpdate(intervals[i].left, ref update);
 
-                update.Tau = 'R';
-                di3.AddOrUpdate(intervals[i].right, ref update);
+                        update.Tau = 'R';
+                        di3.AddOrUpdate(intervals[i].right, ref update);
+                    }
+                    break;
             }
         }
 
-        public void SecondPass()
+        public int SecondPass()
         {
             KeyValuePair<C, B<C, M>> firstItem;
             di3.TryGetFirst(out firstItem);
@@ -193,9 +205,15 @@ namespace DI3
             Dictionary<uint, Lambda<C, M>> lambdaCarrier = new Dictionary<uint, Lambda<C, M>>();
             KeyValueUpdate<C, B<C, M>> updateFunction = delegate(C k, B<C, M> i) { return i.Update(lambdaCarrier); };
             List<uint> keysToRemove = new List<uint>();
+            List<uint> keys;
+
+
+            int TESTBlockCount = 0;
 
             foreach (var block in di3.EnumerateFrom(firstItem.Key))
             {
+                TESTBlockCount++;
+
                 foreach (var lambda in block.Value.lambda)
                 {
                     if (lambdaCarrier.ContainsKey(lambda.atI.hashKey))
@@ -211,7 +229,13 @@ namespace DI3
                 foreach (uint item in keysToRemove)
                     lambdaCarrier.Remove(item);
                 keysToRemove.Clear();
+
+                keys = new List<uint>(lambdaCarrier.Keys);
+                foreach (var key in keys)
+                    lambdaCarrier[key] = new Lambda<C, M>('M', lambdaCarrier[key].atI);
             }
+
+            return TESTBlockCount;
         }
 
         private bool HandleFirstItem(KeyValuePair<C, B<C, M>> item)

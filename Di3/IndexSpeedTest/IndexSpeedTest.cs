@@ -494,6 +494,8 @@ namespace IndexSpeedTest
             int avgValueSize,
             bool goMultiThread)
         {
+            Mode mode = Mode.SinglePass;
+
             int right = 0;
             int left = 0;
 
@@ -565,7 +567,7 @@ namespace IndexSpeedTest
                             //Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                         }
 
-                        di3.Add(peaks);
+                        di3.Add(peaks, mode);
 
                         stopWatch.Stop();
                         Console.WriteLine("");
@@ -581,13 +583,16 @@ namespace IndexSpeedTest
                     }
                 }
 
-                using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
-                {
-                    stopWatch.Restart();
-                    di3.SecondPass();
-                    stopWatch.Stop();
-                    Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round((sampleCount * regionCount) / stopWatch.Elapsed.TotalSeconds, 2));
-                }
+                if (mode == Mode.MultiPass)
+                    using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                    {
+                        Console.WriteLine("*********     SECOND PASS    **********");
+                        stopWatch.Restart();
+                        int TESTBlockCount = di3.SecondPass();
+                        stopWatch.Stop();
+                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine(".::. Total of {0,N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                    }
             }
             else
             {

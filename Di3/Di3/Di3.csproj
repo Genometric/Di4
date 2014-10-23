@@ -55,6 +55,7 @@
     <Compile Include="BasicOperations\HigherOrderFuncs.cs" />
     <Compile Include="BasicOperations\INDEX.cs" />
     <Compile Include="Di3.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Interfaces\ICSOutput.cs" />
     <Compile Include="PrimaryComponents\B.cs" />
     <Compile Include="PrimaryComponents\Lambda.cs" />

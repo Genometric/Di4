@@ -37,7 +37,7 @@ namespace DI3
         private BPlusTree<C, B<C, M>> di3 { set; get; }
         private BSerializer<C, M> bSerializer { set; get; }
 
-
+        
         /// <summary>
         /// Is an instance of INDEX class which 
         /// provides efficient means of inserting an 
@@ -102,8 +102,10 @@ namespace DI3
             //options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             options.StoragePerformance = StoragePerformance.Fastest;
 
-            options.CachePolicy = CachePolicy.All;
-            //options.CachePolicy = CachePolicy.Recent;
+
+            //////// Multi-Threading 2nd pass test; was commented-out visa versa
+            //options.CachePolicy = CachePolicy.All;
+            options.CachePolicy = CachePolicy.Recent;
 
             //options.FileBlockSize = 512;
 
@@ -121,6 +123,8 @@ namespace DI3
             /////options.LockingFactory = new LockFactory<WriterOnlyLocking>(); //Test 2
             //options.LockingFactory = new LockFactory<ReaderWriterLocking>();
             //options.LockTimeout = 10000;
+
+
 
 
             options.MaximumChildNodes = 256;// 100;
@@ -233,11 +237,11 @@ namespace DI3
             return INDEX.Index(interval);
         }
 
-        public void Add(List<I> intervals)
+        public void Add(List<I> intervals, Mode mode)
         {
-            Add(intervals, Environment.ProcessorCount);
+            Add(intervals, Environment.ProcessorCount, mode);
         }
-        public void Add(List<I> intervals, int threads)
+        public void Add(List<I> intervals, int threads, Mode mode)
         {
             Stopwatch watch = new Stopwatch();
 
@@ -249,7 +253,7 @@ namespace DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > intervals.Count) stop = intervals.Count;
-                    work.Enqueue(new INDEX<C, I, M>(di3, intervals, start, stop).Index);
+                    work.Enqueue(new INDEX<C, I, M>(di3, intervals, start, stop, mode).Index);
                 }
 
                 watch.Restart();
@@ -259,9 +263,9 @@ namespace DI3
             }
         }
 
-        public void SecondPass()
+        public int SecondPass()
         {
-            INDEX.SecondPass();
+            return INDEX.SecondPass();
         }
 
         public List<O> Cover<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
