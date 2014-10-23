@@ -55,7 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IndexSpeedTest.cs" />
+    <Compile Include="IndexSpeedTest_v1.cs" />
+    <Compile Include="IndexSpeedTest_v2.cs" />
     <Compile Include="Int32Comparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

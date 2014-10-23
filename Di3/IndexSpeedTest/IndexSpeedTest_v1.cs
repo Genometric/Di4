@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace IndexSpeedTest
 {
-    public class IndexSpeedTest
+    public class IndexSpeedTest_v1
     {
         Random rnd = new Random();
 

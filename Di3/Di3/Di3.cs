@@ -91,7 +91,8 @@ namespace DI3
             ISerializer<C> CSerializer,
             IComparer<C> comparer,
             int avgKeySize,
-            int avgValueSize)
+            int avgValueSize, 
+            bool THIS_IS_THE_MOST_USED_ONE)
         {
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
@@ -106,6 +107,7 @@ namespace DI3
             //////// Multi-Threading 2nd pass test; was commented-out visa versa
             //options.CachePolicy = CachePolicy.All;
             options.CachePolicy = CachePolicy.Recent;
+            
 
             //options.FileBlockSize = 512;
 
@@ -140,6 +142,33 @@ namespace DI3
             INDEX = new INDEX<C, I, M>(di3);
 
             //di3.DebugSetValidateOnCheckpoint(false);
+        }
+
+
+        public Di3(
+            string FileName,
+            CreatePolicy createPolicy,
+            ISerializer<C> CSerializer,
+            IComparer<C> comparer,
+            int avgKeySize,
+            int avgValueSize)
+        {
+            bSerializer = new BSerializer<C, M>();
+            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+
+            options.FileBlockSize = 512;
+            options.CachePolicy = CachePolicy.Recent;
+
+            options.CalcBTreeOrder(avgKeySize, avgValueSize);
+            options.CreateFile = createPolicy;
+            options.ExistingLogAction = ExistingLogAction.Truncate;
+            options.StoragePerformance = StoragePerformance.Fastest;            
+
+            if (createPolicy != CreatePolicy.Never)
+                options.FileName = FileName;
+
+            di3 = new BPlusTree<C, B<C, M>>(options);
+            INDEX = new INDEX<C, I, M>(di3);
         }        
 
 
@@ -155,18 +184,13 @@ namespace DI3
         {
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            /// The previous call had:
-            //options.CalcBTreeOrder(avgKeySize, avgValueSize);
             
-            /// Running version has CachePolicy.Recent
-            options.CachePolicy = CachePolicy.All;
-            
+            options.CachePolicy = CachePolicy.Recent;            
             options.FileBlockSize = 512;
 
             options.CreateFile = createPolicy;
-            //options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
-            //options.StoragePerformance = StoragePerformance.Fastest;
+            options.ExistingLogAction = ExistingLogAction.Truncate;
+            options.StoragePerformance = StoragePerformance.Fastest;
             options.MaximumChildNodes = maximumChildNodes;
             options.MinimumChildNodes = minimumChildNodes;
             options.MaximumValueNodes = maximumValueNodes;
@@ -195,18 +219,17 @@ namespace DI3
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
 
+            options.CachePolicy = CachePolicy.Recent;
+            options.FileBlockSize = 512;
+
             options.CalcBTreeOrder(avgKeySize, avgValueSize);
             options.CreateFile = createPolicy;
-            options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
+            options.ExistingLogAction = ExistingLogAction.Truncate;
             options.StoragePerformance = StoragePerformance.Fastest;
             options.MaximumChildNodes = maximumChildNodes;
             options.MinimumChildNodes = minimumChildNodes;
             options.MaximumValueNodes = maximumValueNodes;
             options.MinimumValueNodes = minimumValueNodes;
-
-            options.CachePolicy = CachePolicy.Recent;
-
-            options.FileBlockSize = 512;
 
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
@@ -214,6 +237,46 @@ namespace DI3
             di3 = new BPlusTree<C, B<C, M>>(options);
             INDEX = new INDEX<C, I, M>(di3);
         }
+
+
+        public Di3(
+            string FileName,
+            CreatePolicy createPolicy,
+            ISerializer<C> CSerializer,
+            IComparer<C> comparer,
+            int maximumChildNodes,
+            int minimumChildNodes,
+            int maximumValueNodes,
+            int minimumValueNodes,
+            int fileBlockSize)
+        {
+            bSerializer = new BSerializer<C, M>();
+            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+
+            options.CachePolicy = CachePolicy.Recent;
+            options.FileBlockSize = fileBlockSize;
+
+            options.CreateFile = createPolicy;
+            options.ExistingLogAction = ExistingLogAction.Truncate;
+            options.StoragePerformance = StoragePerformance.Fastest;
+            options.MaximumChildNodes = maximumChildNodes;
+            options.MinimumChildNodes = minimumChildNodes;
+            options.MaximumValueNodes = maximumValueNodes;
+            options.MinimumValueNodes = minimumValueNodes;
+
+            if (createPolicy != CreatePolicy.Never)
+                options.FileName = FileName;
+
+            di3 = new BPlusTree<C, B<C, M>>(options);
+            INDEX = new INDEX<C, I, M>(di3);
+        }
+
+        public Di3(Di3Options<C> Options)
+        {
+
+        }
+
+        
 
         public void Add(I interval)
         { }
