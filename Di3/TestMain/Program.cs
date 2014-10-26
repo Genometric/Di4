@@ -15,8 +15,18 @@ namespace TestMain
     {
         static void Main(string[] args)
         {
-            //TEST_AddOrUpdate();
+            //BasicTest();
 
+            // A Runtime test for multiple insertions. 
+            //TimeSpan elapsed = BasicInsertionSpeedTest(500000000);
+            //double millisec = elapsed.TotalSeconds;
+
+            LargeInsertion.Sequence("E:\\VahidTest\\", "LargeInsertion__Sequence");
+            LargeInsertion.RandomOverlaps("E:\\VahidTest\\", "LargeInsertion__RandomOverlaps");
+        }
+
+        private static void BasicTest()
+        {
             BPlusTree<double, string>.OptionsV2 options =
                 new BPlusTree<double, string>.OptionsV2(PrimitiveSerializer.Double, PrimitiveSerializer.String);
 
@@ -64,14 +74,14 @@ namespace TestMain
 
 
                 // Given key get the value. 
-                // Key is valid, i.e., it is available in tree.
+                // Key is valid, region.e., it is available in tree.
                 // Hence it returns: "50.2"
                 string value_of_valid_key;
                 tree.TryGetValue(50.1, out value_of_valid_key);
 
 
                 // Given key get the value.
-                // Key is invalid, i.e., it is NOT available in tree.
+                // Key is invalid, region.e., it is NOT available in tree.
                 // Hence it returns: null (default value of int)
                 string value_of_invalid_key;
                 tree.TryGetValue(55, out value_of_invalid_key);
@@ -100,18 +110,18 @@ namespace TestMain
                 // starting from first item to last.
                 foreach (var item in tree)
                 {
-  
+
                 }
 
 
                 // Iterates through items starting from given key: 40.1 (inclusively) 
                 // and goes till the last item.
-                foreach(var item in tree.EnumerateFrom(39.1))
+                foreach (var item in tree.EnumerateFrom(39.1))
                 {
 
                 }
 
-                
+
 
 
                 // Iterates through items starting from given index: 2 (inclusively)
@@ -125,9 +135,9 @@ namespace TestMain
 
                 // Iterate from an item that is NOT available in collection
                 // to the item which is neither available.
-                foreach(var item in tree.EnumerateRange(20.5, 40.9))
+                foreach (var item in tree.EnumerateRange(20.5, 40.9))
                 {
-                    
+
                 }
 
 
@@ -140,38 +150,33 @@ namespace TestMain
                 var element_at_2 = tree.ElementAtOrDefault(2);
                 var element_at_3 = tree.ElementAtOrDefault(3);
                 var element_at_100 = tree.ElementAtOrDefault(100);
-            }
-
-            // A Runtime test for multiple insertions. 
-            TimeSpan elapsed = RunTime(500000000);
-
-            double millisec = elapsed.TotalSeconds;
 
 
-            using (BPlusTree<double, string> data = new BPlusTree<double, string>(options))
-            {
-                bool sT1 = data.TryAdd(1, "a");
-                bool sF1 = data.TryAdd(1, "a");
+                using (BPlusTree<double, string> data = new BPlusTree<double, string>(options))
+                {
+                    bool sT1 = data.TryAdd(1, "a");
+                    bool sF1 = data.TryAdd(1, "a");
 
-                data[1] = "did it";
+                    data[1] = "did it";
 
-                bool sT2 = data.TryUpdate(1, "a");
-                bool sT3 = data.TryUpdate(1, "c");
-                bool sT4 = data.TryUpdate(1, "d", "c");
-                bool sF2 = data.TryUpdate(1, "f", "c");
-                bool equality1 = "d".Equals(data[1]);
-                bool sT5 = data.TryUpdate(1, "a", data[1]);
-                bool equality2 = "a".Equals(data[1]);
-                bool sF3 = data.TryUpdate(2, "b");
+                    bool sT2 = data.TryUpdate(1, "a");
+                    bool sT3 = data.TryUpdate(1, "c");
+                    bool sT4 = data.TryUpdate(1, "d", "c");
+                    bool sF2 = data.TryUpdate(1, "f", "c");
+                    bool equality1 = "d".Equals(data[1]);
+                    bool sT5 = data.TryUpdate(1, "a", data[1]);
+                    bool equality2 = "a".Equals(data[1]);
+                    bool sF3 = data.TryUpdate(2, "b");
 
-                string val;
-                bool st6 = data.TryRemove(1, out val) && val == "a";
-                bool sF4 = data.TryRemove(2, out val);
-                bool notEqual = val.Equals("a");
+                    string val;
+                    bool st6 = data.TryRemove(1, out val) && val == "a";
+                    bool sF4 = data.TryRemove(2, out val);
+                    bool notEqual = val.Equals("a");
+                }
             }
         }
 
-        private static TimeSpan RunTime(int inputSize)
+        private static TimeSpan BasicInsertionSpeedTest(int inputSize)
         {
             Stopwatch watch = new Stopwatch();
 
