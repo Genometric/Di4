@@ -5,9 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interfaces;
 
 namespace DI3
 {
+    public enum LockMode { WriterOnlyLocking, ReaderWriterLocking, SimpleReadWriteLocking, IgnoreLocking };
+
     public class Di3Options<C>
         where C : IComparable<C>
     {
@@ -22,7 +25,7 @@ namespace DI3
             this.Comparer = Comparer;
         }
 
-        enum LockMode { WriterOnlyLocking, ReaderWriterLocking, SimpleReadWriteLocking };
+        public bool OpenReadOnly { set; get; }
         internal string FileName { set; get; }
         internal CreatePolicy CreatePolicy { set; get; }
         internal ISerializer<C> CSerializer { set; get; }
@@ -38,7 +41,9 @@ namespace DI3
         public int LockTimeout { set; get; }
         public int CacheMaximumHistory { set; get; }
         public int CacheMinimumHistory { set; get; }
-        public int CacheTimeOut { set; get; }
+        public int CacheKeepAliveTimeOut { set; get; }
         public CachePolicy CachePolicy { set; get; }
+        public ExistingLogAction ExistingLogAction { set; get; }
+        public StoragePerformance StoragePerformance { set; get; }
     }
 }

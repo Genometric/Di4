@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Di3_4_64_2_256_noBlockSize_noAvg</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Di3Multipass\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -60,6 +60,7 @@
     <Compile Include="Int32Comparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests_v2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

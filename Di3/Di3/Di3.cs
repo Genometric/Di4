@@ -98,33 +98,33 @@ namespace DI3
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
 
             
-            //options.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
+            //rtv.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
             options.CreateFile = createPolicy;
-            //options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
+            //rtv.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             options.StoragePerformance = StoragePerformance.Fastest;
 
 
             //////// Multi-Threading 2nd pass test; was commented-out visa versa
-            //options.CachePolicy = CachePolicy.All;
+            //rtv.CachePolicy = CachePolicy.All;
             options.CachePolicy = CachePolicy.Recent;
             
 
-            //options.FileBlockSize = 512;
+            //rtv.FileBlockSize = 512;
 
-            /*options.MaximumChildNodes = 8;
-            options.MinimumChildNodes = 2;
+            /*rtv.MaximumChildNodes = 8;
+            rtv.MinimumChildNodes = 2;
 
-            options.MaximumValueNodes = 8;
-            options.MinimumValueNodes = 2;
+            rtv.MaximumValueNodes = 8;
+            rtv.MinimumValueNodes = 2;
             */
 
 
             /// There three lines added for multi-threading.
-            //options.CallLevelLock = new ReaderWriterLocking();
-            /////options.LockingFactory = new LockFactory<SimpleReadWriteLocking>(); //Test 1
-            /////options.LockingFactory = new LockFactory<WriterOnlyLocking>(); //Test 2
-            //options.LockingFactory = new LockFactory<ReaderWriterLocking>();
-            //options.LockTimeout = 10000;
+            //rtv.CallLevelLock = new ReaderWriterLocking();
+            /////rtv.LockingFactory = new LockFactory<SimpleReadWriteLocking>(); //Test 1
+            /////rtv.LockingFactory = new LockFactory<WriterOnlyLocking>(); //Test 2
+            //rtv.LockingFactory = new LockFactory<ReaderWriterLocking>();
+            //rtv.LockTimeout = 10000;
 
 
 
@@ -271,9 +271,73 @@ namespace DI3
             INDEX = new INDEX<C, I, M>(di3);
         }
 
-        public Di3(Di3Options<C> Options)
+        public Di3(Di3Options<C> options)
         {
+            di3 = new BPlusTree<C, B<C, M>>(GetTreeOptions(options));
+            INDEX = new INDEX<C, I, M>(di3);
+        }
 
+        private BPlusTree<C, B<C, M>>.OptionsV2 GetTreeOptions(Di3Options<C> options)
+        {
+            bSerializer = new BSerializer<C, M>();
+            var rtv = new BPlusTree<C, B<C, M>>.OptionsV2(options.CSerializer, bSerializer, options.Comparer);
+            rtv.ReadOnly = options.OpenReadOnly;
+
+            if (options.MaximumChildNodes >= 4 &&
+                options.MinimumChildNodes >= 2 &&
+                options.MaximumValueNodes >= 4 &&
+                options.MinimumValueNodes >= 2)
+            {
+                rtv.MaximumChildNodes = options.MaximumChildNodes;
+                rtv.MinimumChildNodes = options.MinimumChildNodes;
+                rtv.MaximumValueNodes = options.MaximumValueNodes;
+                rtv.MinimumValueNodes = options.MinimumValueNodes;
+            }
+            
+            if(options.AverageKeySize != 0 && options.AverageValueSize != 0)
+                rtv.CalcBTreeOrder(options.AverageKeySize, options.AverageValueSize);
+
+            if (options.FileBlockSize != 0)
+                rtv.FileBlockSize = options.FileBlockSize;
+
+            rtv.CachePolicy = options.CachePolicy;
+            if (options.CreatePolicy != CreatePolicy.Never)
+                rtv.FileName = options.FileName;
+
+            rtv.CreateFile = options.CreatePolicy;
+            rtv.ExistingLogAction = options.ExistingLogAction;
+            rtv.StoragePerformance = options.StoragePerformance;
+
+            rtv.CallLevelLock = new ReaderWriterLocking();
+            if (options.LockTimeout > 0) rtv.LockTimeout = options.LockTimeout;
+
+            switch (options.Locking)
+            {
+                case LockMode.WriterOnlyLocking:
+                    rtv.LockingFactory = new LockFactory<WriterOnlyLocking>();
+                    break;
+
+                case LockMode.ReaderWriterLocking:
+                    rtv.LockingFactory = new LockFactory<ReaderWriterLocking>();
+                    break;
+
+                case LockMode.SimpleReadWriteLocking:
+                    rtv.LockingFactory = new LockFactory<SimpleReadWriteLocking>();                    
+                    break;
+
+                case LockMode.IgnoreLocking:
+                    rtv.LockingFactory = new IgnoreLockFactory();
+                    break;
+            }
+
+            if (options.CacheMaximumHistory != 0 && options.CacheKeepAliveTimeOut != 0)
+            {
+                rtv.CacheKeepAliveMaximumHistory = options.CacheMaximumHistory;
+                rtv.CacheKeepAliveMinimumHistory = options.CacheMinimumHistory;
+                rtv.CacheKeepAliveTimeout = options.CacheKeepAliveTimeOut;
+            }
+
+            return rtv;
         }
 
         
@@ -286,15 +350,6 @@ namespace DI3
         {
             INDEX.TEST_Sample_Number = TEST_Sample_Number;
             INDEX.TEST_Region_Number = TEST_Region_Number;
-
-
-            /// only test
-            /*var originalBlock = new B<C, M>();
-            //aBlock.lambda.Add(new Lambda<C, M>('M', default(M))); // this should be error
-            //aBlock.lambda.Add(new Lambda<C, M>('L', default(M))); // error
-            //aBlock.lambda.Add(new Lambda<C, M>('R', default(M))); // error
-            var anotherBlock = originalBlock.Update(new Lambda<C, M>('T', default(M)));
-            originalBlock = originalBlock.Update(new Lambda<C, M>('2', default(M)));*/
 
 
             return INDEX.Index(interval);

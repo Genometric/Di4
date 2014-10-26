@@ -6,9 +6,26 @@ namespace IndexSpeedTest
     {
         static void Main(string[] args)
         {
+            Tests_v2 SpeedTest_V2 = new Tests_v2();
+            SpeedTest_V2.Test_10();
+            SpeedTest_V2.Test_11();
+            SpeedTest_V2.Test_12();
+            SpeedTest_V2.Test_13();
+            SpeedTest_V2.Test_14();
+            SpeedTest_V2.Test_15();
+            SpeedTest_V2.Test_16();
+            SpeedTest_V2.Test_17();
+            SpeedTest_V2.Test_18();
+            SpeedTest_V2.Test_19();
+            SpeedTest_V2.Test_20();
+
+
+
+
+            /*
             IndexSpeedTest_v1 SpeedTest = new IndexSpeedTest_v1();
 
-            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;*/
 
             //SpeedTest.Run(2000, 200000, path, "TEST_11", 5, 500, 500, 1000);
             //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
@@ -301,9 +318,9 @@ namespace IndexSpeedTest
             #region .::.          Test 20: Multi-Threading          .::.
 
             /// Condensed Regions + Multi-Threading
-            
+            /*
             SpeedTest.Run(
-                50,     // sample count
+                150,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
                 path,     // output path
@@ -317,7 +334,7 @@ namespace IndexSpeedTest
                 //2,         // min currentValue nodes
                 //256);      // max currentValue nodes
                 , 4, 64, true);
-            
+            */
             #endregion
         }
     }

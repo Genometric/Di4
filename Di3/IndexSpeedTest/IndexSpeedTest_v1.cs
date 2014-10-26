@@ -494,7 +494,7 @@ namespace IndexSpeedTest
             int avgValueSize,
             bool goMultiThread)
         {
-            Mode mode = Mode.SinglePass;
+            Mode mode = Mode.MultiPass;
 
             int right = 0;
             int left = 0;
@@ -591,7 +591,7 @@ namespace IndexSpeedTest
                         int TESTBlockCount = di3.SecondPass();
                         stopWatch.Stop();
                         Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        Console.WriteLine(".::. Total of {0,N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
                     }
             }
             else

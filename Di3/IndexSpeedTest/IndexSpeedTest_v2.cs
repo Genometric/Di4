@@ -12,7 +12,7 @@ namespace IndexSpeedTest
     public class IndexSpeedTest_v2
     {
         private StreamWriter writer { set; get; }
-        private Stopwatch stopWatch = new Stopwatch();        
+        private Stopwatch stopWatch = new Stopwatch();
         Random rnd = new Random();
         private Int32Comparer int32Comparer = new Int32Comparer();
 
@@ -32,11 +32,11 @@ namespace IndexSpeedTest
             int right = 0;
             int left = 0;
 
-            string file = outputPath + Path.DirectorySeparatorChar + "bplusTree.bpt";
             if (!Directory.Exists(outputPath) && outputPath.Trim() != string.Empty) Directory.CreateDirectory(outputPath);
-            
+
             writer = new StreamWriter(outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".txt");
             writer.WriteLine("Di3 indexing speed test: " + TestName);
+            writer.WriteLine("Speed(interval/sec)\tET\tET(ms)");
 
             if (disposeDi3atEachSample)
             {
@@ -61,16 +61,18 @@ namespace IndexSpeedTest
                                 right = right,
                                 metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
                             });
+
+                            //Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                         }
 
                         di3.Add(peaks, mode);
 
                         stopWatch.Stop();
-                        Console.WriteLine("");
+                        //Console.WriteLine("");
                         Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
                         Console.WriteLine("");
 
-                        writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2).ToString() + "\t" + stopWatch.Elapsed.ToString() + "\t" + stopWatch.ElapsedMilliseconds.ToString());
                         writer.Flush();
                     }
                 }
@@ -78,7 +80,7 @@ namespace IndexSpeedTest
                 if (mode == Mode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
-                        Console.WriteLine("*********     SECOND PASS    **********");
+                        Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
                         int TESTBlockCount = di3.SecondPass();
                         stopWatch.Stop();
@@ -88,33 +90,49 @@ namespace IndexSpeedTest
             }
             else
             {
-                var di3 = new Di3<int, LightPeak, LightPeakData>(options);
-
-                for (int sample = 0; sample < sampleCount; sample++)
+                using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                 {
-                    Console.WriteLine("processing sample   : {0:N0}", sample);
-                    stopWatch.Restart();
 
-                    for (int intervals = 1; intervals <= regionCount; intervals++)
+                    for (int sample = 0; sample < sampleCount; sample++)
                     {
-                        left = right + rnd.Next(minGap, maxGap);
-                        right = left + rnd.Next(minLenght, maxLenght);
+                        Console.WriteLine("processing sample   : {0:N0}", sample);
+                        stopWatch.Restart();
 
-                        di3.Add(new LightPeak()
+                        for (int intervals = 1; intervals <= regionCount; intervals++)
                         {
-                            left = left,
-                            right = right,
-                            metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
-                        }, sample, intervals);
+                            left = right + rnd.Next(minGap, maxGap);
+                            right = left + rnd.Next(minLenght, maxLenght);
 
-                        Console.Write("\r#Inserted intervals : {0:N0}", intervals);
+                            di3.Add(new LightPeak()
+                            {
+                                left = left,
+                                right = right,
+                                metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
+                            }, sample, intervals);
+
+                            //Console.Write("\r#Inserted intervals : {0:N0}", intervals);
+                        }
+
+                        stopWatch.Stop();
+                        //Console.WriteLine("");
+                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine("");
+
+                        writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2).ToString() + "\t" + stopWatch.Elapsed.ToString() + "\t" + stopWatch.ElapsedMilliseconds.ToString());
+                        writer.Flush();
                     }
-
-                    stopWatch.Stop();
-                    Console.WriteLine("");
-                    Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
-                    Console.WriteLine("");
                 }
+
+                if (mode == Mode.MultiPass)
+                    using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
+                    {
+                        Console.WriteLine(".::.     SECOND PASS    .::.");
+                        stopWatch.Restart();
+                        int TESTBlockCount = di3.SecondPass();
+                        stopWatch.Stop();
+                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                    }
             }
         }
     }
