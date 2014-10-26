@@ -2,12 +2,13 @@
 using CSharpTest.Net.Serialization;
 using ProtoBuf;
 using Interfaces;
+using System.IO;
 
 namespace DI3
 {
     public class BSerializer<C, M> : ISerializer<B<C, M>>
         where C : IComparable<C>
-        where M : IMetaData/*<C>*/
+        where M : IMetaData
     {
         public B<C, M> ReadFrom(System.IO.Stream stream)
         {
@@ -16,8 +17,7 @@ namespace DI3
 
         public void WriteTo(B<C, M> value, System.IO.Stream stream)
         {
-            try { Serializer.SerializeWithLengthPrefix<B<C, M>>(stream, value, PrefixStyle.Fixed32); }
-            catch (Exception exp) { }
+            Serializer.SerializeWithLengthPrefix<B<C, M>>(stream, value, PrefixStyle.Fixed32);
         }
     }
 }

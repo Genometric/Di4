@@ -13,7 +13,7 @@ namespace IndexSpeedTest
     {
         IndexSpeedTest_v2 SpeedTest = new IndexSpeedTest_v2();
 
-        string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+        string path = @"E:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
         Int32Comparer int32Comparer = new Int32Comparer();
 
         public void Test_01()
@@ -622,14 +622,52 @@ namespace IndexSpeedTest
                 PrimitiveSerializer.Int32, int32Comparer);
 
             options.AverageKeySize = 4;
-            options.AverageValueSize = 196;
-            options.FileBlockSize = 8192;
+            options.AverageValueSize = 96;
+            options.FileBlockSize = 4096;
 
             options.CachePolicy = CachePolicy.Recent;
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
             options.Locking = LockMode.SimpleReadWriteLocking;
+
+            SpeedTest.Run(
+                100,
+                200000,
+                true,
+                path,
+                testTitle,
+                50,
+                500,
+                500,
+                1000,
+                options,
+                Mode.SinglePass);
+        }
+        public void Test_21()
+        {
+            string testTitle = "Test_21";
+
+            Di3Options<int> options = new Di3Options<int>(
+                path + Path.DirectorySeparatorChar + "Di3_" + testTitle + ".idx",
+                CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
+                PrimitiveSerializer.Int32, int32Comparer);
+
+            //options.AverageKeySize = 4;
+            //options.AverageValueSize = 96;
+            options.FileBlockSize = 4096;
+
+            options.CachePolicy = CachePolicy.Recent;
+
+            options.StoragePerformance = StoragePerformance.Fastest;
+
+            options.Locking = LockMode.SimpleReadWriteLocking;
+
+            options.MaximumChildNodes = 256;
+            options.MinimumChildNodes = 2;
+
+            options.MaximumValueNodes = 256;
+            options.MinimumValueNodes = 2;
 
             SpeedTest.Run(
                 100,
