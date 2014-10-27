@@ -19,14 +19,16 @@ namespace IndexSpeedTest
             //SpeedTest_V2.Test_19();
             //SpeedTest_V2.Test_20();
             SpeedTest_V2.Test_21();
+            SpeedTest_V2.Test_22();
 
 
 
 
-            
+
+            /*
             IndexSpeedTest_v1 SpeedTest = new IndexSpeedTest_v1();
 
-            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;*/
 
             //SpeedTest.Run(2000, 200000, path, "TEST_11", 5, 500, 500, 1000);
             //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
@@ -275,7 +277,7 @@ namespace IndexSpeedTest
             #region .::.          Test 17         .::.
 
             /// Condensed Regions
-            
+            /*
             SpeedTest.Run(
                 1000,     // sample count
                 200000,   // region count

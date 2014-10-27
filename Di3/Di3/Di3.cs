@@ -343,6 +343,10 @@ namespace DI3
                 rtv.CacheKeepAliveTimeout = options.CacheKeepAliveTimeOut;
             }
 
+            var sto = rtv.StoragePerformance;
+            var stype = rtv.StorageSystem;
+            var sss = rtv.StorageType;
+
             return rtv;
         }
 

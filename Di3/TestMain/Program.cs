@@ -21,8 +21,8 @@ namespace TestMain
             //TimeSpan elapsed = BasicInsertionSpeedTest(500000000);
             //double millisec = elapsed.TotalSeconds;
 
-            LargeInsertion.Sequence("E:\\VahidTest\\", "LargeInsertion__Sequence");
-            LargeInsertion.RandomOverlaps("E:\\VahidTest\\", "LargeInsertion__RandomOverlaps");
+            LargeInsertion.Sequence("D:\\VahidTest\\", "LargeInsertion__Sequence");
+            LargeInsertion.RandomOverlaps("D:\\VahidTest\\", "LargeInsertion__RandomOverlaps");
         }
 
         private static void BasicTest()

@@ -92,7 +92,6 @@ namespace IndexSpeedTest
             {
                 using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                 {
-
                     for (int sample = 0; sample < sampleCount; sample++)
                     {
                         Console.WriteLine("processing sample   : {0:N0}", sample);
