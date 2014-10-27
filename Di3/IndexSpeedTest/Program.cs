@@ -7,6 +7,15 @@ namespace IndexSpeedTest
         static void Main(string[] args)
         {
             Tests_v2 SpeedTest_V2 = new Tests_v2();
+            //SpeedTest_V2.Test_01();
+            //SpeedTest_V2.Test_02();
+            //SpeedTest_V2.Test_03();
+            //SpeedTest_V2.Test_04();
+            //SpeedTest_V2.Test_05();
+            //SpeedTest_V2.Test_06();
+            //SpeedTest_V2.Test_07();
+            //SpeedTest_V2.Test_08();
+            //SpeedTest_V2.Test_09();
             //SpeedTest_V2.Test_10();
             //SpeedTest_V2.Test_11();
             //SpeedTest_V2.Test_12();
@@ -18,13 +27,20 @@ namespace IndexSpeedTest
             //SpeedTest_V2.Test_18();
             //SpeedTest_V2.Test_19();
             //SpeedTest_V2.Test_20();
-            SpeedTest_V2.Test_21();
+            //SpeedTest_V2.Test_21();
             SpeedTest_V2.Test_22();
+            SpeedTest_V2.Test_23();
+            SpeedTest_V2.Test_24();
+            SpeedTest_V2.Test_25();
+            SpeedTest_V2.Test_26();
+            SpeedTest_V2.Test_27();
+            SpeedTest_V2.Test_28();
 
 
 
 
 
+            
             /*
             IndexSpeedTest_v1 SpeedTest = new IndexSpeedTest_v1();
 
