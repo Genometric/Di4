@@ -17,9 +17,9 @@ namespace DI3
         where I : IInterval<C, M>
         where M : IMetaData/*<C>*/
     {
-        internal HigherOrderFuncs(BPlusTree<C, B<C, M>> di3)
+        internal HigherOrderFuncs(BPlusTree<C, int> di3)
         {
-            this.di3 = di3;
+            //this.di3 = di3;
             intervalsKeys = new Hashtable();
             lambdas = new List<Lambda<C, M>>();
         }
@@ -37,6 +37,7 @@ namespace DI3
             lambdas.Clear();
             intervalsKeys.Clear();
 
+            /*
             foreach (var block in di3.EnumerateFrom(di3.First().Key))
             {
                 accumulation = (byte)(block.Value.lambda.Count - block.Value.omega);
@@ -69,7 +70,7 @@ namespace DI3
                         UpdateLambdas(block.Value.lambda);
                     }
                 }
-            }
+            }*/
 
             return OutputStrategy.output;
         }
@@ -82,6 +83,7 @@ namespace DI3
             lambdas.Clear();
             intervalsKeys.Clear();
 
+            /*
             foreach (var block in di3.EnumerateFrom(di3.First().Key))
             {
                 accumulation = (byte)(block.Value.lambda.Count - block.Value.omega);
@@ -116,7 +118,7 @@ namespace DI3
                     UpdateLambdas(block.Value.lambda);
                 }
             }
-
+            */
             return OutputStrategy.output;
         }
 
@@ -137,7 +139,7 @@ namespace DI3
                 #endregion
                 foreach (var block in di3.EnumerateRange(reference.left, reference.right))
                 {
-                    UpdateLambdas(block.Value.lambda);
+                    //UpdateLambdas(block.Value.lambda);
                 }
 
                 OutputStrategy.Output(reference, lambdas);

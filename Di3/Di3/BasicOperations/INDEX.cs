@@ -34,7 +34,7 @@ namespace DI3
         /// </summary>
         /// <param name="di3">The reference di3 to be 
         /// manipulated.</param>
-        internal INDEX(BPlusTree<C, B<C, M>> di3)
+        internal INDEX(BPlusTree<C, int> di3)
         {
             this.di3 = di3;
             //update.di3 = di3;
@@ -43,7 +43,7 @@ namespace DI3
         
         private Mode _mode { set; get; }
 
-        internal INDEX(BPlusTree<C, B<C,M>> di3, List<I> Intervals, int Start, int Stop, Mode mode)
+        internal INDEX(BPlusTree<C, int> di3, List<I> Intervals, int Start, int Stop, Mode mode)
         {
             this.di3 = di3;
             this.intervals = Intervals;
@@ -58,7 +58,7 @@ namespace DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private BPlusTree<C, B<C, M>> di3 { set; get; }
+        private BPlusTree<C, int> di3 { set; get; }
 
         /// <summary>
         /// Represents the coordinate (right or left-end)
@@ -117,7 +117,7 @@ namespace DI3
             foreach (var item in di3.EnumerateFrom(Interval.left))
             {
                 enumerated = true;
-                update.NextBlock = null;
+                update.NextBlock = 0;
 
                 if (isLeftEnd)
                 {
@@ -155,7 +155,7 @@ namespace DI3
             }
             else
             {
-                update.NextBlock = null;
+                update.NextBlock = 0;
                 update.Tau = 'L';
                 update.Metadata = Interval.metadata;
                 di3.AddOrUpdate(Interval.left, ref update);
@@ -199,17 +199,17 @@ namespace DI3
 
         public int SecondPass()
         {
-            KeyValuePair<C, B<C, M>> firstItem;
+            KeyValuePair<C, int> firstItem;
             di3.TryGetFirst(out firstItem);
 
-            Dictionary<uint, Lambda<C, M>> lambdaCarrier = new Dictionary<uint, Lambda<C, M>>();
-            KeyValueUpdate<C, B<C, M>> updateFunction = delegate(C k, B<C, M> i) { return i.Update(lambdaCarrier); };
+            //Dictionary<uint, Lambda<C, M>> lambdaCarrier = new Dictionary<uint, Lambda<C, M>>();
+            //KeyValueUpdate<C, B<C, M>> updateFunction = delegate(C k, B<C, M> i) { return i.Update(lambdaCarrier); };
             List<uint> keysToRemove = new List<uint>();
             List<uint> keys;
 
 
             int TESTBlockCount = 0;
-
+            /*
             foreach (var block in di3.EnumerateFrom(firstItem.Key))
             {
                 TESTBlockCount++;
@@ -233,12 +233,12 @@ namespace DI3
                 keys = new List<uint>(lambdaCarrier.Keys);
                 foreach (var key in keys)
                     lambdaCarrier[key] = new Lambda<C, M>('M', lambdaCarrier[key].atI);
-            }
+            }*/
 
             return TESTBlockCount;
         }
 
-        private bool HandleFirstItem(KeyValuePair<C, B<C, M>> item)
+        private bool HandleFirstItem(KeyValuePair<C, int> item)
         {
             if (interval.left.Equals(item.Key))
             {
@@ -255,7 +255,7 @@ namespace DI3
                         di3.AddOrUpdate(interval.left, ref update);
 
                         update.Tau = 'M';
-                        update.NextBlock = null;
+                        update.NextBlock = 0;
                         di3.AddOrUpdate(item.Key, ref update);
                         return false;
 
@@ -351,7 +351,7 @@ namespace DI3
                 break;
             }*/
 
-            test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, newB.lambda.Count);
+            //test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, newB.lambda.Count);
 
             return newB;
         }
@@ -398,58 +398,60 @@ namespace DI3
         }
 
 
-        struct AddUpdateValue : ICreateOrUpdateValue<C, B<C, M>>, IRemoveValue<C, B<C, M>>
+        struct AddUpdateValue : ICreateOrUpdateValue<C, int>, IRemoveValue<C, int>
         {
-            public B<C, M> OldValue;
+            public int OldValue;
             //public string Value;
             public char Tau { set; get; }
             public M Metadata { set; get; }
 
-            public B<C, M> NextBlock { set; get; }
+            public int NextBlock { set; get; }
 
-            public bool CreateValue(C key, out B<C, M> value)
+            public bool CreateValue(C key, out int value)
             {
-                OldValue = null;
+                OldValue = 0;//null;
 
                 //value = Value;
                 value = GetNewBlock();
 
                 return !Metadata.Equals(default(M)) && Tau != default(char); // Value != null;
             }
-            public bool UpdateValue(C key, ref B<C, M> value)
+            public bool UpdateValue(C key, ref int value)
             {
                 OldValue = value;
 
                 //value = Value;
-                if (Tau == 'R')
+                /*if (Tau == 'R')
                     value = value.Update(Omega: value.omega + 1, tau: Tau, metadata: Metadata);
                 else
-                    value = value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);
+                    value = value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);*/
 
 
                 return !Metadata.Equals(default(M)) && Tau != default(char); // Value != null;
             }
-            public bool RemoveValue(C key, B<C, M> value)
+            public bool RemoveValue(C key, int value)
             {
                 OldValue = value;
 
                 //return value == Value;
-                if (Tau == 'R')
+                /*if (Tau == 'R')
                     return value == value.Update(Omega: value.omega + 1, tau: Tau, metadata: Metadata);
                 else
-                    return value == value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);
+                    return value == value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);*/
+                return true;
             }
 
 
-            private B<C, M> GetNewBlock()
+            private int GetNewBlock()
             {
+                return 0;
                 //B<C, M> newB;
-                if (NextBlock == null)
+                //if (NextBlock == null)
                     //newB = new B<C, M>(tau: Tau, metadata: Metadata);
-                    return new B<C, M>(tau: Tau, metadata: Metadata);
-                else
+                    //return new B<C, M>(tau: Tau, metadata: Metadata);
+                //else
                     //newB = new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
-                    return new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
+                    //return new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
 
 
                 // I need to access one block ahead, but since I could not 

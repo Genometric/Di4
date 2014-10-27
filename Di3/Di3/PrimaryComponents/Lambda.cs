@@ -17,7 +17,7 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    [ProtoContract]
+    //[ProtoContract]
     public class Lambda<C, M>
         where C : IComparable<C>
         where M : IMetaData/*<C>*/
@@ -60,14 +60,14 @@ namespace DI3
         /// <para>[currentValue] = M  ::>  Middle    intersecting the coordiante.</para>
         /// <para>[currentValue] = R  ::>  Right-end intersecting the coordiante.</para>
         /// </summary>
-        [ProtoMember(1)]
+        //[ProtoMember(1)]
         internal char tau { private set; get; }
 
         /// <summary>
         /// Gets descriptive metadata of the intereval
         /// represented by generic type M.
         /// </summary>
-        [ProtoMember(2)]
+        //[ProtoMember(2)]
         internal M atI { private set; get; }
     }
 }

@@ -26,7 +26,9 @@ namespace DI3
         internal B()
         {// it seems that the protobuf net needs this constructor. 
             omega = 0;
-            _lambda = new List<Lambda<C, M>>();
+            //_atI = new M[10];
+            //_tau = new char[10];
+            //_lambda = new List<Lambda<C, M>>();
         }
 
         /// <summary>
@@ -37,26 +39,38 @@ namespace DI3
         {
             //e = coordinate;
             omega = 0;
-            _lambda = new List<Lambda<C, M>>();
+            //_tau = new char[10];
+            //_atI = new M[10];
+            //_lambda = new List<Lambda<C, M>>();
         }
 
         internal B(char tau, M metadata)
         { // initializes a block and adds one Lambda to lambda according to tau and metadata.
             if (tau == 'R') omega = 1;
             else omega = 0;
-            _lambda = new List<Lambda<C, M>>();
-            _lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //_tau = new char[10];
+            //_atI = new M[10];
+            //_tau[0]=tau;
+            //_atI[0]=metadata;
+            //_lambda = new List<Lambda<C, M>>();
+            //_lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
         }
 
         internal B(char tau, M metadata, B<C, M> nextBlock) // check whether it is faster with ref or without ref for nextBlock. 
         {
             if (tau == 'R') omega = 1;//nextBlock.omega + 1;
             //else omega = nextBlock.omega;
-            _lambda = new List<Lambda<C, M>>();
-            _lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
-            foreach (var item in nextBlock.lambda)
-                if (item.tau != 'L')
-                    _lambda.Add(new Lambda<C, M>(tau: 'M', atI: item.atI));
+            //_tau = new char[10];
+            //_atI = new M[10];
+            //_tau[0]= tau;
+            //_atI[0]= metadata;
+            //_lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+           /* foreach (var item in nextBlock.Tau)
+                if (item != 'L')
+                {
+                    _tau.Add('M');
+                }*/
+                    //_lambda.Add(new Lambda<C, M>(tau: 'M', atI: item.atI));
         }
 
         
@@ -80,10 +94,18 @@ namespace DI3
         /// Represents the interval intersecting with 
         /// the c of corresponding block.
         /// </summary>
-        [ProtoMember(2)]
-        private List<Lambda<C, M>> _lambda { set; get; }
+        //[ProtoMember(2)]
+        //private List<Lambda<C, M>> _lambda { set; get; }
+        //internal ReadOnlyCollection<Lambda<C, M>> lambda { get { return _lambda.AsReadOnly(); } }
 
-        internal ReadOnlyCollection<Lambda<C, M>> lambda { get { return _lambda.AsReadOnly(); } }
+        //[ProtoMember(2)]
+        //private char[] _tau { set; get; }
+        //internal ReadOnlyCollection<char> Tau { get { return _tau.AsReadOnly(); } }
+
+        //[ProtoMember(3)]
+        //private M[] _atI { set; get; }
+        //internal ReadOnlyCollection<M> atI { get { return _atI.AsReadOnly(); } }
+
 
 
 
@@ -95,7 +117,11 @@ namespace DI3
             newBlock.omega = Omega;
 
             /// deep copy the current one.
-            newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._tau = new char[10];
+            //newBlock._tau[0] = this._tau[0];
+            //newBlock._atI = new M[10];
+            //newBlock._atI[0] = this._atI[0];
 
             return newBlock;
         }
@@ -105,10 +131,16 @@ namespace DI3
             B<C, M> newBlock = new B<C, M>();
 
             /// deep copy the current one.
-            newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._tau = new char[10];
+            //newBlock._tau[0] = this._tau[0];
+            //newBlock._atI = new M[10];
+            //newBlock._atI[0] = this._atI[0];
 
             /// update it with new Lambda.
-            newBlock._lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //newBlock._lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //newBlock._tau[1] = tau;
+            //newBlock._atI[1] = metadata;
 
             return newBlock;
         }
@@ -121,23 +153,37 @@ namespace DI3
             newBlock.omega = Omega;
 
             /// deep copy the current one.
-            newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._tau = new char[10];
+            //newBlock._tau[0] = this._tau[0];
+            //newBlock._atI = new M[10];
+            //newBlock._atI[0] = this._atI[0];
 
             /// update it with new Lambda.
-            newBlock._lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //newBlock._lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //newBlock._tau[1] = tau;
+            //newBlock._atI[1] = metadata;
 
             return newBlock;
         }
 
+        /*
         internal B<C, M> Update(Dictionary<uint, Lambda<C, M>> lambdas)
         {
             B<C, M> newBlock = new B<C, M>();
             newBlock.omega = this.omega;
-            newBlock._lambda = new List<Lambda<C, M>>();
+            //newBlock._lambda = new List<Lambda<C, M>>();
+            newBlock._tau = new List<char>();
+            newBlock._atI = new List<M>();
+
             foreach (var l in lambdas)
-                newBlock._lambda.Add(new Lambda<C, M>(tau: l.Value.tau, atI: l.Value.atI));
+            {
+                //newBlock._lambda.Add(new Lambda<C, M>(tau: l.Value.tau, atI: l.Value.atI));
+                newBlock._atI.Add(l.Value.atI);
+                newBlock._tau.Add(l.Value.tau);
+            }
 
             return newBlock;
-        }
+        }*/
     }
 }
