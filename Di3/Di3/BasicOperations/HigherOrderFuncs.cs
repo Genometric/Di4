@@ -24,6 +24,22 @@ namespace DI3
             lambdas = new List<Lambda<C, M>>();
         }
 
+        internal HigherOrderFuncs(BPlusTree<C, B<C, M>> di3, ICSOutput<C, I, M, O> OutputStrategy, List<I> Intervals, int Start, int Stop)
+        {
+            this.di3 = di3;
+            intervalsKeys = new Hashtable();
+            lambdas = new List<Lambda<C, M>>();
+            this.intervals = Intervals;
+            this.Start = Start;
+            this.Stop = Stop;
+            this.outputStrategy = OutputStrategy;
+        }
+
+        private List<I> intervals { set; get; }
+        private int Start { set; get; }
+        private int Stop { set; get; }
+        private ICSOutput<C, I, M, O> outputStrategy { set; get; }
+
         private BPlusTree<C, B<C, M>> di3 { set; get; }
 
         private Hashtable intervalsKeys { set; get; }
@@ -122,7 +138,7 @@ namespace DI3
             return OutputStrategy.output;
         }
 
-        internal List<O> Map(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
+        /*internal List<O> Map(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
         {
             int i = 0;
             foreach (var reference in references)
@@ -146,6 +162,39 @@ namespace DI3
             }
 
             return OutputStrategy.output;
+        }*/
+
+        // this MAP is for multi-threading and is not supposed to return anything, 
+        // instead it should put data in an internal list which will be merged with the lists of other threads.
+        internal void Map()//ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
+        {
+            int i = 0;
+            I reference;
+
+            for (i = Start; i < Stop; i++)
+            {
+                reference = intervals[i];
+
+                //Console.Write("\r ... processing regions: {0} / {1}", ++i, intervals.Count);
+                lambdas.Clear();
+                intervalsKeys.Clear();
+
+                #region .::.     a quick note     .::.
+                /// This iteration starts from a block which it's key (i.e., coordinate)
+                /// is the minimum >= to reference.left; and goes to the block which the key
+                /// is maximum <= to reference.right. Of course if no such blocks are available
+                /// this iteration wont iteratre over anything. 
+                #endregion
+                foreach (var block in di3.EnumerateRange(reference.left, reference.right))
+                {
+                    UpdateLambdas(block.Value.lambda);
+                }
+
+                outputStrategy.Output(reference, lambdas);
+
+            }
+
+            //return OutputStrategy.output;
         }
 
         private void UpdateLambdas(ReadOnlyCollection<Lambda<C, M>> newLambdas)

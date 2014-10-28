@@ -185,7 +185,7 @@ namespace Di3B
                         using (var di3 = new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.IfNeeded, CSerializer, CComparer))
                         {
                             Console.WriteLine("... proecssing {0} now.", reference.Key);
-                            output.Chrs[reference.Key][strand] = di3.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                            output.Chrs[reference.Key][strand] = di3.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key], cpuCount);
                         }
                         break;
 
@@ -193,7 +193,7 @@ namespace Di3B
                         if (!Chrs.ContainsKey(reference.Key))
                             Chrs.Add(reference.Key, new Dictionary<char, Di3<C, I, M>>());
                         Chrs[reference.Key].Add(strand, new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.Never, CSerializer, CComparer));
-                        output.Chrs[reference.Key][strand] = Chrs[reference.Key][strand].Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                        output.Chrs[reference.Key][strand] = Chrs[reference.Key][strand].Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key], cpuCount);
                         break;
                 }
 

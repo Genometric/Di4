@@ -226,7 +226,7 @@ namespace IndexSpeedTest
             options.StoragePerformance = StoragePerformance.Fastest;
 
             SpeedTest.Run(
-                150,
+                600,//150,
                 200000,
                 true,
                 path,
@@ -751,6 +751,75 @@ namespace IndexSpeedTest
                 options,
                 Mode.SinglePass);
         }
+        public void Test_22()
+        {
+            string testTitle = "Test_22";
+
+            Di3Options<int> options = new Di3Options<int>(
+                path + Path.DirectorySeparatorChar + "Di3_" + testTitle + ".idx",
+                CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
+                PrimitiveSerializer.Int32, int32Comparer);
+
+            options.AverageKeySize = 4;
+            options.AverageValueSize = 32;
+            options.FileBlockSize = 4096;
+
+            options.CachePolicy = CachePolicy.Recent;
+
+            options.StoragePerformance = StoragePerformance.LogFileInCache;
+
+            options.Locking = LockMode.SimpleReadWriteLocking;
+
+
+            SpeedTest.Run(
+                100,
+                200000,
+                false,
+                path,
+                testTitle,
+                50,
+                500,
+                500,
+                1000,
+                options,
+                Mode.SinglePass);
+        }
+        public void Test_23()
+        {
+            string testTitle = "Test_23";
+
+            Di3Options<int> options = new Di3Options<int>(
+                path + Path.DirectorySeparatorChar + "Di3_" + testTitle + ".idx",
+                CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
+                PrimitiveSerializer.Int32, int32Comparer);
+
+            options.FileBlockSize = 512;
+
+            options.CachePolicy = CachePolicy.Recent;
+
+            options.StoragePerformance = StoragePerformance.Fastest;
+
+            options.Locking = LockMode.WriterOnlyLocking;
+
+            options.MaximumChildNodes = 256;
+            options.MinimumChildNodes = 2;
+
+            options.MaximumValueNodes = 256;
+            options.MinimumValueNodes = 2;
+
+            SpeedTest.Run(
+                100,
+                200000,
+                true,
+                path,
+                testTitle,
+                50,
+                500,
+                500,
+                1000,
+                options,
+                Mode.SinglePass);
+        }
         public void Test_24()
         {
             string testTitle = "Test_24";
@@ -931,5 +1000,37 @@ namespace IndexSpeedTest
                 options,
                 Mode.SinglePass);
         }
+        public void Test_29()
+        {
+            string testTitle = "Test_29";
+
+            Di3Options<int> options = new Di3Options<int>(
+                path + Path.DirectorySeparatorChar + "Di3_" + testTitle + ".idx",
+                CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
+                PrimitiveSerializer.Int32, int32Comparer);
+
+            options.CachePolicy = CachePolicy.Recent;
+
+            options.StoragePerformance = StoragePerformance.Fastest;
+
+            options.Locking = LockMode.SimpleReadWriteLocking;
+
+            options.AverageKeySize = 4;
+            options.AverageValueSize = 64;
+
+            SpeedTest.Run(
+                100,
+                200000,
+                true,
+                path,
+                testTitle,
+                50,
+                500,
+                500,
+                1000,
+                options,
+                Mode.SinglePass);
+        }
+
     }
 }

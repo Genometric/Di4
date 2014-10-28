@@ -430,7 +430,7 @@ namespace DI3
 
         public void Add(List<I> intervals, Mode mode)
         {
-            Add(intervals, Environment.ProcessorCount, mode);
+            Add(intervals, /*Environment.ProcessorCount*/6, mode);
         }
         public void Add(List<I> intervals, int threads, Mode mode)
         {
@@ -471,10 +471,30 @@ namespace DI3
             return SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);
         }
 
-        public List<O> Map<O>(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
+        public List<O> Map<O>(ICSOutput<C, I, M, O> OutputStrategy, List<I> references, int threads)
         {
-            HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
-            return SetOps.Map(OutputStrategy, references);
+            Stopwatch watch = new Stopwatch();
+            int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)threads);
+
+            using (WorkQueue work = new WorkQueue(threads))
+            {
+                for (int i = 0; i < threads; i++)
+                {
+                    start = i * range;
+                    stop = (i + 1) * range;
+                    if (stop > references.Count) stop = references.Count;
+                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(di3, OutputStrategy, references, start, stop).Map);
+                    else break;
+                }
+
+                watch.Restart();
+                work.Complete(true, -1);
+                watch.Stop();
+                Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
+            }
+
+            //HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
+            return null;//SetOps.Map(OutputStrategy, references);
         }
 
 
