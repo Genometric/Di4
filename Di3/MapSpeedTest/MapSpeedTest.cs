@@ -13,13 +13,16 @@ namespace MapSpeedTest
     class MapSpeedTest
     {
         Int32Comparer int32Comparer = new Int32Comparer();
+        int cpuCount = Environment.ProcessorCount;
 
         public void Run(string IndexFile,
             int RegionCount,
             /*int MinGap,
             int MaxGap,*/
             int MinLenght,
-            int MaxLenght)
+            int MaxLenght,
+            int avgKeySize,
+            int avgValueSize)
         {
             List<LightPeak> Peaks = new List<LightPeak>();
             Random rnd = new Random();
@@ -27,27 +30,7 @@ namespace MapSpeedTest
             int rndRight = 0;
             Stopwatch stopWatch = new Stopwatch();
 
-            Di3Options<int> options = new Di3Options<int>(
-                IndexFile,
-                CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
-
-            #region .::. Options that need to be exactly like the indexed file .::.
-            options.Locking = LockMode.IgnoreLocking;
-
-            options.MinimumChildNodes = 2;
-            options.MaximumChildNodes = 256;
-            options.MinimumValueNodes = 2;
-            options.MaximumValueNodes = 256;
-
-            options.FileBlockSize = 4096;
-
-            options.CachePolicy = CachePolicy.Recent;
-
-            options.StoragePerformance = StoragePerformance.Fastest;
-            #endregion
-
-            using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
+            using (var di3 = new Di3<int, LightPeak, LightPeakData>(IndexFile, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
             {
                 /// Creating some random regions. 
                 Console.WriteLine("");
@@ -66,7 +49,7 @@ namespace MapSpeedTest
                 FunctionOutput<Output<int, LightPeak, LightPeakData>> output = new FunctionOutput<Output<int, LightPeak, LightPeakData>>();
                 AggregateFactory<int, LightPeak, LightPeakData> aggFactory = new AggregateFactory<int, LightPeak, LightPeakData>();
                 /*output.Chrs[reference.Key][strand] =*/
-                di3.Map<Output<int, LightPeak, LightPeakData>>(aggFactory.GetAggregateFunction("count"), Peaks, Environment.ProcessorCount);
+                di3.Map<Output<int, LightPeak, LightPeakData>>(aggFactory.GetAggregateFunction("count"), Peaks, cpuCount);
                 stopWatch.Stop();
                 Console.WriteLine("");
                 Console.WriteLine("ET: {0}", stopWatch.Elapsed);

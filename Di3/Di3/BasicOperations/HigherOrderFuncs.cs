@@ -17,13 +17,12 @@ namespace DI3
         where I : IInterval<C, M>
         where M : IMetaData/*<C>*/
     {
-        internal HigherOrderFuncs(BPlusTree<C, int> di3)
+        internal HigherOrderFuncs(BPlusTree<C, B<C, M>> di3)
         {
-            //this.di3 = di3;
+            this.di3 = di3;
             intervalsKeys = new Hashtable();
             lambdas = new List<Lambda<C, M>>();
         }
-
         internal HigherOrderFuncs(BPlusTree<C, B<C, M>> di3, ICSOutput<C, I, M, O> OutputStrategy, List<I> Intervals, int Start, int Stop)
         {
             this.di3 = di3;
@@ -53,7 +52,6 @@ namespace DI3
             lambdas.Clear();
             intervalsKeys.Clear();
 
-            /*
             foreach (var block in di3.EnumerateFrom(di3.First().Key))
             {
                 accumulation = (byte)(block.Value.lambda.Count - block.Value.omega);
@@ -86,7 +84,7 @@ namespace DI3
                         UpdateLambdas(block.Value.lambda);
                     }
                 }
-            }*/
+            }
 
             return OutputStrategy.output;
         }
@@ -99,7 +97,6 @@ namespace DI3
             lambdas.Clear();
             intervalsKeys.Clear();
 
-            /*
             foreach (var block in di3.EnumerateFrom(di3.First().Key))
             {
                 accumulation = (byte)(block.Value.lambda.Count - block.Value.omega);
@@ -134,11 +131,11 @@ namespace DI3
                     UpdateLambdas(block.Value.lambda);
                 }
             }
-            */
+
             return OutputStrategy.output;
         }
-
-        /*internal List<O> Map(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
+        /*
+        internal List<O> Map(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
         {
             int i = 0;
             foreach (var reference in references)
@@ -155,7 +152,7 @@ namespace DI3
                 #endregion
                 foreach (var block in di3.EnumerateRange(reference.left, reference.right))
                 {
-                    //UpdateLambdas(block.Value.lambda);
+                    UpdateLambdas(block.Value.lambda);
                 }
 
                 OutputStrategy.Output(reference, lambdas);
@@ -163,7 +160,6 @@ namespace DI3
 
             return OutputStrategy.output;
         }*/
-
         // this MAP is for multi-threading and is not supposed to return anything, 
         // instead it should put data in an internal list which will be merged with the lists of other threads.
         internal void Map()//ICSOutput<C, I, M, O> OutputStrategy, List<I> references)

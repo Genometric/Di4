@@ -234,8 +234,8 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            //di3 = new BPlusTree<C, B<C, M>>(options);
-            //INDEX = new INDEX<C, I, M>(di3);
+            di3 = new BPlusTree<C, B<C, M>>(options);
+            INDEX = new INDEX<C, I, M>(di3);
         }
 
 
@@ -252,24 +252,6 @@ namespace DI3
         {
             bSerializer = new BSerializer<C, M>();
             var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            options.CachePolicy = CachePolicy.Recent;
-            options.FileBlockSize = fileBlockSize;
-
-            options.CreateFile = createPolicy;
-            options.ExistingLogAction = ExistingLogAction.Truncate;
-            options.StoragePerformance = StoragePerformance.Fastest;
-            options.MaximumChildNodes = maximumChildNodes;
-            options.MinimumChildNodes = minimumChildNodes;
-            options.MaximumValueNodes = maximumValueNodes;
-            options.MinimumValueNodes = minimumValueNodes;
-
-            if (createPolicy != CreatePolicy.Never)
-                options.FileName = FileName;
-
-            //di3 = new BPlusTree<C, B<C, M>>(options);
-            //INDEX = new INDEX<C, I, M>(di3);
-        }
 
         public Di3(Di3Options<C> options)
         {
@@ -372,7 +354,7 @@ namespace DI3
 
             if (options.FileBlockSize != 0)
                 rtv.FileBlockSize = options.FileBlockSize;
-
+        
             rtv.CachePolicy = options.CachePolicy;
             if (options.CreatePolicy != CreatePolicy.Never)
                 rtv.FileName = options.FileName;
@@ -471,30 +453,10 @@ namespace DI3
             return SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);
         }
 
-        public List<O> Map<O>(ICSOutput<C, I, M, O> OutputStrategy, List<I> references, int threads)
+        public List<O> Map<O>(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
         {
-            Stopwatch watch = new Stopwatch();
-            int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)threads);
-
-            using (WorkQueue work = new WorkQueue(threads))
-            {
-                for (int i = 0; i < threads; i++)
-                {
-                    start = i * range;
-                    stop = (i + 1) * range;
-                    if (stop > references.Count) stop = references.Count;
-                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(di3, OutputStrategy, references, start, stop).Map);
-                    else break;
-                }
-
-                watch.Restart();
-                work.Complete(true, -1);
-                watch.Stop();
-                Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
-            }
-
-            //HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
-            return null;//SetOps.Map(OutputStrategy, references);
+            HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
+            return SetOps.Map(OutputStrategy, references);
         }
 
 

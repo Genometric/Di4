@@ -13,7 +13,7 @@ namespace IndexSpeedTest
             //SpeedTest_V2.Test_04();
             //SpeedTest_V2.Test_05();
             //SpeedTest_V2.Test_06();
-            SpeedTest_V2.Test_07();
+            //SpeedTest_V2.Test_07();
             //SpeedTest_V2.Test_08();
             //SpeedTest_V2.Test_09();
             //SpeedTest_V2.Test_10();
@@ -28,14 +28,22 @@ namespace IndexSpeedTest
             //SpeedTest_V2.Test_19();
             //SpeedTest_V2.Test_20();
             //SpeedTest_V2.Test_21();
+            //SpeedTest_V2.Test_22();
+            SpeedTest_V2.Test_23();
+            SpeedTest_V2.Test_24();
+            SpeedTest_V2.Test_25();
+            SpeedTest_V2.Test_26();
+            //SpeedTest_V2.Test_27();
 
 
 
 
-            
+
+
+            /*
             IndexSpeedTest_v1 SpeedTest = new IndexSpeedTest_v1();
 
-            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;*/
 
             //SpeedTest.Run(2000, 200000, path, "TEST_11", 5, 500, 500, 1000);
             //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
@@ -59,7 +67,7 @@ namespace IndexSpeedTest
                 50,       // min lenght
                 100);     // max lenght
             */
-            
+
             #endregion
 
             #region .::.          Test 2          .::.
@@ -300,7 +308,7 @@ namespace IndexSpeedTest
                 //2,         // min currentValue nodes
                 //256);      // max currentValue nodes
                 , 4, 64);
-            */
+            
             #endregion
 
             #region .::.          Test 18         .::.
