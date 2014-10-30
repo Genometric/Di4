@@ -3,14 +3,59 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A22F1A77-6131-413A-A9D7-062DC73406DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEDParser", "BEDParser\BEDParser.csproj", "{A8579878-71FA-44B1-9FCF-62C88CBE5248}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{1BE54F6E-6B8D-44ED-A66B-99F406B5099B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{EE126208-2F58-446F-9476-00F833CA965F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3", "Di3\Di3.csproj", "{A18501A2-6959-40B2-9D17-9BB563C51BDC}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 1
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
+		SccProjectUniqueName1 = BEDParser\\BEDParser.csproj
+		SccProjectTopLevelParentUniqueName1 = Di3.sln
+		SccProjectName1 = BEDParser
+		SccLocalPath1 = BEDParser
+		SccProjectUniqueName2 = Interfaces\\Interfaces.csproj
+		SccProjectTopLevelParentUniqueName2 = Di3.sln
+		SccProjectName2 = Interfaces
+		SccLocalPath2 = Interfaces
+		SccProjectUniqueName3 = Di3\\Di3.csproj
+		SccProjectTopLevelParentUniqueName3 = Di3.sln
+		SccProjectName3 = Di3
+		SccLocalPath3 = Di3
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE126208-2F58-446F-9476-00F833CA965F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE126208-2F58-446F-9476-00F833CA965F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE126208-2F58-446F-9476-00F833CA965F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE126208-2F58-446F-9476-00F833CA965F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A18501A2-6959-40B2-9D17-9BB563C51BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A18501A2-6959-40B2-9D17-9BB563C51BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A18501A2-6959-40B2-9D17-9BB563C51BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A18501A2-6959-40B2-9D17-9BB563C51BDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A8579878-71FA-44B1-9FCF-62C88CBE5248} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
+		{EE126208-2F58-446F-9476-00F833CA965F} = {1BE54F6E-6B8D-44ED-A66B-99F406B5099B}
+		{A18501A2-6959-40B2-9D17-9BB563C51BDC} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
 	EndGlobalSection
 EndGlobal
