@@ -15,9 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3", "Di3\Di3.csproj", "{A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3B", "Di3B\Di3B.csproj", "{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OldVersion", "OldVersion", "{189C970C-43D3-474D-B0FB-9888DA972B87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldDi3", "OldDi3\OldDi3.csproj", "{5D319E83-E522-44B4-BDF8-C331CE8F57F2}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -37,6 +41,10 @@ Global
 		SccProjectTopLevelParentUniqueName4 = Di3.sln
 		SccProjectName4 = Di3B
 		SccLocalPath4 = Di3B
+		SccProjectUniqueName5 = OldDi3\\OldDi3.csproj
+		SccProjectTopLevelParentUniqueName5 = Di3.sln
+		SccProjectName5 = OldDi3
+		SccLocalPath5 = OldDi3
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +67,10 @@ Global
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,5 +80,6 @@ Global
 		{EE126208-2F58-446F-9476-00F833CA965F} = {1BE54F6E-6B8D-44ED-A66B-99F406B5099B}
 		{A18501A2-6959-40B2-9D17-9BB563C51BDC} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
+		{5D319E83-E522-44B4-BDF8-C331CE8F57F2} = {189C970C-43D3-474D-B0FB-9888DA972B87}
 	EndGlobalSection
 EndGlobal
