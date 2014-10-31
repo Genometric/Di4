@@ -46,8 +46,6 @@ namespace IndexSpeedTest
 
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
-                        stopWatch.Restart();
-
                         List<LightPeak> peaks = new List<LightPeak>();
 
                         for (int intervals = 1; intervals <= regionCount; intervals++)
@@ -65,8 +63,8 @@ namespace IndexSpeedTest
                             //Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                         }
 
+                        stopWatch.Restart();
                         di3.Add(peaks, mode);
-
                         stopWatch.Stop();
                         //Console.WriteLine("");
                         Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
@@ -166,8 +164,6 @@ namespace IndexSpeedTest
 
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
-                        stopWatch.Restart();
-
                         List<LightPeak> peaks = new List<LightPeak>();
 
                         for (int intervals = 1; intervals <= regionCount; intervals = intervals + 3)
@@ -185,8 +181,8 @@ namespace IndexSpeedTest
                             //Console.Write("\r#Inserted intervals : {0:N0}", intervals);
                         }
 
+                        stopWatch.Restart();
                         di3.Add(peaks, mode);
-
                         stopWatch.Stop();
                         //Console.WriteLine("");
                         Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round((regionCount / 3) / stopWatch.Elapsed.TotalSeconds, 2));

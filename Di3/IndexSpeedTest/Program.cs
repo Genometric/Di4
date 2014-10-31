@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using CSharpTest.Net.Serialization;
+using DI3;
+using System.IO;
 
 namespace IndexSpeedTest
 {
@@ -6,7 +8,19 @@ namespace IndexSpeedTest
     {
         static void Main(string[] args)
         {
-            Tests_v2 SpeedTest_V2 = new Tests_v2();
+            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+
+            //Tests_v2 SpeedTest_V2 = new Tests_v2();
+            //SpeedTest_V2.path = path;
+            //SpeedTest_V2.Test_01();
+            //SpeedTest_V2.Test_02();
+            //SpeedTest_V2.Test_03();
+            //SpeedTest_V2.Test_04();
+            //SpeedTest_V2.Test_05();
+            //SpeedTest_V2.Test_06();
+            //SpeedTest_V2.Test_07();
+            //SpeedTest_V2.Test_08();
+            //SpeedTest_V2.Test_09();
             //SpeedTest_V2.Test_10();
             //SpeedTest_V2.Test_11();
             //SpeedTest_V2.Test_12();
@@ -18,20 +32,26 @@ namespace IndexSpeedTest
             //SpeedTest_V2.Test_18();
             //SpeedTest_V2.Test_19();
             //SpeedTest_V2.Test_20();
-            SpeedTest_V2.Test_21();
+            //SpeedTest_V2.Test_21();
+            //SpeedTest_V2.Test_22();
+            //SpeedTest_V2.Test_23();
+            //SpeedTest_V2.Test_24();
+            //SpeedTest_V2.Test_25();
+            //SpeedTest_V2.Test_26();
+            //SpeedTest_V2.Test_27();
+
+
+            ControledIntervals ControlledIntervals = new ControledIntervals();
+            ControlledIntervals.path = path;
+            ControlledIntervals.Sequence();
+            
 
 
 
-
-
-            IndexSpeedTest_v1 SpeedTest = new IndexSpeedTest_v1();
-
-            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
-
+            //IndexSpeedTest_v1 SpeedTest = new IndexSpeedTest_v1();
+            //string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
             //SpeedTest.Run(2000, 200000, path, "TEST_11", 5, 500, 500, 1000);
             //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
-
-
             //SpeedTest.Run(path, "smallTest");
 
 
@@ -270,12 +290,10 @@ namespace IndexSpeedTest
             */
             #endregion
 
-
-
             #region .::.          Test 17         .::.
 
             /// Condensed Regions
-
+            /*
             SpeedTest.Run(
                 1000,     // sample count
                 200000,   // region count
@@ -291,7 +309,7 @@ namespace IndexSpeedTest
                 //2,         // min currentValue nodes
                 //256);      // max currentValue nodes
                 , 4, 64);
-
+            */
             #endregion
 
             #region .::.          Test 18         .::.
@@ -314,7 +332,6 @@ namespace IndexSpeedTest
                 256);      // max currentValue nodes
             */
             #endregion
-
 
             #region .::.          Test 20: Multi-Threading          .::.
 

@@ -13,7 +13,7 @@ namespace IndexSpeedTest
     {
         IndexSpeedTest_v2 SpeedTest = new IndexSpeedTest_v2();
 
-        string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+        public string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
         Int32Comparer int32Comparer = new Int32Comparer();
 
         public void Test_01()

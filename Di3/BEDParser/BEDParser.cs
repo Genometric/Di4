@@ -41,7 +41,7 @@ namespace BEDParser
         /// <param name="nameColumn">The column number of peak name.</param>
         /// <param name="valueColumn">The column number of peak value.</param>
         /// /// <param name="strandColumn">The column number of peak strand. If input is not stranded this value should be set to -1.</param>
-        protected internal BEDParser(
+        public BEDParser(
             string source,
             string species,
             byte startOffset,
@@ -89,7 +89,7 @@ namespace BEDParser
         /// <para>2 : value =  (-1)Log10(value)</para>
         /// <param name="dropPeakIfInvalidValue">If set to true, a peak with invalid value will be droped. 
         /// If set to false, a peak with invalid value with take up the default value.</param>
-        protected internal BEDParser(
+        public BEDParser(
             string source,
             string species,
             byte startOffset,
