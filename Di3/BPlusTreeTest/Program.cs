@@ -1,5 +1,10 @@
-﻿using System;
+﻿using CSharpTest.Net.Collections;
+using CSharpTest.Net.Serialization;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,8 +21,8 @@ namespace BPlusTreeTest
             //TimeSpan elapsed = BasicInsertionSpeedTest(500000000);
             //double millisec = elapsed.TotalSeconds;
 
-            LargeInsertion.Sequence("E:\\VahidTest\\", "LargeInsertion__Sequence");
-            LargeInsertion.RandomOverlaps("E:\\VahidTest\\", "LargeInsertion__RandomOverlaps");
+            LargeInsertion.Sequence("D:\\VahidTest\\", "BPlusTreeTest_LargeInsertion__Sequence");
+            LargeInsertion.RandomOverlaps("D:\\VahidTest\\", "BPlusTreeTest_LargeInsertion__RandomOverlaps");
         }
 
         private static void BasicTest()
@@ -27,7 +32,7 @@ namespace BPlusTreeTest
 
             options.CalcBTreeOrder(16, 24);
             options.CreateFile = CreatePolicy.Always;
-            options.FileName = Path.GetTempFileName();
+            options.FileName = System.IO.Path.GetTempFileName();
             using (var tree = new BPlusTree<double, string>(options))
             {
                 var tempDir = new DirectoryInfo(Path.GetTempPath());

@@ -31,9 +31,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BPlusTreeTest", "BPlusTreeT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3BMain", "Di3BMain\Di3BMain.csproj", "{F8235645-248F-46DE-956E-5D3367EE19A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3WithCustomBlockSerializer", "Di3WithCustomBlockSerializer\Di3WithCustomBlockSerializer.csproj", "{AE63A4F0-AA76-472D-B21A-84BC8D5656FE}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -76,6 +78,10 @@ Global
 		SccProjectUniqueName10 = Di3BMain\\Di3BMain.csproj
 		SccProjectName10 = Di3BMain
 		SccLocalPath10 = Di3BMain
+		SccProjectUniqueName11 = Di3WithCustomBlockSerializer\\Di3WithCustomBlockSerializer.csproj
+		SccProjectTopLevelParentUniqueName11 = Di3.sln
+		SccProjectName11 = Di3WithCustomBlockSerializer
+		SccLocalPath11 = Di3WithCustomBlockSerializer
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +128,10 @@ Global
 		{F8235645-248F-46DE-956E-5D3367EE19A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8235645-248F-46DE-956E-5D3367EE19A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8235645-248F-46DE-956E-5D3367EE19A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE63A4F0-AA76-472D-B21A-84BC8D5656FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE63A4F0-AA76-472D-B21A-84BC8D5656FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE63A4F0-AA76-472D-B21A-84BC8D5656FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE63A4F0-AA76-472D-B21A-84BC8D5656FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,5 +146,6 @@ Global
 		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 		{39F5704E-F83C-42E2-A09E-1E453C66ED04} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285} = {D4532791-94FB-467A-83D1-5D449D3A3653}
+		{AE63A4F0-AA76-472D-B21A-84BC8D5656FE} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 	EndGlobalSection
 EndGlobal

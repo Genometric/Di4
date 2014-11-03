@@ -80,7 +80,7 @@ namespace BPlusTreeTest
                     for (int region = 0; region < regionCount; region++)
                     {
                         update.Value = rnd.Next(0, Int32.MaxValue);
-                        tree.AddOrUpdate(rnd.Next(10, 20), ref update);
+                        tree.AddOrUpdate(rnd.Next(10, 12), ref update);
                     }
                     stopWatch.Stop();
                     Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));

@@ -43,7 +43,8 @@ namespace IndexSpeedTest
 
             ControledIntervals ControlledIntervals = new ControledIntervals();
             ControlledIntervals.path = path;
-            ControlledIntervals.Sequence();
+            //ControlledIntervals.Sequence();
+            ControlledIntervals.Controlled_10_05_10();
             
 
 
