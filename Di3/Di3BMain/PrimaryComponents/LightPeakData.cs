@@ -1,13 +1,15 @@
 ﻿using System;
-using ProtoBuf;
+//using ProtoBuf;
 using Interfaces;
 
 namespace Di3BMain
 {
-    [ProtoContract]
+    //[ProtoContract]
     public class LightPeakData : IMetaData
     {
-        [ProtoMember(1)]
+        public LightPeakData()
+        { }
+        //[ProtoMember(1)]
         public UInt32 hashKey { set; get; }
     }
 }

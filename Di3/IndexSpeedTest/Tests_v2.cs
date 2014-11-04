@@ -890,5 +890,38 @@ namespace IndexSpeedTest
                 options,
                 Mode.SinglePass);
         }
+        public void Test_28()
+        {
+            string testTitle = "Test_28";
+
+            Di3Options<int> options = new Di3Options<int>(
+                path + Path.DirectorySeparatorChar + "Di3_" + testTitle + ".idx",
+                CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
+                PrimitiveSerializer.Int32, int32Comparer);
+
+            options.MinimumChildNodes = 2;
+            options.MaximumChildNodes = 256;
+            options.MinimumValueNodes = 2;
+            options.MaximumValueNodes = 256;
+
+            options.FileBlockSize = 8192;
+
+            options.CachePolicy = CachePolicy.Recent;
+
+            options.StoragePerformance = StoragePerformance.Fastest;
+
+            SpeedTest.Run(
+                400,
+                200000,
+                true,
+                path,
+                testTitle,
+                50,
+                500,
+                500,
+                1000,
+                options,
+                Mode.MultiPass);
+        }
     }
 }

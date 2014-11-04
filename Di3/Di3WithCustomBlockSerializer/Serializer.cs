@@ -20,9 +20,10 @@ namespace Di3WithCustomBlockSerializer
         public B ReadFrom(System.IO.Stream stream)
         {
             int omega = PrimitiveSerializer.Int32.ReadFrom(stream);
-            Lambda[] lambda = _itemSerializer.ReadFrom(stream);
+            ////Lambda[] lambda = _itemSerializer.ReadFrom(stream);
 
-            return new B(omega, lambda);
+            ////return new B(omega, lambda);
+            return new B(omega);
         }
 
         public void WriteTo(B value, System.IO.Stream stream)
@@ -30,7 +31,7 @@ namespace Di3WithCustomBlockSerializer
             if (value == null) return;
 
             PrimitiveSerializer.Int32.WriteTo(value.omega, stream);
-            _itemSerializer.WriteTo(value.lambda, stream);
+            ////_itemSerializer.WriteTo(value.lambda, stream);
         }
     }
 

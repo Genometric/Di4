@@ -18,7 +18,7 @@ namespace Di3WithCustomBlockSerializer
         internal B()
         {// it seems that the protobuf net needs this constructor. 
             omega = 0;
-            _lambda = new Lambda[0];//new List<Lambda<C, M>>();
+            ////_lambda = new Lambda[0];//new List<Lambda<C, M>>();
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Di3WithCustomBlockSerializer
         { // initializes a block and adds one Lambda to lambda according to tau and metadata.
             if (tau == 'R') omega = 1;
             else omega = 0;
-            _lambda = new Lambda[] { new Lambda(tau, metadata) };//new List<Lambda<C, M>>();
+            ////_lambda = new Lambda[] { new Lambda(tau, metadata) };//new List<Lambda<C, M>>();
             //_lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
         }
 
@@ -48,10 +48,10 @@ namespace Di3WithCustomBlockSerializer
 
 
 
-            _lambda = new Lambda[nextBlock._lambda.Length + 1];
-            _lambda[0] = new Lambda(tau, metadata);
-            for (int i = 1; i <= nextBlock._lambda.Length; i++)
-                _lambda[i] = new Lambda('M', nextBlock._lambda[i - 1].atI);
+            ////_lambda = new Lambda[nextBlock._lambda.Length + 1];
+            ////_lambda[0] = new Lambda(tau, metadata);
+            ////for (int i = 1; i <= nextBlock._lambda.Length; i++)
+                ////_lambda[i] = new Lambda('M', nextBlock._lambda[i - 1].atI);
             /*
                 _lambda = new List<Lambda<C, M>>();
             _lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
@@ -60,10 +60,11 @@ namespace Di3WithCustomBlockSerializer
                     _lambda.Add(new Lambda<C, M>(tau: 'M', atI: item.atI));*/
         }
 
-        internal B(int omega, Lambda[] lambda)
+        ////internal B(int omega, Lambda[] lambda)
+        internal B(int omega)
         {
             this.omega = omega;
-            this._lambda = lambda;
+            ////this._lambda = lambda;
         }
 
 
@@ -86,12 +87,12 @@ namespace Di3WithCustomBlockSerializer
         /// Represents the interval intersecting with 
         /// the c of corresponding block.
         /// </summary>
-        private Lambda[] _lambda { set; get; }
+        ////private Lambda[] _lambda { set; get; }
 
         // think better how I can make this line, because it is necessary. 
         //internal ReadOnlyCollection<Lambda<M>> lambda { get { return _lambda.AsReadOnly(); } }
         // temporary solution:
-        internal Lambda[] lambda { get { return _lambda; } }
+        ////internal Lambda[] lambda { get { return _lambda; } }
 
 
 

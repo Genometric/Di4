@@ -1,22 +1,22 @@
-﻿using ProtoBuf;
+﻿//using ProtoBuf;
 using Interfaces;
 
 namespace Di3BMain
 {
-    [ProtoContract]
+    //[ProtoContract]
     public class LightPeak : IInterval<int, LightPeakData>
     {
         /// <summary>
         /// Sets and gets the left-end of the interval.
         /// </summary>
-        [ProtoMember(1)]
+        //[ProtoMember(1)]
         public int left { set; get; }
 
 
         /// <summary>
         /// Sets and gets the right-end of the interval.
         /// </summary>
-        [ProtoMember(2)]
+        //[ProtoMember(2)]
         public int right { set; get; }
 
 
@@ -26,7 +26,7 @@ namespace Di3BMain
         /// to a memory object, or a pointer, or 
         /// an entry ID on database, or etc. 
         /// </summary>
-        [ProtoMember(3)]
+        //[ProtoMember(3)]
         public LightPeakData metadata { set; get; }
     }
 }

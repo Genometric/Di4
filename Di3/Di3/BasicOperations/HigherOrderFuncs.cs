@@ -15,7 +15,7 @@ namespace DI3
     internal class HigherOrderFuncs<C, I, M, O>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/
+        where M : IMetaData/*<C>*/, new()
     {
         internal HigherOrderFuncs(BPlusTree<C, B<C, M>> di3)
         {

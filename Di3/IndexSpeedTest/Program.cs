@@ -10,8 +10,8 @@ namespace IndexSpeedTest
         {
             string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
 
-            //Tests_v2 SpeedTest_V2 = new Tests_v2();
-            //SpeedTest_V2.path = path;
+            Tests_v2 SpeedTest_V2 = new Tests_v2();
+            SpeedTest_V2.path = path;
             //SpeedTest_V2.Test_01();
             //SpeedTest_V2.Test_02();
             //SpeedTest_V2.Test_03();
@@ -39,12 +39,13 @@ namespace IndexSpeedTest
             //SpeedTest_V2.Test_25();
             //SpeedTest_V2.Test_26();
             //SpeedTest_V2.Test_27();
+            SpeedTest_V2.Test_28();
 
 
-            ControledIntervals ControlledIntervals = new ControledIntervals();
-            ControlledIntervals.path = path;
+            //ControledIntervals ControlledIntervals = new ControledIntervals();
+            //ControlledIntervals.path = path;
             //ControlledIntervals.Sequence();
-            ControlledIntervals.Controlled_10_05_10();
+            //ControlledIntervals.Controlled_10_05_10();
             
 
 

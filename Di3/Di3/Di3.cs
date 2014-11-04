@@ -32,10 +32,13 @@ namespace DI3
     public class Di3<C, I, M> : IDisposable
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/
+        where M : IMetaData/*<C>*/, new()
     {
         private BPlusTree<C, B<C, M>> di3 { set; get; }
         private BSerializer<C, M> bSerializer { set; get; }
+        private BlockSerializer<C, M> blockSerializer { set; get; }
+        private LambdaItemSerializer<C, M> lambdaItemSerializer { set; get; }
+        private LambdaArraySerializer<C, M> lambdaArraySerializer { set; get; }
 
 
         /// <summary>
@@ -279,8 +282,11 @@ namespace DI3
 
         private BPlusTree<C, B<C, M>>.OptionsV2 GetTreeOptions(Di3Options<C> options)
         {
-            bSerializer = new BSerializer<C, M>();
-            var rtv = new BPlusTree<C, B<C, M>>.OptionsV2(options.CSerializer, bSerializer, options.Comparer);
+            //bSerializer = new BSerializer<C, M>();
+            lambdaItemSerializer = new LambdaItemSerializer<C, M>();
+            lambdaArraySerializer = new LambdaArraySerializer<C, M>(lambdaItemSerializer);
+            blockSerializer = new BlockSerializer<C, M>(lambdaArraySerializer);
+            var rtv = new BPlusTree<C, B<C, M>>.OptionsV2(options.CSerializer, blockSerializer, options.Comparer);
             rtv.ReadOnly = options.OpenReadOnly;
 
             if (options.MaximumChildNodes >= 4 &&

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Linq;
-using Interfaces;
-using CSharpTest.Net.Collections;
-using System.Collections.Generic;
-using CSharpTest.Net.Threading;
+﻿    using System;
+    using System.Linq;
+    using Interfaces;
+    using CSharpTest.Net.Collections;
+    using System.Collections.Generic;
+    using CSharpTest.Net.Threading;
 
-
-namespace DI3
+namespace Di3WithCustomBlockSerializer
 {
+
+
     /// <summary>
     /// Provides efficient means of inserting an 
     /// interval to DI3; i.e., di3 indexding.
@@ -23,10 +24,7 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
-    class INDEX<C, I, M>
-        where C : IComparable<C>
-        where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/, new()
+    class INDEX
     {
         /// <summary>
         /// Provides efficient means of inserting an 
@@ -34,22 +32,19 @@ namespace DI3
         /// </summary>
         /// <param name="di3">The reference di3 to be 
         /// manipulated.</param>
-        internal INDEX(BPlusTree<C, B<C, M>> di3)
+        internal INDEX(BPlusTree<int, B> di3)
         {
             this.di3 = di3;
             //update.di3 = di3;
         }
 
 
-        private Mode _mode { set; get; }
-
-        internal INDEX(BPlusTree<C, B<C, M>> di3, List<I> Intervals, int Start, int Stop, Mode mode)
+        internal INDEX(BPlusTree<int, B> di3, List<Intervals> Intervals, int Start, int Stop)
         {
             this.di3 = di3;
             this.intervals = Intervals;
             this.Start = Start;
             this.Stop = Stop;
-            _mode = mode;
         }
 
         /// <summary>
@@ -58,21 +53,21 @@ namespace DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private BPlusTree<C, B<C, M>> di3 { set; get; }
+        private BPlusTree<int, B> di3 { set; get; }
 
         /// <summary>
         /// Represents the coordinate (right or left-end)
         /// of interval being inserted to di3.
         /// </summary>
-        private C marshalPoint { set; get; }
+        private int marshalPoint { set; get; }
 
         /// <summary>
         /// Sets and Gets the interval to 
         /// be added to di3. 
         /// </summary>
-        private I interval { set; get; }
+        private Intervals interval { set; get; }
 
-        private List<I> intervals { set; get; }
+        private List<Intervals> intervals { set; get; }
 
         private int Start { set; get; }
         private int Stop { set; get; }
@@ -95,11 +90,11 @@ namespace DI3
         /// <summary>
         /// Indexes the provided interval.
         /// </summary>
-        /// <param name="Interval">The interval to be index.</param>
-        public int Index(I Interval)
+        /// <param name="Intval">The interval to be index.</param>
+        public int Index(Intervals Intval)
         {
 
-            interval = Interval;
+            interval = Intval;
 
             /*
             marshalPoint = interval.left;
@@ -113,9 +108,9 @@ namespace DI3
             bool isLeftEnd = true;
             bool enumerated = false;
             update.Tau = 'L';
-            update.Metadata = Interval.metadata;
+            update.Metadata = Intval.hashKey;
 
-            foreach (var item in di3.EnumerateFrom(Interval.left))
+            foreach (var item in di3.EnumerateFrom(Intval.left))
             {
                 enumerated = true;
                 update.NextBlock = null;
@@ -127,12 +122,12 @@ namespace DI3
                 }
                 else
                 {
-                    if (Interval.right.Equals(item.Key))
+                    if (Intval.right.Equals(item.Key))
                     {
                         update.Tau = 'R';
                         break;
                     }
-                    else if (Interval.right.CompareTo(item.Key) == 1) // Interval.right is bigger than block.Key
+                    else if (Intval.right.CompareTo(item.Key) == 1) // Intval.right is bigger than block.Key
                     {
                         update.Tau = 'M';
                         di3.AddOrUpdate(item.Key, ref update);
@@ -152,18 +147,18 @@ namespace DI3
 
             if (enumerated)
             {
-                di3.AddOrUpdate(Interval.right, ref update);
+                di3.AddOrUpdate(Intval.right, ref update);
             }
             else
             {
                 update.NextBlock = null;
                 update.Tau = 'L';
-                update.Metadata = Interval.metadata;
-                di3.AddOrUpdate(Interval.left, ref update);
+                update.Metadata = Intval.hashKey;
+                di3.AddOrUpdate(Intval.left, ref update);
 
                 update.Tau = 'R';
-                update.Metadata = Interval.metadata;
-                di3.AddOrUpdate(Interval.right, ref update);
+                update.Metadata = Intval.hashKey;
+                di3.AddOrUpdate(Intval.right, ref update);
             }
 
 
@@ -177,30 +172,30 @@ namespace DI3
         public void Index()
         {
             int i;
-            switch (_mode)
+            /*switch (_mode)
             {
-                case Mode.SinglePass:
-                    for (i = Start; i < Stop; i++)
-                        Index(intervals[i]);
-                    break;
+                case Mode.SinglePass:*/
+                    /*for (i = Start; i < Stop; i++)
+                        Index(intervals[i]);*/
+                    /*break;
 
-                case Mode.MultiPass:
+                case Mode.MultiPass:*/
                     for (i = Start; i < Stop; i++)
                     {
-                        update.Metadata = intervals[i].metadata;
+                        update.Metadata = intervals[i].hashKey;
                         update.Tau = 'L';
                         di3.AddOrUpdate(intervals[i].left, ref update);
 
                         update.Tau = 'R';
                         di3.AddOrUpdate(intervals[i].right, ref update);
                     }
-                    break;
-            }
+                    /*break;
+            }*/
         }
 
         public int SecondPass()
-        {
-            KeyValuePair<C, B<C, M>> firstItem;
+        {/*
+            KeyValuePair<C, B> firstItem;
             di3.TryGetFirst(out firstItem);
 
             Dictionary<uint, Lambda<C, M>> lambdaCarrier = new Dictionary<uint, Lambda<C, M>>();
@@ -236,10 +231,11 @@ namespace DI3
                     lambdaCarrier[key] = new Lambda<C, M>('M', lambdaCarrier[key].atI);
             }
 
-            return TESTBlockCount;
+            return TESTBlockCount;*/
+            return 0;
         }
 
-        private bool HandleFirstItem(KeyValuePair<C, B<C, M>> item)
+        private bool HandleFirstItem(KeyValuePair<int, B> item)
         {
             if (interval.left.Equals(item.Key))
             {
@@ -318,7 +314,7 @@ namespace DI3
             }*/
 
             update.Tau = tau;
-            update.Metadata = interval.metadata;
+            //update.Metadata = interval.metadata;
             di3.AddOrUpdate(marshalPoint, ref update);
         }
 
@@ -330,9 +326,9 @@ namespace DI3
         /// <param name="tau">The intersection type of interval
         /// wtih c of corresponding block.</param>
         /// <returns>A new block to be added to di3.</returns>
-        private B<C, M> GetNewBlock(char tau)
+        private B GetNewBlock(char tau)
         {
-            B<C, M> newB = new B<C, M>(marshalPoint) { };
+            //B newB = new B(marshalPoint) { };
             //newB.lambda.Add(new Lambda<C, M>(tau, interval.metadata));
 
             //if (tau == 'R') newB.omega = 1;
@@ -352,9 +348,10 @@ namespace DI3
                 break;
             }*/
 
-            test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, newB.lambda.Count);
+            //test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, newB.lambda.Count);
 
-            return newB;
+            //return newB;
+            return null;
         }
 
         /// <summary>
@@ -364,7 +361,7 @@ namespace DI3
         /// <param name="key"></param>
         /// <param name="tau">The intersection type of interval
         /// wtih c of corresponding block.</param>
-        private void UpdateBlock(C key, char tau)
+        private void UpdateBlock(int key, char tau)
         {
             /*using(var sw = new System.IO.StreamWriter("D:\\UpdateCalls.txt", true))
             {
@@ -399,39 +396,39 @@ namespace DI3
         }
 
 
-        struct AddUpdateValue : ICreateOrUpdateValue<C, B<C, M>>, IRemoveValue<C, B<C, M>>
+        struct AddUpdateValue : ICreateOrUpdateValue<int, B>, IRemoveValue<int, B>
         {
-            public B<C, M> OldValue;
+            public B OldValue;
             //public string Value;
             public char Tau { set; get; }
-            public M Metadata { set; get; }
+            public UInt32 Metadata { set; get; }
 
-            public B<C, M> NextBlock { set; get; }
+            public B NextBlock { set; get; }
 
-            public bool CreateValue(C key, out B<C, M> value)
+            public bool CreateValue(int key, out B value)
             {
                 OldValue = null;
 
                 //value = Value;
                 value = GetNewBlock();
 
-                return !Metadata.Equals(default(M)) && Tau != default(char); // Value != null;
+                return !Metadata.Equals(default(UInt32)) && Tau != default(char); // Value != null;
             }
-            public bool UpdateValue(C key, ref B<C, M> value)
+            public bool UpdateValue(int key, ref B value)
             {
                 OldValue = value;
 
                 //value = Value;
-                if (Tau == 'R')
+                /*if (Tau == 'R')
                     value = value.Update(Omega: value.omega + 1, tau: Tau, metadata: Metadata);
                 else
-                    value = value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);
+                    value = value.Update(Omega: value.omega, tau: Tau, metadata: Metadata);*/
 
 
                 //return !Metadata.Equals(default(M)) && Tau != default(char); // Value != null;
                 return false;
             }
-            public bool RemoveValue(C key, B<C, M> value)
+            public bool RemoveValue(int key, B value)
             {
                 OldValue = value;
 
@@ -443,15 +440,15 @@ namespace DI3
             }
 
 
-            private B<C, M> GetNewBlock()
+            private B GetNewBlock()
             {
                 //B<C, M> newB;
                 if (NextBlock == null)
                     //newB = new B<C, M>(tau: Tau, metadata: Metadata);
-                    return new B<C, M>(tau: Tau, metadata: Metadata);
+                    return new B(tau: Tau, metadata: Metadata);
                 else
                     //newB = new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
-                    return new B<C, M>(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
+                    return new B(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
 
 
                 // I need to access one block ahead, but since I could not 
@@ -476,4 +473,22 @@ namespace DI3
 
         }
     }
+
+
+
+
+
+
+
+
+
+
+    public class Intervals
+    {
+        public int left;
+        public int right;
+        public UInt32 hashKey;
+    }
 }
+
+
