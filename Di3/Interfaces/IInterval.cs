@@ -22,5 +22,11 @@ namespace Interfaces
         /// an entry ID on database, or etc. 
         /// </summary>
         M metadata { set; get; }
+        // this shall be removed.
+
+
+
+        uint hashKey { set; get; }
+
     }
 }

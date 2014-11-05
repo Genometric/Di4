@@ -34,11 +34,11 @@ namespace DI3
         where I : IInterval<C, M>
         where M : IMetaData/*<C>*/, new()
     {
-        private BPlusTree<C, B<C, M>> di3 { set; get; }
+        private BPlusTree<C, B> di3 { set; get; }
         private BSerializer<C, M> bSerializer { set; get; }
-        private BlockSerializer<C, M> blockSerializer { set; get; }
-        private LambdaItemSerializer<C, M> lambdaItemSerializer { set; get; }
-        private LambdaArraySerializer<C, M> lambdaArraySerializer { set; get; }
+        private BlockSerializer blockSerializer { set; get; }
+        private LambdaItemSerializer lambdaItemSerializer { set; get; }
+        private LambdaArraySerializer lambdaArraySerializer { set; get; }
 
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace DI3
             IComparer<C> comparer)
         {
             bSerializer = new BSerializer<C, M>();
-            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CalcBTreeOrder(16, 1400); //24);
             options.CreateFile = createPolicy;
@@ -74,7 +74,7 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
+            di3 = new BPlusTree<C, B>(options);
             INDEX = new INDEX<C, I, M>(di3);
         }
 
@@ -98,7 +98,7 @@ namespace DI3
             bool THIS_IS_THE_MOST_USED_ONE)
         {
             bSerializer = new BSerializer<C, M>();
-            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
 
             //rtv.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
@@ -141,7 +141,7 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
+            di3 = new BPlusTree<C, B>(options);
             INDEX = new INDEX<C, I, M>(di3);
 
             //di3.DebugSetValidateOnCheckpoint(false);
@@ -157,7 +157,7 @@ namespace DI3
             int avgValueSize)
         {
             bSerializer = new BSerializer<C, M>();
-            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.FileBlockSize = 512;
             options.CachePolicy = CachePolicy.Recent;
@@ -170,7 +170,7 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
+            di3 = new BPlusTree<C, B>(options);
             INDEX = new INDEX<C, I, M>(di3);
         }
 
@@ -186,7 +186,7 @@ namespace DI3
             int minimumValueNodes)
         {
             bSerializer = new BSerializer<C, M>();
-            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CachePolicy = CachePolicy.Recent;
             options.FileBlockSize = 512;
@@ -202,7 +202,7 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
+            di3 = new BPlusTree<C, B>(options);
             INDEX = new INDEX<C, I, M>(di3);
         }
 
@@ -220,7 +220,7 @@ namespace DI3
             int avgValueSize)
         {
             bSerializer = new BSerializer<C, M>();
-            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CachePolicy = CachePolicy.Recent;
             options.FileBlockSize = 512;
@@ -237,7 +237,7 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
+            di3 = new BPlusTree<C, B>(options);
             INDEX = new INDEX<C, I, M>(di3);
         }
 
@@ -254,7 +254,7 @@ namespace DI3
             int fileBlockSize)
         {
             bSerializer = new BSerializer<C, M>();
-            var options = new BPlusTree<C, B<C, M>>.OptionsV2(CSerializer, bSerializer, comparer);
+            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CachePolicy = CachePolicy.Recent;
             options.FileBlockSize = fileBlockSize;
@@ -270,23 +270,23 @@ namespace DI3
             if (createPolicy != CreatePolicy.Never)
                 options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B<C, M>>(options);
+            di3 = new BPlusTree<C, B>(options);
             INDEX = new INDEX<C, I, M>(di3);
         }
 
         public Di3(Di3Options<C> options)
         {
-            di3 = new BPlusTree<C, B<C, M>>(GetTreeOptions(options));
+            di3 = new BPlusTree<C, B>(GetTreeOptions(options));
             INDEX = new INDEX<C, I, M>(di3);
         }
 
-        private BPlusTree<C, B<C, M>>.OptionsV2 GetTreeOptions(Di3Options<C> options)
+        private BPlusTree<C, B>.OptionsV2 GetTreeOptions(Di3Options<C> options)
         {
             //bSerializer = new BSerializer<C, M>();
-            lambdaItemSerializer = new LambdaItemSerializer<C, M>();
-            lambdaArraySerializer = new LambdaArraySerializer<C, M>(lambdaItemSerializer);
-            blockSerializer = new BlockSerializer<C, M>(lambdaArraySerializer);
-            var rtv = new BPlusTree<C, B<C, M>>.OptionsV2(options.CSerializer, blockSerializer, options.Comparer);
+            lambdaItemSerializer = new LambdaItemSerializer();
+            lambdaArraySerializer = new LambdaArraySerializer(lambdaItemSerializer);
+            blockSerializer = new BlockSerializer(lambdaArraySerializer);
+            var rtv = new BPlusTree<C, B>.OptionsV2(options.CSerializer, blockSerializer, options.Comparer);
             rtv.ReadOnly = options.OpenReadOnly;
 
             if (options.MaximumChildNodes >= 4 &&

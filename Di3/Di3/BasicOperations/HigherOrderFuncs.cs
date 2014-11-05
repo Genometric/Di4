@@ -17,18 +17,18 @@ namespace DI3
         where I : IInterval<C, M>
         where M : IMetaData/*<C>*/, new()
     {
-        internal HigherOrderFuncs(BPlusTree<C, B<C, M>> di3)
+        internal HigherOrderFuncs(BPlusTree<C, B> di3)
         {
             this.di3 = di3;
             intervalsKeys = new Hashtable();
-            lambdas = new List<Lambda<C, M>>();
+            lambdas = new List<Lambda>();
         }
 
-        internal HigherOrderFuncs(BPlusTree<C, B<C, M>> di3, ICSOutput<C, I, M, O> OutputStrategy, List<I> Intervals, int Start, int Stop)
+        internal HigherOrderFuncs(BPlusTree<C, B> di3, ICSOutput<C, I, M, O> OutputStrategy, List<I> Intervals, int Start, int Stop)
         {
             this.di3 = di3;
             intervalsKeys = new Hashtable();
-            lambdas = new List<Lambda<C, M>>();
+            lambdas = new List<Lambda>();
             this.intervals = Intervals;
             this.Start = Start;
             this.Stop = Stop;
@@ -40,10 +40,10 @@ namespace DI3
         private int Stop { set; get; }
         private ICSOutput<C, I, M, O> outputStrategy { set; get; }
 
-        private BPlusTree<C, B<C, M>> di3 { set; get; }
+        private BPlusTree<C, B> di3 { set; get; }
 
         private Hashtable intervalsKeys { set; get; }
-        private List<Lambda<C, M>> lambdas { set; get; }
+        private List<Lambda> lambdas { set; get; }
 
         internal List<O> Cover(ICSOutput<C, I, M, O> OutputStrategy, byte minAcc, byte maxAcc)
         {
@@ -192,15 +192,15 @@ namespace DI3
             //return OutputStrategy.output;
         }
 
-        private void UpdateLambdas(ReadOnlyCollection<Lambda<C, M>> newLambdas)
+        private void UpdateLambdas(ReadOnlyCollection<Lambda> newLambdas)
         {
             foreach (var item in newLambdas)
             {
                 if (//block.tau != 'R' &&
-                    !intervalsKeys.ContainsKey(item.atI.hashKey))
+                    !intervalsKeys.ContainsKey(item.atI))
                 {
                     lambdas.Add(item);
-                    intervalsKeys.Add(item.atI.hashKey, "Hmd");
+                    intervalsKeys.Add(item.atI, "Hmd");
                 }
             }
         }

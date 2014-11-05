@@ -27,9 +27,9 @@ namespace DI3
         where I : IInterval<C, M>
         where M : IMetaData/*<C>*/, new()
     {
-        void Output(C left, C right, List<Lambda<C, M>> intervals);
+        void Output(C left, C right, List<Lambda> intervals);
 
-        void Output(I interval, List<Lambda<C, M>> intervals);
+        void Output(I interval, List<Lambda> intervals);
 
         List<O> output { set; get; }
     }

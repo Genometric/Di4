@@ -7,40 +7,41 @@ using System.Collections.ObjectModel;
 
 namespace DI3
 {
-    public class BSerializer<C, M> : ISerializer<B<C, M>>
+    public class BSerializer<C, M> : ISerializer<B>
         where C : IComparable<C>
         where M : IMetaData, new()
     {
-        public B<C, M> ReadFrom(System.IO.Stream stream)
+        public B ReadFrom(System.IO.Stream stream)
         {
-            return Serializer.DeserializeWithLengthPrefix<B<C, M>>(stream, PrefixStyle.Fixed32);
+            return Serializer.DeserializeWithLengthPrefix<B>(stream, PrefixStyle.Fixed32);
         }
 
-        public void WriteTo(B<C, M> value, System.IO.Stream stream)
+        public void WriteTo(B value, System.IO.Stream stream)
         {
-            Serializer.SerializeWithLengthPrefix<B<C, M>>(stream, value, PrefixStyle.Fixed32);
+            Serializer.SerializeWithLengthPrefix<B>(stream, value, PrefixStyle.Fixed32);
         }
     }
 
-    class BlockSerializer<C, M> : ISerializer<B<C, M>>
-        where C : IComparable<C>
-        where M : IMetaData, new()
+    class BlockSerializer/*<C, M> */: ISerializer<B>
+        /*where C : IComparable<C>
+        where M : IMetaData, new()*/
     {
-        private readonly ISerializer<ReadOnlyCollection<Lambda<C, M>>> _itemSerializer;
-        public BlockSerializer(ISerializer<ReadOnlyCollection<Lambda<C, M>>> itemSerializer)
+        private readonly ISerializer<ReadOnlyCollection<Lambda>> _itemSerializer;
+        public BlockSerializer(ISerializer<ReadOnlyCollection<Lambda>> itemSerializer)
         {
             _itemSerializer = itemSerializer;
         }
 
-        public B<C, M> ReadFrom(System.IO.Stream stream)
+        public B ReadFrom(System.IO.Stream stream)
         {
-            int omega = PrimitiveSerializer.Int32.ReadFrom(stream);
-            ReadOnlyCollection<Lambda<C, M>> lambda = _itemSerializer.ReadFrom(stream);
+            //int omega = PrimitiveSerializer.Int32.ReadFrom(stream);
+            //ReadOnlyCollection<Lambda> lambda = _itemSerializer.ReadFrom(stream);
+            //return new B(omega, lambda);
 
-            return new B<C, M>(omega, lambda);
+            return new B(PrimitiveSerializer.Int32.ReadFrom(stream), _itemSerializer.ReadFrom(stream));
         }
 
-        public void WriteTo(B<C,M> value, System.IO.Stream stream)
+        public void WriteTo(B value, System.IO.Stream stream)
         {
             if (value == null) return;
 
@@ -55,31 +56,31 @@ namespace DI3
 
 
 
-    class LambdaArraySerializer<C, M> : ISerializer<ReadOnlyCollection<Lambda<C, M>>>
-        where C : IComparable<C>
-        where M : IMetaData, new()
+    class LambdaArraySerializer/*<C, M>*/ : ISerializer<ReadOnlyCollection<Lambda>>
+        /*where C : IComparable<C>
+        where M : IMetaData, new()*/
     {
-        private readonly ISerializer<Lambda<C,M>> _itemSerializer;
-        public LambdaArraySerializer(ISerializer<Lambda<C,M>> itemSerializer)
+        private readonly ISerializer<Lambda> _itemSerializer;
+        public LambdaArraySerializer(ISerializer<Lambda> itemSerializer)
         {
             _itemSerializer = itemSerializer;
         }
 
 
-        public ReadOnlyCollection<Lambda<C, M>> ReadFrom(System.IO.Stream stream)
+        public ReadOnlyCollection<Lambda> ReadFrom(System.IO.Stream stream)
         {
             int size = PrimitiveSerializer.Int32.ReadFrom(stream);
             if (size < 0)
                 //return null;
-                return Array.AsReadOnly(new Lambda<C, M>[0]);
+                return Array.AsReadOnly(new Lambda[0]);
 
-            Lambda<C, M>[] value = new Lambda<C, M>[size];
+            Lambda[] value = new Lambda[size];
             for (int i = 0; i < size; i++)
                 value[i] = _itemSerializer.ReadFrom(stream);
             return Array.AsReadOnly(value);
         }
 
-        public void WriteTo(ReadOnlyCollection<Lambda<C, M>> value, System.IO.Stream stream)
+        public void WriteTo(ReadOnlyCollection<Lambda> value, System.IO.Stream stream)
         {
             if (value == null)
             {
@@ -100,23 +101,24 @@ namespace DI3
 
 
 
-    class LambdaItemSerializer<C, M> : ISerializer<Lambda<C,M>>
-        where C : IComparable<C>
-        where M : IMetaData, new()
+    class LambdaItemSerializer/*<C, M> */: ISerializer<Lambda>
+       // where C : IComparable<C>
+        //where M : IMetaData, new()
     {
-        public Lambda<C, M> ReadFrom(System.IO.Stream stream)
+        public Lambda ReadFrom(System.IO.Stream stream)
         {
-            char tau = PrimitiveSerializer.Char.ReadFrom(stream);
-            UInt32 hashKey = PrimitiveSerializer.UInt32.ReadFrom(stream);
+            //char tau = PrimitiveSerializer.Char.ReadFrom(stream);
+            //UInt32 hashKey = PrimitiveSerializer.UInt32.ReadFrom(stream);
+            //return new Lambda(tau, hashKey);
 
-            return new Lambda<C, M>(tau, hashKey);
+            return new Lambda(PrimitiveSerializer.Char.ReadFrom(stream), PrimitiveSerializer.UInt32.ReadFrom(stream));
         }
 
-        public void WriteTo(Lambda<C, M> value, System.IO.Stream stream)
+        public void WriteTo(Lambda value, System.IO.Stream stream)
         {
-            if (value == null) return;
+            if (value.atI == default(UInt32) && value.tau == default(char)) return;
             PrimitiveSerializer.Char.WriteTo(value.tau, stream);
-            PrimitiveSerializer.UInt32.WriteTo(value.atI.hashKey, stream);
+            PrimitiveSerializer.UInt32.WriteTo(value.atI, stream);
         }
     }
 }

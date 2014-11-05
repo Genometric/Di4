@@ -18,9 +18,10 @@ namespace DI3
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
     //[ProtoContract]
-    public class Lambda<C, M>
-        where C : IComparable<C>
-        where M : IMetaData/*<C>*/, new()
+    //public class Lambda
+        //where C : IComparable<C>
+        //where M : IMetaData/*<C>*/, new()
+    public struct Lambda
     {
         /// <summary>
         /// Represents the interval intersecting with 
@@ -30,9 +31,9 @@ namespace DI3
         /// parameter in terms of Lowest Common Denominator.
         /// </para>
         /// </summary>
-        internal Lambda()
-        {// it seems that the protobuf-net needs this constructor.
-        }
+        //internal Lambda()
+        //{// it seems that the protobuf-net needs this constructor.
+        //}
 
         /// <summary>
         /// Represents the interval intersecting with 
@@ -45,17 +46,11 @@ namespace DI3
         /// <param name="tau">The intersection type of interval
         /// wtih c of corresponding block.</param>
         /// <param name="atI">Descriptive metadata of the intereval.</param>
-        internal Lambda(char tau, M atI)
+        internal Lambda(char tau, UInt32 atI)
+            : this()
         {
             this.tau = tau;
             this.atI = atI;
-        }
-
-        internal Lambda(char tau, UInt32 hashKey)
-        {
-            this.tau = tau;
-            this.atI = new M();
-            this.atI.hashKey = hashKey;
         }
 
 
@@ -75,6 +70,6 @@ namespace DI3
         /// represented by generic type M.
         /// </summary>
         //[ProtoMember(2)]
-        internal M atI { private set; get; }
+        internal UInt32 atI { private set; get; }
     }
 }

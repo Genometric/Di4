@@ -16,9 +16,9 @@ namespace DI3
     /// type of pointer to descriptive metadata cooresponding
     /// to the interval.</typeparam>
     //[ProtoContract]
-    public class B<C, M>
-        where C : IComparable<C>
-        where M : IMetaData/*<C>*/, new()
+    public class B//<C, M>
+        //where C : IComparable<C>
+        //where M : IMetaData/*<C>*/, new()
     {
         /// <summary>
         /// A Block representing relative information of intervals
@@ -26,32 +26,32 @@ namespace DI3
         internal B()
         {// it seems that the protobuf net needs this constructor. 
             omega = 0;
-            _lambda = new Lambda<C, M>[0];//new List<Lambda<C, M>>();
+            _lambda = new Lambda[0];//new List<Lambda>();
         }
 
         /// <summary>
         /// A Block representing relative information of intervals
         /// intersecting with a particular c (e) on domain.</summary>
         /// <param name="coordinate">Represents the c on domain.</param>
-        internal B(C coordinate) // this constructor is redundant, because there is no Coordinate anymore. 
+        /*internal B(C coordinate) // this constructor is redundant, because there is no Coordinate anymore. 
         {
             //e = coordinate;
             omega = 0;
-            _lambda = new Lambda<C, M>[0];//new List<Lambda<C, M>>();
-        }
+            _lambda = new Lambda[0];//new List<Lambda>();
+        }*/
 
-        internal B(char tau, M metadata)
+        internal B(char tau, UInt32 metadata)
         { // initializes a block and adds one Lambda to lambda according to tau and metadata.
             if (tau == 'R') omega = 1;
             else omega = 0;
-            _lambda = new Lambda<C, M>[] { new Lambda<C, M>(tau: tau, atI: metadata) };//new List<Lambda<C, M>>();
-            //_lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            _lambda = new Lambda[] { new Lambda(tau: tau, atI: metadata) };//new List<Lambda>();
+            //_lambda.Add(new Lambda(tau: tau, atI: metadata));
         }
 
-        internal B(int omega, ReadOnlyCollection<Lambda<C, M>> lambda)
+        internal B(int omega, ReadOnlyCollection<Lambda> lambda)
         {
             omega = 0;
-            _lambda = new Lambda<C, M>[lambda.Count];
+            _lambda = new Lambda[lambda.Count];
 
             for (int i = 0; i < lambda.Count; i++)
             {
@@ -61,7 +61,7 @@ namespace DI3
             }
         }
 
-        internal B(char tau, M metadata, B<C, M> nextBlock) // check whether it is faster with ref or without ref for nextBlock. 
+        internal B(char tau, UInt32 metadata, B nextBlock) // check whether it is faster with ref or without ref for nextBlock. 
         {
             if (tau == 'R') omega = 1;//nextBlock.omega + 1;
             //else omega = nextBlock.omega;
@@ -76,19 +76,19 @@ namespace DI3
             foreach (var item in nextBlock.lambda)
                 if (item.tau != 'L')
                     i++;
-            _lambda = new Lambda<C, M>[i];
+            _lambda = new Lambda[i];
             i = 0;
             foreach (var item in nextBlock.lambda)
                 if (item.tau != 'L')
-                    _lambda[i++] = new Lambda<C, M>(tau: 'M', atI: item.atI);
+                    _lambda[i++] = new Lambda(tau: 'M', atI: item.atI);
 
 
             /// Fix this, note lambda size can't be determined at begining because it depends on nextblock lambdas' satisfying the condition.
-            //_lambda = new List<Lambda<C, M>>();
-            //_lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //_lambda = new List<Lambda>();
+            //_lambda.Add(new Lambda(tau: tau, atI: metadata));
             //foreach (var item in nextBlock.lambda)
             //    if (item.tau != 'L')
-            //        _lambda.Add(new Lambda<C, M>(tau: 'M', atI: item.atI));
+            //        _lambda.Add(new Lambda(tau: 'M', atI: item.atI));
         }
 
 
@@ -113,62 +113,62 @@ namespace DI3
         /// the c of corresponding block.
         /// </summary>
         //[ProtoMember(2)]
-        //private List<Lambda<C, M>> _lambda { set; get; }
-        private Lambda<C, M>[] _lambda { set; get; }
+        //private List<Lambda> _lambda { set; get; }
+        private Lambda[] _lambda { set; get; }
 
-        internal ReadOnlyCollection<Lambda<C, M>> lambda { get { return Array.AsReadOnly(_lambda); } }
+        internal ReadOnlyCollection<Lambda> lambda { get { return Array.AsReadOnly(_lambda); } }
 
 
 
-        internal B<C, M> Update(int Omega)
+        internal B Update(int Omega)
         {
-            B<C, M> newBlock = new B<C, M>();
+            B newBlock = new B();
 
             /// update it with new Omega.
             newBlock.omega = Omega;
 
             /// deep copy the current one.
-            //newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._lambda = new List<Lambda>(this._lambda);
 
             return newBlock;
         }
 
-        internal B<C, M> Update(char tau, M metadata)
+        internal B Update(char tau, UInt32 metadata)
         {
-            B<C, M> newBlock = new B<C, M>();
+            B newBlock = new B();
 
             /// deep copy the current one.
-            //newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._lambda = new List<Lambda>(this._lambda);
 
             /// update it with new Lambda.
-            //newBlock._lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //newBlock._lambda.Add(new Lambda(tau: tau, atI: metadata));
 
             return newBlock;
         }
 
-        internal B<C, M> Update(int Omega, char tau, M metadata)
+        internal B Update(int Omega, char tau, UInt32 metadata)
         {
-            B<C, M> newBlock = new B<C, M>();
+            B newBlock = new B();
 
             /// update it with new Omega.
             newBlock.omega = Omega;
 
             /// deep copy the current one.
-            //newBlock._lambda = new List<Lambda<C, M>>(this._lambda);
+            //newBlock._lambda = new List<Lambda>(this._lambda);
 
             /// update it with new Lambda.
-            //newBlock._lambda.Add(new Lambda<C, M>(tau: tau, atI: metadata));
+            //newBlock._lambda.Add(new Lambda(tau: tau, atI: metadata));
 
             return newBlock;
         }
 
-        internal B<C, M> Update(Dictionary<uint, Lambda<C, M>> lambdas)
+        internal B Update(Dictionary<uint, Lambda> lambdas)
         {
-            B<C, M> newBlock = new B<C, M>();
+            B newBlock = new B();
             newBlock.omega = this.omega;
-            //newBlock._lambda = new List<Lambda<C, M>>();
+            //newBlock._lambda = new List<Lambda>();
             //foreach (var l in lambdas)
-                //newBlock._lambda.Add(new Lambda<C, M>(tau: l.Value.tau, atI: l.Value.atI));
+                //newBlock._lambda.Add(new Lambda(tau: l.Value.tau, atI: l.Value.atI));
 
             return newBlock;
         }
