@@ -27,17 +27,17 @@ namespace Di3B
         }
 
         /// <summary>
-        /// Dynamic intervals inverted index for Positive Strand.
+        /// Dynamic _intervals inverted index for Positive Strand.
         /// </summary>
         internal Di3<C, I, M> di3PS { set; get; }
 
         /// <summary>
-        /// Dynamic intervals inverted index for Negative Strand.
+        /// Dynamic _intervals inverted index for Negative Strand.
         /// </summary>
         internal Di3<C, I, M> di3NS { set; get; }
 
         /// <summary>
-        /// Dynamic intervals inverted index for Un-Stranded.
+        /// Dynamic _intervals inverted index for Un-Stranded.
         /// </summary>
         internal Di3<C, I, M> di3US { set; get; }
     }

@@ -71,7 +71,7 @@ namespace DI3
                         accumulation > maxAcc)
                     {
                         UpdateLambdas(block.Value.lambda);
-                        //OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
+                        //OutputStrategy.Output(_di3[markedKey].e, _di3[block.Key].e, lambdas);
                         OutputStrategy.Output(markedKey, block.Key, lambdas);
 
                         markedKey = default(C);
@@ -117,7 +117,7 @@ namespace DI3
                     markedAcc != -1))
                 {
                     UpdateLambdas(block.Value.lambda);
-                    //OutputStrategy.Output(di3[markedKey].e, di3[block.Key].e, lambdas);
+                    //OutputStrategy.Output(_di3[markedKey].e, _di3[block.Key].e, lambdas);
                     OutputStrategy.Output(markedKey, block.Key, lambdas);
 
                     markedKey = default(C);
@@ -170,7 +170,7 @@ namespace DI3
             {
                 reference = intervals[i];
 
-                //Console.Write("\r ... processing regions: {0} / {1}", ++i, intervals.Count);
+                //Console.Write("\r ... processing regions: {0} / {1}", ++i, _intervals.Count);
                 lambdas.Clear();
                 intervalsKeys.Clear();
 

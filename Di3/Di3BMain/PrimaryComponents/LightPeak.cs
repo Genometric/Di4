@@ -28,5 +28,8 @@ namespace Di3BMain
         /// </summary>
         //[ProtoMember(3)]
         public LightPeakData metadata { set; get; }
+
+
+        public uint hashKey { set; get; }
     }
 }

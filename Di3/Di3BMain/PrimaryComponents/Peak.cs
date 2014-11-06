@@ -33,5 +33,18 @@ namespace Di3BMain
         /// </summary>
         [ProtoMember(3)]
         public PeakData metadata { set; get; }
+
+
+        public uint hashKey
+        {
+            get
+            {
+                throw new System.NotImplementedException();
+            }
+            set
+            {
+                throw new System.NotImplementedException();
+            }
+        }
     }
 }

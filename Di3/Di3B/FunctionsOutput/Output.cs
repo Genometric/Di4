@@ -34,7 +34,7 @@ namespace Di3B
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Interval"></param>
+        /// <param name="interval"></param>
         /// <param name="Count"></param>
         internal Output(I Interval, int Count)
         {

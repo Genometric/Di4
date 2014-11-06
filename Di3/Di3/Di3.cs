@@ -12,30 +12,30 @@ using CSharpTest.Net.Synchronization;
 namespace DI3
 {
     /// <summary>
-    /// Dynamic intervals inverted index (DI3) 
+    /// Dynamic _intervals inverted index (DI3) 
     /// is an indexing system aimed at providing
-    /// efficient means of processing the intervals
+    /// efficient means of processing the _intervals
     /// it indexes for common information retrieval 
     /// tasks.
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
     /// type (e.g,. int, double, Time).</typeparam>
-    /// <typeparam name="I">Represents generic type of the interval.
-    /// (e.g., time span, interval on natural numbers)
-    /// <para>For intervals of possibly different types,
+    /// <typeparam name="I">Represents generic type of the _interval.
+    /// (e.g., time span, _interval on natural numbers)
+    /// <para>For _intervals of possibly different types,
     /// it is recommended to define this generic type
     /// parameter in terms of Lowest Common Denominator.
     /// </para></typeparam>
     /// <typeparam name="M">Represents generic
-    /// type of pointer to descriptive metadata cooresponding
-    /// to the interval.</typeparam>
+    /// type of pointer to descriptive hashKey cooresponding
+    /// to the _interval.</typeparam>
     public class Di3<C, I, M> : IDisposable
         where C : IComparable<C>
         where I : IInterval<C, M>
         where M : IMetaData/*<C>*/, new()
     {
         private BPlusTree<C, B> di3 { set; get; }
-        private BSerializer<C, M> bSerializer { set; get; }
+        private BSerializer/*<C, M>*/ bSerializer { set; get; }
         private BlockSerializer blockSerializer { set; get; }
         private LambdaItemSerializer lambdaItemSerializer { set; get; }
         private LambdaArraySerializer lambdaArraySerializer { set; get; }
@@ -44,7 +44,7 @@ namespace DI3
         /// <summary>
         /// Is an instance of INDEX class which 
         /// provides efficient means of inserting an 
-        /// interval to DI3; i.e., di3 indexding.
+        /// _interval to DI3; i.e., _di3 indexding.
         /// </summary>
         private INDEX<C, I, M> INDEX { set; get; }
 
@@ -59,7 +59,7 @@ namespace DI3
             ISerializer<C> CSerializer,
             IComparer<C> comparer)
         {
-            bSerializer = new BSerializer<C, M>();
+            bSerializer = new BSerializer/*<C, M>*/();
             var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CalcBTreeOrder(16, 1400); //24);
@@ -80,9 +80,9 @@ namespace DI3
 
 
         /// <summary>
-        /// Dynamic intervals inverted index (DI3) 
+        /// Dynamic _intervals inverted index (DI3) 
         /// is an indexing system aimed at providing
-        /// efficient means of processing the intervals
+        /// efficient means of processing the _intervals
         /// it indexes for common information retrieval 
         /// tasks.
         /// </summary>
@@ -97,7 +97,7 @@ namespace DI3
             int avgValueSize,
             bool THIS_IS_THE_MOST_USED_ONE)
         {
-            bSerializer = new BSerializer<C, M>();
+            bSerializer = new BSerializer();
             var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
 
@@ -144,7 +144,7 @@ namespace DI3
             di3 = new BPlusTree<C, B>(options);
             INDEX = new INDEX<C, I, M>(di3);
 
-            //di3.DebugSetValidateOnCheckpoint(false);
+            //_di3.DebugSetValidateOnCheckpoint(false);
         }
 
 
@@ -156,7 +156,7 @@ namespace DI3
             int avgKeySize,
             int avgValueSize)
         {
-            bSerializer = new BSerializer<C, M>();
+            bSerializer = new BSerializer();
             var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.FileBlockSize = 512;
@@ -185,7 +185,7 @@ namespace DI3
             int maximumValueNodes,
             int minimumValueNodes)
         {
-            bSerializer = new BSerializer<C, M>();
+            bSerializer = new BSerializer();
             var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CachePolicy = CachePolicy.Recent;
@@ -219,7 +219,7 @@ namespace DI3
             int avgKeySize,
             int avgValueSize)
         {
-            bSerializer = new BSerializer<C, M>();
+            bSerializer = new BSerializer();
             var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CachePolicy = CachePolicy.Recent;
@@ -253,7 +253,7 @@ namespace DI3
             int minimumValueNodes,
             int fileBlockSize)
         {
-            bSerializer = new BSerializer<C, M>();
+            bSerializer = new BSerializer();
             var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
             options.CachePolicy = CachePolicy.Recent;
@@ -352,13 +352,9 @@ namespace DI3
         { }
 
 
-        public int Add(I interval, int TEST_Sample_Number, int TEST_Region_Number)
+        public void Add(I interval, int TEST_Sample_Number, int TEST_Region_Number)
         {
-            INDEX.TEST_Sample_Number = TEST_Sample_Number;
-            INDEX.TEST_Region_Number = TEST_Region_Number;
-
-
-            return INDEX.Index(interval);
+            INDEX.Index(interval);
         }
 
         public void Add(List<I> intervals, Mode mode)
@@ -387,9 +383,9 @@ namespace DI3
             }
         }
 
-        public int SecondPass()
+        public void SecondPass()
         {
-            return INDEX.SecondPass();
+            INDEX.SecondPass();
         }
 
         public List<O> Cover<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
@@ -431,7 +427,7 @@ namespace DI3
                 Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
 
-            //HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
+            //HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(_di3);
             return null;//SetOps.Map(OutputStrategy, references);
         }
 

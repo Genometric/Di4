@@ -44,13 +44,13 @@ namespace Di3B
                     {
                         left = peak.left,
                         right = peak.right,
-                        metadata = new M()
+                        hashKey = new M()
                         {
-                            left = peak.metadata.left,
-                            right = peak.metadata.right,
-                            hashKey = peak.metadata.hashKey,
-                            currentValue = peak.metadata.currentValue,
-                            name = peak.metadata.name
+                            left = peak.hashKey.left,
+                            right = peak.hashKey.right,
+                            hashKey = peak.hashKey.hashKey,
+                            currentValue = peak.hashKey.currentValue,
+                            name = peak.hashKey.name
                         }
                     });
 

@@ -911,7 +911,7 @@ namespace IndexSpeedTest
             options.StoragePerformance = StoragePerformance.Fastest;
 
             SpeedTest.Run(
-                400,
+                5,
                 200000,
                 true,
                 path,

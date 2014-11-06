@@ -10,112 +10,77 @@ namespace DI3
 {
     /// <summary>
     /// Provides efficient means of inserting an 
-    /// interval to DI3; i.e., di3 indexding.
+    /// _interval to DI3; i.e., _di3 indexding.
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
     /// type (e.g,. int, double, Time).</typeparam>
-    /// <typeparam name="I">Represents generic type of the interval.
-    /// (e.g., time span, interval on natural numbers)
-    /// <para>For intervals of possibly different types,
+    /// <typeparam name="I">Represents generic type of the _interval.
+    /// (e.g., time span, _interval on natural numbers)
+    /// <para>For _intervals of possibly different types,
     /// it is recommended to define this generic type
     /// parameter in terms of Lowest Common Denominator.
     /// </para></typeparam>
     /// <typeparam name="M">Represents generic
-    /// type of pointer to descriptive metadata cooresponding
-    /// to the interval.</typeparam>
+    /// type of pointer to descriptive hashKey cooresponding
+    /// to the _interval.</typeparam>
     class INDEX<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/, new()
+        where M : IMetaData, new()
     {
         /// <summary>
         /// Provides efficient means of inserting an 
-        /// interval to DI3; i.e., di3 indexding.
+        /// _interval to DI3; i.e., _di3 indexding.
         /// </summary>
-        /// <param name="di3">The reference di3 to be 
+        /// <param name="di3">The reference _di3 to be 
         /// manipulated.</param>
         internal INDEX(BPlusTree<C, B> di3)
         {
-            this.di3 = di3;
-            //update.di3 = di3;
+            _di3 = di3;
         }
-
-
-        private Mode _mode { set; get; }
-
         internal INDEX(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, Mode mode)
         {
-            this.di3 = di3;
-            this.intervals = Intervals;
-            this.Start = Start;
-            this.Stop = Stop;
-            _mode = mode;
+            _di3 = di3;
+            _intervals = Intervals;
+            _start = Start;
+            _stop = Stop;
+            _mode = mode;            
         }
 
+        
+
         /// <summary>
-        /// Sets and gets the di3 data structure
+        /// Sets and gets the _di3 data structure
         /// to be manipulated. This data structure
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private BPlusTree<C, B> di3 { set; get; }
-
+        private BPlusTree<C, B> _di3 { set; get; }
         /// <summary>
-        /// Represents the coordinate (right or left-end)
-        /// of interval being inserted to di3.
+        /// Sets and Gets the _interval to 
+        /// be added to _di3. 
         /// </summary>
-        private C marshalPoint { set; get; }
-
-        /// <summary>
-        /// Sets and Gets the interval to 
-        /// be added to di3. 
-        /// </summary>
-        private I interval { set; get; }
-
-        private List<I> intervals { set; get; }
-
-        private int Start { set; get; }
-        private int Stop { set; get; }
-
-        /// <summary>
-        /// Sets and Gets the cardinality of di3.
-        /// </summary>
-        private int di3Cardinality { set; get; }
-
-        public int TEST_Sample_Number;
-        public int TEST_Region_Number;
-
+        private I _interval { set; get; }
+        private Mode _mode { set; get; }
+        private List<I> _intervals { set; get; }
+        private int _start { set; get; }
+        private int _stop { set; get; }
         private AddUpdateValue update = new AddUpdateValue();
 
 
-
-        private int test_Maximum_Lambda_Lenght { set; get; }
-
-
         /// <summary>
-        /// Indexes the provided interval.
+        /// Indexes the provided _interval.
         /// </summary>
-        /// <param name="Interval">The interval to be index.</param>
-        public int Index(I Interval)
+        /// <param name="interval">The _interval to be index.</param>
+        public void Index(I interval)
         {
-
-            interval = Interval;
-
-            /*
-            marshalPoint = interval.left;
-            Insert('L');
-
-            marshalPoint = interval.right;
-            //MarchForRightEnd();
-            Insert('R');
-            */
-
+            _interval = interval;
             bool isLeftEnd = true;
             bool enumerated = false;
-            update.Tau = 'L';
-            update.hashKey = Interval.hashKey;
+            update.tau = 'L';
+            update.hashKey = _interval.hashKey;
 
-            foreach (var item in di3.EnumerateFrom(Interval.left))
+            foreach (var item in _di3.EnumerateFrom(_interval.left))
             {
                 enumerated = true;
                 update.NextBlock = null;
@@ -127,19 +92,19 @@ namespace DI3
                 }
                 else
                 {
-                    if (Interval.right.Equals(item.Key))
+                    if (_interval.right.Equals(item.Key))
                     {
-                        update.Tau = 'R';
+                        update.tau = 'R';
                         break;
                     }
-                    else if (Interval.right.CompareTo(item.Key) == 1) // Interval.right is bigger than block.Key
+                    else if (_interval.right.CompareTo(item.Key) == 1) // interval.right is bigger than block.Key
                     {
-                        update.Tau = 'M';
-                        di3.AddOrUpdate(item.Key, ref update);
+                        update.tau = 'M';
+                        _di3.AddOrUpdate(item.Key, ref update);
                     }
                     else
                     {
-                        update.Tau = 'R';
+                        update.tau = 'R';
                         update.NextBlock = item.Value;
                         break;
                     }
@@ -147,31 +112,24 @@ namespace DI3
 
                 /// this will be useful when the iteration reaches the 
                 /// end of collection while right-end is not handled yet. 
-                update.Tau = 'R';
+                update.tau = 'R';
             }
 
             if (enumerated)
             {
-                di3.AddOrUpdate(Interval.right, ref update);
+                _di3.AddOrUpdate(_interval.right, ref update);
             }
             else
             {
                 update.NextBlock = null;
-                update.Tau = 'L';
-                update.hashKey = Interval.hashKey;
-                di3.AddOrUpdate(Interval.left, ref update);
+                update.tau = 'L';
+                update.hashKey = _interval.hashKey;
+                _di3.AddOrUpdate(_interval.left, ref update);
 
-                update.Tau = 'R';
-                update.hashKey = Interval.hashKey;
-                di3.AddOrUpdate(Interval.right, ref update);
+                update.tau = 'R';
+                update.hashKey = _interval.hashKey;
+                _di3.AddOrUpdate(_interval.right, ref update);
             }
-
-
-
-
-
-
-            return test_Maximum_Lambda_Lenght;
         }
 
         public void Index()
@@ -180,41 +138,36 @@ namespace DI3
             switch (_mode)
             {
                 case Mode.SinglePass:
-                    for (i = Start; i < Stop; i++)
-                        Index(intervals[i]);
+                    for (i = _start; i < _stop; i++)
+                        Index(_intervals[i]);
                     break;
 
                 case Mode.MultiPass:
-                    for (i = Start; i < Stop; i++)
+                    for (i = _start; i < _stop; i++)
                     {
-                        update.hashKey = intervals[i].hashKey;
-                        update.Tau = 'L';
-                        di3.AddOrUpdate(intervals[i].left, ref update);
+                        update.hashKey = _intervals[i].hashKey;
+                        update.tau = 'L';
+                        _di3.AddOrUpdate(_intervals[i].left, ref update);
 
-                        update.Tau = 'R';
-                        di3.AddOrUpdate(intervals[i].right, ref update);
+                        update.tau = 'R';
+                        _di3.AddOrUpdate(_intervals[i].right, ref update);
                     }
                     break;
             }
         }
 
-        public int SecondPass()
+        public void SecondPass()
         {
             KeyValuePair<C, B> firstItem;
-            di3.TryGetFirst(out firstItem);
+            _di3.TryGetFirst(out firstItem);
 
             Dictionary<uint, Lambda> lambdaCarrier = new Dictionary<uint, Lambda>();
             KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(lambdaCarrier); };
             List<uint> keysToRemove = new List<uint>();
             List<uint> keys;
 
-
-            int TESTBlockCount = 0;
-
-            foreach (var block in di3.EnumerateFrom(firstItem.Key))
+            foreach (var block in _di3.EnumerateFrom(firstItem.Key))
             {
-                TESTBlockCount++;
-
                 foreach (var lambda in block.Value.lambda)
                 {
                     if (lambdaCarrier.ContainsKey(lambda.atI))
@@ -225,7 +178,7 @@ namespace DI3
                     if (lambda.tau == 'R') keysToRemove.Add(lambda.atI);
                 }
 
-                di3.TryUpdate(block.Key, updateFunction);
+                _di3.TryUpdate(block.Key, updateFunction);
 
                 foreach (uint item in keysToRemove)
                     lambdaCarrier.Remove(item);
@@ -235,36 +188,34 @@ namespace DI3
                 foreach (var key in keys)
                     lambdaCarrier[key] = new Lambda('M', lambdaCarrier[key].atI);
             }
-
-            return TESTBlockCount;
         }
 
         private bool HandleFirstItem(KeyValuePair<C, B> item)
         {
-            if (interval.left.Equals(item.Key))
+            if (_interval.left.Equals(item.Key))
             {
-                di3.AddOrUpdate(interval.left, ref update);
+                _di3.AddOrUpdate(_interval.left, ref update);
                 return false;
             }
             else
             {
                 update.NextBlock = item.Value;
 
-                switch (interval.right.CompareTo(item.Key))
+                switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // interval.right is bigger than block.key
-                        di3.AddOrUpdate(interval.left, ref update);
+                    case 1: // _interval.right is bigger than block.key
+                        _di3.AddOrUpdate(_interval.left, ref update);
 
-                        update.Tau = 'M';
+                        update.tau = 'M';
                         update.NextBlock = null;
-                        di3.AddOrUpdate(item.Key, ref update);
+                        _di3.AddOrUpdate(item.Key, ref update);
                         return false;
 
                     case 0:
                     case -1:
-                        di3.AddOrUpdate(interval.left, ref update);
+                        _di3.AddOrUpdate(_interval.left, ref update);
 
-                        update.Tau = 'R';
+                        update.tau = 'R';
                         return true;
                 }
             }
@@ -273,209 +224,49 @@ namespace DI3
         }
 
 
-        /// <summary>
-        /// Linearly searches di3 starting from left-end
-        /// insertion index of the interval toward di3 end for 
-        /// proper postion for the interval's right-end insertion.
-        /// </summary>
-        private void MarchForRightEnd()
-        {
-            /*foreach (var block in di3.EnumerateFrom(interval.left).Skip(1))
-            {
-                switch (marshalPoint.CompareTo(block.Key))
-                {
-                    case 0:  // equal
-                    case -1: // greater than
-                        return;
-
-                    case 1:  // less than
-                        UpdateBlock(block.Key, 'M');
-                        break;
-                }
-            }*/
-        }
-
-
-        /// <summary>
-        /// Inserts right/left -end of the interval to 
-        /// determined position on di3 by either updating
-        /// present block or creating a new block.
-        /// </summary>
-        /// <param name="tau">The intersection type of interval
-        /// wtih marshalPoint of corresponding block.</param>
-        private void Insert(char tau)
-        {
-            /*
-            // Shall new Block be added to the end of list ? OR: Does the same index already available ?
-            if (di3.ContainsKey(marshalPoint)) // Condition satisfied: add new index
-            {
-                UpdateBlock(marshalPoint, tau);
-            }
-            else // update the available index with new region
-            { // Test with TryAdd
-                //di3.Add(marshalPoint, GetNewBlock(tau));
-                di3.TryAdd(marshalPoint, GetNewBlock(tau));
-            }*/
-
-            //update.Tau = tau;
-            //update.Metadata = interval.metadata;
-            //di3.AddOrUpdate(marshalPoint, ref update);
-        }
-
-
-        /// <summary>
-        /// Initializes and returns a new block
-        /// to be added to di3.
-        /// </summary>
-        /// <param name="tau">The intersection type of interval
-        /// wtih c of corresponding block.</param>
-        /// <returns>A new block to be added to di3.</returns>
-        private B GetNewBlock(char tau)
-        {
-            //B newB = new B(marshalPoint) { };
-            //newB.lambda.Add(new Lambda(tau, interval.metadata));
-
-            //if (tau == 'R') newB.omega = 1;
-
-            // I need to access one block ahead, but since I could not 
-            // find any proper way to do so with BPlusTree, I'm using 
-            // following ramblings :)
-            /*foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
-            {
-                foreach (var d in block.newValue.lambda)
-                {
-                    if (d.tau != 'L')                    
-                        newB.lambda.Add(new Lambda('M', d.atI) { });                    
-                }
-
-                // only one object :) 
-                break;
-            }*/
-
-            //test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, newB.lambda.Count);
-
-            //return newB;
-            return null;
-        }
-
-        /// <summary>
-        /// Updates the di3 block specified by 'b' 
-        /// to represent the interval being indexed as well.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="tau">The intersection type of interval
-        /// wtih c of corresponding block.</param>
-        private void UpdateBlock(C key, char tau)
-        {
-            /*using(var sw = new System.IO.StreamWriter("D:\\UpdateCalls.txt", true))
-            {
-                sw.WriteLine("Updating at sample #{0:N0}   and Region #{1:N0}", TEST_Sample_Number, TEST_Region_Number);
-            }*/
-
-
-            /// 1st Strategy: is the old version; it cause errors because it's not actually updateing. 
-            //di3[key].lambda.Add(new Lambda(tau, interval.metadata) { });
-
-            /// 2nd strategy: this works well ... but a bit slow and dirty !
-            /// ------------------------------------------------------------------------------------
-            /// KEEP GOING WITH THIS DIRTY ONE BECAUSE THE LATER RAISES SOME ISSUES IN SERIALIZATION
-            /// ------------------------------------------------------------------------------------
-            /*B removingValue;
-            di3.TryRemove(key, out removingValue);
-            removingValue.lambda.Add(new Lambda(tau, interval.metadata));
-            di3.Add(key, removingValue);*/
-
-            /// 3rd strategy : based on test fuctions.
-            /*KeyValueUpdate<C, B> updateFunction = delegate(C Key, B newValue)
-            {
-                B block = newValue;
-                block.lambda.Add(new Lambda(tau, interval.metadata));
-                return block;
-            };
-            di3.TryUpdate(key, updateFunction);
-            */
-            //if (tau == 'R') di3[key].omega++;
-
-            //test_Maximum_Lambda_Lenght = Math.Max(test_Maximum_Lambda_Lenght, removingValue.lambda.Count);
-        }
-
 
         struct AddUpdateValue : ICreateOrUpdateValue<C, B>, IRemoveValue<C, B>
         {
-            public B OldValue;
-            //public string Value;
-            public char Tau { set; get; }
-            //public M Metadata { set; get; }
+            public B oldValue;
+            public char tau { set; get; }
             public UInt32 hashKey { set; get; }
 
             public B NextBlock { set; get; }
 
             public bool CreateValue(C key, out B value)
             {
-                OldValue = null;
-
-                //value = Value;
+                oldValue = null;
                 value = GetNewBlock();
-
-                return !hashKey.Equals(default(UInt32)) && Tau != default(char); // Value != null;
+                return hashKey != 0 && tau != default(char);
             }
             public bool UpdateValue(C key, ref B value)
             {
-                OldValue = value;
+                oldValue = value;
 
-                //value = Value;
-                if (Tau == 'R')
-                    value = value.Update(Omega: value.omega + 1, tau: Tau, metadata: hashKey);
+                if (tau == 'R')
+                    value = value.Update(omega: value.omega + 1, tau: tau, hashKey: hashKey);
                 else
-                    value = value.Update(Omega: value.omega, tau: Tau, metadata: hashKey);
+                    value = value.Update(omega: value.omega, tau: tau, hashKey: hashKey);
 
-
-                //return !Metadata.Equals(default(M)) && Tau != default(char); // Value != null;
-                return false;
+                return hashKey != 0 && tau != default(char);
             }
             public bool RemoveValue(C key, B value)
             {
-                OldValue = value;
+                oldValue = value;
 
-                //return value == Value;
-                if (Tau == 'R')
-                    return value == value.Update(Omega: value.omega + 1, tau: Tau, metadata: hashKey);
+                if (tau == 'R')
+                    return value == value.Update(omega: value.omega + 1, tau: tau, hashKey: hashKey);
                 else
-                    return value == value.Update(Omega: value.omega, tau: Tau, metadata: hashKey);
+                    return value == value.Update(omega: value.omega, tau: tau, hashKey: hashKey);
             }
-
 
             private B GetNewBlock()
             {
-                //B newB;
                 if (NextBlock == null)
-                    //newB = new B(tau: Tau, metadata: Metadata);
-                    return new B(tau: Tau, metadata: hashKey);
+                    return new B(tau: tau, hashKey: hashKey);
                 else
-                    //newB = new B(tau: Tau, metadata: Metadata, nextBlock: NextBlock);
-                    return new B(tau: Tau, metadata: hashKey, nextBlock: NextBlock);
-
-
-                // I need to access one block ahead, but since I could not 
-                // find any proper way to do so with BPlusTree, I'm using 
-                // following ramblings :)
-                /*foreach (var block in di3.EnumerateFrom(marshalPoint))//.Skip(0))
-                {
-                    foreach (var d in block.newValue.lambda)
-                    {
-                        if (d.tau != 'L')                    
-                            newB.lambda.Add(new Lambda('M', d.atI) { });                    
-                    }
-
-                    // only one object :) 
-                    break;
-                }*/
-
-
-                //return newB;
+                    return new B(tau: tau, metadata: hashKey, nextBlock: NextBlock);
             }
-
-
         }
     }
 }

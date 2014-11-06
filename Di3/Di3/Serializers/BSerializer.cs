@@ -7,9 +7,9 @@ using System.Collections.ObjectModel;
 
 namespace DI3
 {
-    public class BSerializer<C, M> : ISerializer<B>
-        where C : IComparable<C>
-        where M : IMetaData, new()
+    public class BSerializer/*<C, M>*/ : ISerializer<B>
+        /*where C : IComparable<C>
+        where M : IMetaData, new()*/
     {
         public B ReadFrom(System.IO.Stream stream)
         {

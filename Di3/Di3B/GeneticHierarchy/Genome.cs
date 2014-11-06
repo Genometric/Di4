@@ -73,9 +73,9 @@ namespace Di3B
                         if (!output.Chrs[element.chr].ContainsKey(strand)) output.Chrs[element.chr].Add(strand, new List<Output<C, I, M>>());
 
                         // use options here
-                        /*using (var di3 = new Di3<C, I, M>(element.index, CreatePolicy.IfNeeded, CSerializer, CComparer))
+                        /*using (var _di3 = new Di3<C, I, M>(element.index, CreatePolicy.IfNeeded, CSerializer, CComparer))
                         {
-                            output.Chrs[element.chr][element.strand] = ExecuteCoverSummit(function, di3, strand, minAcc, maxAcc, aggregate);
+                            output.Chrs[element.chr][element.strand] = ExecuteCoverSummit(function, _di3, strand, minAcc, maxAcc, aggregate);
                         }*/
                     }
 
@@ -134,9 +134,9 @@ namespace Di3B
                         string di3File = GetDi3File(chr.Key, strand);
 
                         // use options here
-                        /*using (var di3 = new Di3<C, I, M>(di3File, CreatePolicy.IfNeeded, CSerializer, CComparer))
+                        /*using (var _di3 = new Di3<C, I, M>(di3File, CreatePolicy.IfNeeded, CSerializer, CComparer))
                         {
-                            counter = ExecuteAdd(chr.Value, di3, chr.Key, counter);
+                            counter = ExecuteAdd(chr.Value, _di3, chr.Key, counter);
                         }*/
                     }
 
@@ -166,7 +166,7 @@ namespace Di3B
         {
             foreach (var peak in peaks)
             {
-                //di3.Add(Clone(peak)); // COMMENTED OUT ONLY FOR INDEX SPEED TESTERS. 
+                //_di3.Add(Clone(peak)); // COMMENTED OUT ONLY FOR INDEX SPEED TESTERS. 
                 Console.Write("\r Added: {0} - {1:N0}", chr, counter++);
             }
 
@@ -192,10 +192,10 @@ namespace Di3B
                         ConfigurationManager.RefreshSection(sectionName);
 
                         // use options here
-                        /*using (var di3 = new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.IfNeeded, CSerializer, CComparer))
+                        /*using (var _di3 = new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.IfNeeded, CSerializer, CComparer))
                         {
                             Console.WriteLine("... proecssing {0} now.", reference.Key);
-                            output.Chrs[reference.Key][strand] = di3.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
+                            output.Chrs[reference.Key][strand] = _di3.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
                         }*/
                         break;
 

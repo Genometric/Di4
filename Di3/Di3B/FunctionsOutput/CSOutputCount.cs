@@ -22,12 +22,12 @@ namespace Di3B
 
         public List<Output<C, I, M>> output { set; get; }
 
-        void ICSOutput<C, I, M, Output<C, I, M>>.Output(C left, C right, List<Lambda<C, M>> intervals)
+        void ICSOutput<C, I, M, Output<C, I, M>>.Output(C left, C right, List<Lambda> intervals)
         {
             output.Add(new Output<C, I, M>(left, right, intervals.Count));
         }
 
-        void ICSOutput<C, I, M, Output<C, I, M>>.Output(I interval, List<Lambda<C, M>> intervals)
+        void ICSOutput<C, I, M, Output<C, I, M>>.Output(I interval, List<Lambda> intervals)
         {
             output.Add(new Output<C, I, M>(interval, intervals.Count));
         }

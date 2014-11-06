@@ -5,9 +5,9 @@ using Interfaces;
 namespace DI3
 {
     /// <summary>
-    /// Represents the interval intersecting with 
+    /// Represents the _interval intersecting with 
     /// the c of corresponding block. 
-    /// <para>For intervals of possibly different types,
+    /// <para>For _intervals of possibly different types,
     /// it is recommended to define this generic type
     /// parameter in terms of Lowest Common Denominator.
     /// </para>
@@ -15,8 +15,8 @@ namespace DI3
     /// <typeparam name="C">Represents the c/domain
     /// type (e.g,. int, double, Time).</typeparam>
     /// <typeparam name="M">Represents generic
-    /// type of pointer to descriptive metadata cooresponding
-    /// to the interval.</typeparam>
+    /// type of pointer to descriptive hashKey cooresponding
+    /// to the _interval.</typeparam>
     //[ProtoContract]
     //public class Lambda
         //where C : IComparable<C>
@@ -24,9 +24,9 @@ namespace DI3
     public struct Lambda
     {
         /// <summary>
-        /// Represents the interval intersecting with 
+        /// Represents the _interval intersecting with 
         /// the c of corresponding block. 
-        /// <para>For intervals of possibly different types,
+        /// <para>For _intervals of possibly different types,
         /// it is recommended to define this generic type
         /// parameter in terms of Lowest Common Denominator.
         /// </para>
@@ -36,16 +36,16 @@ namespace DI3
         //}
 
         /// <summary>
-        /// Represents the interval intersecting with 
+        /// Represents the _interval intersecting with 
         /// the c of corresponding block. 
-        /// <para>For intervals of possibly different types,
+        /// <para>For _intervals of possibly different types,
         /// it is recommended to define this generic type
         /// parameter in terms of Lowest Common Denominator.
         /// </para>
         /// </summary>
-        /// <param name="tau">The intersection type of interval
+        /// <param name="tau">The intersection type of _interval
         /// wtih c of corresponding block.</param>
-        /// <param name="atI">Descriptive metadata of the intereval.</param>
+        /// <param name="atI">Descriptive hashKey of the intereval.</param>
         internal Lambda(char tau, UInt32 atI)
             : this()
         {
@@ -56,7 +56,7 @@ namespace DI3
 
 
         /// <summary>
-        /// Gets the intersection type of interval
+        /// Gets the intersection type of _interval
         /// wtih c of corresponding block.
         /// <para>[currentValue] = L  ::>  Left-end  intersecting the coordiante.</para>
         /// <para>[currentValue] = M  ::>  Middle    intersecting the coordiante.</para>
@@ -66,7 +66,7 @@ namespace DI3
         internal char tau { private set; get; }
 
         /// <summary>
-        /// Gets descriptive metadata of the intereval
+        /// Gets descriptive hashKey of the intereval
         /// represented by generic type M.
         /// </summary>
         //[ProtoMember(2)]

@@ -1,5 +1,7 @@
-﻿using CSharpTest.Net.Serialization;
+﻿using BEDParser;
+using CSharpTest.Net.Serialization;
 using DI3;
+using Di3BMain;
 using System.IO;
 
 namespace IndexSpeedTest

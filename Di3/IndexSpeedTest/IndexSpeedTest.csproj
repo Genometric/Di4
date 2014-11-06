@@ -67,6 +67,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BEDParser\BEDParser.csproj">
+      <Project>{a8579878-71fa-44b1-9fcf-62c88cbe5248}</Project>
+      <Name>BEDParser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Di3BMain\Di3BMain.csproj">
       <Project>{f8235645-248f-46de-956e-5d3367ee19a0}</Project>
       <Name>Di3BMain</Name>

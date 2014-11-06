@@ -38,13 +38,13 @@ namespace IndexSpeedTest
             /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
             using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer))
             {
-                //di3.Add(new LightPeak() { left = 010, right = 050, metadata = new LightPeakData() { hashKey = 0/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //di3.Add(new LightPeak() { left = 060, right = 100, metadata = new LightPeakData() { hashKey = 1/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //di3.Add(new LightPeak() { left = 110, right = 140, metadata = new LightPeakData() { hashKey = 2/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //di3.Add(new LightPeak() { left = 030, right = 055, metadata = new LightPeakData() { hashKey = 3/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //di3.Add(new LightPeak() { left = 060, right = 080, metadata = new LightPeakData() { hashKey = 4/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //di3.Add(new LightPeak() { left = 100, right = 110, metadata = new LightPeakData() { hashKey = 5/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //di3.Add(new LightPeak() { left = 140, right = 180, metadata = new LightPeakData() { hashKey = 6/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { left = 010, right = 050, hashKey = new LightPeakData() { hashKey = 0/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { left = 060, right = 100, hashKey = new LightPeakData() { hashKey = 1/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { left = 110, right = 140, hashKey = new LightPeakData() { hashKey = 2/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { left = 030, right = 055, hashKey = new LightPeakData() { hashKey = 3/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { left = 060, right = 080, hashKey = new LightPeakData() { hashKey = 4/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { left = 100, right = 110, hashKey = new LightPeakData() { hashKey = 5/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { left = 140, right = 180, hashKey = new LightPeakData() { hashKey = 6/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
 
                 di3.Add(new LightPeak() { left = 100, right = 300, metadata = new LightPeakData() { hashKey = 1 } }, 1, 1);
                 di3.Add(new LightPeak() { left = 200, right = 400, metadata = new LightPeakData() { hashKey = 2 } }, 1, 1);
@@ -127,7 +127,7 @@ namespace IndexSpeedTest
                         {
                             left = left,
                             right = right,
-                            metadata = new PeakData()
+                            hashKey = new PeakData()
                             {
                                 left = left,
                                 right = right,
@@ -173,11 +173,11 @@ namespace IndexSpeedTest
                             metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
                         }, sample, intervals);
                         /*
-                        di3.Add(new Peak()
+                        _di3.Add(new Peak()
                         {
                             left = left,
                             right = right,
-                            metadata = new PeakData()
+                            hashKey = new PeakData()
                             {
                                 left = left,
                                 right = right,
@@ -244,11 +244,10 @@ namespace IndexSpeedTest
                     /// Why am I diconstructing bplustree at each iteration ? 
                     /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
                     /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                    //using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                    //using (var _di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
                     {
                         int test_Maximum_Lambda_Count = 0;
-                        int couuuuuunt = 0;
                         stopWatch.Restart();
 
                         for (int intervals = 1; intervals <= regionCount; intervals++)
@@ -257,21 +256,21 @@ namespace IndexSpeedTest
                             right = left + rnd.Next(MinLenght, MaxLenght);
 
 
-                            couuuuuunt = di3.Add(new LightPeak()
+                            di3.Add(new LightPeak()
                             {
                                 left = left,
                                 right = right,
                                 metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
                             }, sample, intervals);
 
-                            test_Maximum_Lambda_Count = Math.Max(test_Maximum_Lambda_Count, couuuuuunt);
+                            //test_Maximum_Lambda_Count = Math.Max(test_Maximum_Lambda_Count, couuuuuunt);
 
                             /*
-                            di3.Add(new Peak()
+                            _di3.Add(new Peak()
                             {
                                 left = left,
                                 right = right,
-                                metadata = new PeakData()
+                                hashKey = new PeakData()
                                 {
                                     left = left,
                                     right = right,
@@ -321,11 +320,11 @@ namespace IndexSpeedTest
                         }, sample, intervals);
 
                         /*
-                        di3.Add(new Peak()
+                        _di3.Add(new Peak()
                         {
                             left = left,
                             right = right,
-                            metadata = new PeakData()
+                            hashKey = new PeakData()
                             {
                                 left = left,
                                 right = right,
@@ -406,11 +405,11 @@ namespace IndexSpeedTest
                             }, sample, intervals);
 
                             /*
-                            di3.Add(new Peak()
+                            _di3.Add(new Peak()
                             {
                                 left = left,
                                 right = right,
-                                metadata = new PeakData()
+                                hashKey = new PeakData()
                                 {
                                     left = left,
                                     right = right,
@@ -454,11 +453,11 @@ namespace IndexSpeedTest
                         }, sample, intervals);
 
                         /*
-                        di3.Add(new Peak()
+                        _di3.Add(new Peak()
                         {
                             left = left,
                             right = right,
-                            metadata = new PeakData()
+                            hashKey = new PeakData()
                             {
                                 left = left,
                                 right = right,
@@ -526,7 +525,7 @@ namespace IndexSpeedTest
                     /// Why am I diconstructing bplustree at each iteration ? 
                     /// becasue in actual scenario there is a taxanomy and data between taxanomies are independent and 
                     /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
-                    //using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
+                    //using (var _di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(file, CreatePolicy.IfNeeded, PrimitiveSerializer.Int32, int32Comparer, avgKeySize, avgValueSize))
                     {
                         //int test_Maximum_Lambda_Count = 0;
@@ -550,11 +549,11 @@ namespace IndexSpeedTest
                             //test_Maximum_Lambda_Count = Math.Max(test_Maximum_Lambda_Count, couuuuuunt);
 
                             /*
-                            di3.Add(new Peak()
+                            _di3.Add(new Peak()
                             {
                                 left = left,
                                 right = right,
-                                metadata = new PeakData()
+                                hashKey = new PeakData()
                                 {
                                     left = left,
                                     right = right,
@@ -564,7 +563,7 @@ namespace IndexSpeedTest
                                 }
                             });*/
 
-                            //Console.Write("\r#Inserted intervals : {0:N0}", intervals);
+                            //Console.Write("\r#Inserted _intervals : {0:N0}", _intervals);
                         }
 
                         di3.Add(peaks, mode);
@@ -588,10 +587,10 @@ namespace IndexSpeedTest
                     {
                         Console.WriteLine("*********     SECOND PASS    **********");
                         stopWatch.Restart();
-                        int TESTBlockCount = di3.SecondPass();
+                        di3.SecondPass();
                         stopWatch.Stop();
-                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
                     }
             }
             else
@@ -617,11 +616,11 @@ namespace IndexSpeedTest
                         }, sample, intervals);
 
                         /*
-                        di3.Add(new Peak()
+                        _di3.Add(new Peak()
                         {
                             left = left,
                             right = right,
-                            metadata = new PeakData()
+                            hashKey = new PeakData()
                             {
                                 left = left,
                                 right = right,
@@ -654,11 +653,11 @@ namespace IndexSpeedTest
                 left = right + rnd.Next(minGap, maxGap);
                 right = left + rnd.Next(minLenght, maxLenght);
                 /*
-                di3.Add(new Peak()
+                _di3.Add(new Peak()
                 {
                     left = left,
                     right = right,
-                    metadata = new PeakData()
+                    hashKey = new PeakData()
                     {
                         left = left,
                         right = right,
