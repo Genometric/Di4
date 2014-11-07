@@ -11,7 +11,7 @@ namespace Di3B
     public class Chromosome<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/, new()
+        where M : IMetaData, new()
     {
         /// <summary>
         /// Represents a chromosome with different strands

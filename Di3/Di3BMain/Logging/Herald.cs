@@ -19,7 +19,11 @@ namespace Di3BMain
             heraldDestination = HeraldDestination;
             if (HeraldDestination == Destination.File ||
                 HeraldDestination == Destination.Both)
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(FileFullName))) Directory.CreateDirectory(Path.GetDirectoryName(FileFullName));
+                if (!File.Exists(Path.GetFileName(FileFullName))) File.Create(Path.GetFileName(FileFullName));
                 writer = new StreamWriter(FileFullName);
+            }
         }
 
         internal static void Announce(string message)

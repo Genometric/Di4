@@ -6,8 +6,8 @@ namespace Di3B
 {
     public class AggregateFactory<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>, new() // new is new
-        where M : IMetaData/*<C>*/, new()
+        where I : IInterval<C, M>, new()
+        where M : IMetaData, new()
     {
         public ICSOutput<C, I, M, Output<C, I, M>> GetAggregateFunction(string aggregate)
         {

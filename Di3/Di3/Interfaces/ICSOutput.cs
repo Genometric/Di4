@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interfaces;
 
 namespace DI3
@@ -25,7 +22,7 @@ namespace DI3
     public interface ICSOutput<C, I, M, O>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/, new()
+        where M : IMetaData, new()
     {
         void Output(C left, C right, List<Lambda> intervals);
 

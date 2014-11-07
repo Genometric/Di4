@@ -107,7 +107,7 @@ namespace IndexSpeedTest
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
                         //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
                     }
             }
@@ -130,7 +130,7 @@ namespace IndexSpeedTest
                                 left = left,
                                 right = right,
                                 metadata = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
-                            }, sample, intervals);
+                            });
 
                             //Console.Write("\r#Inserted _intervals : {0:N0}", _intervals);
                         }
@@ -152,7 +152,7 @@ namespace IndexSpeedTest
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
                         //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
                     }
             }
@@ -314,7 +314,7 @@ namespace IndexSpeedTest
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
                         //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
                     }
             }
@@ -372,7 +372,7 @@ namespace IndexSpeedTest
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
                         //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
                     }
             }

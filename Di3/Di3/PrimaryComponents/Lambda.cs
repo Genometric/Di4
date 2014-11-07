@@ -1,6 +1,4 @@
 ﻿using System;
-//using ProtoBuf;
-using Interfaces;
 
 namespace DI3
 {
@@ -17,10 +15,6 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive hashKey cooresponding
     /// to the _interval.</typeparam>
-    //[ProtoContract]
-    //public class Lambda
-        //where C : IComparable<C>
-        //where M : IMetaData/*<C>*/, new()
     public struct Lambda
     {
         /// <summary>
@@ -62,14 +56,12 @@ namespace DI3
         /// <para>[currentValue] = M  ::>  Middle    intersecting the coordiante.</para>
         /// <para>[currentValue] = R  ::>  Right-end intersecting the coordiante.</para>
         /// </summary>
-        //[ProtoMember(1)]
         internal char tau { private set; get; }
 
         /// <summary>
         /// Gets descriptive hashKey of the intereval
         /// represented by generic type M.
         /// </summary>
-        //[ProtoMember(2)]
         internal UInt32 atI { private set; get; }
     }
 }

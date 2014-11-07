@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using CSharpTest.Net.Collections;
 using Interfaces;
-using CSharpTest.Net.Collections;
+using System;
 using System.Collections.Generic;
-using CSharpTest.Net.Threading;
 
 
 namespace DI3
@@ -32,7 +30,7 @@ namespace DI3
         /// Provides efficient means of inserting an 
         /// _interval to DI3; i.e., _di3 indexding.
         /// </summary>
-        /// <param name="di3">The reference _di3 to be 
+        /// <param name="_di3">The reference _di3 to be 
         /// manipulated.</param>
         internal INDEX(BPlusTree<C, B> di3)
         {

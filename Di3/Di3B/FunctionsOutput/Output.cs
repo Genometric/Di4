@@ -5,22 +5,9 @@ namespace Di3B
 {
     public class Output<C, I, M>
         where C : IComparable<C>
-        where I : IInterval<C, M>, new() // new is new
-        where M : IMetaData/*<C>*/
+        where I : IInterval<C, M>, new()
+        where M : IMetaData
     {
-        /// ----------------------------------------
-        /// ----- HIGH-LEVEL CAUTION ---------------
-        /// -- THE CURRENT METHODS OF ASSIGNMENTS --
-        /// -- ARE POSSIBLE MEMORY LEAKS SOURCES ---
-        /// ----------------------------------------
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Left"></param>
-        /// <param name="Right"></param>
-        /// <param name="Count"></param>
         internal Output(C Left, C Right, int Count)
         {
             //left = Left;
@@ -31,11 +18,6 @@ namespace Di3B
             count = Count;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="interval"></param>
-        /// <param name="Count"></param>
         internal Output(I Interval, int Count)
         {
             interval = Interval;

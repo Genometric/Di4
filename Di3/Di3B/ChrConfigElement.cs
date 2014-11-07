@@ -55,39 +55,24 @@ namespace Di3B
 
         public override ConfigurationElementCollectionType CollectionType
         {
-            get
-            {
-                return ConfigurationElementCollectionType.AddRemoveClearMap;
-            }
+            get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
         }
 
-        /*protected override Object GetElementKey(ConfigurationElement element)
-        {
-            return ((ChrConfigElement)element).chr;
-        }*/
 
         public ChrConfigElement this[int index]
         {
-            get
-            {
-                return (ChrConfigElement)BaseGet(index);
-            }
+            get { return (ChrConfigElement)BaseGet(index); }
             set
             {
-                if (BaseGet(index) != null)
-                {
+                if (BaseGet(index) != null)                
                     BaseRemoveAt(index);
-                }
                 BaseAdd(index, value);
             }
         }
 
         new public ChrConfigElement this[string Name]
         {
-            get
-            {
-                return (ChrConfigElement)BaseGet(Name);
-            }
+            get { return (ChrConfigElement)BaseGet(Name); }
         }
 
         public int IndexOf(ChrConfigElement chrElement)

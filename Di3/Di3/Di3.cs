@@ -32,10 +32,9 @@ namespace DI3
     public class Di3<C, I, M> : IDisposable
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/, new()
+        where M : IMetaData, new()
     {
         private BPlusTree<C, B> di3 { set; get; }
-        private BSerializer/*<C, M>*/ bSerializer { set; get; }
         private BlockSerializer blockSerializer { set; get; }
         private LambdaItemSerializer lambdaItemSerializer { set; get; }
         private LambdaArraySerializer lambdaArraySerializer { set; get; }
@@ -53,31 +52,6 @@ namespace DI3
         /// </summary>
         public int blockCount { private set { } get { return di3.Count; } }
 
-        public Di3(
-            string FileName,
-            CreatePolicy createPolicy,
-            ISerializer<C> CSerializer,
-            IComparer<C> comparer)
-        {
-            bSerializer = new BSerializer/*<C, M>*/();
-            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            options.CalcBTreeOrder(16, 1400); //24);
-            options.CreateFile = createPolicy;
-            options.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
-            options.StoragePerformance = StoragePerformance.Fastest;
-
-            options.CachePolicy = CachePolicy.All;
-
-            options.FileBlockSize = 512;
-
-            if (createPolicy != CreatePolicy.Never)
-                options.FileName = FileName;
-
-            di3 = new BPlusTree<C, B>(options);
-            INDEX = new INDEX<C, I, M>(di3);
-        }
-
 
         /// <summary>
         /// Dynamic _intervals inverted index (DI3) 
@@ -88,7 +62,7 @@ namespace DI3
         /// </summary>
         /// <param name="CSerializer"></param>
         /// <param name="comparer"></param>
-        public Di3(
+        private Di3(
             string FileName,
             CreatePolicy createPolicy,
             ISerializer<C> CSerializer,
@@ -97,19 +71,19 @@ namespace DI3
             int avgValueSize,
             bool THIS_IS_THE_MOST_USED_ONE)
         {
-            bSerializer = new BSerializer();
-            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
+            //bSerializer = new BSerializer();
+            //var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
 
-            //rtv.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
-            options.CreateFile = createPolicy;
-            //rtv.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
-            options.StoragePerformance = StoragePerformance.Fastest;
+            ////rtv.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
+            //options.CreateFile = createPolicy;
+            ////rtv.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
+            //options.StoragePerformance = StoragePerformance.Fastest;
 
 
             //////// Multi-Threading 2nd pass test; was commented-out visa versa
             //rtv.CachePolicy = CachePolicy.All;
-            options.CachePolicy = CachePolicy.Recent;
+            //options.CachePolicy = CachePolicy.Recent;
 
 
             //rtv.FileBlockSize = 512;
@@ -132,147 +106,21 @@ namespace DI3
 
 
 
-            options.MaximumChildNodes = 256;// 100;
-            options.MinimumChildNodes = 2;//2;//10;
+            //options.MaximumChildNodes = 256;// 100;
+            //options.MinimumChildNodes = 2;//2;//10;
 
-            options.MaximumValueNodes = 256; // 100;
-            options.MinimumValueNodes = 2;//2;//10;
+            //options.MaximumValueNodes = 256; // 100;
+            //options.MinimumValueNodes = 2;//2;//10;
 
-            if (createPolicy != CreatePolicy.Never)
-                options.FileName = FileName;
+            //if (createPolicy != CreatePolicy.Never)
+                //options.FileName = FileName;
 
-            di3 = new BPlusTree<C, B>(options);
-            INDEX = new INDEX<C, I, M>(di3);
+            //_di3 = new BPlusTree<C, B>(options);
+            //INDEX = new INDEX<C, I, M>(_di3);
 
             //_di3.DebugSetValidateOnCheckpoint(false);
         }
 
-
-        public Di3(
-            string FileName,
-            CreatePolicy createPolicy,
-            ISerializer<C> CSerializer,
-            IComparer<C> comparer,
-            int avgKeySize,
-            int avgValueSize)
-        {
-            bSerializer = new BSerializer();
-            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            options.FileBlockSize = 512;
-            options.CachePolicy = CachePolicy.Recent;
-
-            options.CalcBTreeOrder(avgKeySize, avgValueSize);
-            options.CreateFile = createPolicy;
-            options.ExistingLogAction = ExistingLogAction.Truncate;
-            options.StoragePerformance = StoragePerformance.Fastest;
-
-            if (createPolicy != CreatePolicy.Never)
-                options.FileName = FileName;
-
-            di3 = new BPlusTree<C, B>(options);
-            INDEX = new INDEX<C, I, M>(di3);
-        }
-
-
-        public Di3(
-            string FileName,
-            CreatePolicy createPolicy,
-            ISerializer<C> CSerializer,
-            IComparer<C> comparer,
-            int maximumChildNodes,
-            int minimumChildNodes,
-            int maximumValueNodes,
-            int minimumValueNodes)
-        {
-            bSerializer = new BSerializer();
-            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            options.CachePolicy = CachePolicy.Recent;
-            options.FileBlockSize = 512;
-
-            options.CreateFile = createPolicy;
-            options.ExistingLogAction = ExistingLogAction.Truncate;
-            options.StoragePerformance = StoragePerformance.Fastest;
-            options.MaximumChildNodes = maximumChildNodes;
-            options.MinimumChildNodes = minimumChildNodes;
-            options.MaximumValueNodes = maximumValueNodes;
-            options.MinimumValueNodes = minimumValueNodes;
-
-            if (createPolicy != CreatePolicy.Never)
-                options.FileName = FileName;
-
-            di3 = new BPlusTree<C, B>(options);
-            INDEX = new INDEX<C, I, M>(di3);
-        }
-
-
-        public Di3(
-            string FileName,
-            CreatePolicy createPolicy,
-            ISerializer<C> CSerializer,
-            IComparer<C> comparer,
-            int maximumChildNodes,
-            int minimumChildNodes,
-            int maximumValueNodes,
-            int minimumValueNodes,
-            int avgKeySize,
-            int avgValueSize)
-        {
-            bSerializer = new BSerializer();
-            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            options.CachePolicy = CachePolicy.Recent;
-            options.FileBlockSize = 512;
-
-            options.CalcBTreeOrder(avgKeySize, avgValueSize);
-            options.CreateFile = createPolicy;
-            options.ExistingLogAction = ExistingLogAction.Truncate;
-            options.StoragePerformance = StoragePerformance.Fastest;
-            options.MaximumChildNodes = maximumChildNodes;
-            options.MinimumChildNodes = minimumChildNodes;
-            options.MaximumValueNodes = maximumValueNodes;
-            options.MinimumValueNodes = minimumValueNodes;
-
-            if (createPolicy != CreatePolicy.Never)
-                options.FileName = FileName;
-
-            di3 = new BPlusTree<C, B>(options);
-            INDEX = new INDEX<C, I, M>(di3);
-        }
-
-
-        public Di3(
-            string FileName,
-            CreatePolicy createPolicy,
-            ISerializer<C> CSerializer,
-            IComparer<C> comparer,
-            int maximumChildNodes,
-            int minimumChildNodes,
-            int maximumValueNodes,
-            int minimumValueNodes,
-            int fileBlockSize)
-        {
-            bSerializer = new BSerializer();
-            var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
-
-            options.CachePolicy = CachePolicy.Recent;
-            options.FileBlockSize = fileBlockSize;
-
-            options.CreateFile = createPolicy;
-            options.ExistingLogAction = ExistingLogAction.Truncate;
-            options.StoragePerformance = StoragePerformance.Fastest;
-            options.MaximumChildNodes = maximumChildNodes;
-            options.MinimumChildNodes = minimumChildNodes;
-            options.MaximumValueNodes = maximumValueNodes;
-            options.MinimumValueNodes = minimumValueNodes;
-
-            if (createPolicy != CreatePolicy.Never)
-                options.FileName = FileName;
-
-            di3 = new BPlusTree<C, B>(options);
-            INDEX = new INDEX<C, I, M>(di3);
-        }
 
         public Di3(Di3Options<C> options)
         {
@@ -349,14 +197,7 @@ namespace DI3
 
 
         public void Add(I interval)
-        { }
-
-
-        public void Add(I interval, int TEST_Sample_Number, int TEST_Region_Number)
-        {
-            INDEX.Index(interval);
-        }
-
+        { INDEX.Index(interval); }
         public void Add(List<I> intervals, Mode mode)
         {
             Add(intervals, Environment.ProcessorCount, mode);
@@ -382,7 +223,6 @@ namespace DI3
                 Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
         }
-
         public void SecondPass()
         {
             INDEX.SecondPass();
@@ -393,7 +233,6 @@ namespace DI3
             HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
             return SetOps.Cover(OutputStrategy, minAccumulation, maxAccumulation);
         }
-
         public List<O> Summit<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
         {
             HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
@@ -428,35 +267,30 @@ namespace DI3
             }
 
             //HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(_di3);
-            return null;//SetOps.Map(OutputStrategy, references);
+            return null;//SetOps.Map(_outputStrategy, references);
         }
 
 
 
         bool disposed = false;
-
-        // Public implementation of Dispose pattern callable by consumers. 
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        // Protected implementation of Dispose pattern. 
         protected virtual void Dispose(bool disposing)
-        {
+        {// Protected implementation of Dispose pattern. 
             if (disposed)
                 return;
 
             if (disposing)
             {
-                // Free any other managed objects here. 
+                // Free managed objects here. 
                 di3.Commit();
                 di3.Dispose();
             }
 
-            // Free any unmanaged objects here. 
-            //
+            // Free unmanaged objects here. 
             disposed = true;
         }
     }

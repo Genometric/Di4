@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CSharpTest.Net.Collections;
-using CSharpTest.Net.Serialization;
-using System.IO;
-using System.Collections;
+﻿using CSharpTest.Net.Collections;
 using Interfaces;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace DI3
@@ -15,45 +10,43 @@ namespace DI3
     internal class HigherOrderFuncs<C, I, M, O>
         where C : IComparable<C>
         where I : IInterval<C, M>
-        where M : IMetaData/*<C>*/, new()
+        where M : IMetaData, new()
     {
         internal HigherOrderFuncs(BPlusTree<C, B> di3)
         {
-            this.di3 = di3;
-            intervalsKeys = new Hashtable();
-            lambdas = new List<Lambda>();
+            _di3 = di3;
+            _intervalsKeys = new Hashtable();
+            _lambdas = new List<Lambda>();
         }
 
-        internal HigherOrderFuncs(BPlusTree<C, B> di3, ICSOutput<C, I, M, O> OutputStrategy, List<I> Intervals, int Start, int Stop)
+        internal HigherOrderFuncs(BPlusTree<C, B> di3, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
         {
-            this.di3 = di3;
-            intervalsKeys = new Hashtable();
-            lambdas = new List<Lambda>();
-            this.intervals = Intervals;
-            this.Start = Start;
-            this.Stop = Stop;
-            this.outputStrategy = OutputStrategy;
+            _di3 = di3;
+            _intervalsKeys = new Hashtable();
+            _lambdas = new List<Lambda>();
+            _intervals = intervals;
+            _start = start;
+            _stop = stop;
+            _outputStrategy = outputStrategy;
         }
 
-        private List<I> intervals { set; get; }
-        private int Start { set; get; }
-        private int Stop { set; get; }
-        private ICSOutput<C, I, M, O> outputStrategy { set; get; }
-
-        private BPlusTree<C, B> di3 { set; get; }
-
-        private Hashtable intervalsKeys { set; get; }
-        private List<Lambda> lambdas { set; get; }
+        private BPlusTree<C, B> _di3 { set; get; }
+        private int _start { set; get; }
+        private int _stop { set; get; }
+        private List<I> _intervals { set; get; }
+        private ICSOutput<C, I, M, O> _outputStrategy { set; get; }
+        private Hashtable _intervalsKeys { set; get; }
+        private List<Lambda> _lambdas { set; get; }
 
         internal List<O> Cover(ICSOutput<C, I, M, O> OutputStrategy, byte minAcc, byte maxAcc)
         {
             C markedKey = default(C);
             int markedAcc = -1;
             byte accumulation = 0;
-            lambdas.Clear();
-            intervalsKeys.Clear();
+            _lambdas.Clear();
+            _intervalsKeys.Clear();
 
-            foreach (var block in di3.EnumerateFrom(di3.First().Key))
+            foreach (var block in _di3.EnumerateFrom(_di3.First().Key))
             {
                 accumulation = (byte)(block.Value.lambda.Count - block.Value.omega);
 
@@ -71,13 +64,12 @@ namespace DI3
                         accumulation > maxAcc)
                     {
                         UpdateLambdas(block.Value.lambda);
-                        //OutputStrategy.Output(_di3[markedKey].e, _di3[block.Key].e, lambdas);
-                        OutputStrategy.Output(markedKey, block.Key, lambdas);
+                        OutputStrategy.Output(markedKey, block.Key, _lambdas);
 
                         markedKey = default(C);
                         markedAcc = -1;
-                        lambdas.Clear();
-                        intervalsKeys.Clear();
+                        _lambdas.Clear();
+                        _intervalsKeys.Clear();
                     }
                     else if (accumulation >= minAcc &&
                         accumulation <= maxAcc)
@@ -95,10 +87,10 @@ namespace DI3
             C markedKey = default(C);
             int markedAcc = -1;
             byte accumulation = 0;
-            lambdas.Clear();
-            intervalsKeys.Clear();
+            _lambdas.Clear();
+            _intervalsKeys.Clear();
 
-            foreach (var block in di3.EnumerateFrom(di3.First().Key))
+            foreach (var block in _di3.EnumerateFrom(_di3.First().Key))
             {
                 accumulation = (byte)(block.Value.lambda.Count - block.Value.omega);
 
@@ -117,13 +109,12 @@ namespace DI3
                     markedAcc != -1))
                 {
                     UpdateLambdas(block.Value.lambda);
-                    //OutputStrategy.Output(_di3[markedKey].e, _di3[block.Key].e, lambdas);
-                    OutputStrategy.Output(markedKey, block.Key, lambdas);
+                    OutputStrategy.Output(markedKey, block.Key, _lambdas);
 
                     markedKey = default(C);
                     markedAcc = -1;
-                    lambdas.Clear();
-                    intervalsKeys.Clear();
+                    _lambdas.Clear();
+                    _intervalsKeys.Clear();
                 }
                 else if (accumulation >= minAcc &&
                     accumulation <= maxAcc &&
@@ -141,9 +132,8 @@ namespace DI3
             int i = 0;
             foreach (var reference in references)
             {
-                Console.Write("\r ... processing regions: {0} / {1}", ++i, references.Count);
-                lambdas.Clear();
-                intervalsKeys.Clear();
+                _lambdas.Clear();
+                _intervalsKeys.Clear();
 
                 #region .::.     a quick note     .::.
                 /// This iteration starts from a block which it's key (i.e., coordinate)
@@ -151,28 +141,26 @@ namespace DI3
                 /// is maximum <= to reference.right. Of course if no such blocks are available
                 /// this iteration wont iteratre over anything. 
                 #endregion
-                foreach (var block in di3.EnumerateRange(reference.left, reference.right))
+                foreach (var block in _di3.EnumerateRange(reference.left, reference.right))
                 {
                     UpdateLambdas(block.Value.lambda);
                 }
 
-                OutputStrategy.Output(reference, lambdas);
+                OutputStrategy.Output(reference, _lambdas);
             }
 
             return OutputStrategy.output;
         }
-        internal void Map()//ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
+        internal void Map()
         {
             int i = 0;
             I reference;
 
-            for (i = Start; i < Stop; i++)
+            for (i = _start; i < _stop; i++)
             {
-                reference = intervals[i];
-
-                //Console.Write("\r ... processing regions: {0} / {1}", ++i, _intervals.Count);
-                lambdas.Clear();
-                intervalsKeys.Clear();
+                reference = _intervals[i];
+                _lambdas.Clear();
+                _intervalsKeys.Clear();
 
                 #region .::.     a quick note     .::.
                 /// This iteration starts from a block which it's key (i.e., coordinate)
@@ -180,16 +168,15 @@ namespace DI3
                 /// is maximum <= to reference.right. Of course if no such blocks are available
                 /// this iteration wont iteratre over anything. 
                 #endregion
-                foreach (var block in di3.EnumerateRange(reference.left, reference.right))
+                foreach (var block in _di3.EnumerateRange(reference.left, reference.right))
                 {
                     UpdateLambdas(block.Value.lambda);
                 }
 
-                outputStrategy.Output(reference, lambdas);
-
+                _outputStrategy.Output(reference, _lambdas);
             }
 
-            //return OutputStrategy.output;
+            //return _outputStrategy.output;
         }
 
         private void UpdateLambdas(ReadOnlyCollection<Lambda> newLambdas)
@@ -197,10 +184,10 @@ namespace DI3
             foreach (var item in newLambdas)
             {
                 if (//block.tau != 'R' &&
-                    !intervalsKeys.ContainsKey(item.atI))
+                    !_intervalsKeys.ContainsKey(item.atI))
                 {
-                    lambdas.Add(item);
-                    intervalsKeys.Add(item.atI, "Hmd");
+                    _lambdas.Add(item);
+                    _intervalsKeys.Add(item.atI, "Hmd");
                 }
             }
         }

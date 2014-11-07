@@ -58,9 +58,12 @@
     <Compile Include="Interfaces\ICSOutput.cs" />
     <Compile Include="PrimaryComponents\B.cs" />
     <Compile Include="PrimaryComponents\Di3Options.cs" />
+    <Compile Include="PrimaryComponents\Enums.cs" />
     <Compile Include="PrimaryComponents\Lambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serializers\BSerializer.cs" />
+    <Compile Include="Serializers\BlockSerializer.cs" />
+    <Compile Include="Serializers\LambdaArraySerializer.cs" />
+    <Compile Include="Serializers\LambdaItemSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

@@ -2,16 +2,9 @@
 using CSharpTest.Net.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interfaces;
 
 namespace DI3
 {
-    public enum LockMode { WriterOnlyLocking, ReaderWriterLocking, SimpleReadWriteLocking, IgnoreLocking };
-    public enum Mode { SinglePass, MultiPass };
-
     public class Di3Options<C>
         where C : IComparable<C>
     {

@@ -1,9 +1,7 @@
-﻿using ProtoBuf;
-using Interfaces;
+﻿using Interfaces;
 
 namespace Di3BMain
 {
-    [ProtoContract]
     public class Peak : IInterval<int, PeakData>
     {
         /*public Peak() // this part is added later after seeing problems with BEDParser. This part is also available with previous version.
@@ -14,14 +12,12 @@ namespace Di3BMain
         /// <summary>
         /// Sets and gets the left-end of the interval.
         /// </summary>
-        [ProtoMember(1)]
         public int left { set; get; }
 
 
         /// <summary>
         /// Sets and gets the right-end of the interval.
         /// </summary>
-        [ProtoMember(2)]
         public int right { set; get; }
 
 
@@ -31,20 +27,9 @@ namespace Di3BMain
         /// to a memory object, or a pointer, or 
         /// an entry ID on database, or etc. 
         /// </summary>
-        [ProtoMember(3)]
         public PeakData metadata { set; get; }
 
 
-        public uint hashKey
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-                throw new System.NotImplementedException();
-            }
-        }
+        public uint hashKey { set; get; }
     }
 }

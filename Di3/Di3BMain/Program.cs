@@ -11,9 +11,9 @@ namespace Di3BMain
             var confingFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var settings = confingFile.AppSettings.Settings;
             if (settings["WorkingDirectory"] == null)
-                settings.Add("WorkingDirectory", /*@"I:" + Path.DirectorySeparatorChar +*/ "Di3Data");
+                settings.Add("WorkingDirectory", @"I:" + Path.DirectorySeparatorChar + "Di3Data");
             if (settings["LogFile"] == null)
-                settings.Add("LogFile", /*@"I:" + Path.DirectorySeparatorChar +*/ "Di3Data" + Path.DirectorySeparatorChar + "Di3.log");
+                settings.Add("LogFile", @"I:" + Path.DirectorySeparatorChar + "Di3Data" + Path.DirectorySeparatorChar + "Di3.log");
             confingFile.Save();
 
             Console.WriteLine("");

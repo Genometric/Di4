@@ -9,7 +9,7 @@ namespace Di3B
     public class Di3B<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>, new()
-        where M : IExtMetaData<C>/*IMetaData<C>*/, new()
+        where M : IExtMetaData<C>, new()
     {
         private ISerializer<C> CSerializer { set; get; }
         private IComparer<C> CComparer { set; get; }

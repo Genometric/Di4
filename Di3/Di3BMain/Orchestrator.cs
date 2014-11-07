@@ -21,7 +21,7 @@ namespace Di3BMain
             //Load_and_Add();
 
             ///------ TEST B
-            //LID(new string[] { "", @"H:\hg", "narrowPeak" });
+            LID(new string[] { "", @"I:\this\", "BED" });
         }
 
         Stopwatch stopWatch { set; get; }
@@ -134,11 +134,7 @@ namespace Di3BMain
             Repository.inputSamples.Add(args[1]);
             BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(args[1], "Human");
 
-
             var parsedSample = bedParser.Parse();
-            //var parsedSample = TESTBED();
-
-
 
             Repository.parsedSamples.Add(parsedSample.fileHashKey, parsedSample);
             samplesHashtable.Add(args[1], parsedSample.fileHashKey);
