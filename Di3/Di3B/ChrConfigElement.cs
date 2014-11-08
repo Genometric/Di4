@@ -5,7 +5,7 @@ namespace Di3B
     public class ChrConfigElement : ConfigurationElement
     {
         public ChrConfigElement() { }
-
+        
         public ChrConfigElement(string Chr, char Strand, string Index)
         {
             this.chr = Chr;
@@ -33,16 +33,9 @@ namespace Di3B
             get { return (string)this["Index"]; }
             set { this["Index"] = value; }
         }
-
-
     }
     public class Genome : ConfigurationElementCollection
     {
-        public Genome()
-        {
-            ChrConfigElement chrElement = (ChrConfigElement)CreateNewElement();
-            Add(chrElement);
-        }
         protected override ConfigurationElement CreateNewElement()
         {
             return new ChrConfigElement();
@@ -51,28 +44,6 @@ namespace Di3B
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((ChrConfigElement)element).chr;
-        }
-
-        public override ConfigurationElementCollectionType CollectionType
-        {
-            get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
-        }
-
-
-        public ChrConfigElement this[int index]
-        {
-            get { return (ChrConfigElement)BaseGet(index); }
-            set
-            {
-                if (BaseGet(index) != null)                
-                    BaseRemoveAt(index);
-                BaseAdd(index, value);
-            }
-        }
-
-        new public ChrConfigElement this[string Name]
-        {
-            get { return (ChrConfigElement)BaseGet(Name); }
         }
 
         public int IndexOf(ChrConfigElement chrElement)
@@ -89,25 +60,9 @@ namespace Di3B
             BaseAdd(element, false);
         }
 
-        public void Remove(ChrConfigElement chrElement)
-        {
-            if (BaseIndexOf(chrElement) >= 0)
-                BaseRemove(chrElement.chr);
-        }
-
         public void RemoveAt(int index)
         {
             BaseRemoveAt(index);
-        }
-
-        public void Remove(string name)
-        {
-            BaseRemove(name);
-        }
-
-        public void Clear()
-        {
-            BaseClear();
         }
     }
     public class ChrSection : ConfigurationSection
@@ -124,80 +79,5 @@ namespace Di3B
         [ConfigurationProperty(genome)]
         [ConfigurationCollection(typeof(Genome), AddItemName = "add")]
         public Genome genomeChrs { get { return (Genome)base[genome]; } }
-
-        /*
-        [ConfigurationProperty("Chromosome")]
-        public ChrConfigElement ChrElement
-        {
-            get { return ((ChrConfigElement)this["Chromosome"]); }
-            set { this["Chromosome"] = currentValue; }
-        }*/
     }
-
-
-
-
-
-
-
-
-    public class ConnectionManagerDataSection : ConfigurationSection
-    {
-        /// <summary>
-        /// The name of this section in the app.config.
-        /// </summary>
-        public const string SectionName = "ConnectionManagerDataSection";
-
-        private const string EndpointCollectionName = "ConnectionManagerEndpoints";
-
-        [ConfigurationProperty(EndpointCollectionName)]
-        [ConfigurationCollection(typeof(ConnectionManagerEndpointsCollection), AddItemName = "add")]
-        public ConnectionManagerEndpointsCollection ConnectionManagerEndpoints { get { return (ConnectionManagerEndpointsCollection)base[EndpointCollectionName]; } }
-    }
-
-    public class ConnectionManagerEndpointsCollection : ConfigurationElementCollection
-    {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new ConnectionManagerEndpointElement();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((ConnectionManagerEndpointElement)element).Name;
-        }
-    }
-
-    public class ConnectionManagerEndpointElement : ConfigurationElement
-    {
-        [ConfigurationProperty("name", IsRequired = true)]
-        public string Name
-        {
-            get { return (string)this["name"]; }
-            set { this["name"] = value; }
-        }
-
-        [ConfigurationProperty("address", IsRequired = true)]
-        public string Address
-        {
-            get { return (string)this["address"]; }
-            set { this["address"] = value; }
-        }
-
-        [ConfigurationProperty("useSSL", IsRequired = false, DefaultValue = false)]
-        public bool UseSSL
-        {
-            get { return (bool)this["useSSL"]; }
-            set { this["useSSL"] = value; }
-        }
-
-        [ConfigurationProperty("securityGroupsAllowedToSaveChanges", IsRequired = false)]
-        public string SecurityGroupsAllowedToSaveChanges
-        {
-            get { return (string)this["securityGroupsAllowedToSaveChanges"]; }
-            set { this["securityGroupsAllowedToSaveChanges"] = value; }
-        }
-    }
-
-
 }

@@ -20,13 +20,12 @@ namespace Di3B
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
 
-            config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             Di3Path = Di3Path + Path.DirectorySeparatorChar;
+            config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
             if (settings["WorkingDirectory"] == null) settings.Add("WorkingDirectory", Di3Path);
             else settings["WorkingDirectory"].Value = Di3Path;
 
-            //FileName = Di3Path + Path.DirectorySeparatorChar + "Di3";
             if (!Directory.Exists(settings["WorkingDirectory"].Value)) Directory.CreateDirectory(settings["WorkingDirectory"].Value);
 
             if (memory == Memory.RAM)
@@ -34,21 +33,14 @@ namespace Di3B
         }
 
 
+        string sectionName = "Chromosome";
         int cpuCount = Environment.ProcessorCount;
-
+        private KeyValueConfigurationCollection settings { set; get; }
         private ISerializer<C> CSerializer { set; get; }
         private IComparer<C> CComparer { set; get; }
-        //private string FileName { set; get; }
         private Memory memory { set; get; }
-        private KeyValueConfigurationCollection settings { set; get; }
-        string sectionName = "Chromosome";
         ChrSection chrSection { set; get; }
         Configuration config { set; get; }
-
-        /// <summary>
-        /// Sets and Gets all chromosomes of the genome.
-        /// </summary>
-        //internal Dictionary<string, Chromosome<C, I, M>> Chrs { set; get; }
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> Chrs { set; get; }
 
 
@@ -59,7 +51,6 @@ namespace Di3B
             switch (memory)
             {
                 case Memory.HDD:
-                    chrSection = (ChrSection)ConfigurationManager.GetSection(sectionName);
                     if (chrSection == null) chrSection = new ChrSection();
                     ConfigurationManager.RefreshSection(sectionName);
 
@@ -248,11 +239,11 @@ namespace Di3B
             /// 2. memory = HDD but no index for the defined chromosome is defined in config file.
             if (settings[chr] == null) settings.Add(chr, settings["WorkingDirectory"].Value + "Di3" + chr + ".indx");
             else settings[chr].Value = settings["WorkingDirectory"].Value + "Di3" + chr + ".indx";
-            chrSection.genomeChrs.Add(new ChrConfigElement() { chr = chr, strand = strand, index = settings[chr].Value });
+            chrSection.genomeChrs.Add(new ChrConfigElement(Chr: chr, Strand: strand, Index: settings[chr].Value));
 
-            /// There might be better way to wipe-out the default currentValue, even in different position with different strategy; 
+            /// There might be better way to wipe-out the default currentValue, even in different place with different strategy; 
             /// however, this method was the simplest I found and is a possible target of cleaning code.
-            var initialDataIndex = chrSection.genomeChrs.IndexOf(new ChrConfigElement() { chr = "Initial", index = "Initial", strand = '*' });
+            var initialDataIndex = chrSection.genomeChrs.IndexOf(new ChrConfigElement(Chr: "Initial", Index: "Initial", Strand: '*'));
             if (initialDataIndex != -1) chrSection.genomeChrs.RemoveAt(initialDataIndex);
 
             return settings[chr].Value;

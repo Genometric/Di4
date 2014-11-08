@@ -577,7 +577,8 @@ namespace BEDParser
                                 if (!_data.peaks.ContainsKey(chrTitle))
                                     AddNewChromosome(chrTitle);
 
-                                readingPeak.metadata.hashKey = GetPeakHashKey(readingPeak, chrTitle);
+                                readingPeak.hashKey = GetPeakHashKey(readingPeak, chrTitle);
+                                readingPeak.metadata.hashKey = readingPeak.hashKey;
 
                                 _data.peaks[chrTitle].Add(readingPeak);
 
