@@ -14,9 +14,10 @@ namespace Di3B
         where I : IInterval<C, M>, new()
         where M : IExtMetaData<C>, new()
     {
-        public Genome(string Di3Path, Memory Memory, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Genome(string Di3Path, Memory memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
-            this.memory = Memory;
+            _memory = memory;
+            _hddPerformance = hddPerformance;
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
 
@@ -28,7 +29,7 @@ namespace Di3B
 
             if (!Directory.Exists(settings["WorkingDirectory"].Value)) Directory.CreateDirectory(settings["WorkingDirectory"].Value);
 
-            if (memory == Memory.RAM)
+            if (_memory == Memory.RAM || (_memory == Memory.HDD && _hddPerformance == HDDPerformance.Fastest))
                 Chrs = new Dictionary<string, Dictionary<char, Di3<C, I, M>>>();
         }
 
@@ -38,7 +39,8 @@ namespace Di3B
         private KeyValueConfigurationCollection settings { set; get; }
         private ISerializer<C> CSerializer { set; get; }
         private IComparer<C> CComparer { set; get; }
-        private Memory memory { set; get; }
+        private Memory _memory { set; get; }
+        private HDDPerformance _hddPerformance { set; get; }
         ChrSection chrSection { set; get; }
         Configuration config { set; get; }
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> Chrs { set; get; }
@@ -48,15 +50,32 @@ namespace Di3B
 
         internal void Add(Dictionary<string, List<I>> peaks, char strand)
         {
-            switch (memory)
+            switch (_memory)
             {
                 case Memory.HDD:
                     if (chrSection == null) chrSection = new ChrSection();
                     ConfigurationManager.RefreshSection(sectionName);
 
-                    foreach (var chr in peaks)                    
-                        using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))))                        
-                            di3.Add(chr.Value, Mode.MultiPass);
+                    switch (_hddPerformance)
+                    {
+                        case HDDPerformance.LeastMemory:
+                            foreach (var chr in peaks)
+                                using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))))
+                                    di3.Add(chr.Value, Mode.MultiPass);
+                            break;
+
+                        case HDDPerformance.Fastest:
+                            foreach (var chr in peaks)
+                            {
+                                if (!Chrs.ContainsKey(chr.Key))
+                                    Chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
+
+                                Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
+                                Chrs[chr.Key][strand].Add(chr.Value, Mode.MultiPass);
+                            }
+                            break;
+                    }
+                    
 
                     if (config.Sections[sectionName] == null)
                         config.Sections.Add(sectionName, chrSection);
@@ -87,7 +106,7 @@ namespace Di3B
         {
             FunctionOutput<Output<C, I, M>> output = new FunctionOutput<Output<C, I, M>>();
 
-            switch (memory)
+            switch (_memory)
             {
                 case Memory.HDD:
                     chrSection = (ChrSection)ConfigurationManager.GetSection(sectionName);
@@ -156,7 +175,7 @@ namespace Di3B
                 if (!output.Chrs.ContainsKey(reference.Key))
                     output.Chrs.Add(reference.Key, new Dictionary<char, List<Output<C, I, M>>>());
 
-                switch (memory)
+                switch (_memory)
                 {
                     case Memory.HDD:
                         chrSection = (ChrSection)ConfigurationManager.GetSection(sectionName);
@@ -228,15 +247,15 @@ namespace Di3B
 
         private string GetDi3File(string chr, char strand)
         {
-            if (memory == Memory.HDD)
+            if (_memory == Memory.HDD)
                 foreach (ChrConfigElement element in chrSection.genomeChrs)
                     if (element.chr == chr)
                         return element.index;
 
 
             /// Following codes will be met in two conditions:
-            /// 1. memory = RAM 
-            /// 2. memory = HDD but no index for the defined chromosome is defined in config file.
+            /// 1. _memory = RAM 
+            /// 2. _memory = HDD but no index for the defined chromosome is defined in config file.
             if (settings[chr] == null) settings.Add(chr, settings["WorkingDirectory"].Value + "Di3" + chr + ".indx");
             else settings[chr].Value = settings["WorkingDirectory"].Value + "Di3" + chr + ".indx";
             chrSection.genomeChrs.Add(new ChrConfigElement(Chr: chr, Strand: strand, Index: settings[chr].Value));
@@ -250,10 +269,25 @@ namespace Di3B
         }
         private Di3Options<C> GetDi3Options(string indexFile)
         {
-            Di3Options<C> options = new Di3Options<C>(
-                indexFile,
-                CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                CSerializer, CComparer);
+            Di3Options<C> options;
+
+            switch (_memory)
+            {
+                case Memory.HDD:
+                    options = new Di3Options<C>(
+                        indexFile,
+                        CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
+                        CSerializer, CComparer);
+                    break;
+
+                case Memory.RAM:
+                default:
+                    options = new Di3Options<C>(
+                        indexFile,
+                        CSharpTest.Net.Collections.CreatePolicy.Never,
+                        CSerializer, CComparer);
+                    break;
+            }
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;

@@ -15,11 +15,13 @@ namespace Di3B
         private IComparer<C> CComparer { set; get; }
 
         private Genome<C, I, M> genome { set; get; }
-        public Di3B(string Di3Path, Memory Memory, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Di3B(string Di3Path, Memory Memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
-            genome = new Genome<C, I, M>(Di3Path, Memory, CSerializer, CComparer);
+            
+            /// TODO: Two constructors are needed, with (for Memory = RAM) & without (for Memory = HDD) HDDPerformance.
+            genome = new Genome<C, I, M>(Di3Path, Memory, hddPerformance, CSerializer, CComparer);
         }
 
         public void Add(Dictionary<string, List<I>> peaks)

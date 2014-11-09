@@ -14,14 +14,14 @@ namespace Di3BMain
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<string, uint>();
             stopWatch = new Stopwatch();
-            di3B = new Di3B<int, Peak, PeakData>(workingDirectory, Memory.HDD, PrimitiveSerializer.Int32, int32Comparer);
+            di3B = new Di3B<int, Peak, PeakData>(workingDirectory, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
 
 
             ///------ TEST A
             //Load_and_Add();
 
             ///------ TEST B
-            LID(new string[] { "", @"E:\hgnp\", "narrowPeak" });
+            LID(new string[] { "", @"I:\this\", "BED" });
         }
 
         Stopwatch stopWatch { set; get; }
@@ -168,9 +168,10 @@ namespace Di3BMain
                 Index(new string[] { "null", file.FullName });
 
                 Repository.parsedSamples.Remove(samplesHashtable[file.FullName]);
-                GC.Collect();
-                GC.SuppressFinalize(this);
-                GC.WaitForPendingFinalizers();
+                
+                //GC.Collect();
+                //GC.SuppressFinalize(this);
+                //GC.WaitForPendingFinalizers();
             }
         }
 
