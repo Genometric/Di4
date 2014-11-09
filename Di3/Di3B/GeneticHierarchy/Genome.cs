@@ -70,7 +70,9 @@ namespace Di3B
                                 if (!Chrs.ContainsKey(chr.Key))
                                     Chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
 
-                                Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
+                                if (!Chrs[chr.Key].ContainsKey(strand))
+                                    Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
+
                                 Chrs[chr.Key][strand].Add(chr.Value, Mode.MultiPass);
                             }
                             break;
@@ -90,7 +92,13 @@ namespace Di3B
                         if (!Chrs.ContainsKey(chr.Key))
                             Chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
 
-                        Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
+                        // Previously was:
+                        //Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
+
+                        // Now is:
+                        if (!Chrs[chr.Key].ContainsKey(strand))
+                            Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
+
                         Chrs[chr.Key][strand].Add(chr.Value, Mode.MultiPass);
                     }
                     break;
@@ -294,6 +302,9 @@ namespace Di3B
             options.FileBlockSize = 8192;
 
             options.CachePolicy = CachePolicy.Recent;
+            options.CacheKeepAliveTimeOut = 60000;
+            options.CacheMinimumHistory = 10240;
+            options.CacheMaximumHistory = 40960;
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
