@@ -154,8 +154,9 @@ namespace DI3
             }
         }
 
-        public void SecondPass()
+        public int SecondPass()
         {
+            int blockCount = 0;
             KeyValuePair<C, B> firstItem;
             _di3.TryGetFirst(out firstItem);
 
@@ -185,7 +186,11 @@ namespace DI3
                 keys = new List<uint>(lambdaCarrier.Keys);
                 foreach (var key in keys)
                     lambdaCarrier[key] = new Lambda('M', lambdaCarrier[key].atI);
+
+                blockCount++;
             }
+
+            return blockCount;
         }
 
         private bool HandleFirstItem(KeyValuePair<C, B> item)

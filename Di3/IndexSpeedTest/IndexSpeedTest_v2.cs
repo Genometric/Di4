@@ -38,27 +38,15 @@ namespace IndexSpeedTest
             writer.WriteLine("Di3 indexing speed test: " + TestName);
             writer.WriteLine("Speed(interval/sec)\tET\tET(ms)");
 
-
-            StreamWriter wwww = new StreamWriter("I:\\LoadSpeed.txt");
-
-
-            Stopwatch test_STOPWATCH = new Stopwatch();
+            TimeSpan totalET = new TimeSpan();
 
             if (disposeDi3atEachSample)
             {
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
-                    ////Console.WriteLine("processing sample   : {0:N0}", sample);
-
-                    test_STOPWATCH.Restart();
+                    Console.WriteLine("processing sample   : {0:N0}", sample);
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
-                        test_STOPWATCH.Stop();
-                        Console.WriteLine(test_STOPWATCH.ElapsedMilliseconds);
-                        wwww.WriteLine(test_STOPWATCH.ElapsedMilliseconds);
-
-
-
                         List<LightPeak> peaks = new List<LightPeak>();
 
                         for (int intervals = 1; intervals <= regionCount; intervals++)
@@ -80,23 +68,34 @@ namespace IndexSpeedTest
                         di3.Add(peaks, mode);
                         stopWatch.Stop();
                         //Console.WriteLine("");
-                        ////Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
                         Console.WriteLine("");
+
+                        totalET += stopWatch.Elapsed;
 
                         writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2).ToString() + "\t" + stopWatch.Elapsed.ToString() + "\t" + stopWatch.ElapsedMilliseconds.ToString());
                         writer.Flush();
                     }
                 }
 
+                writer.WriteLine("Total_Elapsed_Time=" + totalET.ToString());
+                writer.Flush();
+
                 if (mode == Mode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
-                        di3.SecondPass();
+                        int blockCount = di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", blockCount, stopWatch.Elapsed.ToString());
+
+                        writer.WriteLine("_____Second__pass_____");
+                        writer.WriteLine("totalBlockCount=" + blockCount);
+                        writer.WriteLine("speed=" + Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2) + "block\\sec");
+                        writer.WriteLine("ET=" + stopWatch.Elapsed.ToString());
+                        writer.Flush();
                     }
             }
             else
@@ -129,20 +128,31 @@ namespace IndexSpeedTest
                         Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
                         Console.WriteLine("");
 
+                        totalET += stopWatch.Elapsed;
+
                         writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2).ToString() + "\t" + stopWatch.Elapsed.ToString() + "\t" + stopWatch.ElapsedMilliseconds.ToString());
                         writer.Flush();
                     }
                 }
+
+                writer.WriteLine("Total_Elapsed_Time=" + totalET.ToString());
+                writer.Flush();
 
                 if (mode == Mode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
-                        di3.SecondPass();
+                        int blockCount = di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", blockCount, stopWatch.Elapsed.ToString());
+
+                        writer.WriteLine("_____Second__pass_____");
+                        writer.WriteLine("totalBlockCount=" + blockCount);
+                        writer.WriteLine("speed=" + Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2) + "block\\sec");
+                        writer.WriteLine("ET=" + stopWatch.Elapsed.ToString());
+                        writer.Flush();
                     }
             }
         }

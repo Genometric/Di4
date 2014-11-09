@@ -223,9 +223,9 @@ namespace DI3
                 //Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
         }
-        public void SecondPass()
+        public int SecondPass()
         {
-            INDEX.SecondPass();
+            return INDEX.SecondPass();
         }
 
         public List<O> Cover<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
