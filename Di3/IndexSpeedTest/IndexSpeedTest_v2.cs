@@ -38,14 +38,27 @@ namespace IndexSpeedTest
             writer.WriteLine("Di3 indexing speed test: " + TestName);
             writer.WriteLine("Speed(interval/sec)\tET\tET(ms)");
 
+
+            StreamWriter wwww = new StreamWriter("I:\\LoadSpeed.txt");
+
+
+            Stopwatch test_STOPWATCH = new Stopwatch();
+
             if (disposeDi3atEachSample)
             {
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
-                    Console.WriteLine("processing sample   : {0:N0}", sample);
+                    ////Console.WriteLine("processing sample   : {0:N0}", sample);
 
+                    test_STOPWATCH.Restart();
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
+                        test_STOPWATCH.Stop();
+                        Console.WriteLine(test_STOPWATCH.ElapsedMilliseconds);
+                        wwww.WriteLine(test_STOPWATCH.ElapsedMilliseconds);
+
+
+
                         List<LightPeak> peaks = new List<LightPeak>();
 
                         for (int intervals = 1; intervals <= regionCount; intervals++)
@@ -57,7 +70,6 @@ namespace IndexSpeedTest
                             {
                                 left = left,
                                 right = right,
-                                //hashKey = new LightPeakData() { hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000) }
                                 hashKey = (UInt32)Math.Round(rnd.NextDouble() * 100000)
                             });
 
@@ -68,7 +80,7 @@ namespace IndexSpeedTest
                         di3.Add(peaks, mode);
                         stopWatch.Stop();
                         //Console.WriteLine("");
-                        Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        ////Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
                         Console.WriteLine("");
 
                         writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2).ToString() + "\t" + stopWatch.Elapsed.ToString() + "\t" + stopWatch.ElapsedMilliseconds.ToString());
