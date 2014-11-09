@@ -20,6 +20,7 @@ namespace Di3BMain
             Console.WriteLine(".::.   I'm Di3, Welcome.");
             Console.WriteLine("");
             Console.WriteLine(".::.   Running Directory : {0}", Environment.CurrentDirectory);
+            Console.WriteLine("");
 
             Herald.Initialize(Herald.Destination.Both, settings["LogFile"].Value);
 

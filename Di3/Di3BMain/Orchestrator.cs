@@ -4,6 +4,7 @@ using Di3B;
 using System.IO;
 using BEDParser;
 using System.Diagnostics;
+using Di3B.Logging;
 
 namespace Di3BMain
 {
@@ -161,10 +162,11 @@ namespace Di3BMain
 
             foreach (var file in dirInfo.GetFiles("*." + args[2]))
             {
-                Herald.Announce(String.Format("... Now Loading: [{0}\\{1}] {2}", (++counter), dirInfo.GetFiles("*." + args[2]).Length, file.Name));
+                //Herald.Announce(String.Format("... Now Loading: [{0}\\{1}] {2}", (++counter), dirInfo.GetFiles("*." + args[2]).Length, file.Name));
+                Herald.Announce(String.Format("... {0,8} : [{1:N0}\\{2:N0}] {3,30}", "Loading", (++counter), dirInfo.GetFiles("*." + args[2]).Length, file.Name));
                 Load(new string[] { "null", file.FullName });
 
-                Herald.Announce(String.Format("... Now Indexing: [{0}\\{1}] {2}", counter, dirInfo.GetFiles("*." + args[2]).Length, file.Name));
+                Herald.Announce(String.Format("... {0,8} : [{1:N0}\\{2:N0}] {3,30}","Indexing", counter, dirInfo.GetFiles("*." + args[2]).Length, file.Name));
                 Index(new string[] { "null", file.FullName });
 
                 Repository.parsedSamples.Remove(samplesHashtable[file.FullName]);
@@ -178,7 +180,8 @@ namespace Di3BMain
         private void Index(string[] args)
         {
             var peaks = Repository.parsedSamples[samplesHashtable[args[1]]].peaks;
-            di3B.Add(peaks);
+            ExecutionReport exeReport = di3B.Add(peaks);
+            Herald.Announce(String.Format("___ {0,8} : #:{1,9}     ET:{2,6}     Speed:{3,10}", "Done", String.Format("{0:N0}", exeReport.count), exeReport.ET, string.Format("{0:N0} #\\sec", Math.Round(exeReport.count / exeReport.ET.TotalSeconds, 2))));
         }
 
         private void Cover(string[] args)

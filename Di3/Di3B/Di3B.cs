@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Interfaces;
 using CSharpTest.Net.Serialization;
+using Di3B.Logging;
 
 
 namespace Di3B
@@ -24,9 +25,9 @@ namespace Di3B
             genome = new Genome<C, I, M>(Di3Path, Memory, hddPerformance, CSerializer, CComparer);
         }
 
-        public void Add(Dictionary<string, List<I>> peaks)
+        public ExecutionReport Add(Dictionary<string, List<I>> peaks)
         {
-            genome.Add(peaks, '*');
+            return genome.Add(peaks, '*');
         }
 
 

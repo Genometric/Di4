@@ -59,6 +59,7 @@
     <Compile Include="FunctionsOutput\Output.cs" />
     <Compile Include="GeneticHierarchy\Chromosome.cs" />
     <Compile Include="GeneticHierarchy\Genome.cs" />
+    <Compile Include="Logging\ExecutionReport.cs" />
     <Compile Include="MessageElement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -204,7 +204,7 @@ namespace DI3
         }
         public void Add(List<I> intervals, int threads, Mode mode)
         {
-            Stopwatch watch = new Stopwatch();
+            //Stopwatch watch = new Stopwatch();
 
             int start = 0, stop = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             using (WorkQueue work = new WorkQueue(threads))
@@ -217,10 +217,10 @@ namespace DI3
                     work.Enqueue(new INDEX<C, I, M>(di3, intervals, start, stop, mode).Index);
                 }
 
-                watch.Restart();
+                //watch.Restart();
                 work.Complete(true, -1);
-                watch.Stop();
-                Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
+                //watch.Stop();
+                //Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
         }
         public void SecondPass()

@@ -1,10 +1,12 @@
 ﻿using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using DI3;
+using Di3B.Logging;
 using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 
 namespace Di3B
@@ -47,9 +49,11 @@ namespace Di3B
 
 
 
-
-        internal void Add(Dictionary<string, List<I>> peaks, char strand)
+        internal ExecutionReport Add(Dictionary<string, List<I>> peaks, char strand)
         {
+            Stopwatch stpWtch = new Stopwatch();
+            int totalIntervals = 0;
+
             switch (_memory)
             {
                 case Memory.HDD:
@@ -61,7 +65,12 @@ namespace Di3B
                         case HDDPerformance.LeastMemory:
                             foreach (var chr in peaks)
                                 using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))))
+                                {
+                                    stpWtch.Start();
                                     di3.Add(chr.Value, Mode.MultiPass);
+                                    stpWtch.Stop();
+                                    totalIntervals += chr.Value.Count;
+                                }
                             break;
 
                         case HDDPerformance.Fastest:
@@ -73,7 +82,10 @@ namespace Di3B
                                 if (!Chrs[chr.Key].ContainsKey(strand))
                                     Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
 
+                                stpWtch.Start();
                                 Chrs[chr.Key][strand].Add(chr.Value, Mode.MultiPass);
+                                stpWtch.Stop();
+                                totalIntervals += chr.Value.Count;
                             }
                             break;
                     }
@@ -99,10 +111,15 @@ namespace Di3B
                         if (!Chrs[chr.Key].ContainsKey(strand))
                             Chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
 
+                        stpWtch.Start();
                         Chrs[chr.Key][strand].Add(chr.Value, Mode.MultiPass);
+                        stpWtch.Stop();
+                        totalIntervals += chr.Value.Count;
                     }
                     break;
             }
+
+            return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
 
