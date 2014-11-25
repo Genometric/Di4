@@ -12,7 +12,7 @@ namespace MapSpeedTest
         {
             MapSpeedTest mapSpeedTest = new MapSpeedTest();
 
-            mapSpeedTest.Run("D:\\VahidTest\\Di3_Test_07.idx", 1500, 5, 50);
+            mapSpeedTest.Run("D:\\VahidTest\\Di3_Test_28.idx", 100000, 5, 50);
         }
     }
 }

@@ -43,6 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssembliesInfo\Assemblies.cs" />
+    <Compile Include="AssembliesInfo\Enums.cs" />
+    <Compile Include="AssembliesInfo\hm19.cs" />
+    <Compile Include="AssembliesInfo\mm10.cs" />
     <Compile Include="BEDParser.cs" />
     <Compile Include="ChrStatistics.cs" />
     <Compile Include="ParsedBED.cs" />

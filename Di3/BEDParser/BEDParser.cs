@@ -3,25 +3,29 @@ using System.IO;
 using System.Collections.Generic;
 using Interfaces;
 using System.Text.RegularExpressions;
+using BEDParser.AssembliesInfo;
 
 namespace BEDParser
 {
     public class BEDParser<I, M>
         where I : IInterval<int, M>, new()
-        where M : IExtMetaData<int>/*IMetaData<int>*/, new()
+        where M : IExtMetaData<int>, new()
     {
+
         /// <summary>
         /// Parse standard Browser Extensible Data (BED) format.
         /// </summary>
-        /// <param name="source">Full path of source file name/</param>
-        /// <param name="species">This parameter will be used for initializing the chromosome count and sex chromosomes mappings.
-        /// Values could be "Homo sapiens" or "Human" , or "Mus musculus" or "Mouse".</param>
+        /// <param name="source">Full path of source file name.</param>
+        /// <param name="species">This parameter will be used for initializing the chromosome count and sex chromosomes mappings.</param>
+        /// <param name="assembly"></param>
         public BEDParser(
             string source,
-            string species)
+            AvailableGenomes species,
+            AvailableAssemblies assembly)
         {
             _source = source;
             _species = species;
+            _assembly = assembly;
 
             Initialize();
         }
@@ -30,8 +34,8 @@ namespace BEDParser
         /// Parse standard Browser Extensible Data (BED) format.
         /// </summary>
         /// <param name="source">Full path of source file name.</param>
-        /// <param name="species">This parameter will be used for initializing the chromosome count and sex chromosomes mappings.
-        /// Values could be "Homo sapiens" or "Human" , or "Mus musculus" or "Mouse".</param>
+        /// <param name="species">This parameter will be used for initializing the chromosome count and sex chromosomes mappings.</param>
+        /// <param name="assembly"></param>
         /// <param name="startOffset">If the source file comes with header, the number of headers lines needs to be specified so that
         /// parser can ignore them. If not specified and header is present, header might be dropped because
         /// of improper format it might have. </param>
@@ -43,7 +47,8 @@ namespace BEDParser
         /// /// <param name="strandColumn">The column number of peak strand. If input is not stranded this value should be set to -1.</param>
         public BEDParser(
             string source,
-            string species,
+            AvailableGenomes species,
+            AvailableAssemblies assembly,
             byte startOffset,
             byte chrColumn,
             byte leftColumn,
@@ -54,6 +59,7 @@ namespace BEDParser
         {
             _source = source;
             _species = species;
+            _assembly = assembly;
             _startOffset = startOffset;
             _chrColumn = chrColumn;
             _leftColumn = leftColumn;
@@ -70,8 +76,8 @@ namespace BEDParser
         /// Parse standard Browser Extensible Data (BED) format.
         /// </summary>
         /// <param name="source">Full path of source file name.</param>
-        /// <param name="species">This parameter will be used for initializing the chromosome count and sex chromosomes mappings.
-        /// Values could be "Homo sapiens" or "Human" , or "Mus musculus" or "Mouse".</param>
+        /// <param name="species">This parameter will be used for initializing the chromosome count and sex chromosomes mappings.</param>
+        /// <param name="assembly"></param>
         /// <param name="startOffset">If the source file comes with header, the number of headers lines needs to be specified so that
         /// parser can ignore them. If not specified and header is present, header might be dropped because
         /// of improper format it might have. </param>
@@ -91,7 +97,8 @@ namespace BEDParser
         /// If set to false, a peak with invalid value with take up the default value.</param>
         public BEDParser(
             string source,
-            string species,
+            AvailableGenomes species,
+            AvailableAssemblies assembly,
             byte startOffset,
             byte chrColumn,
             byte leftColumn,
@@ -105,6 +112,7 @@ namespace BEDParser
         {
             _source = source;
             _species = species;
+            _assembly = assembly;
             _startOffset = startOffset;
             _chrColumn = chrColumn;
             _leftColumn = leftColumn;
@@ -182,7 +190,12 @@ namespace BEDParser
         /// This parameter will be used for initializing the chromosome count and sex chromosomes mappings.
         /// Values could be "Homo sapiens" or "Human" , or "Mus musculus" or "Mouse".
         /// </summary>
-        private string _species = "Homo sapiens";
+        private AvailableGenomes _species = AvailableGenomes.HomoSapiens;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private AvailableAssemblies _assembly = AvailableAssemblies.hm19;
 
         /// <summary>
         /// If the source file comes with header, the number of headers lines needs to be specified so that
@@ -249,7 +262,7 @@ namespace BEDParser
         /// <summary>
         /// The chromosome count of the species, that is initialized based on the chosen species. 
         /// </summary>
-        private byte _chrCount;
+        private byte _chrCount { set; get; }
 
         /// <summary>
         /// Holds catched information of each chromosome's base pairs count. 
@@ -326,88 +339,9 @@ namespace BEDParser
             _data.filePath = System.IO.Path.GetFullPath(_source);
             _data.fileName = System.IO.Path.GetFileName(_source);
             _data.fileHashKey = GetFileHashKey(_data.filePath);
-            _basePairsCount = new Dictionary<string, int>();
-
-            switch (_species.ToLower().Trim())
-            {
-                case "human":
-                case "homo sapiens":
-                    InitializeHumanData();
-                    break;
-
-                case "mouse":
-                case "mus musculus":
-                    InitializeMouseData();
-                    break;
-            }
+            _basePairsCount = Assemblies.Assembly(_assembly);
+            _chrCount = (byte)_basePairsCount.Count;
         }
-
-        private void InitializeHumanData()
-        {
-            // Assembly : GRCh37.p13
-            // Gencode version : GENCODE 19
-            // hm19
-            _basePairsCount.Add("chr1", 249250621);
-            _basePairsCount.Add("chr2", 243199373);
-            _basePairsCount.Add("chr3", 198022430);
-            _basePairsCount.Add("chr4", 191154276);
-            _basePairsCount.Add("chr5", 180915260);
-            _basePairsCount.Add("chr6", 171115067);
-            _basePairsCount.Add("chr7", 159138663);
-            _basePairsCount.Add("chr8", 146364022);
-            _basePairsCount.Add("chr9", 141213431);
-            _basePairsCount.Add("chr10", 135534747);
-            _basePairsCount.Add("chr11", 135006516);
-            _basePairsCount.Add("chr12", 133851895);
-            _basePairsCount.Add("chr13", 115169878);
-            _basePairsCount.Add("chr14", 107349540);
-            _basePairsCount.Add("chr15", 102531392);
-            _basePairsCount.Add("chr16", 90354753);
-            _basePairsCount.Add("chr17", 81195210);
-            _basePairsCount.Add("chr18", 78077248);
-            _basePairsCount.Add("chr19", 59128983);
-            _basePairsCount.Add("chr20", 63025520);
-            _basePairsCount.Add("chr21", 48129895);
-            _basePairsCount.Add("chr22", 51304566);
-            _basePairsCount.Add("chrX", 155270560);
-            _basePairsCount.Add("chrY", 59373566);
-            _basePairsCount.Add("chrM", 16569);
-
-            _data.species = "Homo sapiens";
-        }
-
-        private void InitializeMouseData()
-        {
-            // Assembly : GRCm38.p2
-            // Gencode version : GENCODE M2
-            // mm10            
-            _basePairsCount.Add("chr1", 195471971);
-            _basePairsCount.Add("chr2", 182113224);
-            _basePairsCount.Add("chr3", 160039680);
-            _basePairsCount.Add("chr4", 156508116);
-            _basePairsCount.Add("chr5", 151834684);
-            _basePairsCount.Add("chr6", 149736546);
-            _basePairsCount.Add("chr7", 145441459);
-            _basePairsCount.Add("chr8", 129401213);
-            _basePairsCount.Add("chr9", 124595110);
-            _basePairsCount.Add("chr10", 130694993);
-            _basePairsCount.Add("chr11", 122082543);
-            _basePairsCount.Add("chr12", 120129022);
-            _basePairsCount.Add("chr13", 120421639);
-            _basePairsCount.Add("chr14", 124902244);
-            _basePairsCount.Add("chr15", 104043685);
-            _basePairsCount.Add("chr16", 98207768);
-            _basePairsCount.Add("chr17", 94987271);
-            _basePairsCount.Add("chr18", 90702639);
-            _basePairsCount.Add("chr19", 90702639);
-            _basePairsCount.Add("chr20", 61431566);
-            _basePairsCount.Add("chrX", 171031299);
-            _basePairsCount.Add("chrY", 91744698);
-            _basePairsCount.Add("chrM", 16299);
-
-            _data.species = "Mus musculus";
-        }
-
 
 
         /// <summary>
