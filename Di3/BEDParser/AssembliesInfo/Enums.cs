@@ -9,7 +9,7 @@ namespace BEDParser.AssembliesInfo
     /// <summary>
     /// 
     /// </summary>
-    public enum AvailableAssemblies
+    public enum Assemblies
     {
         /// <summary>
         /// hm19
@@ -29,7 +29,7 @@ namespace BEDParser.AssembliesInfo
     /// <summary>
     /// 
     /// </summary>
-    public enum AvailableGenomes
+    public enum Genomes
     {
         /// <summary>
         /// 

@@ -20,8 +20,8 @@ namespace BEDParser
         /// <param name="assembly"></param>
         public BEDParser(
             string source,
-            AvailableGenomes species,
-            AvailableAssemblies assembly)
+            Genomes species,
+            Assemblies assembly)
         {
             _source = source;
             _species = species;
@@ -47,8 +47,8 @@ namespace BEDParser
         /// /// <param name="strandColumn">The column number of peak strand. If input is not stranded this value should be set to -1.</param>
         public BEDParser(
             string source,
-            AvailableGenomes species,
-            AvailableAssemblies assembly,
+            Genomes species,
+            Assemblies assembly,
             byte startOffset,
             byte chrColumn,
             byte leftColumn,
@@ -97,8 +97,8 @@ namespace BEDParser
         /// If set to false, a peak with invalid value with take up the default value.</param>
         public BEDParser(
             string source,
-            AvailableGenomes species,
-            AvailableAssemblies assembly,
+            Genomes species,
+            Assemblies assembly,
             byte startOffset,
             byte chrColumn,
             byte leftColumn,
@@ -190,12 +190,12 @@ namespace BEDParser
         /// This parameter will be used for initializing the chromosome count and sex chromosomes mappings.
         /// Values could be "Homo sapiens" or "Human" , or "Mus musculus" or "Mouse".
         /// </summary>
-        private AvailableGenomes _species = AvailableGenomes.HomoSapiens;
+        private Genomes _species = Genomes.HomoSapiens;
 
         /// <summary>
         /// 
         /// </summary>
-        private AvailableAssemblies _assembly = AvailableAssemblies.hm19;
+        private Assemblies _assembly = Assemblies.hm19;
 
         /// <summary>
         /// If the source file comes with header, the number of headers lines needs to be specified so that
@@ -339,7 +339,7 @@ namespace BEDParser
             _data.filePath = System.IO.Path.GetFullPath(_source);
             _data.fileName = System.IO.Path.GetFileName(_source);
             _data.fileHashKey = GetFileHashKey(_data.filePath);
-            _basePairsCount = Assemblies.Assembly(_assembly);
+            _basePairsCount = GenomeAssemblies.Assembly(_assembly);
             _chrCount = (byte)_basePairsCount.Count;
         }
 
