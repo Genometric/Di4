@@ -6,41 +6,33 @@ using System.Threading.Tasks;
 
 namespace BEDParser.AssembliesInfo
 {
-    public static class GenomeAssemblies
+    internal static class Assemblies
     {
-        internal static Dictionary<string, int> Assembly(Assemblies assembly)
+        internal static Dictionary<string, int> Assembly(AvailableAssemblies assembly)
         {
             switch(assembly)
             {
-                case Assemblies.hm19: return hm19.Data();
-                case Assemblies.mm10: return mm10.Data();
+                case AvailableAssemblies.hm19: return hm19.Data();
+                case AvailableAssemblies.mm10: return mm10.Data();
             }
             return null;
         }
-        public static Dictionary<Genomes, GenomeInfo> AllGenomeAssemblies()
+        internal static List<AvailableAssemblies> AllGenomeAssemblies(AvailableGenomes genome)
         {
-            Dictionary<Genomes, GenomeInfo> rtv = new Dictionary<Genomes, GenomeInfo>();
+            List<AvailableAssemblies> rtv = new List<AvailableAssemblies>();
 
-            GenomeInfo hs = new GenomeInfo();
-            hs.genomeTitle = "Homo Sapiens";
-            hs.genomeAssemblies = new Dictionary<Assemblies, string>();
-            hs.genomeAssemblies.Add(Assemblies.hm19, "hm19 (GENECODE 19)");
-            rtv.Add(Genomes.HomoSapiens, hs);
+            switch(genome)
+            {
+                case AvailableGenomes.HomoSapiens:
+                    rtv.Add(AvailableAssemblies.hm19);
+                    break;
 
-
-            GenomeInfo mm = new GenomeInfo();
-            mm.genomeTitle = "Mus musculus";
-            mm.genomeAssemblies = new Dictionary<Assemblies, string>();
-            mm.genomeAssemblies.Add(Assemblies.hm19, "mm10 (GENCODE M2)");
-            rtv.Add(Genomes.MusMusculus, mm);
+                case AvailableGenomes.MusMusculus:
+                    rtv.Add(AvailableAssemblies.mm10);
+                    break;
+            }
 
             return rtv;
-        }
-
-        public class GenomeInfo
-        {
-            public string genomeTitle { internal set; get; }
-            public Dictionary<Assemblies, string> genomeAssemblies { internal set; get; }
         }
     }
 }
