@@ -1,6 +1,6 @@
 ﻿using Interfaces;
 
-namespace Di3BMain
+namespace Di3BCLI
 {
     public class Peak : IInterval<int, PeakData>
     {

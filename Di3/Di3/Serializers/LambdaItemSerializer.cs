@@ -12,8 +12,8 @@ namespace DI3
 
         public void WriteTo(Lambda value, System.IO.Stream stream)
         {
-            if (value.atI == default(UInt32) && value.tau == default(char)) return;
-            PrimitiveSerializer.Char.WriteTo(value.tau, stream);
+            if (value.atI == default(UInt32) && value.phi == default(char)) return;
+            PrimitiveSerializer.Char.WriteTo(value.phi, stream);
             PrimitiveSerializer.UInt32.WriteTo(value.atI, stream);
         }
     }

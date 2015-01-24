@@ -4,7 +4,7 @@ using System.Diagnostics;
 using DI3;
 using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using Di3BMain;
+using Di3BCLI;
 using System.Collections.Generic;
 using Di3B;
 
@@ -76,14 +76,12 @@ namespace MapSpeedTest
                     stopWatch.Restart();
                     FunctionOutput<Output<int, LightPeak, LightPeakData>> output = new FunctionOutput<Output<int, LightPeak, LightPeakData>>();
                     AggregateFactory<int, LightPeak, LightPeakData> aggFactory = new AggregateFactory<int, LightPeak, LightPeakData>();
-                    /*output.Chrs[reference.Key][strand] =*/
+                    /*output.chrs[reference.Key][strand] =*/
                     di3.Map<Output<int, LightPeak, LightPeakData>>(aggFactory.GetAggregateFunction("count"), Peaks, cpuCount);
                     stopWatch.Stop();
                     Console.WriteLine("");
                     Console.WriteLine("ET: {0}", stopWatch.Elapsed);
                 }
-
-                int stopHere = 0;
             }
         }
     }

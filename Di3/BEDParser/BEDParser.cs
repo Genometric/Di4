@@ -177,6 +177,11 @@ namespace BEDParser
         /// </summary>
         public byte decimalPlaces = 3;
 
+        /// <summary>
+        /// Gets the calculated hashkey of the file.
+        /// </summary>
+        public uint fileHashKey { get { return _data.fileHashKey; } }
+
         #endregion
 
         #region .::.         private Variables declaration               .::.

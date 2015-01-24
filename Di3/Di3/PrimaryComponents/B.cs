@@ -5,20 +5,13 @@ using System.Collections.ObjectModel;
 namespace DI3
 {
     /// <summary>
-    /// A Block representing relative information of _intervals
-    /// intersecting with a particular c (i.e., e) on 
-    /// domain.</summary>
-    /// <typeparam name="C">Represents the c/domain
-    /// type (e.g,. int, double, Time).</typeparam>
-    /// <typeparam name="M">Represents generic
-    /// type of pointer to descriptive hashKey cooresponding
-    /// to the _interval.</typeparam>
-    //[ProtoContract]
+    /// A Bookmark representing relative information of intervals
+    /// intersecting with a particular e on domain.</summary>
     public class B
     {
         /// <summary>
-        /// A Block representing relative information of _intervals
-        /// intersecting with a particular c (e) on domain.</summary>
+        /// A Bookmark representing relative information of intervals
+        /// intersecting with a particular e on domain.</summary>
         internal B()
         {// it seems that the protobuf net needs this constructor. 
             omega = 0;
@@ -46,7 +39,7 @@ namespace DI3
         }
 
         internal B(char tau, UInt32 hashKey)
-        { // initializes a block and adds one Lambda to lambda according to tau and hashKey.
+        { // initializes a block and adds one Lambda to lambda according to phi and hashKey.
             if (tau == 'R') omega = 1;
             else omega = 0;
             _lambda = new Lambda[] { new Lambda(tau: tau, atI: hashKey) };
@@ -64,7 +57,7 @@ namespace DI3
             for (int i = 0; i < lambda.Count; i++)
             {
                 _lambda[i] = lambda[i];
-                if (lambda[i].tau == 'R')
+                if (lambda[i].phi == 'R')
                     omega++;
             }*/
         }
@@ -80,12 +73,12 @@ namespace DI3
             /// less footprints and copies lambda only once. 
             int i = 0;
             foreach (var item in nextBlock.lambda)
-                if (item.tau != 'L')
+                if (item.phi != 'L')
                     i++;
             _lambda = new Lambda[i];
             i = 0;
             foreach (var item in nextBlock.lambda)
-                if (item.tau != 'L')
+                if (item.phi != 'L')
                     _lambda[i++] = new Lambda(tau: 'M', atI: item.atI);
         }
 

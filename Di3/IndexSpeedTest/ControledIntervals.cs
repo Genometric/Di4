@@ -1,7 +1,7 @@
 ﻿using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using DI3;
-using Di3BMain;
+using Di3BCLI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

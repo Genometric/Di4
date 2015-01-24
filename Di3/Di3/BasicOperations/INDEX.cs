@@ -8,19 +8,19 @@ namespace DI3
 {
     /// <summary>
     /// Provides efficient means of inserting an 
-    /// _interval to DI3; i.e., _di3 indexding.
+    /// interval to Di3; i.e., Di3 indexding.
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
     /// type (e.g,. int, double, Time).</typeparam>
-    /// <typeparam name="I">Represents generic type of the _interval.
-    /// (e.g., time span, _interval on natural numbers)
-    /// <para>For _intervals of possibly different types,
+    /// <typeparam name="I">Represents generic type of the interval.
+    /// (e.g., time span, interval on natural numbers)
+    /// <para>For intervals of possibly different types,
     /// it is recommended to define this generic type
     /// parameter in terms of Lowest Common Denominator.
     /// </para></typeparam>
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive hashKey cooresponding
-    /// to the _interval.</typeparam>
+    /// to the interval.</typeparam>
     class INDEX<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
@@ -28,9 +28,9 @@ namespace DI3
     {
         /// <summary>
         /// Provides efficient means of inserting an 
-        /// _interval to DI3; i.e., _di3 indexding.
+        /// interval to DI3; i.e., di3 indexding.
         /// </summary>
-        /// <param name="_di3">The reference _di3 to be 
+        /// <param name="_di3">The reference di3 to be 
         /// manipulated.</param>
         internal INDEX(BPlusTree<C, B> di3)
         {
@@ -48,15 +48,15 @@ namespace DI3
         
 
         /// <summary>
-        /// Sets and gets the _di3 data structure
+        /// Sets and gets the di3 data structure
         /// to be manipulated. This data structure
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
         private BPlusTree<C, B> _di3 { set; get; }
         /// <summary>
-        /// Sets and Gets the _interval to 
-        /// be added to _di3. 
+        /// Sets and Gets the interval to 
+        /// be added to di3. 
         /// </summary>
         private I _interval { set; get; }
         private Mode _mode { set; get; }
@@ -67,9 +67,9 @@ namespace DI3
 
 
         /// <summary>
-        /// Indexes the provided _interval.
+        /// Indexes the provided interval.
         /// </summary>
-        /// <param name="interval">The _interval to be index.</param>
+        /// <param name="interval">The interval to be index.</param>
         public void Index(I interval)
         {
             _interval = interval;
@@ -174,7 +174,7 @@ namespace DI3
                     else
                         lambdaCarrier.Add(lambda.atI, lambda);
 
-                    if (lambda.tau == 'R') keysToRemove.Add(lambda.atI);
+                    if (lambda.phi == 'R') keysToRemove.Add(lambda.atI);
                 }
 
                 _di3.TryUpdate(block.Key, updateFunction);

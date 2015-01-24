@@ -183,7 +183,7 @@ namespace DI3
         {
             foreach (var item in newLambdas)
             {
-                if (//block.tau != 'R' &&
+                if (//block.phi != 'R' &&
                     !_intervalsKeys.ContainsKey(item.atI))
                 {
                     _lambdas.Add(item);

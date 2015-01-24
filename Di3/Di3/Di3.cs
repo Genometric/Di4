@@ -34,25 +34,6 @@ namespace DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        private BPlusTree<C, B> di3 { set; get; }
-        private BlockSerializer blockSerializer { set; get; }
-        private LambdaItemSerializer lambdaItemSerializer { set; get; }
-        private LambdaArraySerializer lambdaArraySerializer { set; get; }
-
-
-        /// <summary>
-        /// Is an instance of INDEX class which 
-        /// provides efficient means of inserting an 
-        /// _interval to DI3; i.e., _di3 indexding.
-        /// </summary>
-        private INDEX<C, I, M> INDEX { set; get; }
-
-        /// <summary>
-        /// Gets the number of blocks contained in DI3.
-        /// </summary>
-        public int blockCount { private set { } get { return di3.Count; } }
-
-
         /// <summary>
         /// Dynamic _intervals inverted index (DI3) 
         /// is an indexing system aimed at providing
@@ -127,6 +108,24 @@ namespace DI3
             di3 = new BPlusTree<C, B>(GetTreeOptions(options));
             INDEX = new INDEX<C, I, M>(di3);
         }
+
+        private BPlusTree<C, B> di3 { set; get; }
+        private BlockSerializer blockSerializer { set; get; }
+        private LambdaItemSerializer lambdaItemSerializer { set; get; }
+        private LambdaArraySerializer lambdaArraySerializer { set; get; }
+
+
+        /// <summary>
+        /// Is an instance of INDEX class which 
+        /// provides efficient means of inserting an 
+        /// _interval to DI3; i.e., _di3 indexding.
+        /// </summary>
+        private INDEX<C, I, M> INDEX { set; get; }
+
+        /// <summary>
+        /// Gets the number of blocks contained in DI3.
+        /// </summary>
+        public int blockCount { private set { } get { return di3.Count; } }
 
         private BPlusTree<C, B>.OptionsV2 GetTreeOptions(Di3Options<C> options)
         {

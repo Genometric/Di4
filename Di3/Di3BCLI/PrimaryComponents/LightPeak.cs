@@ -1,6 +1,6 @@
 ﻿using Interfaces;
 
-namespace Di3BMain
+namespace Di3BCLI
 {
     public class LightPeak : IInterval<int, LightPeakData>
     {

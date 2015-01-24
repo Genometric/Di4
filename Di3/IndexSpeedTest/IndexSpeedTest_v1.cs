@@ -4,7 +4,7 @@ using System.Diagnostics;
 using DI3;
 using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using Di3BMain;
+using Di3BCLI;
 using System.Collections.Generic;
 
 namespace IndexSpeedTest

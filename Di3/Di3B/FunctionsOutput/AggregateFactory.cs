@@ -9,11 +9,11 @@ namespace Di3B
         where I : IInterval<C, M>, new()
         where M : IMetaData, new()
     {
-        public ICSOutput<C, I, M, Output<C, I, M>> GetAggregateFunction(string aggregate)
+        public ICSOutput<C, I, M, Output<C, I, M>> GetAggregateFunction(Aggregate aggregate)
         {
-            switch (aggregate.ToLower())
+            switch (aggregate)
             {
-                case "count":
+                case Aggregate.Count:
                     return new CSOutputCount<C, I, M>();
             }
 

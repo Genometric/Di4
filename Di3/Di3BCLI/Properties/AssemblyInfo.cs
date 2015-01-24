@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Di3BMain")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Di3BCLI")]
+[assembly: AssemblyDescription("Di3 Bioinformatics - Command Line Interface")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Di3BMain")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCompany("Politecnico di Milano - Dipartimento di Elettronica, Informazione e Bioingegneria")]
+[assembly: AssemblyProduct("Di3BCLI")]
+[assembly: AssemblyCopyright("Copyright ©  2015 Vahid Jalili")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("67cfd03f-f607-4928-99e5-8a6f3e3065f5")]
+[assembly: Guid("e5dac994-5ac1-40c8-a9bf-0ee76b2a47b8")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -71,7 +71,7 @@ namespace Di3B
         { }
 
         /// <summary>
-        /// The name of this section in the app.config.
+        /// The name of this section in the app._config.
         /// </summary>
         public const string SectionName = "Chromosomes";
         private const string genome = "GenomeEndpoints";

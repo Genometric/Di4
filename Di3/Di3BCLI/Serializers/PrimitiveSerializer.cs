@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using CSharpTest.Net.Serialization;
 
-namespace Di3BMain
+namespace Di3BCLI
 {
     class PrimitiveSerializer : ISerializer<int>, ISerializer<uint>
     {

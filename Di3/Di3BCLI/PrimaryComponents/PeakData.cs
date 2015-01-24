@@ -1,7 +1,7 @@
 ﻿using System;
 using Interfaces;
 
-namespace Di3BMain
+namespace Di3BCLI
 {
     /// <summary>
     /// Representing ChIP-seq Peak Metadata.

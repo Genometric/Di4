@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Di3BMain
+namespace Di3BCLI
 {
     public class Int32Comparer : IComparer<int>
     {

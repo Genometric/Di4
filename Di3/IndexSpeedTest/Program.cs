@@ -1,7 +1,7 @@
 ﻿using BEDParser;
 using CSharpTest.Net.Serialization;
 using DI3;
-using Di3BMain;
+using Di3BCLI;
 using System.IO;
 
 namespace IndexSpeedTest
@@ -12,58 +12,19 @@ namespace IndexSpeedTest
         {
             string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
 
-            Tests_v2 SpeedTest_V2 = new Tests_v2();
-            SpeedTest_V2.path = path;
-            //SpeedTest_V2.Test_01();
-            //SpeedTest_V2.Test_02();
-            //SpeedTest_V2.Test_03();
-            //SpeedTest_V2.Test_04();
-            //SpeedTest_V2.Test_05();
-            //SpeedTest_V2.Test_06();
-            //SpeedTest_V2.Test_07();
-            //SpeedTest_V2.Test_08();
-            //SpeedTest_V2.Test_09();
-            //SpeedTest_V2.Test_10();
-            //SpeedTest_V2.Test_11();
-            //SpeedTest_V2.Test_12();
-            //SpeedTest_V2.Test_13();
-            //SpeedTest_V2.Test_14();
-            //SpeedTest_V2.Test_15();
-            //SpeedTest_V2.Test_16();
-            //SpeedTest_V2.Test_17();
-            //SpeedTest_V2.Test_18();
-            //SpeedTest_V2.Test_19();
-            //SpeedTest_V2.Test_20();
-            //SpeedTest_V2.Test_21();
-            //SpeedTest_V2.Test_22();
-            //SpeedTest_V2.Test_23();
-            //SpeedTest_V2.Test_24();
-            //SpeedTest_V2.Test_25();
-            //SpeedTest_V2.Test_26();
-            //SpeedTest_V2.Test_27();
-            SpeedTest_V2.Test_28();
+            //SpeedTest_v1(path);
+            SpeedTest_v2(path);
+        }
 
-
-            //ControledIntervals ControlledIntervals = new ControledIntervals();
-            //ControlledIntervals.path = path;
-            //ControlledIntervals.Sequence();
-            //ControlledIntervals.Controlled_10_05_10();
-            
-
-
-
-            //IndexSpeedTest_v1 SpeedTest = new IndexSpeedTest_v1();
-            //string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
-            //SpeedTest.Run(2000, 200000, path, "TEST_11", 5, 500, 500, 1000);
-            //SpeedTest.Run(2000, 200000, true, path, "Test_1", 5, 500, 500, 1000);
-            //SpeedTest.Run(path, "smallTest");
-
+        private static void SpeedTest_v1(string path)
+        {
+            IndexSpeedTest_v1 indexSpeedTest_v1 = new IndexSpeedTest_v1();
 
             #region .::.          Test 1          .::.
 
             /// Condensed Regions
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -81,7 +42,7 @@ namespace IndexSpeedTest
 
             /// Spars Regions
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -99,7 +60,7 @@ namespace IndexSpeedTest
 
             /// Spars Regions & Big node sizes (both key and currentValue)
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -121,7 +82,7 @@ namespace IndexSpeedTest
 
             /// Spars Regions & Small node sizes (both key and currentValue)
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -143,7 +104,7 @@ namespace IndexSpeedTest
 
             /// Most condensed regions
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -161,7 +122,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak key-currentValue sizes.
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,        // sample count
                 200000,      // region count
                 true,        // Keep or Dispose Di3?
@@ -181,7 +142,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak key-currentValue sizes.
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,        // sample count
                 200000,      // region count
                 true,        // Keep or Dispose Di3?
@@ -201,7 +162,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak key-currentValue sizes.
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,        // sample count
                 200000,      // region count
                 true,        // Keep or Dispose Di3?
@@ -220,7 +181,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak key-currentValue sizes.            
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,            // sample count
                 200000,          // region count
                 true,            // Keep or Dispose Di3?
@@ -239,7 +200,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak key-currentValue sizes.
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,            // sample count
                 200000,          // region count
                 true,            // Keep or Dispose Di3?
@@ -258,7 +219,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -278,7 +239,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 1000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -298,7 +259,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 1000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -320,7 +281,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 1000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -341,7 +302,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions + Multi-Threading
             /*
-            SpeedTest.Run(
+            indexSpeedTest_v1.Run(
                 150,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Di3?
@@ -358,6 +319,39 @@ namespace IndexSpeedTest
                 , 4, 64, true);
             */
             #endregion
+        }
+        private static void SpeedTest_v2(string path)
+        {
+            IndexSpeedTest_v2 indexSpeedTest_v2 = new IndexSpeedTest_v2();
+            indexSpeedTest_v2.path = path;
+            //indexSpeedTest_v2.Test_01();
+            //indexSpeedTest_v2.Test_02();
+            //indexSpeedTest_v2.Test_03();
+            //indexSpeedTest_v2.Test_04();
+            //indexSpeedTest_v2.Test_05();
+            //indexSpeedTest_v2.Test_06();
+            //indexSpeedTest_v2.Test_07();
+            //indexSpeedTest_v2.Test_08();
+            //indexSpeedTest_v2.Test_09();
+            //indexSpeedTest_v2.Test_10();
+            //indexSpeedTest_v2.Test_11();
+            //indexSpeedTest_v2.Test_12();
+            //indexSpeedTest_v2.Test_13();
+            //indexSpeedTest_v2.Test_14();
+            //indexSpeedTest_v2.Test_15();
+            //indexSpeedTest_v2.Test_16();
+            //indexSpeedTest_v2.Test_17();
+            //indexSpeedTest_v2.Test_18();
+            //indexSpeedTest_v2.Test_19();
+            //indexSpeedTest_v2.Test_20();
+            //indexSpeedTest_v2.Test_21();
+            //indexSpeedTest_v2.Test_22();
+            //indexSpeedTest_v2.Test_23();
+            //indexSpeedTest_v2.Test_24();
+            //indexSpeedTest_v2.Test_25();
+            //indexSpeedTest_v2.Test_26();
+            //indexSpeedTest_v2.Test_27();
+            indexSpeedTest_v2.Test_28();
         }
     }
 }
