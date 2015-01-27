@@ -7,13 +7,8 @@ namespace Di3BCLI
     {
         internal enum Destination { Console = 0, File = 1, Both = 2 };
         internal enum MessageType { Info, Success, Warrning, Error, None };
-
-        private static Destination _heraldDestination { set; get; }
-
-        internal static string logFile { set; get; }
-
         internal static StreamWriter writer { set; get; }
-
+        private static Destination _heraldDestination { set; get; }
 
         internal static void Initialize(Destination HeraldDestination, string FileFullName)
         {
@@ -67,7 +62,6 @@ namespace Di3BCLI
                     break;
             }
         }
-
 
         internal static void Dispose()
         {

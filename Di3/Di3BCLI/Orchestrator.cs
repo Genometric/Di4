@@ -19,14 +19,16 @@ namespace Di3BCLI
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<int, uint>();
             stopWatch = new Stopwatch();
+            parserSTW = new Stopwatch();
             di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
         }
 
         private string _workingDirectory { set; get; }
-
-        Stopwatch stopWatch { set; get; }
-
+        private Stopwatch stopWatch { set; get; }
+        private Stopwatch parserSTW { set; get; }
         Di3B<int, Peak, PeakData> di3B { set; get; }
+        Int32Comparer int32Comparer { set; get; }
+        Dictionary<int, UInt32> samplesHashtable { set; get; }
 
         internal bool CommandParse(string command)
         {
@@ -41,28 +43,18 @@ namespace Di3BCLI
                     case "exit":
                         return true;
 
-                    case "load":
-                        stopWatch.Restart();
-                        if (!Load(splittedCommand))
-                        {
-                            stopWatch.Stop();
-                            return false;
-                        }
-                        break;
-                        
-
-                    case "loadall":
-                        stopWatch.Restart();
-                        if(!LoadAll(splittedCommand))
-                        {
-                            stopWatch.Stop();
-                            return false;
-                        }
-                        break;
-
                     case "index":
                         stopWatch.Restart();
                         if (!Index(splittedCommand))
+                        {
+                            stopWatch.Stop();
+                            return false;
+                        }
+                        break;
+
+                    case "batchindex":
+                        stopWatch.Restart();
+                        if (!BatchIndex(splittedCommand))
                         {
                             stopWatch.Stop();
                             return false;
@@ -81,16 +73,7 @@ namespace Di3BCLI
 
                     case "map": // example: Map E:\reference.bed * count
                         stopWatch.Restart();
-                        if(!Map(splittedCommand))
-                        {
-                            stopWatch.Stop();
-                            return false;
-                        }
-                        break;
-
-                    case "lid":
-                        stopWatch.Restart();
-                        if(!LID(splittedCommand))
+                        if (!Map(splittedCommand))
                         {
                             stopWatch.Stop();
                             return false;
@@ -118,130 +101,94 @@ namespace Di3BCLI
             return false;
         }
 
-        
-
-        Int32Comparer int32Comparer { set; get; }
-
-        Dictionary<int, UInt32> samplesHashtable { set; get; }
-
-
-        private bool Load(string[] args)
-        {
-            if (Path.GetDirectoryName(args[1]).Trim() == "")
-                args[1] = _workingDirectory + Path.DirectorySeparatorChar + args[1];
-
-            if (File.Exists(args[1]))
-            {
-                Repository.inputSamples.Add(args[1]);
-                BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(args[1], AvailableGenomes.HomoSapiens, AvailableAssemblies.hm19);
-                if (!Repository.parsedSamples.ContainsKey(bedParser.fileHashKey))
-                {
-                    var parsedSample = bedParser.Parse();
-
-                    Repository.parsedSamples.Add(parsedSample.fileHashKey, parsedSample);
-                    samplesHashtable.Add(samplesHashtable.Count, parsedSample.fileHashKey);
-
-                    Herald.Announce(Herald.MessageType.Info, String.Format("Parsed {0:N0} peaks", parsedSample.peaksCount));
-                    Herald.Announce(Herald.MessageType.Info, String.Format("Reference No. : {0}", samplesHashtable.Count - 1));
-
-                    return true;
-                }
-                else
-                {
-                    Herald.Announce(Herald.MessageType.Info,
-                        String.Format("The file is already parsed with following reference No. {0}",
-                        samplesHashtable.Keys.OfType<int>().First(i => samplesHashtable[i] == bedParser.fileHashKey)));
-
-                    return false;
-                }
-            }
-            else
-            {
-                Herald.Announce(Herald.MessageType.Error, String.Format("File not found [{0}]", args[1]));
-                return false;
-            }
-        }
-
-        private bool LoadAll(string[] args)
-        {
-            DirectoryInfo dirInfo;
-            if (args.Length < 3)
-            {
-                dirInfo = new DirectoryInfo(_workingDirectory);
-            }
-            else
-            {
-                Uri logFileURI = null;
-                if (Uri.TryCreate(args[2], UriKind.Absolute, out logFileURI) == false)
-                {
-                    Herald.Announce(Herald.MessageType.Error, "Invalid path URI format.");
-                    return false;
-                }
-                if (!Directory.Exists(logFileURI.AbsolutePath))
-                {
-                    Herald.Announce(Herald.MessageType.Error, "Path does not exist.");
-                    return false;
-                }
-                dirInfo = new DirectoryInfo(logFileURI.AbsolutePath);
-            }
-
-            int counter = 0;
-            FileInfo[] determinedFiles = dirInfo.GetFiles("*." + args[1]);
-
-            foreach (var file in determinedFiles)
-            {
-                Herald.Announce(Herald.MessageType.Info, String.Format("... Now Loading: [{0}\\{1}] {2}", (++counter), determinedFiles.Length, file.Name));
-                Load(new string[] { "null", file.FullName });
-                Herald.Announce(Herald.MessageType.None, "");
-            }
-
-            return true;
-        }
-
-        private bool LID(string[] args)
-        {
-            DirectoryInfo dirInfo = new DirectoryInfo(args[1]);
-
-            int counter = 0;
-
-            foreach (var file in dirInfo.GetFiles("*." + args[2]))
-            {
-                //Herald.Announce(String.Format("... Now Loading: [{0}\\{1}] {2}", (++counter), dirInfo.GetFiles("*." + args[2]).Length, file.Name));
-                Herald.Announce(Herald.MessageType.Info, String.Format("... {0,8} : [{1:N0}\\{2:N0}] {3,30}", "Loading", (++counter), dirInfo.GetFiles("*." + args[2]).Length, file.Name));
-                Load(new string[] { "null", file.FullName });
-
-                Herald.Announce(Herald.MessageType.Info, String.Format("... {0,8} : [{1:N0}\\{2:N0}] {3,30}", "Indexing", counter, dirInfo.GetFiles("*." + args[2]).Length, file.Name));
-                Index(new string[] { "null", file.FullName });
-
-                //Repository.parsedSamples.Remove(samplesHashtable[file.FullName]);
-
-                //GC.Collect();
-                //GC.SuppressFinalize(this);
-                //GC.WaitForPendingFinalizers();
-            }
-
-            return true;
-        }
 
         private bool Index(string[] args)
         {
-            int refNo;
-            if (int.TryParse(args[1], out refNo) && samplesHashtable.ContainsKey(refNo))
+            if (args.Length != 2)
             {
-                var peaks = Repository.parsedSamples[samplesHashtable[refNo]].peaks;
-                ExecutionReport exeReport = di3B.Add(peaks);
-                Herald.Announce(Herald.MessageType.None,
-                    /*-*/ String.Format(" #i: {0,9}     ET: {1,6}     Speed: {2,10}",
-                    /*0*/ String.Format("{0:N0}", exeReport.count),
-                    /*1*/ exeReport.ET,
-                    /*2*/ String.Format("{0:N0} #i\\sec", Math.Round(exeReport.count / exeReport.ET.TotalSeconds, 2))));
-                return true;
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing arguments."));
+                return false;
+            }
+
+            if (!Load(args[1])) return false;
+
+            ExecutionReport exeReport = di3B.Add(Repository.parsedSample.peaks);
+            Herald.Announce(Herald.MessageType.None,
+                /*-*/ String.Format("Indexed #i: {0,9}     ET: {1,6}     Speed: {2,10}",
+                /*0*/ String.Format("{0:N0}", exeReport.count),
+                /*1*/ exeReport.ET,
+                /*2*/ String.Format("{0:N0} #i\\sec", Math.Round(exeReport.count / exeReport.ET.TotalSeconds, 2))));
+            return true;
+        }
+        private bool BatchIndex(string[] args)
+        {
+            DirectoryInfo dirInfo;
+            if (args.Length == 2 && args[1].Length > 2 && args[1][0] == '*' && args[1][1] == '.')
+            {
+                dirInfo = new DirectoryInfo(_workingDirectory);
+            }
+            else if (args.Length == 3)
+            {
+                Uri logFileURI = null;
+                if (!ValidateURI(args[2], out logFileURI)) return false;
+                dirInfo = new DirectoryInfo(logFileURI.AbsolutePath);
             }
             else
             {
-                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid Reference No."));
+                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid arguments."));
                 return false;
             }
+
+            /// Check validity of the extension
+            string extension = args[1].Substring(2, args[1].Length - 2);
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+            foreach (char c in invalidChars)
+                if (extension.Contains(c))
+                {
+                    Herald.Announce(Herald.MessageType.Error, "Invalid extension.");
+                    return false;
+                }
+
+            FileInfo[] determinedFiles = dirInfo.GetFiles("*." + extension);
+
+            if (determinedFiles.Length == 0)
+            {
+                Herald.Announce(Herald.MessageType.Warrning, String.Format("No file with \"{0}\" extension found!", extension));
+                return false;
+            }
+
+            int i = 0;
+            foreach (FileInfo fileInfo in determinedFiles)
+            {
+                Herald.Announce(
+                    Herald.MessageType.Info,
+                    String.Format(
+                    /*-*/ "[{0}\\{1}] {2}",
+                    /*0*/ ++i,
+                    /*1*/ determinedFiles.Length,
+                    /*2*/ Path.GetFileNameWithoutExtension(fileInfo.FullName)));
+
+                Index(new string[] { null, fileInfo.FullName });
+            }
+
+            return true;
+        }
+        private bool Load(string fileName)
+        {
+            if (!ValidateFileName(fileName, out fileName)) return false;
+
+            parserSTW.Restart();
+            BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileName, AvailableGenomes.HomoSapiens, AvailableAssemblies.hm19);
+            Repository.parsedSample = bedParser.Parse();
+            parserSTW.Stop();
+
+            Herald.Announce(Herald.MessageType.None,
+                /*-*/ String.Format("Parsed  #i: {0,9}     ET: {1,6}     Speed: {2,10}",
+                /*0*/ String.Format("{0:N0}", Repository.parsedSample.peaksCount),
+                /*1*/ parserSTW.Elapsed,
+                /*2*/ String.Format("{0:N0} #i\\sec", Math.Round(Repository.parsedSample.peaksCount / parserSTW.Elapsed.TotalSeconds, 2))));
+
+            return true;
         }
 
         private bool Cover(string[] args, string coverORsummit)
@@ -254,13 +201,13 @@ namespace Di3BCLI
 
             char strand;
             byte minAcc, maxAcc;
-            
-            if(!Char.TryParse(args[1], out strand))
+
+            if (!Char.TryParse(args[1], out strand))
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid strand parameter."));
                 return false;
             }
-            if(!Byte.TryParse(args[2], out minAcc))
+            if (!Byte.TryParse(args[2], out minAcc))
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid minimum accumulation parameter."));
                 return false;
@@ -272,13 +219,9 @@ namespace Di3BCLI
             }
 
             Aggregate agg = Aggregate.Count;
-            if(!String2Aggregate(args[4], out agg))
-            {
-                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid aggregate parameter."));
-                return false;
-            }
+            if (!String2Aggregate(args[4], out agg)) return false;
 
-            switch(coverORsummit)
+            switch (coverORsummit)
             {
                 case "cover":
                     di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg);
@@ -292,20 +235,27 @@ namespace Di3BCLI
             return true;
         }
 
-
         private bool Map(string[] args)
         {
-            int refNo;
-            if (int.TryParse(args[1], out refNo))
+            if (args.Length != 4)
             {
-                Load(new string[] { "", args[1] });
-                var referencePeaks = Repository.parsedSamples[samplesHashtable[refNo]].peaks;
-
-                /// -----------       FIX aggregate function
-                //di3B.Map(Char.Parse(args[2]), referencePeaks, args[3]);
-                return true;
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing arguments."));
+                return false;
             }
-            else return false;
+
+            char strand = '*';
+            if (!Char.TryParse(args[2], out strand))
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid strand argument [{0}].", args[2]));
+                return false;
+            }
+
+            Aggregate agg = Aggregate.Count;
+            if (!String2Aggregate(args[3], out agg)) return false;
+
+            if (!Load(args[1])) return false;
+            di3B.Map(strand, Repository.parsedSample.peaks, agg);
+            return true;
         }
 
         private bool String2Aggregate(string strAggregate, out Aggregate aggregate)
@@ -346,51 +296,42 @@ namespace Di3BCLI
 
                 default:
                     aggregate = Aggregate.Count;
+                    Herald.Announce(Herald.MessageType.Error, String.Format("Invalid aggregate parameter."));
                     return false;
 
             }
         }
 
-
-        private ParsedBED<int, Peak, PeakData> TESTBED()
+        private bool ValidateURI(string strUri, out Uri uri)
         {
-            Random rnd = new Random();
-            string[] chrs = new string[] { "chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16" };
-            var data = new ParsedBED<int, Peak, PeakData>();
-
-            foreach (var chr in chrs)
+            uri = null;
+            if (Uri.TryCreate(strUri, UriKind.Absolute, out uri) == false)
             {
-                var peaks = new List<Peak>();
-
-                int p = 0;
-                for (int i = 0; i < 10000; i++)
-                {
-                    int l = rnd.Next(p, p + 20);
-                    int r = rnd.Next(p + 10, p + 30);
-
-                    peaks.Add(new Peak()
-                    {
-                        left = l,
-                        right = r,
-                        metadata = new PeakData()
-                        {
-                            left = l,
-                            right = r,
-                            name = "Hamedlkjlslkfjlksdjvlksdjvdsjfe",
-                            value = rnd.NextDouble(),
-                            hashKey = (UInt32)rnd.Next(10000, 100000000)
-                        }
-                    });
-
-                    p += rnd.Next(20, 50);
-                }
-
-                data.peaks.Add(chr, peaks);
+                Herald.Announce(Herald.MessageType.Error, "Invalid path URI format.");
+                return false;
             }
+            if (!Directory.Exists(uri.AbsolutePath))
+            {
+                Herald.Announce(Herald.MessageType.Error, "Path does not exist.");
+                return false;
+            }
+            return true;
+        }
+        private bool ValidateFileName(string iFileName, out string oFileName)
+        {
+            Uri fileUri = null;
+            oFileName = iFileName;
+            if (Path.GetDirectoryName(iFileName).Trim() == "")
+                oFileName = _workingDirectory + Path.DirectorySeparatorChar + iFileName;
+            else if (!ValidateURI(Path.GetDirectoryName(iFileName), out fileUri))
+                return false;
 
-            data.fileHashKey = (uint)rnd.Next(100, 10000000);
-
-            return data;
+            if (!File.Exists(oFileName))
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("File not found [{0}]", oFileName));
+                return false;
+            }
+            return true;
         }
     }
 }
