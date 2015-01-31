@@ -39,7 +39,7 @@ namespace DI3
         }
 
         internal B(char tau, UInt32 hashKey)
-        { // initializes a block and adds one Lambda to lambda according to phi and hashKey.
+        { // initializes a bookmark and adds one Lambda to lambda according to phi and hashKey.
             if (tau == 'R') omega = 1;
             else omega = 0;
             _lambda = new Lambda[] { new Lambda(tau: tau, atI: hashKey) };
@@ -71,12 +71,13 @@ namespace DI3
             /// all items satisfying the condition to a list and 
             /// converting a list to array` because this method has
             /// less footprints and copies lambda only once. 
-            int i = 0;
+            int i = 1;
             foreach (var item in nextBlock.lambda)
                 if (item.phi != 'L')
                     i++;
             _lambda = new Lambda[i];
-            i = 0;
+            _lambda[0] = new Lambda(tau: tau, atI: metadata);
+            i = 1;
             foreach (var item in nextBlock.lambda)
                 if (item.phi != 'L')
                     _lambda[i++] = new Lambda(tau: 'M', atI: item.atI);
@@ -91,7 +92,7 @@ namespace DI3
 
         /// <summary>
         /// Represents the _interval intersecting with 
-        /// the c of corresponding block.
+        /// the c of corresponding bookmark.
         /// </summary>
         private Lambda[] _lambda { set; get; }
 

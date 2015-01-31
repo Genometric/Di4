@@ -21,8 +21,14 @@ namespace BPlusTreeTest
             //TimeSpan elapsed = BasicInsertionSpeedTest(500000000);
             //double millisec = elapsed.TotalSeconds;
 
-            LargeInsertion.Sequence("D:\\VahidTest\\", "BPlusTreeTest_LargeInsertion__Sequence");
-            LargeInsertion.RandomOverlaps("D:\\VahidTest\\", "BPlusTreeTest_LargeInsertion__RandomOverlaps");
+            //LargeInsertion.Sequence("D:\\VahidTest\\", "BPlusTreeTest_LargeInsertion__Sequence");
+            //LargeInsertion.RandomOverlaps("D:\\VahidTest\\", "BPlusTreeTest_LargeInsertion__RandomOverlaps");
+
+            //BulkInsertTest.Run();
+            //BulkInsertTest.Test_DuplicateHandelingOptions();
+
+            //RangeInsertTest.Run();
+            RangeInsertTest.Test_AllowUpdates();
         }
 
         private static void BasicTest()
@@ -35,8 +41,6 @@ namespace BPlusTreeTest
             options.FileName = System.IO.Path.GetTempFileName();
             using (var tree = new BPlusTree<double, string>(options))
             {
-                var tempDir = new DirectoryInfo(Path.GetTempPath());
-
                 // Insertion to tree.
                 // Note: numbers are NOT inserted sorted.
                 tree.Add(30.1, "30.2");

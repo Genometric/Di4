@@ -25,9 +25,9 @@ namespace IndexSpeedTest
         {
             string TestTitle = "ControlledIntervals__Sequence";
             Di3Options<int> options = new Di3Options<int>(
-                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle + ".idx",
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer,
+                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle + ".idx");
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;
@@ -162,9 +162,9 @@ namespace IndexSpeedTest
         {
             string TestTitle = "ControlledIntervals__10_05_10";
             Di3Options<int> options = new Di3Options<int>(
-                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle + ".idx",
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer,
+                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle + ".idx");
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;

@@ -15,7 +15,7 @@ namespace Di3BCLI
             Console.WriteLine("");
             Console.Write("Initializing ...");
             Herald.Initialize(Herald.Destination.Both, settings["LogFile"].Value);
-            Orchestrator orchestrator = new Orchestrator(settings["WorkingDirectory"].Value);
+            Orchestrator orchestrator = new Orchestrator(settings["WorkingDirectory"].Value, Path.GetExtension(settings["LogFile"].Value));
             Console.Write(" Done!");
 
             Console.WriteLine("");

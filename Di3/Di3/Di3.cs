@@ -6,8 +6,8 @@ using Interfaces;
 using CSharpTest.Net.Threading;
 using System.Diagnostics;
 using CSharpTest.Net.Synchronization;
-
-
+using System.Linq;
+using System.Collections.Concurrent;
 
 namespace DI3
 {
@@ -97,7 +97,7 @@ namespace DI3
                 //options.FileName = FileName;
 
             //_di3 = new BPlusTree<C, B>(options);
-            //INDEX = new INDEX<C, I, M>(_di3);
+            //SingleIndex = new SingleIndex<C, I, M>(_di3);
 
             //_di3.DebugSetValidateOnCheckpoint(false);
         }
@@ -106,7 +106,11 @@ namespace DI3
         public Di3(Di3Options<C> options)
         {
             di3 = new BPlusTree<C, B>(GetTreeOptions(options));
-            INDEX = new INDEX<C, I, M>(di3);
+            INDEX = new SingleIndex<C, I, M>(di3);
+
+            /// This might decrease speed. 
+            /// TODO: Test initialization with and without this command. 
+            di3.EnableCount();
         }
 
         private BPlusTree<C, B> di3 { set; get; }
@@ -116,11 +120,11 @@ namespace DI3
 
 
         /// <summary>
-        /// Is an instance of INDEX class which 
+        /// Is an instance of SingleIndex class which 
         /// provides efficient means of inserting an 
         /// _interval to DI3; i.e., _di3 indexding.
         /// </summary>
-        private INDEX<C, I, M> INDEX { set; get; }
+        private SingleIndex<C, I, M> INDEX { set; get; }
 
         /// <summary>
         /// Gets the number of blocks contained in DI3.
@@ -196,7 +200,9 @@ namespace DI3
 
 
         public void Add(I interval)
-        { INDEX.Index(interval); }
+        {
+            INDEX.Index(interval);
+        }
         public void Add(List<I> intervals, Mode mode)
         {
             Add(intervals, Environment.ProcessorCount, mode);
@@ -213,7 +219,7 @@ namespace DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > intervals.Count) stop = intervals.Count;
-                    work.Enqueue(new INDEX<C, I, M>(di3, intervals, start, stop, mode).Index);
+                    work.Enqueue(new SingleIndex<C, I, M>(di3, intervals, start, stop, mode).Index);
                 }
 
                 //watch.Restart();
@@ -227,49 +233,120 @@ namespace DI3
             return INDEX.SecondPass();
         }
 
-        public List<O> Cover<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        public void Cover<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation)
         {
-            HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
-            return SetOps.Cover(OutputStrategy, minAccumulation, maxAccumulation);
+            Cover<O>(ref outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
         }
-        public List<O> Summit<O>(ICSOutput<C, I, M, O> OutputStrategy, byte minAccumulation, byte maxAccumulation)
+        public void Cover<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation, int nThreads)
         {
-            HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
-            return SetOps.Summit(OutputStrategy, minAccumulation, maxAccumulation);
-        }
-
-        public List<O> Map<O>(ICSOutput<C, I, M, O> OutputStrategy, List<I> references)
-        {
-            HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(di3);
-            return SetOps.Map(OutputStrategy, references);
-        }
-        public List<O> Map<O>(ICSOutput<C, I, M, O> OutputStrategy, List<I> references, int threads)
-        {
-            Stopwatch watch = new Stopwatch();
-            int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)threads);
-
-            using (WorkQueue work = new WorkQueue(threads))
+            Partition<C>[] partitions = Fragment(nThreads);
+            using (WorkQueue work = new WorkQueue(nThreads))
             {
-                for (int i = 0; i < threads; i++)
+                for (int i = 0; i < nThreads; i++)                
+                    work.Enqueue(
+                        new HigherOrderFuncs<C, I, M, O>(
+                            di3,
+                            outputStrategy,
+                            partitions[i].left,
+                            partitions[i].right,
+                            minAccumulation,
+                            maxAccumulation).Cover);
+
+                work.Complete(true, -1);
+            }
+        }
+        public void Summit<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation)
+        {
+            Summit<O>(ref outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
+        }
+        public void Summit<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation, int nThreads)
+        {
+            Partition<C>[] partitions = Fragment(nThreads);
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(
+                        new HigherOrderFuncs<C, I, M, O>(
+                            di3,
+                            outputStrategy,
+                            partitions[i].left,
+                            partitions[i].right,
+                            minAccumulation,
+                            maxAccumulation).Summit);
+
+                work.Complete(true, -1);
+            }
+        }
+
+        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references)
+        {
+            Map<O>(ref outputStrategy, references, Environment.ProcessorCount);
+        }
+        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
+        {
+            //Stopwatch watch = new Stopwatch();
+            int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
+
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
                 {
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > references.Count) stop = references.Count;
-                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(di3, OutputStrategy, references, start, stop).Map);
+                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(di3, outputStrategy, references, start, stop).Map);
                     else break;
                 }
 
-                watch.Restart();
+                //watch.Restart();
                 work.Complete(true, -1);
-                watch.Stop();
-                Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
+                //watch.Stop();
+                //Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
-
-            //HigherOrderFuncs<C, I, M, O> SetOps = new HigherOrderFuncs<C, I, M, O>(_di3);
-            return null;//SetOps.Map(_outputStrategy, references);
         }
 
+        private Partition<C>[] Fragment(int fCount)
+        {
+            int range = Convert.ToInt32(Math.Floor((double)di3.Count / (double)fCount));
 
+            /// Initialization
+            Partition<C>[] partitions = new Partition<C>[fCount];
+            for (int i = 0; i < fCount; i++)
+            {
+                partitions[i].left = di3.ElementAtOrDefault((i * range) + 1).Key;
+                partitions[i].right = di3.ElementAtOrDefault((i + 1) * range).Key;
+            }
+            partitions[0].left = di3.First().Key;
+            partitions[fCount - 1].right = di3.Last().Key;
+
+            /// Refinement
+            bool incrementRight = true;
+            fCount--;
+            for (int i = 0; i < fCount; i++)
+            {
+                foreach (var bookmark in di3.EnumerateFrom(partitions[i].right))
+                {
+                    if (incrementRight)
+                    {
+                        partitions[i].right = bookmark.Key;
+                        if (bookmark.Value.omega == bookmark.Value.lambda.Count)
+                            incrementRight = false;
+                        continue;
+                    }
+                    else
+                    {
+                        partitions[i + 1].left = bookmark.Key;
+                        break;
+                    }                    
+                }
+
+                if (partitions[i + 1].left.CompareTo(partitions[i + 1].right) == 1)
+                    partitions[i + 1].right = partitions[i + 1].left;
+                incrementRight = true;
+            }
+
+            return partitions;
+        }
 
         bool disposed = false;
         public void Dispose()
@@ -294,3 +371,11 @@ namespace DI3
         }
     }
 }
+
+
+/// Note 1:
+/// Cover, Summit, and Map manipulate the reference of outputStrategy. 
+/// During this process, outputStrategy is possibly modified outside the scope of these functions. 
+/// To avoid any issues, a possible scenario could be initializing a brand-new 
+/// instance of outputStrategy in each of the functions, and when finished, 
+/// replace the referenced type by the new instance. 

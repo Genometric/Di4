@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DI3;
 using Interfaces;
+using System.Collections.Concurrent;
 
 namespace Di3B
 {
@@ -17,10 +18,12 @@ namespace Di3B
     {
         public CSOutputCount()
         {
-            output = new List<Output<C, I, M>>();
+            //output = new List<Output<C, I, M>>();
+            output = new ConcurrentBag<Output<C, I, M>>();
         }
 
-        public List<Output<C, I, M>> output { set; get; }
+        //public List<Output<C, I, M>> output { set; get; }
+        public ConcurrentBag<Output<C, I, M>> output { set; get; }
 
         void ICSOutput<C, I, M, Output<C, I, M>>.Output(C left, C right, List<Lambda> intervals)
         {

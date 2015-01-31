@@ -4,6 +4,7 @@ using DI3;
 using Di3B.Logging;
 using Interfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -23,28 +24,37 @@ namespace Di3B
             _CSerializer = CSerializer;
             _CComparer = CComparer;
             _sectionName = "Chromosome";
-            _cpuCount = Environment.ProcessorCount;
-
-            /// if following commented-out section is not required, then the following code is neither necessary.
-            //workingDirectory = workingDirectory + Path.DirectorySeparatorChar;
-
+            _processorCount = Environment.ProcessorCount;
 
             _config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             _settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
 
-            /// Previously, the following code was in-use. However, it seems to be redundant after what is done by the "ReadAndSetConfiguration" 
-            /// function of Di3BCLI Program class.  
-            //if (_settings["WorkingDirectory"] == null) _settings.Add("WorkingDirectory", workingDirectory);
-            //else _settings["WorkingDirectory"].Value = workingDirectory;
-            //if (!Directory.Exists(_settings["WorkingDirectory"].Value)) Directory.CreateDirectory(_settings["WorkingDirectory"].Value);
-
-            if (_memory == Memory.RAM || (_memory == Memory.HDD && _hddPerformance == HDDPerformance.Fastest))
+            if (_memory == Memory.RAM)
+            {
                 chrs = new Dictionary<string, Dictionary<char, Di3<C, I, M>>>();
+            }
+            else if (_memory == Memory.HDD && _hddPerformance == HDDPerformance.Fastest)
+            {
+                chrs = new Dictionary<string, Dictionary<char, Di3<C, I, M>>>();
+
+                _chrSection = (ChrSection)ConfigurationManager.GetSection(_sectionName);
+                if (_chrSection == null) _chrSection = new ChrSection();
+                ConfigurationManager.RefreshSection(_sectionName);
+
+                foreach (ChrConfigElement element in _chrSection.genomeChrs)
+                {
+                    if (!chrs.ContainsKey(element.chr))
+                        chrs.Add(element.chr, new Dictionary<char, Di3<C, I, M>>());
+
+                    if (!chrs[element.chr].ContainsKey(element.strand))
+                        chrs[element.chr].Add(element.strand, new Di3<C, I, M>(GetDi3Options(element.index)));
+                }
+            }
         }
 
 
         private string _sectionName { set; get; }
-        private int _cpuCount { set; get; }
+        private int _processorCount { set; get; }
         private KeyValueConfigurationCollection _settings { set; get; }
         private ISerializer<C> _CSerializer { set; get; }
         private IComparer<C> _CComparer { set; get; }
@@ -56,7 +66,7 @@ namespace Di3B
 
 
 
-        internal ExecutionReport Add(Dictionary<string, List<I>> peaks, char strand)
+        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
@@ -71,32 +81,31 @@ namespace Di3B
                     {
                         case HDDPerformance.LeastMemory:
                             foreach (var chr in peaks)
-                                using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))))
-                                {
-                                    stpWtch.Start();
-                                    di3.Add(chr.Value, Mode.MultiPass);
-                                    stpWtch.Stop();
-                                    totalIntervals += chr.Value.Count;
-                                }
+                                foreach(var strandEntry in chr.Value)
+                                    using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand)))) // this might be wrong
+                                    {
+                                        stpWtch.Start();
+                                        di3.Add(strandEntry.Value, Mode.SinglePass);
+                                        stpWtch.Stop();
+                                        totalIntervals += strandEntry.Value.Count;
+                                    }
                             break;
 
                         case HDDPerformance.Fastest:
                             foreach (var chr in peaks)
-                            {
-                                if (!chrs.ContainsKey(chr.Key))
-                                    chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
+                                foreach (var strandEntry in chr.Value)
+                                {
+                                    if (!chrs.ContainsKey(chr.Key)) chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
+                                    if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
 
-                                if (!chrs[chr.Key].ContainsKey(strand))
-                                    chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
-
-                                stpWtch.Start();
-                                chrs[chr.Key][strand].Add(chr.Value, Mode.MultiPass);
-                                stpWtch.Stop();
-                                totalIntervals += chr.Value.Count;
-                            }
+                                    stpWtch.Start();
+                                    chrs[chr.Key][strand].Add(strandEntry.Value, Mode.SinglePass);
+                                    stpWtch.Stop();
+                                    totalIntervals += strandEntry.Value.Count;
+                                }
                             break;
                     }
-                    
+
 
                     if (_config.Sections[_sectionName] == null)
                         _config.Sections.Add(_sectionName, _chrSection);
@@ -107,170 +116,92 @@ namespace Di3B
 
                 case Memory.RAM:
                     foreach (var chr in peaks)
-                    {
-                        if (!chrs.ContainsKey(chr.Key))
-                            chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
+                        foreach (var strandEntry in chr.Value)
+                        {
+                            if (!chrs.ContainsKey(chr.Key)) chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
+                            if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options()));
 
-                        // Previously was:
-                        //chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
-
-                        // Now is:
-                        if (!chrs[chr.Key].ContainsKey(strand))
-                            chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
-
-                        stpWtch.Start();
-                        chrs[chr.Key][strand].Add(chr.Value, Mode.MultiPass);
-                        stpWtch.Stop();
-                        totalIntervals += chr.Value.Count;
-                    }
+                            stpWtch.Start();
+                            chrs[chr.Key][strand].Add(strandEntry.Value, Mode.SinglePass);
+                            stpWtch.Stop();
+                            totalIntervals += strandEntry.Value.Count;
+                        }
                     break;
             }
 
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-
-        internal FunctionOutput<Output<C, I, M>> Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate)
+        internal ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
         {
-            FunctionOutput<Output<C, I, M>> output = new FunctionOutput<Output<C, I, M>>();
+            Stopwatch stpWtch = new Stopwatch();
+            int totalIntervals = 0;
 
-            switch (_memory)
-            {
-                case Memory.HDD:
-                    _chrSection = (ChrSection)ConfigurationManager.GetSection(_sectionName);
-                    if (_chrSection == null) _chrSection = new ChrSection();
-                    ConfigurationManager.RefreshSection(_sectionName);
+            result = new FunctionOutput<Output<C, I, M>>();
+            ICSOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
 
-                    foreach (ChrConfigElement element in _chrSection.genomeChrs)
-                    {
-                        if (!output.Chrs.ContainsKey(element.chr)) output.Chrs.Add(element.chr, new Dictionary<char, List<Output<C, I, M>>>());
-                        if (!output.Chrs[element.chr].ContainsKey(strand)) output.Chrs[element.chr].Add(strand, new List<Output<C, I, M>>());
-
-                        // use options here
-                        /*using (var _di3 = new Di3<C, I, M>(element.index, CreatePolicy.IfNeeded, CSerializer, CComparer))
-                        {
-                            output.chrs[element.chr][element.strand] = ExecuteCover(function, _di3, strand, minAcc, maxAcc, aggregate);
-                        }*/
-                    }
-
-                    // string _sectionName = "Chromosome";                    
-                    // var allChrs = _config.Sections[_sectionName];
-                    break;
-
-
-                case Memory.RAM:
-
-
-                    foreach (var chr in chrs)
-                    {
-                        // use options here
-                        //chrs[chr.Key].Add('*', new Di3<C, I, M>(GetDi3File(chr.Key, strand), CreatePolicy.Never, CSerializer, CComparer));
-                        output.Chrs[chr.Key][strand] = ExecuteCover(coverVariation, chrs[chr.Key][strand], strand, minAcc, maxAcc, aggregate);
-                    }
-                    break;
-            }
-
-            return output;
-        }
-        private List<Output<C, I, M>> ExecuteCover(CoverVariation coverVariation, Di3<C, I, M> di3, char strand, byte minAcc, byte maxAcc, Aggregate aggregate)
-        {
-            AggregateFactory<C, I, M> aggFactory = new AggregateFactory<C, I, M>();
-
-            switch (coverVariation)
-            {
-                case CoverVariation.Cover:
-                    return di3.Cover<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
-
-                case CoverVariation.Summit:
-                    return di3.Summit<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), minAcc, maxAcc);
-            }
-
-            return null;
-        }
-
-
-        internal FunctionOutput<Output<C, I, M>> Map(Dictionary<string, List<I>> references, char strand, Aggregate aggregate)
-        {
-            FunctionOutput<Output<C, I, M>> output = new FunctionOutput<Output<C, I, M>>();
-            AggregateFactory<C, I, M> aggFactory = new AggregateFactory<C, I, M>();
-
-            foreach (var reference in references)
-            {
-                if (!output.Chrs.ContainsKey(reference.Key))
-                    output.Chrs.Add(reference.Key, new Dictionary<char, List<Output<C, I, M>>>());
-
-                switch (_memory)
+            foreach (var chr in chrs)
+                foreach (var sDi3 in chr.Value)
                 {
-                    case Memory.HDD:
-                        _chrSection = (ChrSection)ConfigurationManager.GetSection(_sectionName);
-                        if (_chrSection == null) _chrSection = new ChrSection();
-                        ConfigurationManager.RefreshSection(_sectionName);
+                    if (!result.Chrs.ContainsKey(chr.Key)) result.Chrs.Add(chr.Key, new Dictionary<char, ConcurrentBag<Output<C, I, M>>>());
+                    if (!result.Chrs[chr.Key].ContainsKey(sDi3.Key)) result.Chrs[chr.Key].Add(sDi3.Key, new ConcurrentBag<Output<C, I, M>>());
 
-                        // use options here
-                        /*using (var _di3 = new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.IfNeeded, CSerializer, CComparer))
-                        {
-                            Console.WriteLine("... proecssing {0} now.", reference.Key);
-                            output.chrs[reference.Key][strand] = _di3.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
-                        }*/
-                        break;
+                    stpWtch.Start();
+                    switch(coverVariation)
+                    {
+                        case CoverVariation.Cover:
+                            sDi3.Value.Cover<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, _processorCount);
+                            break;
 
-                    case Memory.RAM:
-                        if (!chrs.ContainsKey(reference.Key))
-                            chrs.Add(reference.Key, new Dictionary<char, Di3<C, I, M>>());
-
-
-                        // use options here
-                        //chrs[reference.Key].Add(strand, new Di3<C, I, M>(GetDi3File(reference.Key, strand), CreatePolicy.Never, CSerializer, CComparer));
-                        output.Chrs[reference.Key][strand] = chrs[reference.Key][strand].Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
-                        break;
+                        case CoverVariation.Summit:
+                            sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, _processorCount);
+                            break;
+                    }
+                    result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
+                    stpWtch.Stop();
                 }
 
-                /*
-                if (!chrs.ContainsKey(reference.Key))
-                    chrs.Add(reference.Key, new Chromosome<C, I, M>(FileName + reference.Key + ".indx", CSerializer, CComparer));
-                if (!output.chrs.ContainsKey(reference.Key))
-                    output.chrs.Add(reference.Key, new FunctionOutput<Output<C, I, M>>.Chromosome());
+            return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
+        }
 
-                switch (strand)
+        internal ExecutionReport Map(Dictionary<string, Dictionary<char, List<I>>> references, char strand, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            int totalIntervals = 0;
+
+            result = new FunctionOutput<Output<C, I, M>>();
+            ICSOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
+
+            foreach (var refChr in references)
+            {
+                foreach (var refStrand in refChr.Value)
                 {
-                    case '+':
-                        //if (chr.newValue.di3PS.blockCount > 0)
-                        //{
-                            ///////////////// ----------------- there will be an error here, because this is reading chr title from chrs but searching 
-                            ////////////////------------------- for it in references ! e.g., there might be chrM in chrs but not in refrences. 
-                        output.chrs[reference.Key].outputPS =
-                                chrs[reference.Key].di3PS.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
-                        //}
-                        break;
+                    if (!result.Chrs.ContainsKey(refChr.Key)) result.Chrs.Add(refChr.Key, new Dictionary<char, ConcurrentBag<Output<C, I, M>>>());
+                    if (!result.Chrs[refChr.Key].ContainsKey(refStrand.Key)) result.Chrs[refChr.Key].Add(refStrand.Key, new ConcurrentBag<Output<C, I, M>>());
 
-                    case '-':
-                        //if (chrs[chr.Key].di3NS.blockCount > 0)
-                        //{
-                            ///////////////// ----------------- there will be an error here, because this is reading chr title from chrs but searching 
-                            ////////////////------------------- for it in references ! e.g., there might be chrM in chrs but not in refrences. 
-                        output.chrs[reference.Key].outputNS =
-                                chrs[reference.Key].di3NS.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
-                        //}
-                        break;
-
-                    case '*':
-                        //if (chrs[chr.Key].di3US.blockCount > 0)
-                        //{
-                            ///////////////// ----------------- there will be an error here, because this is reading chr title from chrs but searching 
-                            ////////////////------------------- for it in references ! e.g., there might be chrM in chrs but not in refrences. 
-                        output.chrs[reference.Key].outputUS =
-                                chrs[reference.Key].di3US.Map<Output<C, I, M>>(aggFactory.GetAggregateFunction(aggregate), references[reference.Key]);
-                        //}
-                        break;
-                }*/
+                    stpWtch.Start();
+                    chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, _processorCount);
+                    result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
+                    stpWtch.Stop();
+                    totalIntervals += refStrand.Value.Count;
+                }
             }
 
-            return output;
+            return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
 
         private string GetDi3File(string chr, char strand)
         {
+            string s = "";
+            switch (strand)
+            {
+                case '+': s = "P"; break;
+                case '-': s = "N"; break;
+                case '*': s = "U"; break;
+                default: s = "V"; break;
+            }
+
             if (_memory == Memory.HDD)
                 foreach (ChrConfigElement element in _chrSection.genomeChrs)
                     if (element.chr == chr)
@@ -280,8 +211,8 @@ namespace Di3B
             /// Following codes will be met in two conditions:
             /// 1. _memory = RAM 
             /// 2. _memory = HDD but no index for the defined chromosome is defined in _config file.
-            if (_settings[chr] == null) _settings.Add(chr, _settings["WorkingDirectory"].Value + "Di3" + chr + ".indx");
-            else _settings[chr].Value = _settings["WorkingDirectory"].Value + "Di3" + chr + ".indx";
+            if (_settings[chr] == null) _settings.Add(chr, _settings["WorkingDirectory"].Value + "Di3" + chr + s + ".indx");
+            else _settings[chr].Value = _settings["WorkingDirectory"].Value + "Di3" + chr + s + ".indx";
             _chrSection.genomeChrs.Add(new ChrConfigElement(Chr: chr, Strand: strand, Index: _settings[chr].Value));
 
             /// There might be better way to wipe-out the default currentValue, even in different place with different strategy; 
@@ -291,7 +222,7 @@ namespace Di3B
 
             return _settings[chr].Value;
         }
-        private Di3Options<C> GetDi3Options(string indexFile)
+        private Di3Options<C> GetDi3Options(string indexFile = "none")
         {
             Di3Options<C> options;
 
@@ -299,17 +230,18 @@ namespace Di3B
             {
                 case Memory.HDD:
                     options = new Di3Options<C>(
-                        indexFile,
-                        CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                        _CSerializer, _CComparer);
+                        FileName: indexFile,
+                        CreatePolicy: CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
+                        CSerializer: _CSerializer,
+                        Comparer: _CComparer);
                     break;
 
                 case Memory.RAM:
                 default:
                     options = new Di3Options<C>(
-                        indexFile,
-                        CSharpTest.Net.Collections.CreatePolicy.Never,
-                        _CSerializer, _CComparer);
+                        CreatePolicy: CSharpTest.Net.Collections.CreatePolicy.Never,
+                        CSerializer: _CSerializer,
+                        Comparer: _CComparer);
                     break;
             }
 

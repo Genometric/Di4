@@ -65,6 +65,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Di3BCLI\Di3BCLI.csproj">
+      <Project>{ed22831f-4e4d-4c49-b02b-a8cb21dccf35}</Project>
+      <Name>Di3BCLI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Di3B\Di3B.csproj">
       <Project>{d17dd4b8-ea5a-4a0c-a029-7b353b092aa1}</Project>
       <Name>Di3B</Name>

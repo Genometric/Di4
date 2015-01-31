@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Di3B.Logging;
 
 namespace Di3BCLI
 {
@@ -61,6 +62,16 @@ namespace Di3BCLI
                     writer.Flush();
                     break;
             }
+        }
+
+        internal static void AnnounceExeReport(string command, ExecutionReport report)
+        {
+            Herald.Announce(Herald.MessageType.None,
+                /*-*/ String.Format("{0,7} #i: {1,9}     ET: {2,6}     Speed: {3,10}",
+                /*0*/ command,
+                /*1*/ String.Format("{0:N0}", report.count),
+                /*2*/ report.ET,
+                /*3*/ String.Format("{0:N0} #i\\sec", Math.Round(report.count / report.ET.TotalSeconds, 2))));
         }
 
         internal static void Dispose()

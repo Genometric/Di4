@@ -12,9 +12,10 @@ namespace Di3BCLI
 {
     public class Orchestrator
     {
-        public Orchestrator(string workingDirectory)
+        public Orchestrator(string workingDirectory, string logFileExtension)
         {
             _workingDirectory = workingDirectory;
+            _logFileExtension = logFileExtension;
 
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<int, uint>();
@@ -24,6 +25,7 @@ namespace Di3BCLI
         }
 
         private string _workingDirectory { set; get; }
+        private string _logFileExtension { set; get; }
         private Stopwatch stopWatch { set; get; }
         private Stopwatch parserSTW { set; get; }
         Di3B<int, Peak, PeakData> di3B { set; get; }
@@ -71,7 +73,7 @@ namespace Di3BCLI
                         }
                         break;
 
-                    case "map": // example: Map E:\reference.bed * count
+                    case "map": // example: Map E:\refChr.bed * count
                         stopWatch.Restart();
                         if (!Map(splittedCommand))
                         {
@@ -97,7 +99,7 @@ namespace Di3BCLI
             }
 
             stopWatch.Stop();
-            Herald.Announce(Herald.MessageType.Success, String.Format("Runtime: {0}", stopWatch.Elapsed.ToString()));
+            Herald.Announce(Herald.MessageType.Success, String.Format("    Overall ET: {0}", stopWatch.Elapsed.ToString()));
             return false;
         }
 
@@ -111,13 +113,7 @@ namespace Di3BCLI
             }
 
             if (!Load(args[1])) return false;
-
-            ExecutionReport exeReport = di3B.Add(Repository.parsedSample.peaks);
-            Herald.Announce(Herald.MessageType.None,
-                /*-*/ String.Format("Indexed #i: {0,9}     ET: {1,6}     Speed: {2,10}",
-                /*0*/ String.Format("{0:N0}", exeReport.count),
-                /*1*/ exeReport.ET,
-                /*2*/ String.Format("{0:N0} #i\\sec", Math.Round(exeReport.count / exeReport.ET.TotalSeconds, 2))));
+            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.peaks));
             return true;
         }
         private bool BatchIndex(string[] args)
@@ -179,15 +175,21 @@ namespace Di3BCLI
 
             parserSTW.Restart();
             BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileName, AvailableGenomes.HomoSapiens, AvailableAssemblies.hm19);
-            Repository.parsedSample = bedParser.Parse();
+
+            try { Repository.parsedSample = bedParser.Parse(); }
+            catch (Exception e)
+            {
+                if (Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar == _workingDirectory &&
+                    Path.GetExtension(fileName) == _logFileExtension)
+                    Herald.Announce(Herald.MessageType.Error, String.Format("The requested extension should not have same extension as the log file."));
+                else
+                    Herald.Announce(Herald.MessageType.Error, String.Format("{0}", e.Message));
+                return false;
+            }
             parserSTW.Stop();
 
-            Herald.Announce(Herald.MessageType.None,
-                /*-*/ String.Format("Parsed  #i: {0,9}     ET: {1,6}     Speed: {2,10}",
-                /*0*/ String.Format("{0:N0}", Repository.parsedSample.peaksCount),
-                /*1*/ parserSTW.Elapsed,
-                /*2*/ String.Format("{0:N0} #i\\sec", Math.Round(Repository.parsedSample.peaksCount / parserSTW.Elapsed.TotalSeconds, 2))));
-
+            Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedSample.peaksCount, parserSTW.Elapsed));
+            
             return true;
         }
 
@@ -221,14 +223,15 @@ namespace Di3BCLI
             Aggregate agg = Aggregate.Count;
             if (!String2Aggregate(args[4], out agg)) return false;
 
+            FunctionOutput<Output<int, Peak, PeakData>> result;
             switch (coverORsummit)
             {
                 case "cover":
-                    di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg);
+                    Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result));
                     break;
 
                 case "summit":
-                    di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg);
+                    Herald.AnnounceExeReport("Summit", di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg, out result));
                     break;
             }
 
@@ -254,10 +257,45 @@ namespace Di3BCLI
             if (!String2Aggregate(args[3], out agg)) return false;
 
             if (!Load(args[1])) return false;
-            di3B.Map(strand, Repository.parsedSample.peaks, agg);
+
+            FunctionOutput<Output<int, Peak, PeakData>> result;
+            Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.peaks, agg, out result));
+
             return true;
         }
 
+        
+        private bool ValidateURI(string strUri, out Uri uri)
+        {
+            uri = null;
+            if (Uri.TryCreate(strUri, UriKind.Absolute, out uri) == false)
+            {
+                Herald.Announce(Herald.MessageType.Error, "Invalid path URI format.");
+                return false;
+            }
+            if (!Directory.Exists(uri.AbsolutePath))
+            {
+                Herald.Announce(Herald.MessageType.Error, "Path does not exist.");
+                return false;
+            }
+            return true;
+        }
+        private bool ValidateFileName(string iFileName, out string oFileName)
+        {
+            Uri fileUri = null;
+            oFileName = iFileName;
+            if (Path.GetDirectoryName(iFileName).Trim() == "")
+                oFileName = _workingDirectory + Path.DirectorySeparatorChar + iFileName;
+            else if (!ValidateURI(Path.GetDirectoryName(iFileName), out fileUri))
+                return false;
+
+            if (!File.Exists(oFileName))
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("File not found [{0}]", oFileName));
+                return false;
+            }
+            return true;
+        }
         private bool String2Aggregate(string strAggregate, out Aggregate aggregate)
         {
             switch (strAggregate.ToLower().Trim())
@@ -300,38 +338,6 @@ namespace Di3BCLI
                     return false;
 
             }
-        }
-
-        private bool ValidateURI(string strUri, out Uri uri)
-        {
-            uri = null;
-            if (Uri.TryCreate(strUri, UriKind.Absolute, out uri) == false)
-            {
-                Herald.Announce(Herald.MessageType.Error, "Invalid path URI format.");
-                return false;
-            }
-            if (!Directory.Exists(uri.AbsolutePath))
-            {
-                Herald.Announce(Herald.MessageType.Error, "Path does not exist.");
-                return false;
-            }
-            return true;
-        }
-        private bool ValidateFileName(string iFileName, out string oFileName)
-        {
-            Uri fileUri = null;
-            oFileName = iFileName;
-            if (Path.GetDirectoryName(iFileName).Trim() == "")
-                oFileName = _workingDirectory + Path.DirectorySeparatorChar + iFileName;
-            else if (!ValidateURI(Path.GetDirectoryName(iFileName), out fileUri))
-                return false;
-
-            if (!File.Exists(oFileName))
-            {
-                Herald.Announce(Herald.MessageType.Error, String.Format("File not found [{0}]", oFileName));
-                return false;
-            }
-            return true;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Di3WithCustomBlockSerializer
         /// Provides efficient means of inserting an 
         /// interval to DI3; i.e., di3 indexding.
         /// </summary>
-        /// <param name="di3">The reference di3 to be 
+        /// <param name="di3">The refChr di3 to be 
         /// manipulated.</param>
         internal INDEX(BPlusTree<int, B> di3)
         {

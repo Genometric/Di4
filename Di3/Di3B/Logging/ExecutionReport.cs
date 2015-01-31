@@ -8,7 +8,7 @@ namespace Di3B.Logging
 {
     public struct ExecutionReport
     {
-        internal ExecutionReport(int count, TimeSpan ET)
+        public ExecutionReport(int count, TimeSpan ET)
             : this()
         {
             this.count = count;

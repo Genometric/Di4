@@ -21,7 +21,7 @@ namespace DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive hashKey cooresponding
     /// to the interval.</typeparam>
-    class INDEX<C, I, M>
+    internal class SingleIndex<C, I, M>
         where C : IComparable<C>
         where I : IInterval<C, M>
         where M : IMetaData, new()
@@ -32,11 +32,11 @@ namespace DI3
         /// </summary>
         /// <param name="_di3">The reference di3 to be 
         /// manipulated.</param>
-        internal INDEX(BPlusTree<C, B> di3)
+        internal SingleIndex(BPlusTree<C, B> di3)
         {
             _di3 = di3;
         }
-        internal INDEX(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, Mode mode)
+        internal SingleIndex(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, Mode mode)
         {
             _di3 = di3;
             _intervals = Intervals;
@@ -77,6 +77,7 @@ namespace DI3
             bool enumerated = false;
             update.tau = 'L';
             update.hashKey = _interval.hashKey;
+            int compareResult;
 
             foreach (var item in _di3.EnumerateFrom(_interval.left))
             {
@@ -90,12 +91,14 @@ namespace DI3
                 }
                 else
                 {
-                    if (_interval.right.Equals(item.Key))
+                    compareResult = _interval.right.CompareTo(item.Key);
+
+                    if (compareResult == 0)
                     {
                         update.tau = 'R';
                         break;
                     }
-                    else if (_interval.right.CompareTo(item.Key) == 1) // interval.right is bigger than block.Key
+                    else if (compareResult == 1)// interval.right is bigger than bookmark.Key
                     {
                         update.tau = 'M';
                         _di3.AddOrUpdate(item.Key, ref update);
@@ -206,7 +209,7 @@ namespace DI3
 
                 switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // _interval.right is bigger than block.key
+                    case 1: // _interval.right is bigger than item.key
                         _di3.AddOrUpdate(_interval.left, ref update);
 
                         update.tau = 'M';

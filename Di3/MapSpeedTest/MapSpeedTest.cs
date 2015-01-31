@@ -29,9 +29,9 @@ namespace MapSpeedTest
             Stopwatch stopWatch = new Stopwatch();
 
             Di3Options<int> options = new Di3Options<int>(
-                IndexFile,
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer,
+                IndexFile);
 
             options.MinimumChildNodes = 2;
             options.MaximumChildNodes = 256;
@@ -74,10 +74,9 @@ namespace MapSpeedTest
                     Console.WriteLine("");
 
                     stopWatch.Restart();
-                    FunctionOutput<Output<int, LightPeak, LightPeakData>> output = new FunctionOutput<Output<int, LightPeak, LightPeakData>>();
-                    AggregateFactory<int, LightPeak, LightPeakData> aggFactory = new AggregateFactory<int, LightPeak, LightPeakData>();
-                    /*output.chrs[reference.Key][strand] =*/
-                    di3.Map<Output<int, LightPeak, LightPeakData>>(aggFactory.GetAggregateFunction("count"), Peaks, cpuCount);
+                    //var output = new FunctionOutput<Output<int, LightPeak, LightPeakData>>();
+                    var outputStrategy = new AggregateFactory<int, LightPeak, LightPeakData>().GetAggregateFunction(Aggregate.Count);
+                    di3.Map<Output<int, LightPeak, LightPeakData>>(ref outputStrategy, Peaks, cpuCount);
                     stopWatch.Stop();
                     Console.WriteLine("");
                     Console.WriteLine("ET: {0}", stopWatch.Elapsed);

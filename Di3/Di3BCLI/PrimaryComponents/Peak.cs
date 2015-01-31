@@ -23,7 +23,7 @@ namespace Di3BCLI
 
         /// <summary>
         /// Sets and gets the descriptive metadata
-        /// of the interval. It could be a reference
+        /// of the interval. It could be a refChr
         /// to a _memory object, or a pointer, or 
         /// an entry ID on database, or etc. 
         /// </summary>

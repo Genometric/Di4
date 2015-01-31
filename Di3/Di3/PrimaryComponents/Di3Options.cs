@@ -8,10 +8,11 @@ namespace DI3
     public class Di3Options<C>
         where C : IComparable<C>
     {
-        public Di3Options(string FileName,
+        public Di3Options(
             CreatePolicy CreatePolicy,
             ISerializer<C> CSerializer,
-            IComparer<C> Comparer)
+            IComparer<C> Comparer,
+            string FileName = "none")
         {
             this.FileName = FileName;
             this.CreatePolicy = CreatePolicy;

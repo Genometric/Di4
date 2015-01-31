@@ -34,9 +34,9 @@ namespace IndexSpeedTest
             string file = OutputPath + "\\bplusTree.bpt";
 
             Di3Options<int> options = new Di3Options<int>(
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx",
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer, 
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
 
             options.AverageKeySize = 16;
             options.AverageValueSize = 1400;
@@ -120,9 +120,9 @@ namespace IndexSpeedTest
             string file = OutputPath + "\\bplusTree.bpt";
 
             Di3Options<int> options = new Di3Options<int>(
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx",
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer,
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
 
             options.AverageKeySize = 16;
             options.AverageValueSize = 1400;
@@ -249,9 +249,9 @@ namespace IndexSpeedTest
 
 
             Di3Options<int> options = new Di3Options<int>(
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx",
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer,
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
 
             options.AverageKeySize = avgKeySize;
             options.AverageValueSize = avgValueSize;
@@ -367,9 +367,9 @@ namespace IndexSpeedTest
             writer.WriteLine("Di3 indexing speed test: " + TestName);
 
             Di3Options<int> options = new Di3Options<int>(
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx",
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer,
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
 
 
             options.FileBlockSize = 512;
@@ -484,9 +484,9 @@ namespace IndexSpeedTest
             writer.WriteLine("Di3 indexing speed test: " + TestName);
 
             Di3Options<int> options = new Di3Options<int>(
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx",
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
-                PrimitiveSerializer.Int32, int32Comparer);
+                PrimitiveSerializer.Int32, int32Comparer,
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
 
             options.AverageKeySize = avgKeySize;
             options.AverageValueSize = avgValueSize;

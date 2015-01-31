@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Interfaces;
+using System.Collections.Concurrent;
 
 namespace DI3
 {
@@ -28,6 +29,7 @@ namespace DI3
 
         void Output(I interval, List<Lambda> intervals);
 
-        List<O> output { set; get; }
+        ConcurrentBag<O> output { set; get; }
+        //List<O> output { set; get; }
     }
 }

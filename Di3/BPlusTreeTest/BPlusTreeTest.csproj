@@ -53,9 +53,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BulkInsertTest.cs" />
     <Compile Include="LargeInsertion.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RangeInsertTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

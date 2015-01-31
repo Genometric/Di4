@@ -21,7 +21,7 @@ namespace DI3
         /// </para>
         /// </summary>
         /// <param name="phi">The intersection type of interval
-        /// wtih c of corresponding block.</param>
+        /// wtih c of corresponding bookmark.</param>
         /// <param name="atI">Descriptive hashKey of the intereval.</param>
         internal Lambda(char tau, UInt32 atI)
             : this()
@@ -34,7 +34,7 @@ namespace DI3
 
         /// <summary>
         /// Gets the intersection type of _interval
-        /// wtih c of corresponding block.
+        /// wtih c of corresponding bookmark.
         /// <para>[currentValue] = L  ::>  Left-end  intersecting the coordiante.</para>
         /// <para>[currentValue] = M  ::>  Middle    intersecting the coordiante.</para>
         /// <para>[currentValue] = R  ::>  Right-end intersecting the coordiante.</para>

@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Di3B
 {
     public class FunctionOutput<O>
     {
         //public Dictionary<string, Chromosome> chrs { set; get; }
-        public Dictionary<string, Dictionary<char, List<O>>> Chrs { set; get; }
+        public Dictionary<string, Dictionary<char, ConcurrentBag<O>>> Chrs { set; get; }
 
         public FunctionOutput()
         {
             //chrs = new Dictionary<string, Chromosome>();
-            Chrs = new Dictionary<string, Dictionary<char, List<O>>>();
+            Chrs = new Dictionary<string, Dictionary<char, ConcurrentBag<O>>>();
         }
         /*
         public class Chromosome
@@ -29,7 +30,7 @@ namespace Di3B
         public void addChromosome(string chr)
         {
             //chrs.Add(chr, new Chromosome());
-            Chrs.Add(chr, new Dictionary<char, List<O>>());
+            Chrs.Add(chr, new Dictionary<char, ConcurrentBag<O>>());
         }
     }
 }

@@ -60,6 +60,9 @@ namespace BEDParser
             _source = source;
             _species = species;
             _assembly = assembly;
+
+            Initialize();
+            
             _startOffset = startOffset;
             _chrColumn = chrColumn;
             _leftColumn = leftColumn;
@@ -67,8 +70,6 @@ namespace BEDParser
             _nameColumn = nameColumn;
             _valueColumn = valueColumn;
             _strandColumn = strandColumn;
-
-            Initialize();
         }
 
 
@@ -113,6 +114,9 @@ namespace BEDParser
             _source = source;
             _species = species;
             _assembly = assembly;
+
+            Initialize();
+            
             _startOffset = startOffset;
             _chrColumn = chrColumn;
             _leftColumn = leftColumn;
@@ -123,8 +127,6 @@ namespace BEDParser
             _defaultValue = defaultValue;
             _valueConvertionOption = valueConvertionOption;
             _dropPeakIfInvalidValue = dropPeakIfInvalidValue;
-
-            Initialize();
         }
 
 
@@ -157,25 +159,25 @@ namespace BEDParser
         /// <summary>
         /// The chromosomes that no valid regions determined on them.
         /// </summary>
-        public List<string> missingChrs = new List<string>();
+        public List<string> missingChrs { set; get; }
 
         /// <summary>
         /// The chromosomes that observed in source BED file, while should not be present
         /// considering the chosen species. Note, the corresponding reads are not cached.
         /// </summary>
-        public List<string> excessChrs = new List<string>();
+        public List<string> excessChrs { set; get; }
 
         /// <summary>
         /// Sets the number of lines to be read from input file.
         /// The default value is 4,294,967,295 (0xFFFFFFFF) which will be used if not set. 
         /// </summary>
-        public UInt32 maxLinesToBeRead = UInt32.MaxValue;
+        public UInt32 maxLinesToBeRead { set; get; }
 
         /// <summary>
         /// decimal places/precision of numbers when rounding them. It is used for 
         /// chromosome-wide stats estimation.
         /// </summary>
-        public byte decimalPlaces = 3;
+        public byte decimalPlaces { set; get; }
 
         /// <summary>
         /// Gets the calculated hashkey of the file.
@@ -189,80 +191,80 @@ namespace BEDParser
         /// <summary>
         /// Full path of source file name
         /// </summary>
-        private string _source;
+        private string _source { set; get; }
 
         /// <summary>
         /// This parameter will be used for initializing the chromosome count and sex chromosomes mappings.
         /// Values could be "Homo sapiens" or "Human" , or "Mus musculus" or "Mouse".
         /// </summary>
-        private AvailableGenomes _species = AvailableGenomes.HomoSapiens;
+        private AvailableGenomes _species { set; get; }
 
         /// <summary>
         /// 
         /// </summary>
-        private AvailableAssemblies _assembly = AvailableAssemblies.hm19;
+        private AvailableAssemblies _assembly { set; get; }
 
         /// <summary>
         /// If the source file comes with header, the number of headers lines needs to be specified so that
         /// parser can ignore them. If not specified and header is present, header might be dropped because
         /// of improper format it might have. 
         /// </summary>
-        private byte _startOffset = 0;
+        private byte _startOffset { set; get; }
 
         /// <summary>
         /// The coloumn number of chromosome name
         /// </summary>
-        private byte _chrColumn = 0;
+        private byte _chrColumn { set; get; }
 
         /// <summary>
         /// The column number of peak left position
         /// </summary>
-        private byte _leftColumn = 1;
+        private byte _leftColumn { set; get; }
 
         /// <summary>
         /// The column number of peak right position
         /// </summary>
-        private byte _rightColumn = 2;
+        private byte _rightColumn { set; get; }
 
         /// <summary>
         /// The column number of peak name
         /// </summary>
-        private byte _nameColumn = 3;
+        private byte _nameColumn { set; get; }
 
         /// <summary>
         /// The column number of p-value
         /// </summary>
-        private byte _valueColumn = 4;
+        private byte _valueColumn { set; get; }
 
         /// <summary>
         /// The column number of strand.
         /// </summary>
-        private sbyte _strandColumn = -1;
+        private sbyte _strandColumn { set; get; }
 
         /// <summary>
         /// Will be used as region's p-value if the 
         /// region in source file has an invalid p-value and 'drop_Peak_if_no_p_Value_is_given = false'
         /// </summary>
-        private double _defaultValue = 1E-8;
+        private double _defaultValue { set; get; }
 
         /// <summary>
         /// The p-value conversion will be based on this parameter.
         /// Set to '1' if the p-values are in (-10)Log10(p-value) format or
         /// set to '2' if the p-values are in (-1)Log10(p-value) format
         /// </summary>
-        private char _valueConvertionOption = '1';
+        private char _valueConvertionOption { set; get; }
 
         /// <summary>
         /// If set to true, any peak that has invalid p-value will be droped. 
         /// </summary>
-        private bool _dropPeakIfInvalidValue = true;
+        private bool _dropPeakIfInvalidValue { set; get; }
 
         /// <summary>
         /// It needs to be set to true if an unsuccessful attemp to read a region is occured, 
         /// such as invalid chromosome number. If the value is true, the reading peak will 
         /// not be stored. 
         /// </summary>
-        private bool _dropLine = false;
+        private bool _dropLine { set; get; }
 
         /// <summary>
         /// The chromosome count of the species, that is initialized based on the chosen species. 
@@ -273,67 +275,67 @@ namespace BEDParser
         /// Holds catched information of each chromosome's base pairs count. 
         /// This information will be updated based on the selected species.
         /// </summary>
-        private Dictionary<string, int> _basePairsCount;
+        private Dictionary<string, int> _basePairsCount { set; get; }
 
         /// <summary>
         /// Mapping from chromosome Title (e.g., chrX, chrY, chrM) to chromosome Number (e.g., 23, 24, 25). 
         /// This parameter is initialized based on the selected species.
         /// Index 0 specifies chrX, index 1 specifies chrY, and index 2 specifies chrM mappings.
         /// </summary>
-        private byte[] _chrT2N = new byte[3];
+        private byte[] _chrT2N { set; get; }
 
         /// <summary>
         /// When read process is finished, this variable contains the number
         /// of dropped regions.
         /// </summary>
-        private UInt16 _dropedLinesCount = 0;
+        private UInt16 _dropedLinesCount { set; get; }
 
         /// <summary>
         /// When read process is finished, this variable contains the number
         /// of regions that contained invalid p-value and replaced by default p-value. 
         /// </summary>
-        private UInt16 _defaultValueUtilizationCount = 0;
+        private UInt16 _defaultValueUtilizationCount { set; get; }
 
         /// <summary>
         /// Contains all read information from the input BED file, and 
         /// will be retured as read process result.
         /// </summary>
-        private ParsedBED<int, I, M> _data = new ParsedBED<int, I, M>();
+        private ParsedBED<int, I, M> _data { set; get; }
 
         /// <summary>
         /// Contains chromosome wide information and statistics of the sample
         /// </summary>
-        private Dictionary<string, ChrStatistics> _Chrs = new Dictionary<string, ChrStatistics>();
+        private Dictionary<string, ChrStatistics> _Chrs { set; get; }
 
         /// <summary>
         /// Holds the width sum of all read peaks chromosome wide.
         /// </summary>
-        private Dictionary<string, uint> _pw__Sum = new Dictionary<string, uint>();
+        private Dictionary<string, uint> _pw__Sum { set; get; }
 
         /// <summary>
         /// Holds the width mean of all read peaks chromosome wide.
         /// </summary>
-        private Dictionary<string, double> _pw_Mean = new Dictionary<string, double>();
+        private Dictionary<string, double> _pw_Mean { set; get; }
 
         /// <summary>
         /// Holds the width standard deviation of all read peaks chromosome wide.
         /// </summary>
-        private Dictionary<string, double> _pw_STDV = new Dictionary<string, double>();
+        private Dictionary<string, double> _pw_STDV { set; get; }
 
         /// <summary>
         /// Holds the p-value sum of all read peaks chromosome wide.
         /// </summary>
-        private Dictionary<string, double> _pV__Sum = new Dictionary<string, double>();
+        private Dictionary<string, double> _pV__Sum { set; get; }
 
         /// <summary>
         /// Holds the p-value mean of all read peaks chromosome wide.
         /// </summary>
-        private Dictionary<string, double> _pV_Mean = new Dictionary<string, double>();
+        private Dictionary<string, double> _pV_Mean { set; get; }
 
         /// <summary>
         /// Hold the p-value standard deviation of all read peaks chromosome wide
         /// </summary>
-        private Dictionary<string, double> _pV_STDV = new Dictionary<string, double>();
+        private Dictionary<string, double> _pV_STDV { set; get; }
 
         #endregion
 
@@ -341,11 +343,43 @@ namespace BEDParser
 
         private void Initialize()
         {
+            missingChrs = new List<string>();
+            excessChrs = new List<string>();
+            maxLinesToBeRead = UInt32.MaxValue;
+            decimalPlaces = 3;
+
+            //_species = AvailableGenomes.HomoSapiens;
+            //_assembly = AvailableAssemblies.hm19;
+
+            _data = new ParsedBED<int, I, M>();
             _data.filePath = System.IO.Path.GetFullPath(_source);
             _data.fileName = System.IO.Path.GetFileName(_source);
             _data.fileHashKey = GetFileHashKey(_data.filePath);
             _basePairsCount = Assemblies.Assembly(_assembly);
             _chrCount = (byte)_basePairsCount.Count;
+
+            _startOffset = 0;
+            _chrColumn = 0;
+            _leftColumn = 1;
+            _rightColumn = 2;
+            _nameColumn = 3;
+            _valueColumn = 4;
+            _strandColumn = -1;
+            _defaultValue = 1E-8;
+            _valueConvertionOption = '1';
+            _dropPeakIfInvalidValue = true;
+            _dropLine = false;
+            _chrT2N = new byte[3];
+            _dropedLinesCount = 0;
+            _defaultValueUtilizationCount = 0;
+
+            _Chrs = new Dictionary<string, ChrStatistics>();
+            _pw__Sum = new Dictionary<string, uint>();
+            _pw_Mean = new Dictionary<string, double>();
+            _pw_STDV = new Dictionary<string, double>();
+            _pV__Sum = new Dictionary<string, double>();
+            _pV_Mean = new Dictionary<string, double>();
+            _pV_STDV = new Dictionary<string, double>();
         }
 
 
@@ -357,20 +391,15 @@ namespace BEDParser
         {
             _dropLine = false;
 
-            //byte chr_No = 0;
-
             int left = 0;
             int right = 0;
+            char strand = '*';
+            double pValue = 0.0;
+            string line;
 
             UInt32 lineCounter = 0;
 
-            double pValue = 0.0;
-
-            char strand = '*';
-
             List<string> lineDropMsg = new List<string>();
-
-            string line;
 
             if (File.Exists(_source))
             {
@@ -464,7 +493,7 @@ namespace BEDParser
 
                             #endregion
 
-                            #region -_-     Process I Name       -_-
+                            #region -_-     Process I Name          -_-
 
                             if (_nameColumn < splittedLine.Length)
                             {
@@ -477,7 +506,7 @@ namespace BEDParser
 
                             #endregion
 
-                            #region -_-     Process I Strand     -_-
+                            #region -_-     Process I Strand        -_-
 
                             if (_strandColumn != -1 && _strandColumn < splittedLine.Length)
                             {
@@ -492,6 +521,7 @@ namespace BEDParser
                             }
                             else
                             {
+                                strand = '*';
                                 //readingPeak.metadata.strand = '*';
                             }
 
@@ -515,11 +545,13 @@ namespace BEDParser
                             {
                                 if (!_data.peaks.ContainsKey(chrTitle))
                                     AddNewChromosome(chrTitle);
+                                if (!_data.peaks[chrTitle].ContainsKey(strand))
+                                    _data.peaks[chrTitle].Add(strand, new List<I>());
 
                                 readingPeak.hashKey = GetPeakHashKey(readingPeak, chrTitle);
                                 readingPeak.metadata.hashKey = readingPeak.hashKey;
 
-                                _data.peaks[chrTitle].Add(readingPeak);
+                                _data.peaks[chrTitle][strand].Add(readingPeak);
 
                                 _Chrs[chrTitle].count++;
 
@@ -625,13 +657,14 @@ namespace BEDParser
             }
 
             foreach (KeyValuePair<string, ChrStatistics> entry in _Chrs)
-            {
-                foreach (I P in _data.peaks[entry.Key])
-                {
-                    _pw_STDV[entry.Key] += Math.Pow((P.right - P.left) - _pw_Mean[entry.Key], 2.0);
-                    _pV_STDV[entry.Key] += Math.Pow(P.metadata.value - _pV_Mean[entry.Key], 2.0);
-                }
-            }
+                foreach (var strandEntry in _data.peaks[entry.Key])
+                    foreach (I P in strandEntry.Value)
+                    {
+                        _pw_STDV[entry.Key] += Math.Pow((P.right - P.left) - _pw_Mean[entry.Key], 2.0);
+                        _pV_STDV[entry.Key] += Math.Pow(P.metadata.value - _pV_Mean[entry.Key], 2.0);
+                    }
+
+
 
             foreach (KeyValuePair<string, ChrStatistics> entry in _Chrs)
             {
@@ -717,7 +750,7 @@ namespace BEDParser
 
         private void AddNewChromosome(string newChr)
         {
-            _data.peaks.Add(newChr, new List<I>());
+            _data.peaks.Add(newChr, new Dictionary<char, List<I>>());
             _Chrs.Add(newChr, new ChrStatistics()
             {
                 chrTitle = newChr,
@@ -790,7 +823,7 @@ namespace BEDParser
         /// <returns>Hashkey of the interval.</returns>
         private UInt32 GetPeakHashKey(I readingPeak, string chr)
         {
-            string key = chr + "|" + readingPeak.metadata.name + "|" + readingPeak.left.ToString() + "|" + readingPeak.right.ToString() + "|";
+            string key = chr + "|" + readingPeak.metadata.name + "|" + readingPeak.left.ToString() + "|" + readingPeak.right.ToString() + "|" + fileHashKey.ToString();
             int len = key.Length;
 
             UInt32 hashKey = 0;

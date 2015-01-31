@@ -16,8 +16,7 @@ namespace Di3B
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
-            
-            /// TODO: Two constructors are needed, with (for Memory = RAM) & without (for Memory = HDD) HDDPerformance.
+
             genome = new Genome<C, I, M>(workingDirectory, Memory, hddPerformance, CSerializer, CComparer);
         }
 
@@ -25,18 +24,17 @@ namespace Di3B
         private IComparer<C> CComparer { set; get; }
         private Genome<C, I, M> genome { set; get; }
 
-        public ExecutionReport Add(Dictionary<string, List<I>> peaks)
+        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks)
         {
             return genome.Add(peaks, '*');
         }
-
-        public FunctionOutput<Output<C, I, M>> Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate)
+        public ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
         {
-            return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate);
+            return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate, out result);
         }
-        public FunctionOutput<Output<C, I, M>> Map(char strand, Dictionary<string, List<I>> references, Aggregate aggregate)
+        public ExecutionReport Map(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
         {
-            return genome.Map(references, strand, aggregate);
+            return genome.Map(references, strand, aggregate, out result);
         }
     }
 }
