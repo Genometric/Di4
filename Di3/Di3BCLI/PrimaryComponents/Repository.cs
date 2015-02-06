@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using BEDParser;
+//using BEDParser;
+using GIFP;
 
 namespace Di3BCLI
 {
     public static class Repository
     {
-        public static ParsedBED<int, Peak, PeakData> parsedSample { set; get; }
+        public static ParsedChIPseqPeaks<int, Peak, PeakData> parsedSample { set; get; }
     }
 }
