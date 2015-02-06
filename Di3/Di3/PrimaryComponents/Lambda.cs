@@ -31,7 +31,6 @@ namespace DI3
         }
 
 
-
         /// <summary>
         /// Gets the intersection type of _interval
         /// wtih c of corresponding bookmark.

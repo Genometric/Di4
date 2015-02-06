@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using GIFP;
+﻿using GIFP;
 
 namespace Di3BCLI
 {

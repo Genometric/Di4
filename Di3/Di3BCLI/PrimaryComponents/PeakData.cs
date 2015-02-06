@@ -1,5 +1,5 @@
-﻿using System;
-using IGenomics;
+﻿using IGenomics;
+using System;
 
 namespace Di3BCLI
 {
@@ -12,16 +12,6 @@ namespace Di3BCLI
         /// Sets and gets peak name.
         /// </summary>
         public string name { set; get; }
-
-        /// <summary>
-        /// Gets the left-end of the interval.
-        /// </summary>
-        //public int left { set; get; }
-
-        /// <summary>
-        /// Gets the right-end of the interval.
-        /// </summary>
-        //public int right { set; get; }
 
         /// <summary>
         /// Sets and gets peak value.
@@ -38,8 +28,6 @@ namespace Di3BCLI
         public string ToString(string separator = "\t")
         {
             return
-                //left.ToString() + separator +
-                //right.ToString() + separator +
                 name + separator +
                 value.ToString();
         }

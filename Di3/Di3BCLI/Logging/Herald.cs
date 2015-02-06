@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Di3B.Logging;
+using System;
 using System.IO;
-using Di3B.Logging;
 
 namespace Di3BCLI
 {
@@ -8,6 +8,7 @@ namespace Di3BCLI
     {
         internal enum Destination { Console = 0, File = 1, Both = 2 };
         internal enum MessageType { Info, Success, Warrning, Error, None };
+        internal enum SpeedUnit { intervalPerSecond, bookmarkPerSecond };
         internal static StreamWriter writer { set; get; }
         private static Destination _heraldDestination { set; get; }
 
@@ -64,14 +65,22 @@ namespace Di3BCLI
             }
         }
 
-        internal static void AnnounceExeReport(string command, ExecutionReport report)
+        internal static void AnnounceExeReport(string command, ExecutionReport report, SpeedUnit speedUnit = SpeedUnit.intervalPerSecond)
         {
+            string sUnit = "";
+            switch (speedUnit)
+            {
+                case SpeedUnit.intervalPerSecond: sUnit = "#i"; break;
+                case SpeedUnit.bookmarkPerSecond: sUnit = "#b"; break;
+            }
+
             Herald.Announce(Herald.MessageType.None,
-                /*-*/ String.Format("{0,7} #i: {1,9}     ET: {2,6}     Speed: {3,10}",
+                /*-*/ String.Format("{0,7} {1}: {2,9}     ET: {3,6}     Speed: {4,14}",
                 /*0*/ command,
-                /*1*/ String.Format("{0:N0}", report.count),
-                /*2*/ report.ET,
-                /*3*/ String.Format("{0:N0} #i\\sec", Math.Round(report.count / report.ET.TotalSeconds, 2))));
+                /*1*/ sUnit,
+                /*2*/ String.Format("{0:N0}", report.count),
+                /*3*/ report.ET,
+                /*4*/ String.Format("{0:N0} {1}\\sec", Math.Round(report.count / report.ET.TotalSeconds, 2), sUnit)));
         }
 
         internal static void Dispose()

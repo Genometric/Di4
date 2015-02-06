@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Diagnostics;
-using DI3;
-using CSharpTest.Net.Collections;
+﻿using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
+using DI3;
 using Di3BCLI;
+using System;
 using System.Collections.Generic;
-using IGenomics;
+using System.Diagnostics;
+using System.IO;
 
 namespace IndexSpeedTest
 {

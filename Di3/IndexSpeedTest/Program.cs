@@ -1,15 +1,11 @@
-﻿using CSharpTest.Net.Serialization;
-using DI3;
-using Di3BCLI;
-using System.IO;
-
+﻿
 namespace IndexSpeedTest
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string path = @"D:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"I:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
 
             //SpeedTest_v1(path);
             SpeedTest_v2(path);

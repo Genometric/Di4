@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Di3B;
-using System.IO;
-using System.Diagnostics;
+﻿using Di3B;
 using Di3B.Logging;
-using System.Configuration;
 using GIFP;
-using IGenomics;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace Di3BCLI
 {
@@ -213,20 +212,9 @@ namespace Di3BCLI
             char strand;
             byte minAcc, maxAcc;
             string coverOrSummit = args[0].ToLower();
+
             string resultFile = "";
-            Uri resultsFileURI = null;
-
-            if (Path.GetDirectoryName(args[1]).Trim() == "")
-                args[1] = _workingDirectory + Path.GetFileName(args[1]);
-
-            if (Uri.TryCreate(args[1], UriKind.Absolute, out resultsFileURI) == false ||
-                    Path.GetFileName(resultsFileURI.AbsolutePath) == null ||
-                    Path.GetFileName(resultsFileURI.AbsolutePath).Trim() == "")
-            {
-                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid results file."));
-                return false;
-            }
-            resultFile = resultsFileURI.AbsolutePath;
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
             if (!Char.TryParse(args[2], out strand))
             {
@@ -251,11 +239,11 @@ namespace Di3BCLI
             switch (coverOrSummit)
             {
                 case "cover":
-                    Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result));
+                    Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result), Herald.SpeedUnit.bookmarkPerSecond);
                     break;
 
                 case "summit":
-                    Herald.AnnounceExeReport("Summit", di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg, out result));
+                    Herald.AnnounceExeReport("Summit", di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg, out result), Herald.SpeedUnit.bookmarkPerSecond);
                     break;
             }
 
@@ -265,21 +253,24 @@ namespace Di3BCLI
         }
         private bool Map(string[] args)
         {
-            if (args.Length != 4)
+            string resultFile = "";
+            if (!ExtractResultsFile(args[2], out resultFile)) return false; // invalid file URI.
+
+            if (args.Length != 5)
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Missing arguments."));
                 return false;
             }
 
             char strand = '*';
-            if (!Char.TryParse(args[2], out strand))
+            if (!Char.TryParse(args[3], out strand))
             {
-                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid strand argument [{0}].", args[2]));
+                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid strand argument [{0}].", args[3]));
                 return false;
             }
 
             Aggregate agg = Aggregate.Count;
-            if (!String2Aggregate(args[3], out agg)) return false;
+            if (!String2Aggregate(args[4], out agg)) return false;
 
             if (!Load(args[1])) return false;
 
@@ -363,6 +354,23 @@ namespace Di3BCLI
                     return false;
 
             }
+        }
+        private bool ExtractResultsFile(string inputFileName, out string outputFileName)
+        {
+            Uri resultsFileURI = null;
+            outputFileName = "";
+            if (Path.GetDirectoryName(inputFileName).Trim() == "")
+                inputFileName = _workingDirectory + Path.GetFileName(inputFileName);
+
+            if (Uri.TryCreate(inputFileName, UriKind.Absolute, out resultsFileURI) == false ||
+                    Path.GetFileName(resultsFileURI.AbsolutePath) == null ||
+                    Path.GetFileName(resultsFileURI.AbsolutePath).Trim() == "")
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid results file."));
+                return false;
+            }
+            outputFileName = resultsFileURI.AbsolutePath;
+            return true;
         }
     }
 }

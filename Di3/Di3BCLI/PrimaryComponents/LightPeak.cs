@@ -9,12 +9,10 @@ namespace Di3BCLI
         /// </summary>
         public int left { set; get; }
 
-
         /// <summary>
         /// Sets and gets the right-end of the interval.
         /// </summary>
         public int right { set; get; }
-
 
         /// <summary>
         /// Sets and gets the descriptive metadata
@@ -23,7 +21,6 @@ namespace Di3BCLI
         /// an entry ID on database, or etc. 
         /// </summary>
         public LightPeakData metadata { set; get; }
-
 
         public uint hashKey { set; get; }
     }

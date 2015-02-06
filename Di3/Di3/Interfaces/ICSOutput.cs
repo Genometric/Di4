@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using IGenomics;
+﻿using IGenomics;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace DI3
 {
@@ -30,6 +30,5 @@ namespace DI3
         void Output(I interval, List<Lambda> intervals);
 
         ConcurrentBag<O> output { set; get; }
-        //List<O> output { set; get; }
     }
 }

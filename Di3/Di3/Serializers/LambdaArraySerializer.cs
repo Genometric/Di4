@@ -12,7 +12,6 @@ namespace DI3
             _lambdaItemSerializer = lambdaItemSerializer;
         }
 
-
         public ReadOnlyCollection<Lambda> ReadFrom(System.IO.Stream stream)
         {
             int size = PrimitiveSerializer.Int32.ReadFrom(stream);

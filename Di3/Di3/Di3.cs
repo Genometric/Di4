@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using CSharpTest.Net.Collections;
+﻿using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using IGenomics;
-using CSharpTest.Net.Threading;
 using CSharpTest.Net.Synchronization;
+using CSharpTest.Net.Threading;
+using IGenomics;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DI3
@@ -207,8 +207,6 @@ namespace DI3
         }
         public void Add(List<I> intervals, int threads, Mode mode)
         {
-            //Stopwatch watch = new Stopwatch();
-
             int start = 0, stop = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             using (WorkQueue work = new WorkQueue(threads))
             {
@@ -220,10 +218,7 @@ namespace DI3
                     work.Enqueue(new SingleIndex<C, I, M>(di3, intervals, start, stop, mode).Index);
                 }
 
-                //watch.Restart();
                 work.Complete(true, -1);
-                //watch.Stop();
-                //Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
         }
         public int SecondPass()

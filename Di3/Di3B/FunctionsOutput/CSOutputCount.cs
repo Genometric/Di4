@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using DI3;
+﻿using DI3;
 using IGenomics;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Di3B
 {
@@ -22,7 +22,6 @@ namespace Di3B
             output = new ConcurrentBag<Output<C, I, M>>();
         }
 
-        //public List<Output<C, I, M>> output { set; get; }
         public ConcurrentBag<Output<C, I, M>> output { set; get; }
 
         void ICSOutput<C, I, M, Output<C, I, M>>.Output(C left, C right, List<Lambda> intervals)

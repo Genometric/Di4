@@ -2,13 +2,12 @@
 using CSharpTest.Net.Serialization;
 using DI3;
 using Di3B.Logging;
+using IGenomics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.IO;
-using IGenomics;
 
 namespace Di3B
 {
@@ -63,7 +62,6 @@ namespace Di3B
         private ChrSection _chrSection { set; get; }
         private Configuration _config { set; get; }
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> chrs { set; get; }
-
 
 
         internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand)
@@ -135,7 +133,7 @@ namespace Di3B
         internal ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
         {
             Stopwatch stpWtch = new Stopwatch();
-            int totalIntervals = 0;
+            int totalBookmarks = 0;
 
             result = new FunctionOutput<Output<C, I, M>>();
             ICSOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
@@ -147,6 +145,7 @@ namespace Di3B
                     if (!result.Chrs[chr.Key].ContainsKey(sDi3.Key)) result.Chrs[chr.Key].Add(sDi3.Key, new ConcurrentBag<Output<C, I, M>>());
 
                     stpWtch.Start();
+                    totalBookmarks += sDi3.Value.blockCount;
                     switch (coverVariation)
                     {
                         case CoverVariation.Cover:
@@ -161,7 +160,7 @@ namespace Di3B
                     stpWtch.Stop();
                 }
 
-            return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
+            return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
         }
 
         internal ExecutionReport Map(Dictionary<string, Dictionary<char, List<I>>> references, char strand, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)

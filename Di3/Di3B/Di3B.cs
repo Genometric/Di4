@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using CSharpTest.Net.Serialization;
+﻿using CSharpTest.Net.Serialization;
 using Di3B.Logging;
 using IGenomics;
-
+using System;
+using System.Collections.Generic;
 
 namespace Di3B
 {

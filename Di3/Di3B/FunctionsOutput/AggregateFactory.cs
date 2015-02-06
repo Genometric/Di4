@@ -1,6 +1,6 @@
-﻿using System;
-using DI3;
+﻿using DI3;
 using IGenomics;
+using System;
 
 namespace Di3B
 {

@@ -1,12 +1,7 @@
 ﻿using Di3B;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Di3B.Logging;
 using System.Diagnostics;
 using System.IO;
-using Di3B.Logging;
 
 namespace Di3BCLI
 {
