@@ -11,6 +11,7 @@ namespace Di3BCLI
         {
             Console.Title = "Di3B: Dynamic intervals inverted index for Bioinformatics";
             KeyValueConfigurationCollection settings = ReadAndSetConfiguration();
+            if (settings == null) return; // Exit application.
 
             Console.WriteLine("");
             Console.Write("Initializing ...");
@@ -40,8 +41,15 @@ namespace Di3BCLI
 
         static KeyValueConfigurationCollection ReadAndSetConfiguration()
         {
+            bool updateConfiguration = false;
             var confingFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var settings = confingFile.AppSettings.Settings;
+
+            /// This function needs an update. 
+            /// If an invalid configuration or Log file is given by the configuration file, 
+            /// then the user must manually correct it. It should be updated to allow user
+            /// to change the working directory or log file within the program if an invalid
+            /// one is provided. That means updating configuration file shall be supported.
 
             #region .::.     Set Working Directory     .::.
 
@@ -55,16 +63,30 @@ namespace Di3BCLI
                     Console.WriteLine("Error: Incorrect Format!");
                     Console.Write("Please specify working directory : ");
                 }
+                updateConfiguration = true;
             }
             else
             {
-                Uri.TryCreate(settings["WorkingDirectory"].Value, UriKind.Absolute, out wdURI);
+                if (Uri.TryCreate(settings["WorkingDirectory"].Value, UriKind.Absolute, out wdURI))
+                {
+                    Console.WriteLine("Configuration defines a valid working directory.");
+                }
+                else
+                {
+                    Console.WriteLine("Configuration defines an invalid working directory. Please manually correct configuration file.");
+                    Console.WriteLine("Application will exit now.");
+                    Console.ReadKey();
+                    return null;
+                }
+                updateConfiguration = false;
             }
 
             if (Path.GetExtension(wdURI.AbsolutePath).Trim() == "")
-                wd = Path.GetDirectoryName(wdURI.AbsolutePath) + Path.GetFileName(wdURI.AbsolutePath) + Path.DirectorySeparatorChar;
+                wd = Path.GetDirectoryName(wdURI.AbsolutePath) + Path.DirectorySeparatorChar + Path.GetFileName(wdURI.AbsolutePath) + Path.DirectorySeparatorChar;
             else
                 wd = Path.GetDirectoryName(wdURI.AbsolutePath) + Path.DirectorySeparatorChar;
+
+            wd = Path.GetFullPath(wd);
 
             if (!Directory.Exists(wd))
             {
@@ -72,7 +94,9 @@ namespace Di3BCLI
                 Console.WriteLine("The directory is created.");
             }
 
-            settings.Add("WorkingDirectory", wd);
+            if (updateConfiguration)            
+                settings.Add("WorkingDirectory", wd);
+            
             Console.WriteLine("Working directory is successfully set to : {0}", wd);
             Console.WriteLine(" ");
 
@@ -81,6 +105,7 @@ namespace Di3BCLI
             #region .::.     Set Log File              .::.
             Uri logFileURI = null;
             string logFilePath = "", logFile = "";
+            updateConfiguration = false;
             if (settings["LogFile"] == null)
             {
                 Console.Write("Please specify the Log file : ");
@@ -92,10 +117,20 @@ namespace Di3BCLI
                     Console.WriteLine("Error: Incorrect Format!");
                     Console.Write("Please specify the Log file : ");
                 }
+                updateConfiguration = true;
             }
             else
             {
-                Uri.TryCreate(Console.ReadLine(), UriKind.Absolute, out logFileURI);
+                if (Uri.TryCreate(settings["LogFile"].Value, UriKind.Absolute, out logFileURI))
+                    Console.WriteLine("Configuration defines a valid Log file.");
+                else
+                {
+                    Console.WriteLine("Configuration defines an invalid Log file. Please manually correct configuration file.");
+                    Console.WriteLine("Application will exit now.");
+                    Console.ReadKey();
+                    return null;
+                }
+                updateConfiguration = false;
             }
 
             logFilePath = Path.GetDirectoryName(logFileURI.AbsolutePath);
@@ -107,12 +142,15 @@ namespace Di3BCLI
                 Console.WriteLine("The directory is created.");
             }
 
-            settings.Add("LogFile", logFilePath + Path.DirectorySeparatorChar + logFile);
+            if (updateConfiguration)
+                settings.Add("LogFile", logFilePath + Path.DirectorySeparatorChar + logFile);
+
             Console.WriteLine("Log file is successfully set to : {0}", logFilePath + Path.DirectorySeparatorChar + logFile);
 
             #endregion
 
-            confingFile.Save();
+            if (updateConfiguration)
+                confingFile.Save();
 
             return settings;
         }

@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using Interfaces;
 using CSharpTest.Net.Serialization;
 using Di3B.Logging;
+using IGenomics;
 
 
 namespace Di3B
 {
     public class Di3B<C, I, M>
-        where C : IComparable<C>
-        where I : IInterval<C, M>, new()
-        where M : IMetaData, new()
+        where C : IComparable<C>, IFormattable
+        where I : IInterval<C, M>, IFormattable, new()
+        where M : IMetaData, IFormattable, new()
     {        
-        public Di3B(string workingDirectory, Memory Memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Di3B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
 
-            genome = new Genome<C, I, M>(workingDirectory, Memory, hddPerformance, CSerializer, CComparer);
+            genome = new Genome<C, I, M>(workingDirectory, sectionTitle, Memory, hddPerformance, CSerializer, CComparer);
         }
 
         private ISerializer<C> CSerializer { set; get; }

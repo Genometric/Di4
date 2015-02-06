@@ -1,8 +1,9 @@
-﻿using Interfaces;
+﻿using System;
+using IGenomics;
 
 namespace Di3BCLI
 {
-    public class Peak : IInterval<int, PeakData>
+    public class Peak : IInterval<int, PeakData>, IFormattable
     {
         /*public Peak() // this part is added later after seeing problems with BEDParser. This part is also available with previous version.
         {
@@ -31,5 +32,18 @@ namespace Di3BCLI
 
 
         public uint hashKey { set; get; }
+
+        public string ToString(string separator = "\t")
+        {
+            return
+                left.ToString() + separator +
+                right.ToString() + separator +
+                metadata.ToString();
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            return "null";
+        }
     }
 }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interfaces;
+using IGenomics;
 using CSharpTest.Net.Collections;
 
 namespace DI3
 {
     internal class BulkIndex<C, I, M>
-        where C : IComparable<C>
+        where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {

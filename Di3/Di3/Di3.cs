@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using Interfaces;
+using IGenomics;
 using CSharpTest.Net.Threading;
-using System.Diagnostics;
 using CSharpTest.Net.Synchronization;
 using System.Linq;
-using System.Collections.Concurrent;
 
 namespace DI3
 {
@@ -30,7 +28,7 @@ namespace DI3
     /// type of pointer to descriptive hashKey cooresponding
     /// to the _interval.</typeparam>
     public class Di3<C, I, M> : IDisposable
-        where C : IComparable<C>
+        where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {

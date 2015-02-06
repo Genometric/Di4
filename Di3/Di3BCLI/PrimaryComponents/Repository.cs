@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using BEDParser;
 using GIFP;
 
 namespace Di3BCLI

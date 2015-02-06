@@ -1,5 +1,5 @@
 ﻿using CSharpTest.Net.Collections;
-using Interfaces;
+using IGenomics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace DI3
 {
     internal class HigherOrderFuncs<C, I, M, O>
-        where C : IComparable<C>
+        where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {

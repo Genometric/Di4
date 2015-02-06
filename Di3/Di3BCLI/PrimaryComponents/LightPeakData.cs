@@ -1,5 +1,5 @@
 ﻿using System;
-using Interfaces;
+using IGenomics;
 
 namespace Di3BCLI
 {

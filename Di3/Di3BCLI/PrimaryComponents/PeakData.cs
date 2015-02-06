@@ -1,12 +1,12 @@
 ﻿using System;
-using Interfaces;
+using IGenomics;
 
 namespace Di3BCLI
 {
     /// <summary>
     /// Representing ChIP-seq Peak Metadata.
     /// </summary>
-    public class PeakData : IExtMetaData<int>
+    public class PeakData : IChIPSeqPeak, IFormattable
     {
         /// <summary>
         /// Sets and gets peak name.
@@ -16,12 +16,12 @@ namespace Di3BCLI
         /// <summary>
         /// Gets the left-end of the interval.
         /// </summary>
-        public int left { set; get; }
+        //public int left { set; get; }
 
         /// <summary>
         /// Gets the right-end of the interval.
         /// </summary>
-        public int right { set; get; }
+        //public int right { set; get; }
 
         /// <summary>
         /// Sets and gets peak value.
@@ -34,5 +34,18 @@ namespace Di3BCLI
         /// Dr. Dobb's left method.
         /// </summary>
         public UInt32 hashKey { set; get; }
+
+        public string ToString(string separator = "\t")
+        {
+            return
+                //left.ToString() + separator +
+                //right.ToString() + separator +
+                name + separator +
+                value.ToString();
+        }
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            return "null";
+        }
     }
 }

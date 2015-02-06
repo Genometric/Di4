@@ -1,15 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A22F1A77-6131-413A-A9D7-062DC73406DA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEDParser", "BEDParser\BEDParser.csproj", "{A8579878-71FA-44B1-9FCF-62C88CBE5248}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{1BE54F6E-6B8D-44ED-A66B-99F406B5099B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{EE126208-2F58-446F-9476-00F833CA965F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3", "Di3\Di3.csproj", "{A18501A2-6959-40B2-9D17-9BB563C51BDC}"
 EndProject
@@ -38,59 +32,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{42546D
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 10
+		SccNumberOfProjects = 8
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = BEDParser\\BEDParser.csproj
+		SccProjectUniqueName1 = Di3\\Di3.csproj
 		SccProjectTopLevelParentUniqueName1 = Di3.sln
-		SccProjectName1 = BEDParser
-		SccLocalPath1 = BEDParser
-		SccProjectUniqueName2 = Interfaces\\Interfaces.csproj
+		SccProjectName1 = Di3
+		SccLocalPath1 = Di3
+		SccProjectUniqueName2 = Di3B\\Di3B.csproj
 		SccProjectTopLevelParentUniqueName2 = Di3.sln
-		SccProjectName2 = Interfaces
-		SccLocalPath2 = Interfaces
-		SccProjectUniqueName3 = Di3\\Di3.csproj
+		SccProjectName2 = Di3B
+		SccLocalPath2 = Di3B
+		SccProjectUniqueName3 = OldDi3\\OldDi3.csproj
 		SccProjectTopLevelParentUniqueName3 = Di3.sln
-		SccProjectName3 = Di3
-		SccLocalPath3 = Di3
-		SccProjectUniqueName4 = Di3B\\Di3B.csproj
+		SccProjectName3 = OldDi3
+		SccLocalPath3 = OldDi3
+		SccProjectUniqueName4 = IndexSpeedTest\\IndexSpeedTest.csproj
 		SccProjectTopLevelParentUniqueName4 = Di3.sln
-		SccProjectName4 = Di3B
-		SccLocalPath4 = Di3B
-		SccProjectUniqueName5 = OldDi3\\OldDi3.csproj
+		SccProjectName4 = IndexSpeedTest
+		SccLocalPath4 = IndexSpeedTest
+		SccProjectUniqueName5 = MapSpeedTest\\MapSpeedTest.csproj
 		SccProjectTopLevelParentUniqueName5 = Di3.sln
-		SccProjectName5 = OldDi3
-		SccLocalPath5 = OldDi3
-		SccProjectUniqueName6 = IndexSpeedTest\\IndexSpeedTest.csproj
+		SccProjectName5 = MapSpeedTest
+		SccLocalPath5 = MapSpeedTest
+		SccProjectUniqueName6 = BPlusTreeTest\\BPlusTreeTest.csproj
 		SccProjectTopLevelParentUniqueName6 = Di3.sln
-		SccProjectName6 = IndexSpeedTest
-		SccLocalPath6 = IndexSpeedTest
-		SccProjectUniqueName7 = MapSpeedTest\\MapSpeedTest.csproj
-		SccProjectTopLevelParentUniqueName7 = Di3.sln
-		SccProjectName7 = MapSpeedTest
-		SccLocalPath7 = MapSpeedTest
-		SccProjectUniqueName8 = BPlusTreeTest\\BPlusTreeTest.csproj
-		SccProjectTopLevelParentUniqueName8 = Di3.sln
-		SccProjectName8 = BPlusTreeTest
-		SccLocalPath8 = BPlusTreeTest
-		SccProjectUniqueName9 = Di3BCLI\\Di3BCLI.csproj
-		SccProjectName9 = Di3BCLI
-		SccLocalPath9 = Di3BCLI
+		SccProjectName6 = BPlusTreeTest
+		SccLocalPath6 = BPlusTreeTest
+		SccProjectUniqueName7 = Di3BCLI\\Di3BCLI.csproj
+		SccProjectName7 = Di3BCLI
+		SccLocalPath7 = Di3BCLI
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8579878-71FA-44B1-9FCF-62C88CBE5248}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE126208-2F58-446F-9476-00F833CA965F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE126208-2F58-446F-9476-00F833CA965F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE126208-2F58-446F-9476-00F833CA965F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE126208-2F58-446F-9476-00F833CA965F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A18501A2-6959-40B2-9D17-9BB563C51BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A18501A2-6959-40B2-9D17-9BB563C51BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A18501A2-6959-40B2-9D17-9BB563C51BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -124,10 +102,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A8579878-71FA-44B1-9FCF-62C88CBE5248} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
 		{A18501A2-6959-40B2-9D17-9BB563C51BDC} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
-		{EE126208-2F58-446F-9476-00F833CA965F} = {1BE54F6E-6B8D-44ED-A66B-99F406B5099B}
 		{5D319E83-E522-44B4-BDF8-C331CE8F57F2} = {189C970C-43D3-474D-B0FB-9888DA972B87}
 		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 		{39F5704E-F83C-42E2-A09E-1E453C66ED04} = {D4532791-94FB-467A-83D1-5D449D3A3653}

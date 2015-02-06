@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Concurrent;
 
+
 namespace Di3B
 {
     public class FunctionOutput<O>

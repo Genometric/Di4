@@ -1,5 +1,5 @@
 ﻿using CSharpTest.Net.Collections;
-using Interfaces;
+using IGenomics;
 using System;
 using System.Collections.Generic;
 
@@ -22,7 +22,7 @@ namespace DI3
     /// type of pointer to descriptive hashKey cooresponding
     /// to the interval.</typeparam>
     internal class SingleIndex<C, I, M>
-        where C : IComparable<C>
+        where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {

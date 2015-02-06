@@ -2,28 +2,28 @@
 using CSharpTest.Net.Serialization;
 using DI3;
 using Di3B.Logging;
-using Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using IGenomics;
 
 namespace Di3B
 {
     public class Genome<C, I, M>
-        where C : IComparable<C>
-        where I : IInterval<C, M>, new()
-        where M : IMetaData, new()
+        where C : IComparable<C>, IFormattable
+        where I : IInterval<C, M>, IFormattable, new()
+        where M : IMetaData, IFormattable, new()
     {
-        public Genome(string workingDirectory, Memory memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
-        {
+        public Genome(string workingDirectory, string sectionTitle, Memory memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        {            
             _memory = memory;
             _hddPerformance = hddPerformance;
             _CSerializer = CSerializer;
             _CComparer = CComparer;
-            _sectionName = "Chromosome";
+            _sectionTitle = sectionTitle;
             _processorCount = Environment.ProcessorCount;
 
             _config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -37,9 +37,9 @@ namespace Di3B
             {
                 chrs = new Dictionary<string, Dictionary<char, Di3<C, I, M>>>();
 
-                _chrSection = (ChrSection)ConfigurationManager.GetSection(_sectionName);
+                _chrSection = (ChrSection)ConfigurationManager.GetSection(_sectionTitle);
                 if (_chrSection == null) _chrSection = new ChrSection();
-                ConfigurationManager.RefreshSection(_sectionName);
+                ConfigurationManager.RefreshSection(_sectionTitle);
 
                 foreach (ChrConfigElement element in _chrSection.genomeChrs)
                 {
@@ -53,7 +53,7 @@ namespace Di3B
         }
 
 
-        private string _sectionName { set; get; }
+        private string _sectionTitle { set; get; }
         private int _processorCount { set; get; }
         private KeyValueConfigurationCollection _settings { set; get; }
         private ISerializer<C> _CSerializer { set; get; }
@@ -75,13 +75,13 @@ namespace Di3B
             {
                 case Memory.HDD:
                     if (_chrSection == null) _chrSection = new ChrSection();
-                    ConfigurationManager.RefreshSection(_sectionName);
+                    ConfigurationManager.RefreshSection(_sectionTitle);
 
                     switch (_hddPerformance)
                     {
                         case HDDPerformance.LeastMemory:
                             foreach (var chr in peaks)
-                                foreach(var strandEntry in chr.Value)
+                                foreach (var strandEntry in chr.Value)
                                     using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand)))) // this might be wrong
                                     {
                                         stpWtch.Start();
@@ -107,11 +107,11 @@ namespace Di3B
                     }
 
 
-                    if (_config.Sections[_sectionName] == null)
-                        _config.Sections.Add(_sectionName, _chrSection);
+                    if (_config.Sections[_sectionTitle] == null)
+                        _config.Sections.Add(_sectionTitle, _chrSection);
 
                     _config.Save(ConfigurationSaveMode.Modified);
-                    ConfigurationManager.RefreshSection(_sectionName);
+                    ConfigurationManager.RefreshSection(_sectionTitle);
                     break;
 
                 case Memory.RAM:
@@ -147,7 +147,7 @@ namespace Di3B
                     if (!result.Chrs[chr.Key].ContainsKey(sDi3.Key)) result.Chrs[chr.Key].Add(sDi3.Key, new ConcurrentBag<Output<C, I, M>>());
 
                     stpWtch.Start();
-                    switch(coverVariation)
+                    switch (coverVariation)
                     {
                         case CoverVariation.Cover:
                             sDi3.Value.Cover<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, _processorCount);

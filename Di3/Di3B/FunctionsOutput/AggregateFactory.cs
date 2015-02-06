@@ -1,13 +1,13 @@
 ﻿using System;
 using DI3;
-using Interfaces;
+using IGenomics;
 
 namespace Di3B
 {
     public class AggregateFactory<C, I, M>
-        where C : IComparable<C>
-        where I : IInterval<C, M>, new()
-        where M : IMetaData, new()
+        where C : IComparable<C>, IFormattable
+        where I : IInterval<C, M>, IFormattable, new()
+        where M : IMetaData, IFormattable, new()
     {
         public ICSOutput<C, I, M, Output<C, I, M>> GetAggregateFunction(Aggregate aggregate)
         {

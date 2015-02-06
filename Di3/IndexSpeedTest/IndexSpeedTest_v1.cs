@@ -6,6 +6,7 @@ using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
 using Di3BCLI;
 using System.Collections.Generic;
+using IGenomics;
 
 namespace IndexSpeedTest
 {

@@ -2,12 +2,9 @@
 
 namespace Interfaces
 {
-    public interface IMetaData/*<C>*/
+    public interface IMetaData
     {
-        //string name { set; get; }
-        //C left { set; get; }
-        //C right { set; get; }
-        //double value { set; get; }
         UInt32 hashKey { set; get; }
+        /// maybe it would be better to change this to sample hashKey. 
     }
 }

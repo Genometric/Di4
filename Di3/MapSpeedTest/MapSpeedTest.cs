@@ -17,12 +17,11 @@ namespace MapSpeedTest
 
         public void Run(string IndexFile,
             int RegionCount,
-            /*int MinGap,
-            int MaxGap,*/
             int MinLenght,
             int MaxLenght)
         {
-            List<LightPeak> Peaks = new List<LightPeak>();
+            /// the following were using LightPeak.
+            List<Peak> Peaks = new List<Peak>();
             Random rnd = new Random();
             int rndLeft = 0;
             int rndRight = 0;
@@ -44,7 +43,7 @@ namespace MapSpeedTest
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
-            using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
+            using (var di3 = new Di3<int, Peak, PeakData>(options))
             {
 
                 for (int i = 0; i < 10; i++)
@@ -59,24 +58,21 @@ namespace MapSpeedTest
                         rndLeft = rnd.Next(0, 1000000);
                         rndRight = rndLeft + rnd.Next(MinLenght, MaxLenght);
 
-                        Peaks.Add(new LightPeak()
+                        Peaks.Add(new Peak()
                         {
                             left = rndLeft,
                             right = rndRight,
                             hashKey = (uint)rnd.Next(1, 1000000)
-                            /*metadata = new LightPeakData()
-                            {
-                                hashKey = (uint)rnd.Next(1, 1000000)
-                            }*/
                         });
                     }
                     Console.Write("Done!");
                     Console.WriteLine("");
 
                     stopWatch.Restart();
-                    //var output = new FunctionOutput<Output<int, LightPeak, LightPeakData>>();
-                    var outputStrategy = new AggregateFactory<int, LightPeak, LightPeakData>().GetAggregateFunction(Aggregate.Count);
-                    di3.Map<Output<int, LightPeak, LightPeakData>>(ref outputStrategy, Peaks, cpuCount);
+                    
+                    /// the following functions were using Light version of Peak and PeakData.
+                    var outputStrategy = new AggregateFactory<int, Peak, PeakData>().GetAggregateFunction(Aggregate.Count);
+                    di3.Map<Output<int, Peak, PeakData>>(ref outputStrategy, Peaks, cpuCount);
                     stopWatch.Stop();
                     Console.WriteLine("");
                     Console.WriteLine("ET: {0}", stopWatch.Elapsed);

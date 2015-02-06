@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Di3B;
 using System.IO;
-using BEDParser;
 using System.Diagnostics;
 using Di3B.Logging;
-using BEDParser.AssembliesInfo;
+using System.Configuration;
+using GIFP;
+using IGenomics;
 
 namespace Di3BCLI
 {
@@ -16,16 +17,18 @@ namespace Di3BCLI
         {
             _workingDirectory = workingDirectory;
             _logFileExtension = logFileExtension;
+            _sectionTitle = "Chromosome";
 
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<int, uint>();
             stopWatch = new Stopwatch();
             parserSTW = new Stopwatch();
-            di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
+            di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
         }
 
         private string _workingDirectory { set; get; }
         private string _logFileExtension { set; get; }
+        private string _sectionTitle { set; get; }
         private Stopwatch stopWatch { set; get; }
         private Stopwatch parserSTW { set; get; }
         Di3B<int, Peak, PeakData> di3B { set; get; }
@@ -38,69 +41,76 @@ namespace Di3BCLI
 
             string[] splittedCommand = command.Split(' ');
 
-            if (splittedCommand.Length > 1)
+            switch (splittedCommand[0].ToLower())
             {
-                switch (splittedCommand[0].ToLower())
-                {
-                    case "exit":
-                        return true;
+                case "exit":
+                    return true;
 
-                    case "index":
-                        stopWatch.Restart();
-                        if (!Index(splittedCommand))
-                        {
-                            stopWatch.Stop();
-                            return false;
-                        }
-                        break;
-
-                    case "batchindex":
-                        stopWatch.Restart();
-                        if (!BatchIndex(splittedCommand))
-                        {
-                            stopWatch.Stop();
-                            return false;
-                        }
-                        break;
-
-                    case "cover":
-                    case "summit":
-                        stopWatch.Restart();
-                        if (!Cover(splittedCommand, splittedCommand[0].ToLower()))
-                        {
-                            stopWatch.Stop();
-                            return false;
-                        }
-                        break;
-
-                    case "map": // example: Map E:\refChr.bed * count
-                        stopWatch.Restart();
-                        if (!Map(splittedCommand))
-                        {
-                            stopWatch.Stop();
-                            return false;
-                        }
-                        break;
-
-
-                    default:
-                        Herald.Announce(Herald.MessageType.Error, "Unknown Command");
+                case "index":
+                    stopWatch.Restart();
+                    if (!Index(splittedCommand))
+                    {
+                        stopWatch.Stop();
                         return false;
-                }
-            }
-            else
-            {
-                if (splittedCommand[0].ToLower() == "exit") return true;
-                else
-                {
-                    Herald.Announce(Herald.MessageType.Error, "Unknown command, or missing parameters");
+                    }
+                    break;
+
+                case "batchindex":
+                    stopWatch.Restart();
+                    if (!BatchIndex(splittedCommand))
+                    {
+                        stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "cover":
+                case "summit":
+                    stopWatch.Restart();
+                    if (!Cover(splittedCommand))
+                    {
+                        stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "map": // example: Map E:\refChr.bed * count
+                    stopWatch.Restart();
+                    if (!Map(splittedCommand))
+                    {
+                        stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "stats":
+                    ReportStats();
                     return false;
-                }
+
+
+                default:
+                    Herald.Announce(Herald.MessageType.Error, "Unknown Command.");
+                    return false;
             }
+
 
             stopWatch.Stop();
             Herald.Announce(Herald.MessageType.Success, String.Format("    Overall ET: {0}", stopWatch.Elapsed.ToString()));
             return false;
+        }
+
+        private void ReportStats()
+        {
+            ChrSection chrSection = (ChrSection)ConfigurationManager.GetSection(_sectionTitle);
+            if (chrSection == null)
+            {
+                Herald.Announce(Herald.MessageType.Info, "Configuration does not contain any Di3 index.");
+                return;
+            }
+
+            Herald.Announce(Herald.MessageType.Info, String.Format("Configuration contains {0,5} chromosomes as following:", chrSection.genomeChrs.Count));
+            foreach (ChrConfigElement element in chrSection.genomeChrs)
+                Herald.Announce(Herald.MessageType.Info, String.Format("Chromosome {0,5} is indexed in Di3 file: {1}", element.chr, element.index));
         }
 
 
@@ -113,7 +123,7 @@ namespace Di3BCLI
             }
 
             if (!Load(args[1])) return false;
-            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.peaks));
+            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.intervals));
             return true;
         }
         private bool BatchIndex(string[] args)
@@ -135,7 +145,7 @@ namespace Di3BCLI
                 return false;
             }
 
-            /// Check validity of the extension
+            /// Checks the validity of the extension
             string extension = args[1].Substring(2, args[1].Length - 2);
             char[] invalidChars = Path.GetInvalidFileNameChars();
             foreach (char c in invalidChars)
@@ -174,7 +184,7 @@ namespace Di3BCLI
             if (!ValidateFileName(fileName, out fileName)) return false;
 
             parserSTW.Restart();
-            BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileName, AvailableGenomes.HomoSapiens, AvailableAssemblies.hm19);
+            BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileName, Genomes.HomoSapiens, Assemblies.hm19, true);
 
             try { Repository.parsedSample = bedParser.Parse(); }
             catch (Exception e)
@@ -188,14 +198,13 @@ namespace Di3BCLI
             }
             parserSTW.Stop();
 
-            Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedSample.peaksCount, parserSTW.Elapsed));
+            Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedSample.intervalsCount, parserSTW.Elapsed));
             
             return true;
         }
-
-        private bool Cover(string[] args, string coverORsummit)
+        private bool Cover(string[] args)
         {
-            if (args.Length < 5)
+            if (args.Length < 6)
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Missing parameter."));
                 return false;
@@ -203,28 +212,43 @@ namespace Di3BCLI
 
             char strand;
             byte minAcc, maxAcc;
+            string coverOrSummit = args[0].ToLower();
+            string resultFile = "";
+            Uri resultsFileURI = null;
 
-            if (!Char.TryParse(args[1], out strand))
+            if (Path.GetDirectoryName(args[1]).Trim() == "")
+                args[1] = _workingDirectory + Path.GetFileName(args[1]);
+
+            if (Uri.TryCreate(args[1], UriKind.Absolute, out resultsFileURI) == false ||
+                    Path.GetFileName(resultsFileURI.AbsolutePath) == null ||
+                    Path.GetFileName(resultsFileURI.AbsolutePath).Trim() == "")
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid results file."));
+                return false;
+            }
+            resultFile = resultsFileURI.AbsolutePath;
+
+            if (!Char.TryParse(args[2], out strand))
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid strand parameter."));
                 return false;
             }
-            if (!Byte.TryParse(args[2], out minAcc))
+            if (!Byte.TryParse(args[3], out minAcc))
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid minimum accumulation parameter."));
                 return false;
             }
-            if (!Byte.TryParse(args[3], out maxAcc))
+            if (!Byte.TryParse(args[4], out maxAcc))
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid maximum accumulation parameter."));
                 return false;
             }
 
             Aggregate agg = Aggregate.Count;
-            if (!String2Aggregate(args[4], out agg)) return false;
+            if (!String2Aggregate(args[5], out agg)) return false;
 
-            FunctionOutput<Output<int, Peak, PeakData>> result;
-            switch (coverORsummit)
+            FunctionOutput<Output<int, Peak, PeakData>> result = null;
+            switch (coverOrSummit)
             {
                 case "cover":
                     Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result));
@@ -235,9 +259,10 @@ namespace Di3BCLI
                     break;
             }
 
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result));
+
             return true;
         }
-
         private bool Map(string[] args)
         {
             if (args.Length != 4)
@@ -259,7 +284,7 @@ namespace Di3BCLI
             if (!Load(args[1])) return false;
 
             FunctionOutput<Output<int, Peak, PeakData>> result;
-            Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.peaks, agg, out result));
+            Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result));
 
             return true;
         }

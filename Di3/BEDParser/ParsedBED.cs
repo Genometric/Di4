@@ -5,8 +5,9 @@ using Interfaces;
 namespace BEDParser
 {
     public class ParsedBED<C, I, M>
+        where C : IFormattable
         where I : IInterval<C, M>, new()
-        where M : IExtMetaData<C>, new()
+        where M : IExtMetaData/*<C>*/, new()
     {
         public string fileName { set; get; }
         public string filePath { set; get; }
@@ -27,8 +28,8 @@ namespace BEDParser
             chrStatistics = new Dictionary<string, ChrStatistics>();
             messages = new List<string>();
             peaks = new Dictionary<string, Dictionary<char, List<I>>>();
-            pValueMax = new I() { left = default(C), right = default(C), metadata = new M() { left = default(C), right = default(C), name = "di3", value = 0 } };
-            pValueMin = new I() { left = default(C), right = default(C), metadata = new M() { left = default(C), right = default(C), name = "di3", value = 0 } };
+            pValueMax = new I() { left = default(C), right = default(C), metadata = new M() { /*left = default(C), right = default(C),*/ name = "di3", value = 0 } };
+            pValueMin = new I() { left = default(C), right = default(C), metadata = new M() { /*left = default(C), right = default(C),*/ name = "di3", value = 0 } };
         }
     }
 }

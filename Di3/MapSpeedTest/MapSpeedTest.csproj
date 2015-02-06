@@ -44,6 +44,9 @@
     <Reference Include="CSharpTest.Net.Library">
       <HintPath>..\packages\CSharpTest.Net.Library.2.14.126.467\lib\net45\CSharpTest.Net.Library.dll</HintPath>
     </Reference>
+    <Reference Include="IGenomics">
+      <HintPath>..\..\..\..\..\03 - IGenomics\IGenomic\IGenomics\IGenomics\bin\Debug\IGenomics.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
@@ -77,10 +80,6 @@
     <ProjectReference Include="..\Di3\Di3.csproj">
       <Project>{a18501a2-6959-40b2-9d17-9bb563c51bdc}</Project>
       <Name>Di3</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{ee126208-2f58-446f-9476-00f833ca965f}</Project>
-      <Name>Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

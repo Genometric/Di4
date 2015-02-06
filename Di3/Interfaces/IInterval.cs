@@ -1,7 +1,9 @@
 ﻿
+using System;
 namespace Interfaces
 {
     public interface IInterval<C, M>
+        where C : IFormattable
     {
         /// <summary>
         /// Gets the left-end of the interval.
@@ -22,11 +24,8 @@ namespace Interfaces
         /// an entry ID on database, or etc. 
         /// </summary>
         M metadata { set; get; }
-        // this shall be removed.
-
-
+        
 
         uint hashKey { set; get; }
-
     }
 }

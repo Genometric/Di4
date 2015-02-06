@@ -9,7 +9,7 @@ namespace BEDParser
 {
     public class BEDParser<I, M>
         where I : IInterval<int, M>, new()
-        where M : IExtMetaData<int>, new()
+        where M : IExtMetaData/*<int>*/, new()
     {
 
         /// <summary>
@@ -441,8 +441,8 @@ namespace BEDParser
                                 {
                                     readingPeak.left = left;
                                     readingPeak.right = right;
-                                    readingPeak.metadata.left = left;
-                                    readingPeak.metadata.right = right;
+                                    /*readingPeak.metadata.left = left;
+                                    readingPeak.metadata.right = right;*/
                                 }
                                 else
                                 {

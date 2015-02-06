@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Interfaces;
+using IGenomics;
 using System.Collections.Concurrent;
 
 namespace DI3
@@ -21,7 +21,7 @@ namespace DI3
     /// to the _interval.</typeparam>
     /// <typeparam name="O"></typeparam>
     public interface ICSOutput<C, I, M, O>
-        where C : IComparable<C>
+        where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {

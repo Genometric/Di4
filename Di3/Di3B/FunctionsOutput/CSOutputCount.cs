@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DI3;
-using Interfaces;
+using IGenomics;
 using System.Collections.Concurrent;
 
 namespace Di3B
@@ -12,9 +12,9 @@ namespace Di3B
     /// as aggregate function.
     /// </summary>
     public class CSOutputCount<C, I, M> : ICSOutput<C, I, M, Output<C, I, M>>
-        where C : IComparable<C>
-        where I : IInterval<C, M>, new()
-        where M : IMetaData, new()
+        where C : IComparable<C>, IFormattable
+        where I : IInterval<C, M>, IFormattable, new()
+        where M : IMetaData, IFormattable, new()
     {
         public CSOutputCount()
         {
