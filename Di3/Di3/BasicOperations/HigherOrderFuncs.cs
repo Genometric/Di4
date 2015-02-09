@@ -148,8 +148,8 @@ namespace DI3
                 _intervalsKeys.Clear();
 
                 #region .::.     a quick note     .::.
-                /// This iteration starts from a bookmark which it's key (i.e., coordinate)
-                /// is the minimum >= to reference.left; and goes to the bookmark which the key
+                /// This iteration starts from a bookmark which it's newKey (i.e., coordinate)
+                /// is the minimum >= to reference.currentBlockLeftEnd; and goes to the bookmark which the newKey
                 /// is maximum <= to reference.right. Of course if no such blocks are available
                 /// this iteration wont iteratre over anything. 
                 #endregion

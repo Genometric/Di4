@@ -28,9 +28,9 @@ namespace DI3
     {
         /// <summary>
         /// Provides efficient means of inserting an 
-        /// interval to DI3; i.e., di3 indexding.
+        /// interval to DI3; i.e., _di3_1R indexding.
         /// </summary>
-        /// <param name="_di3">The reference di3 to be 
+        /// <param name="_di3">The reference _di3_1R to be 
         /// manipulated.</param>
         internal SingleIndex(BPlusTree<C, B> di3)
         {
@@ -42,29 +42,53 @@ namespace DI3
             _intervals = Intervals;
             _start = Start;
             _stop = Stop;
-            _mode = mode;            
+            _mode = mode;
         }
 
         
 
         /// <summary>
-        /// Sets and gets the di3 data structure
+        /// Sets and gets the _di3_1R data structure
         /// to be manipulated. This data structure
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
         private BPlusTree<C, B> _di3 { set; get; }
-        /// <summary>
-        /// Sets and Gets the interval to 
-        /// be added to di3. 
-        /// </summary>
-        private I _interval { set; get; }
         private Mode _mode { set; get; }
-        private List<I> _intervals { set; get; }
         private int _start { set; get; }
         private int _stop { set; get; }
+        /// <summary>
+        /// Sets and Gets the interval to 
+        /// be added to _di3_1R. 
+        /// </summary>
+        private I _interval { set; get; }
+        private List<I> _intervals { set; get; }
         private AddUpdateValue update = new AddUpdateValue();
+        
 
+        public void Index()
+        {
+            int i;
+            switch (_mode)
+            {
+                case Mode.SinglePass:
+                    for (i = _start; i < _stop; i++)
+                        Index(_intervals[i]);
+                    break;
+
+                case Mode.MultiPass:
+                    for (i = _start; i < _stop; i++)
+                    {
+                        update.hashKey = _intervals[i].hashKey;
+                        update.tau = 'L';
+                        _di3.AddOrUpdate(_intervals[i].left, ref update);
+
+                        update.tau = 'R';
+                        _di3.AddOrUpdate(_intervals[i].right, ref update);
+                    }
+                    break;
+            }
+        }
 
         /// <summary>
         /// Indexes the provided interval.
@@ -133,30 +157,6 @@ namespace DI3
             }
         }
 
-        public void Index()
-        {
-            int i;
-            switch (_mode)
-            {
-                case Mode.SinglePass:
-                    for (i = _start; i < _stop; i++)
-                        Index(_intervals[i]);
-                    break;
-
-                case Mode.MultiPass:
-                    for (i = _start; i < _stop; i++)
-                    {
-                        update.hashKey = _intervals[i].hashKey;
-                        update.tau = 'L';
-                        _di3.AddOrUpdate(_intervals[i].left, ref update);
-
-                        update.tau = 'R';
-                        _di3.AddOrUpdate(_intervals[i].right, ref update);
-                    }
-                    break;
-            }
-        }
-
         public int SecondPass()
         {
             int blockCount = 0;
@@ -209,7 +209,7 @@ namespace DI3
 
                 switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // _interval.right is bigger than item.key
+                    case 1: // _interval.right is bigger than item.newKey
                         _di3.AddOrUpdate(_interval.left, ref update);
 
                         update.tau = 'M';

@@ -8,7 +8,7 @@ namespace Di3B
 {
     /// <summary>
     /// Cover/Summit Output with the Count of regions present 
-    /// at position determined by 'left' and 'right' coordinate, 
+    /// at position determined by 'currentBlockLeftEnd' and 'right' coordinate, 
     /// as aggregate function.
     /// </summary>
     public class CSOutputCount<C, I, M> : ICSOutput<C, I, M, Output<C, I, M>>

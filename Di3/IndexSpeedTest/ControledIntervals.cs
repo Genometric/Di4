@@ -24,7 +24,7 @@ namespace IndexSpeedTest
             Di3Options<int> options = new Di3Options<int>(
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
                 PrimitiveSerializer.Int32, int32Comparer,
-                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle + ".idx");
+                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle);
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;
@@ -161,7 +161,7 @@ namespace IndexSpeedTest
             Di3Options<int> options = new Di3Options<int>(
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
                 PrimitiveSerializer.Int32, int32Comparer,
-                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle + ".idx");
+                path + Path.DirectorySeparatorChar + "Di3_" + TestTitle);
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;

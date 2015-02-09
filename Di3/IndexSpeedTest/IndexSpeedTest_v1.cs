@@ -36,7 +36,7 @@ namespace IndexSpeedTest
             Di3Options<int> options = new Di3Options<int>(
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
                 PrimitiveSerializer.Int32, int32Comparer, 
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName);
 
             options.AverageKeySize = 16;
             options.AverageValueSize = 1400;
@@ -58,13 +58,13 @@ namespace IndexSpeedTest
             /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
             using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
             {
-                //_di3.Add(new LightPeak() { left = 010, right = 050, hashKey = new LightPeakData() { hashKey = 0/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { left = 060, right = 100, hashKey = new LightPeakData() { hashKey = 1/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { left = 110, right = 140, hashKey = new LightPeakData() { hashKey = 2/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { left = 030, right = 055, hashKey = new LightPeakData() { hashKey = 3/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { left = 060, right = 080, hashKey = new LightPeakData() { hashKey = 4/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { left = 100, right = 110, hashKey = new LightPeakData() { hashKey = 5/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { left = 140, right = 180, hashKey = new LightPeakData() { hashKey = 6/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 010, right = 050, hashKey = new LightPeakData() { hashKey = 0/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 060, right = 100, hashKey = new LightPeakData() { hashKey = 1/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 110, right = 140, hashKey = new LightPeakData() { hashKey = 2/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 030, right = 055, hashKey = new LightPeakData() { hashKey = 3/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 060, right = 080, hashKey = new LightPeakData() { hashKey = 4/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 100, right = 110, hashKey = new LightPeakData() { hashKey = 5/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 140, right = 180, hashKey = new LightPeakData() { hashKey = 6/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
 
                 di3.Add(new LightPeak() { left = 100, right = 300, metadata = new LightPeakData() { hashKey = 1 } });
                 di3.Add(new LightPeak() { left = 200, right = 400, metadata = new LightPeakData() { hashKey = 2 } });
@@ -122,7 +122,7 @@ namespace IndexSpeedTest
             Di3Options<int> options = new Di3Options<int>(
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
                 PrimitiveSerializer.Int32, int32Comparer,
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName);
 
             options.AverageKeySize = 16;
             options.AverageValueSize = 1400;
@@ -251,7 +251,7 @@ namespace IndexSpeedTest
             Di3Options<int> options = new Di3Options<int>(
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
                 PrimitiveSerializer.Int32, int32Comparer,
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName);
 
             options.AverageKeySize = avgKeySize;
             options.AverageValueSize = avgValueSize;
@@ -369,7 +369,7 @@ namespace IndexSpeedTest
             Di3Options<int> options = new Di3Options<int>(
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
                 PrimitiveSerializer.Int32, int32Comparer,
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName);
 
 
             options.FileBlockSize = 512;
@@ -486,7 +486,7 @@ namespace IndexSpeedTest
             Di3Options<int> options = new Di3Options<int>(
                 CSharpTest.Net.Collections.CreatePolicy.IfNeeded,
                 PrimitiveSerializer.Int32, int32Comparer,
-                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName + ".idx");
+                OutputPath + Path.DirectorySeparatorChar + "Di3_" + TestName);
 
             options.AverageKeySize = avgKeySize;
             options.AverageValueSize = avgValueSize;
@@ -591,11 +591,11 @@ namespace IndexSpeedTest
                 /*
                 _di3.Add(new Peak()
                 {
-                    left = left,
+                    currentBlockLeftEnd = currentBlockLeftEnd,
                     right = right,
                     hashKey = new PeakData()
                     {
-                        left = left,
+                        currentBlockLeftEnd = currentBlockLeftEnd,
                         right = right,
                         name = RandomName(),
                         currentValue = rnd.NextDouble(),

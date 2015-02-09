@@ -53,7 +53,7 @@ namespace IndexSpeedTest
 
             #region .::.          Test 3          .::.
 
-            /// Spars Regions & Big node sizes (both key and currentValue)
+            /// Spars Regions & Big node sizes (both newKey and currentValue)
             /*
             indexSpeedTest_v1.Run(
                 2000,     // sample count
@@ -75,7 +75,7 @@ namespace IndexSpeedTest
 
             #region .::.          Test 4          .::.
 
-            /// Spars Regions & Small node sizes (both key and currentValue)
+            /// Spars Regions & Small node sizes (both newKey and currentValue)
             /*
             indexSpeedTest_v1.Run(
                 2000,     // sample count
@@ -115,7 +115,7 @@ namespace IndexSpeedTest
 
             #region .::.          Test 6          .::.
 
-            /// Sparse regions; tweak key-currentValue sizes.
+            /// Sparse regions; tweak newKey-currentValue sizes.
             /*
             indexSpeedTest_v1.Run(
                 2000,        // sample count
@@ -135,7 +135,7 @@ namespace IndexSpeedTest
 
             #region .::.          Test 7          .::.
 
-            /// Sparse regions; tweak key-currentValue sizes.
+            /// Sparse regions; tweak newKey-currentValue sizes.
             /*
             indexSpeedTest_v1.Run(
                 2000,        // sample count
@@ -155,7 +155,7 @@ namespace IndexSpeedTest
 
             #region .::.          Test 8          .::.
 
-            /// Sparse regions; tweak key-currentValue sizes.
+            /// Sparse regions; tweak newKey-currentValue sizes.
             /*
             indexSpeedTest_v1.Run(
                 2000,        // sample count
@@ -174,7 +174,7 @@ namespace IndexSpeedTest
 
             #region .::.          Test 9          .::.
 
-            /// Sparse regions; tweak key-currentValue sizes.            
+            /// Sparse regions; tweak newKey-currentValue sizes.            
             /*
             indexSpeedTest_v1.Run(
                 2000,            // sample count
@@ -193,7 +193,7 @@ namespace IndexSpeedTest
 
             #region .::.          Test 10         .::.
 
-            /// Sparse regions; tweak key-currentValue sizes.
+            /// Sparse regions; tweak newKey-currentValue sizes.
             /*
             indexSpeedTest_v1.Run(
                 2000,            // sample count

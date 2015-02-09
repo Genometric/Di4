@@ -13,7 +13,7 @@ namespace BPlusTreeTest
     {
         static void Main(string[] args)
         {
-            //BasicTest();
+            BasicTest();
 
             // A Runtime test for multiple insertions. 
             //TimeSpan elapsed = BasicInsertionSpeedTest(500000000);
@@ -89,6 +89,9 @@ namespace BPlusTreeTest
                 tree.TryGetValue(55, out value_of_invalid_key);
 
 
+                // The "100" key is not available and no key is available greater than
+                // that, hence .Current should return default value of key type (0 in this case).
+                var key_not_available = tree.EnumerateFrom(100).GetEnumerator().Current;
 
 
                 // Runtime error

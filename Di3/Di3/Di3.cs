@@ -103,19 +103,25 @@ namespace DI3
 
         public Di3(Di3Options<C> options)
         {
-            di3 = new BPlusTree<C, B>(GetTreeOptions(options));
-            INDEX = new SingleIndex<C, I, M>(di3);
+            _di3_1R = new BPlusTree<C, B>(Get1ROptions(options));
+            _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
+            INDEX = new SingleIndex<C, I, M>(_di3_1R);
 
-            /// This might decrease speed. 
+            /// This might slow-down the Add, Delete, and Update procedures.
             /// TODO: Test initialization with and without this command. 
-            di3.EnableCount();
+            _di3_1R.EnableCount();
         }
 
-        private BPlusTree<C, B> di3 { set; get; }
-        private BlockSerializer blockSerializer { set; get; }
-        private LambdaItemSerializer lambdaItemSerializer { set; get; }
-        private LambdaArraySerializer lambdaArraySerializer { set; get; }
-
+        /// <summary>
+        /// Di3 First resolution
+        /// </summary>
+        private BPlusTree<C, B> _di3_1R { set; get; }
+        private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
+        private BookmarkSerializer _bookmarkSerializer { set; get; }
+        private LambdaItemSerializer _lambdaItemSerializer { set; get; }
+        private LambdaArraySerializer _lambdaArraySerializer { set; get; }
+        private BlockKeySerializer<C> _blockKeySerializer { set; get; }
+        private BlockValueSerializer _blockValueSerializer { set; get; }
 
         /// <summary>
         /// Is an instance of SingleIndex class which 
@@ -127,15 +133,14 @@ namespace DI3
         /// <summary>
         /// Gets the number of blocks contained in DI3.
         /// </summary>
-        public int blockCount { private set { } get { return di3.Count; } }
+        public int blockCount { private set { } get { return _di3_1R.Count; } }
 
-        private BPlusTree<C, B>.OptionsV2 GetTreeOptions(Di3Options<C> options)
+        private BPlusTree<C, B>.OptionsV2 Get1ROptions(Di3Options<C> options)
         {
-            //bSerializer = new BSerializer<C, M>();
-            lambdaItemSerializer = new LambdaItemSerializer();
-            lambdaArraySerializer = new LambdaArraySerializer(lambdaItemSerializer);
-            blockSerializer = new BlockSerializer(lambdaArraySerializer);
-            var rtv = new BPlusTree<C, B>.OptionsV2(options.CSerializer, blockSerializer, options.Comparer);
+            _lambdaItemSerializer = new LambdaItemSerializer();
+            _lambdaArraySerializer = new LambdaArraySerializer(_lambdaItemSerializer);
+            _bookmarkSerializer = new BookmarkSerializer(_lambdaArraySerializer);
+            var rtv = new BPlusTree<C, B>.OptionsV2(options.CSerializer, _bookmarkSerializer, options.Comparer);
             rtv.ReadOnly = options.OpenReadOnly;
 
             if (options.MaximumChildNodes >= 4 &&
@@ -157,7 +162,68 @@ namespace DI3
 
             rtv.CachePolicy = options.CachePolicy;
             if (options.CreatePolicy != CreatePolicy.Never)
-                rtv.FileName = options.FileName;
+                rtv.FileName = options.FileName + ".idx1R";
+
+            rtv.CreateFile = options.CreatePolicy;
+            rtv.ExistingLogAction = options.ExistingLogAction;
+            rtv.StoragePerformance = options.StoragePerformance;
+
+            rtv.CallLevelLock = new ReaderWriterLocking();
+            if (options.LockTimeout > 0) rtv.LockTimeout = options.LockTimeout;
+
+            switch (options.Locking)
+            {
+                case LockMode.WriterOnlyLocking:
+                    rtv.LockingFactory = new LockFactory<WriterOnlyLocking>();
+                    break;
+
+                case LockMode.ReaderWriterLocking:
+                    rtv.LockingFactory = new LockFactory<ReaderWriterLocking>();
+                    break;
+
+                case LockMode.SimpleReadWriteLocking:
+                    rtv.LockingFactory = new LockFactory<SimpleReadWriteLocking>();
+                    break;
+
+                case LockMode.IgnoreLocking:
+                    rtv.LockingFactory = new IgnoreLockFactory();
+                    break;
+            }
+
+            if (options.CacheMaximumHistory != 0 && options.CacheKeepAliveTimeOut != 0)
+            {
+                rtv.CacheKeepAliveMaximumHistory = options.CacheMaximumHistory;
+                rtv.CacheKeepAliveMinimumHistory = options.CacheMinimumHistory;
+                rtv.CacheKeepAliveTimeout = options.CacheKeepAliveTimeOut;
+            }
+
+            return rtv;
+        }
+        private BPlusTree<BlockKey<C>, BlockValue>.OptionsV2 Get2ROptions(Di3Options<C> options)
+        {
+            /// TODO
+            /// Try to optimize these settings as much as possible.
+            
+            _blockKeySerializer = new BlockKeySerializer<C>(options.CSerializer);
+            _blockValueSerializer = new BlockValueSerializer();
+
+            var rtv = new BPlusTree<BlockKey<C>, BlockValue>.OptionsV2(_blockKeySerializer, _blockValueSerializer, new BlockKeyComparer<C>());
+            rtv.ReadOnly = options.OpenReadOnly;
+
+            rtv.MinimumChildNodes = 2;
+            rtv.MaximumChildNodes = 256;
+            rtv.MinimumValueNodes = 2;
+            rtv.MaximumValueNodes = 256;
+
+            rtv.FileBlockSize = 8192;
+
+            rtv.CachePolicy = CachePolicy.Recent;
+
+            rtv.StoragePerformance = StoragePerformance.Fastest;
+
+            rtv.CachePolicy = options.CachePolicy;
+            if (options.CreatePolicy != CreatePolicy.Never)
+                rtv.FileName = options.FileName + ".idx2R";
 
             rtv.CreateFile = options.CreatePolicy;
             rtv.ExistingLogAction = options.ExistingLogAction;
@@ -203,9 +269,9 @@ namespace DI3
         }
         public void Add(List<I> intervals, Mode mode)
         {
-            Add(intervals, Environment.ProcessorCount, mode);
+            Add(intervals, mode, Environment.ProcessorCount);
         }
-        public void Add(List<I> intervals, int threads, Mode mode)
+        public void Add(List<I> intervals, Mode mode, int threads)
         {
             int start = 0, stop = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             using (WorkQueue work = new WorkQueue(threads))
@@ -215,7 +281,7 @@ namespace DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > intervals.Count) stop = intervals.Count;
-                    work.Enqueue(new SingleIndex<C, I, M>(di3, intervals, start, stop, mode).Index);
+                    work.Enqueue(new SingleIndex<C, I, M>(_di3_1R, intervals, start, stop, mode).Index);
                 }
 
                 work.Complete(true, -1);
@@ -238,7 +304,7 @@ namespace DI3
                 for (int i = 0; i < nThreads; i++)                
                     work.Enqueue(
                         new HigherOrderFuncs<C, I, M, O>(
-                            di3,
+                            _di3_1R,
                             outputStrategy,
                             partitions[i].left,
                             partitions[i].right,
@@ -260,7 +326,7 @@ namespace DI3
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
                         new HigherOrderFuncs<C, I, M, O>(
-                            di3,
+                            _di3_1R,
                             outputStrategy,
                             partitions[i].left,
                             partitions[i].right,
@@ -287,7 +353,7 @@ namespace DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > references.Count) stop = references.Count;
-                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(di3, outputStrategy, references, start, stop).Map);
+                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(_di3_1R, outputStrategy, references, start, stop).Map);
                     else break;
                 }
 
@@ -300,24 +366,24 @@ namespace DI3
 
         private Partition<C>[] Fragment(int fCount)
         {
-            int range = Convert.ToInt32(Math.Floor((double)di3.Count / (double)fCount));
+            int range = Convert.ToInt32(Math.Floor((double)_di3_1R.Count / (double)fCount));
 
             /// Initialization
             Partition<C>[] partitions = new Partition<C>[fCount];
             for (int i = 0; i < fCount; i++)
             {
-                partitions[i].left = di3.ElementAtOrDefault((i * range) + 1).Key;
-                partitions[i].right = di3.ElementAtOrDefault((i + 1) * range).Key;
+                partitions[i].left = _di3_1R.ElementAtOrDefault((i * range) + 1).Key;
+                partitions[i].right = _di3_1R.ElementAtOrDefault((i + 1) * range).Key;
             }
-            partitions[0].left = di3.First().Key;
-            partitions[fCount - 1].right = di3.Last().Key;
+            partitions[0].left = _di3_1R.First().Key;
+            partitions[fCount - 1].right = _di3_1R.Last().Key;
 
             /// Refinement
             bool incrementRight = true;
             fCount--;
             for (int i = 0; i < fCount; i++)
             {
-                foreach (var bookmark in di3.EnumerateFrom(partitions[i].right))
+                foreach (var bookmark in _di3_1R.EnumerateFrom(partitions[i].right))
                 {
                     if (incrementRight)
                     {
@@ -355,8 +421,8 @@ namespace DI3
             if (disposing)
             {
                 // Free managed objects here. 
-                di3.Commit();
-                di3.Dispose();
+                _di3_1R.Commit();
+                _di3_1R.Dispose();
             }
 
             // Free unmanaged objects here. 

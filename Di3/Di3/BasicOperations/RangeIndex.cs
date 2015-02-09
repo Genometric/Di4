@@ -15,7 +15,7 @@ namespace DI3
         }
 
         /// <summary>
-        /// Sets and gets the di3 data structure
+        /// Sets and gets the _di3_1R data structure
         /// to be manipulated. This data structure
         /// is in common between all classes of 
         /// namespace.

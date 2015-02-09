@@ -23,7 +23,7 @@ namespace BPlusTreeTest
 
             BPlusTree<int, int>.OptionsV2 options = new BPlusTree<int, int>.OptionsV2(PrimitiveSerializer.Int32, PrimitiveSerializer.Int32);
             options.CreateFile = CreatePolicy.Always;
-            options.FileName = outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".idx";
+            options.FileName = outputPath + Path.DirectorySeparatorChar + "speed" + TestName;
 
 
             LargeInsertionAddUpdateValue update = new LargeInsertionAddUpdateValue();
@@ -62,7 +62,7 @@ namespace BPlusTreeTest
 
             BPlusTree<int, int>.OptionsV2 options = new BPlusTree<int, int>.OptionsV2(PrimitiveSerializer.Int32, PrimitiveSerializer.Int32);
             options.CreateFile = CreatePolicy.Always;
-            options.FileName = outputPath + Path.DirectorySeparatorChar + "speed" + TestName + ".idx";
+            options.FileName = outputPath + Path.DirectorySeparatorChar + "speed" + TestName;
 
 
             LargeInsertionAddUpdateValue update = new LargeInsertionAddUpdateValue();

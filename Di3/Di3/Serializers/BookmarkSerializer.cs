@@ -3,10 +3,10 @@ using System.Collections.ObjectModel;
 
 namespace DI3
 {
-    class BlockSerializer : ISerializer<B>
+    class BookmarkSerializer : ISerializer<B>
     {
         private readonly ISerializer<ReadOnlyCollection<Lambda>> _lambdaArraySerializer;
-        public BlockSerializer(ISerializer<ReadOnlyCollection<Lambda>> lambdaArraySerializer)
+        public BookmarkSerializer(ISerializer<ReadOnlyCollection<Lambda>> lambdaArraySerializer)
         {
             _lambdaArraySerializer = lambdaArraySerializer;
         }
