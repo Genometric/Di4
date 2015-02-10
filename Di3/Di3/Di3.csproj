@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuxiliaryComponents\BlockKeyComparer.cs" />
+    <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
     <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />
     <Compile Include="BasicOperations\BulkIndex.cs" />
     <Compile Include="BasicOperations\HigherOrderFuncs.cs" />

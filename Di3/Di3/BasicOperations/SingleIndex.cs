@@ -30,7 +30,7 @@ namespace DI3
         /// Provides efficient means of inserting an 
         /// interval to DI3; i.e., _di3_1R indexding.
         /// </summary>
-        /// <param name="_di3">The reference _di3_1R to be 
+        /// <param name="_di3_1R">The reference _di3_1R to be 
         /// manipulated.</param>
         internal SingleIndex(BPlusTree<C, B> di3)
         {

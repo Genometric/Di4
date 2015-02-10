@@ -62,7 +62,7 @@ namespace DI3
 
         private void Update(C leftEnd, C rightEnd, int maxAccumulation, int count)
         {
-            /// item is an element of di3 that intersects newKey.
+            /// item is an element of di3_1R that intersects newKey.
             var newKey = new BlockKey<C>(leftEnd, rightEnd);
             var newValue = new BlockValue(maxAccumulation, count);
 
@@ -77,7 +77,7 @@ namespace DI3
                 if (newKey.rightEnd.CompareTo(item.Key.leftEnd) == -1) // newKey.rightEnd < item.key.leftEnd
                     break;
 
-                /// The block that is already in di3 covers new interval,
+                /// The block that is already in di3_1R covers new interval,
                 /// therefore no update is required.
                 if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1 &&  // newKey.LeftEnd > item.newKey.LeftEnd
                     newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < item.newKey.rightEnd
@@ -94,7 +94,7 @@ namespace DI3
 
                 /// yeah, true ;-) process only one item. 
                 /// maybe there would be a better way to do this. 
-                /// possibly using: _di32R.EnumerateFrom(newKey).GetEnumerator().Current
+                /// possibly using: _di3_2R.EnumerateFrom(newKey).GetEnumerator().Current
                 /// we can do this iteration. But GetEnumerator throws an exception when tree
                 /// is empty, althougth that can be handled by a try-catch-finally but I guess
                 /// this method is more clean ;-)

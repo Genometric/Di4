@@ -58,13 +58,13 @@ namespace IndexSpeedTest
             /// should be in different trees. Hence I need to close the BPlusTrees at every taxonomy. 
             using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
             {
-                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 010, right = 050, hashKey = new LightPeakData() { hashKey = 0/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 060, right = 100, hashKey = new LightPeakData() { hashKey = 1/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 110, right = 140, hashKey = new LightPeakData() { hashKey = 2/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 030, right = 055, hashKey = new LightPeakData() { hashKey = 3/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 060, right = 080, hashKey = new LightPeakData() { hashKey = 4/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 100, right = 110, hashKey = new LightPeakData() { hashKey = 5/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
-                //_di3.Add(new LightPeak() { currentBlockLeftEnd = 140, right = 180, hashKey = new LightPeakData() { hashKey = 6/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3_1R.Add(new LightPeak() { currentBlockLeftEnd = 010, right = 050, hashKey = new LightPeakData() { hashKey = 0/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3_1R.Add(new LightPeak() { currentBlockLeftEnd = 060, right = 100, hashKey = new LightPeakData() { hashKey = 1/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3_1R.Add(new LightPeak() { currentBlockLeftEnd = 110, right = 140, hashKey = new LightPeakData() { hashKey = 2/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3_1R.Add(new LightPeak() { currentBlockLeftEnd = 030, right = 055, hashKey = new LightPeakData() { hashKey = 3/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3_1R.Add(new LightPeak() { currentBlockLeftEnd = 060, right = 080, hashKey = new LightPeakData() { hashKey = 4/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3_1R.Add(new LightPeak() { currentBlockLeftEnd = 100, right = 110, hashKey = new LightPeakData() { hashKey = 5/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
+                //_di3_1R.Add(new LightPeak() { currentBlockLeftEnd = 140, right = 180, hashKey = new LightPeakData() { hashKey = 6/*(UInt32)Math.Round(rnd.NextDouble() * 100000)*/ } }, 1, 1);
 
                 di3.Add(new LightPeak() { left = 100, right = 300, metadata = new LightPeakData() { hashKey = 1 } });
                 di3.Add(new LightPeak() { left = 200, right = 400, metadata = new LightPeakData() { hashKey = 2 } });
@@ -589,7 +589,7 @@ namespace IndexSpeedTest
                 left = right + rnd.Next(minGap, maxGap);
                 right = left + rnd.Next(minLenght, maxLenght);
                 /*
-                _di3.Add(new Peak()
+                _di3_1R.Add(new Peak()
                 {
                     currentBlockLeftEnd = currentBlockLeftEnd,
                     right = right,

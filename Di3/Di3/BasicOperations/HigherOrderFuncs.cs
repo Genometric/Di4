@@ -14,13 +14,13 @@ namespace DI3
     {
         internal HigherOrderFuncs(BPlusTree<C, B> di3)
         {
-            _di3 = di3;
+            _di3_1R = di3;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
         }
-        internal HigherOrderFuncs(BPlusTree<C, B> di3, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
+        internal HigherOrderFuncs(BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
         {
-            _di3 = di3;
+            _di3_1R = di3_1R;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
             _intervals = intervals;
@@ -28,9 +28,10 @@ namespace DI3
             _stop = stop;
             _outputStrategy = outputStrategy;
         }
-        internal HigherOrderFuncs(BPlusTree<C, B> di3, ICSOutput<C, I, M, O> outputStrategy, C left, C right, int minAcc, int maxAcc)
+        internal HigherOrderFuncs(BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, ICSOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
         {
-            _di3 = di3;
+            _di3_1R = di3_1R;
+            _di3_2R = di3_2R;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
             _left = left;
@@ -40,11 +41,12 @@ namespace DI3
             _outputStrategy = outputStrategy;
         }
 
-        private BPlusTree<C, B> _di3 { set; get; }
+        private BPlusTree<C, B> _di3_1R { set; get; }
+        private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
         private int _start { set; get; }
         private int _stop { set; get; }
-        private C _left { set; get; }
-        private C _right { set; get; }
+        private BlockKey<C> _left { set; get; }
+        private BlockKey<C> _right { set; get; }
         private int _minAcc { set; get; }
         private int _maxAcc { set; get; }
         private List<I> _intervals { set; get; }
@@ -55,13 +57,19 @@ namespace DI3
 
         internal void Cover()
         {
+            foreach(var block in _di3_2R.EnumerateRange(_left, _right))
+                if(_minAcc <= block.Value.maxAccumulation)                
+                    _Cover(block.Key.leftEnd, block.Key.rightEnd);
+        }
+        private void _Cover(C left, C right)
+        {
             C markedKey = default(C);
             int markedAcc = -1;
             byte accumulation = 0;
             _lambdas.Clear();
             _intervalsKeys.Clear();
 
-            foreach (var bookmark in _di3.EnumerateRange(_left, _right))
+            foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
                 accumulation = (byte)(bookmark.Value.lambda.Count - bookmark.Value.omega);
 
@@ -94,7 +102,14 @@ namespace DI3
                 }
             }
         }
+
         internal void Summit()
+        {
+            foreach (var block in _di3_2R.EnumerateRange(_left, _right))
+                if (_minAcc <= block.Value.maxAccumulation)
+                    _Summit(block.Key.leftEnd, block.Key.rightEnd);
+        }
+        private void _Summit(C left, C right)
         {
             C markedKey = default(C);
             int markedAcc = -1;
@@ -102,7 +117,7 @@ namespace DI3
             _lambdas.Clear();
             _intervalsKeys.Clear();
 
-            foreach (var bookmark in _di3.EnumerateFrom(_di3.First().Key))
+            foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
                 accumulation = (byte)(bookmark.Value.lambda.Count - bookmark.Value.omega);
 
@@ -153,7 +168,7 @@ namespace DI3
                 /// is maximum <= to reference.right. Of course if no such blocks are available
                 /// this iteration wont iteratre over anything. 
                 #endregion
-                foreach (var block in _di3.EnumerateRange(reference.left, reference.right))
+                foreach (var block in _di3_1R.EnumerateRange(reference.left, reference.right))
                 {
                     UpdateLambdas(block.Value.lambda);
                 }

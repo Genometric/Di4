@@ -94,10 +94,10 @@ namespace DI3
             //if (createPolicy != CreatePolicy.Never)
                 //options.FileName = FileName;
 
-            //_di3 = new BPlusTree<C, B>(options);
-            //SingleIndex = new SingleIndex<C, I, M>(_di3);
+            //_di3_1R = new BPlusTree<C, B>(options);
+            //SingleIndex = new SingleIndex<C, I, M>(_di3_1R);
 
-            //_di3.DebugSetValidateOnCheckpoint(false);
+            //_di3_1R.DebugSetValidateOnCheckpoint(false);
         }
 
 
@@ -110,6 +110,7 @@ namespace DI3
             /// This might slow-down the Add, Delete, and Update procedures.
             /// TODO: Test initialization with and without this command. 
             _di3_1R.EnableCount();
+            _di3_2R.EnableCount();
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace DI3
         /// <summary>
         /// Is an instance of SingleIndex class which 
         /// provides efficient means of inserting an 
-        /// _interval to DI3; i.e., _di3 indexding.
+        /// _interval to DI3; i.e., _di3_1R indexding.
         /// </summary>
         private SingleIndex<C, I, M> INDEX { set; get; }
 
@@ -301,7 +302,7 @@ namespace DI3
         {
             // change first resolution options here to be readonly and readonly lock.
 
-            Partition<C>[] partitions = Fragment(nThreads);
+            Partition<C>[] partitions = Fragment_1R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
@@ -324,13 +325,14 @@ namespace DI3
         }
         public void Cover<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation, int nThreads)
         {
-            Partition<C>[] partitions = Fragment(nThreads);
+            PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
-                for (int i = 0; i < nThreads; i++)                
+                for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
                         new HigherOrderFuncs<C, I, M, O>(
                             _di3_1R,
+                            _di3_2R,
                             outputStrategy,
                             partitions[i].left,
                             partitions[i].right,
@@ -346,13 +348,14 @@ namespace DI3
         }
         public void Summit<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation, int nThreads)
         {
-            Partition<C>[] partitions = Fragment(nThreads);
+            PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
                         new HigherOrderFuncs<C, I, M, O>(
                             _di3_1R,
+                            _di3_2R,
                             outputStrategy,
                             partitions[i].left,
                             partitions[i].right,
@@ -390,7 +393,7 @@ namespace DI3
             }
         }
 
-        private Partition<C>[] Fragment(int fCount)
+        private Partition<C>[] Fragment_1R(int fCount)
         {
             int range = Convert.ToInt32(Math.Floor((double)_di3_1R.Count / (double)fCount));
 
@@ -429,6 +432,48 @@ namespace DI3
                     partitions[i + 1].right = partitions[i + 1].left;
                 incrementRight = true;
             }
+
+            return partitions;
+        }
+        private PartitionBlock<C>[] Fragment_2R(int fCount)
+        {
+            int range = Convert.ToInt32(Math.Floor((double)_di3_2R.Count / (double)fCount));
+
+            /// Initialization
+            PartitionBlock<C>[] partitions = new PartitionBlock<C>[fCount];
+            for (int i = 0; i < fCount; i++)
+            {
+                partitions[i].left = _di3_2R.ElementAtOrDefault((i * range) + 1).Key;
+                partitions[i].right = _di3_2R.ElementAtOrDefault((i + 1) * range).Key;
+            }
+            partitions[0].left = _di3_2R.First().Key;
+            partitions[fCount - 1].right = _di3_2R.Last().Key;
+
+            /// Refinement -------- Check if we need Refinement.
+            /*bool incrementRight = true;
+            fCount--;
+            for (int i = 0; i < fCount; i++)
+            {
+                foreach (var bookmark in _di3_2R.EnumerateFrom(partitions[i].right))
+                {
+                    if (incrementRight)
+                    {
+                        partitions[i].right = bookmark.Key;
+                        if (bookmark.Value.omega == bookmark.Value.lambda.Count)
+                            incrementRight = false;
+                        continue;
+                    }
+                    else
+                    {
+                        partitions[i + 1].left = bookmark.Key;
+                        break;
+                    }
+                }
+
+                if (partitions[i + 1].left.CompareTo(partitions[i + 1].right) == 1)
+                    partitions[i + 1].right = partitions[i + 1].left;
+                incrementRight = true;
+            }*/
 
             return partitions;
         }
