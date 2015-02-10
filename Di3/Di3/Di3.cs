@@ -292,6 +292,32 @@ namespace DI3
             return INDEX.SecondPass();
         }
 
+
+        public int SecondResolutionIndex()
+        {
+            return SecondResolutionIndex(Environment.ProcessorCount);
+        }
+        public int SecondResolutionIndex(int nThreads)
+        {
+            // change first resolution options here to be readonly and readonly lock.
+
+            Partition<C>[] partitions = Fragment(nThreads);
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(
+                        new SingleIndex2R<C, I, M>(
+                            _di3_1R,
+                            _di3_2R,
+                            partitions[i].left,
+                            partitions[i].right).Index);
+
+                work.Complete(true, -1);
+            }
+            return _di3_2R.Count; // change this number.
+        }
+
+
         public void Cover<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation)
         {
             Cover<O>(ref outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);

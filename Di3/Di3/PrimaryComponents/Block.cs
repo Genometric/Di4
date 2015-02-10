@@ -22,11 +22,11 @@ namespace DI3
         internal C leftEnd { private set; get; }
         internal C rightEnd { private set; get; }
 
-        internal BlockKey<C> Update(C LeftEnd)
+        internal BlockKey<C> UpdateLeft(C LeftEnd)
         {
             return new BlockKey<C>(LeftEnd: LeftEnd, RightEnd: this.rightEnd);
         }
-        internal BlockKey<C> Update(C RightEnd)
+        internal BlockKey<C> UpdateRight(C RightEnd)
         {
             return new BlockKey<C>(LeftEnd: this.leftEnd, RightEnd: RightEnd);
         }

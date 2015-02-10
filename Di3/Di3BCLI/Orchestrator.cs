@@ -86,6 +86,10 @@ namespace Di3BCLI
                     ReportStats();
                     return false;
 
+                case "2ri": // 2nd resolution index
+                    SecondResolutionIndex();
+                    break;
+
 
                 default:
                     Herald.Announce(Herald.MessageType.Error, "Unknown Command.");
@@ -277,6 +281,11 @@ namespace Di3BCLI
             FunctionOutput<Output<int, Peak, PeakData>> result;
             Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result));
 
+            return true;
+        }
+        private bool SecondResolutionIndex()
+        {
+            Herald.AnnounceExeReport("2R Index", di3B.SecondResolutionIndex());
             return true;
         }
 

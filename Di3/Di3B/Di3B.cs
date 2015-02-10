@@ -35,5 +35,9 @@ namespace Di3B
         {
             return genome.Map(references, strand, aggregate, out result);
         }
+        public ExecutionReport SecondResolutionIndex()
+        {
+            return genome.SecondResolutionIndex();
+        }
     }
 }

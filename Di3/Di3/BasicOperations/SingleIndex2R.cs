@@ -16,7 +16,7 @@ namespace DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal SingleIndex2R(BPlusTree<C, B> di31R,  BPlusTree<BlockKey<C>, BlockValue> di32R, C left, C right)
+        internal SingleIndex2R(BPlusTree<C, B> di31R, BPlusTree<BlockKey<C>, BlockValue> di32R, C left, C right)
         {
             _di31R = di31R;
             _di32R = di32R;
@@ -49,7 +49,7 @@ namespace DI3
                     startNewBlock = false;
                     continue;
                 }
-                
+
                 if (bookmark.Value.lambda.Count == bookmark.Value.omega)
                 {
                     Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, presentIntervals.Count);
@@ -65,26 +65,42 @@ namespace DI3
             /// item is an element of di3 that intersects newKey.
             var newKey = new BlockKey<C>(leftEnd, rightEnd);
             var newValue = new BlockValue(maxAccumulation, count);
-            var item = _di32R.EnumerateFrom(newKey).GetEnumerator().Current;
 
-            if (!item.Equals(default(BlockKey<C>)))
+            foreach (var item in _di32R.EnumerateFrom(newKey))
             {
+                /// The same key already exist.
+                if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 0 &&
+                    newKey.rightEnd.CompareTo(item.Key.rightEnd) == 0)
+                    return;
+
+                /// "item" occures after "newKey" and does not intersect with it.
+                if (newKey.rightEnd.CompareTo(item.Key.leftEnd) == -1) // newKey.rightEnd < item.key.leftEnd
+                    break;
+
                 /// The block that is already in di3 covers new interval,
                 /// therefore no update is required.
                 if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1 &&  // newKey.LeftEnd > item.newKey.LeftEnd
                     newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < item.newKey.rightEnd
                     return;
 
-                if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1) // newKey.leftEnd > item.newKey.leftEnd
-                    newKey = newKey.Update(LeftEnd: item.Key.leftEnd);
-
-                if (newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < item.newKey.rightEnd
-                    newKey = newKey.Update(RightEnd: item.Key.rightEnd);
+                /// Theoretically, these conditions may not be needed ever !!
+                //if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1) // newKey.leftEnd > item.newKey.leftEnd
+                    //newKey = newKey.UpdateLeft(LeftEnd: item.Key.leftEnd);
+                //if (newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < item.newKey.rightEnd
+                    //newKey = newKey.UpdateRight(RightEnd: item.Key.rightEnd);
 
                 _di32R.Remove(item.Key);
+
+
+                /// yeah, true ;-) process only one item. 
+                /// maybe there would be a better way to do this. 
+                /// possibly using: _di32R.EnumerateFrom(newKey).GetEnumerator().Current
+                /// we can do this iteration. But GetEnumerator throws an exception when tree
+                /// is empty, althougth that can be handled by a try-catch-finally but I guess
+                /// this method is more clean ;-)
+                break;
             }
             _di32R.TryAdd(newKey, newValue);
         }
-
     }
 }

@@ -189,6 +189,21 @@ namespace Di3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
+        internal ExecutionReport SecondResolutionIndex()
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            int totalBookmarks = 0;
+
+            foreach(var chr in chrs)
+                foreach(var sDi3 in chr.Value)
+                {
+                    stpWtch.Start();
+                    totalBookmarks += sDi3.Value.SecondResolutionIndex();
+                    stpWtch.Stop();
+                }
+
+            return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
+        }
 
         private string GetDi3File(string chr, char strand)
         {
