@@ -464,7 +464,7 @@ namespace IndexSpeedTest
             int avgValueSize,
             bool goMultiThread)
         {
-            Mode mode = Mode.MultiPass;
+            IndexingMode mode = IndexingMode.MultiPass;
 
             int right = 0;
             int left = 0;
@@ -536,7 +536,7 @@ namespace IndexSpeedTest
                     }
                 }
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine("*********     SECOND PASS    **********");

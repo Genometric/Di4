@@ -41,7 +41,7 @@ namespace IndexSpeedTest
                 path,
                 TestTitle,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         private void _Sequence(int sampleCount,
             int regionCount,
@@ -49,7 +49,7 @@ namespace IndexSpeedTest
             string outputPath,
             string TestName,
             Di3Options<int> options,
-            Mode mode)
+            IndexingMode mode)
         {
             int right = 0;
             int left = 0;
@@ -97,15 +97,15 @@ namespace IndexSpeedTest
                     }
                 }
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / _stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, _stopWatch.Elapsed.ToString());
                     }
             }
             else
@@ -142,15 +142,15 @@ namespace IndexSpeedTest
                     }
                 }
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / _stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, _stopWatch.Elapsed.ToString());
                     }
             }
         }
@@ -177,7 +177,7 @@ namespace IndexSpeedTest
                 path,
                 TestTitle,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         private void _Controlled_10_05_10(
             int regionCount,
@@ -185,7 +185,7 @@ namespace IndexSpeedTest
             string outputPath,
             string TestName,
             Di3Options<int> options,
-            Mode mode)
+            IndexingMode mode)
         {
             int right = 0;
             int left = 0;
@@ -304,15 +304,15 @@ namespace IndexSpeedTest
                     }
                 }
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / _stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, _stopWatch.Elapsed.ToString());
                     }
             }
             else
@@ -362,15 +362,15 @@ namespace IndexSpeedTest
                     }
                 }
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / _stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, _stopWatch.Elapsed.ToString());
                     }
             }
 

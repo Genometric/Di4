@@ -3,6 +3,7 @@ using Di3B.Logging;
 using IGenomics;
 using System;
 using System.Collections.Generic;
+using DI3;
 
 namespace Di3B
 {
@@ -23,9 +24,13 @@ namespace Di3B
         private IComparer<C> CComparer { set; get; }
         private Genome<C, I, M> genome { set; get; }
 
-        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks)
+        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode)
         {
-            return genome.Add(peaks, '*');
+            return genome.Add(peaks, '*', indexingMode);
+        }
+        public ExecutionReport Add2ndPass()
+        {
+            return Add2ndPass();
         }
         public ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
         {

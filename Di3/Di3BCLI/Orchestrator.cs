@@ -1,4 +1,5 @@
-﻿using Di3B;
+﻿using DI3;
+using Di3B;
 using Di3B.Logging;
 using GIFP;
 using System;
@@ -7,6 +8,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
 
 namespace Di3BCLI
 {
@@ -20,16 +22,17 @@ namespace Di3BCLI
 
             int32Comparer = new Int32Comparer();
             samplesHashtable = new Dictionary<int, uint>();
-            stopWatch = new Stopwatch();
-            parserSTW = new Stopwatch();
+            _stopWatch = new Stopwatch();
+            _parserSTW = new Stopwatch();
             di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
         }
 
         private string _workingDirectory { set; get; }
         private string _logFileExtension { set; get; }
         private string _sectionTitle { set; get; }
-        private Stopwatch stopWatch { set; get; }
-        private Stopwatch parserSTW { set; get; }
+        private Stopwatch _stopWatch { set; get; }
+        private Stopwatch _parserSTW { set; get; }
+        private IndexingMode _indexingMode { set; get; }
         Di3B<int, Peak, PeakData> di3B { set; get; }
         Int32Comparer int32Comparer { set; get; }
         Dictionary<int, UInt32> samplesHashtable { set; get; }
@@ -46,38 +49,38 @@ namespace Di3BCLI
                     return true;
 
                 case "index":
-                    stopWatch.Restart();
+                    _stopWatch.Restart();
                     if (!Index(splittedCommand))
                     {
-                        stopWatch.Stop();
+                        _stopWatch.Stop();
                         return false;
                     }
                     break;
 
                 case "batchindex":
-                    stopWatch.Restart();
+                    _stopWatch.Restart();
                     if (!BatchIndex(splittedCommand))
                     {
-                        stopWatch.Stop();
+                        _stopWatch.Stop();
                         return false;
                     }
                     break;
 
                 case "cover":
                 case "summit":
-                    stopWatch.Restart();
+                    _stopWatch.Restart();
                     if (!Cover(splittedCommand))
                     {
-                        stopWatch.Stop();
+                        _stopWatch.Stop();
                         return false;
                     }
                     break;
 
                 case "map": // example: Map E:\refChr.bed * count
-                    stopWatch.Restart();
+                    _stopWatch.Restart();
                     if (!Map(splittedCommand))
                     {
-                        stopWatch.Stop();
+                        _stopWatch.Stop();
                         return false;
                     }
                     break;
@@ -90,6 +93,14 @@ namespace Di3BCLI
                     SecondResolutionIndex();
                     break;
 
+                case "setim": // set indexing mode.
+                    SetIndexingMode(splittedCommand);
+                    break;
+
+                case "2pass": // 2nd pass of indexing.
+                    // this command should be available only if _indexingMode is set to multi-pass
+                    break;
+
 
                 default:
                     Herald.Announce(Herald.MessageType.Error, "Unknown Command.");
@@ -97,8 +108,8 @@ namespace Di3BCLI
             }
 
 
-            stopWatch.Stop();
-            Herald.Announce(Herald.MessageType.Success, String.Format("    Overall ET: {0}", stopWatch.Elapsed.ToString()));
+            _stopWatch.Stop();
+            Herald.Announce(Herald.MessageType.Success, String.Format("    Overall ET: {0}", _stopWatch.Elapsed.ToString()));
             return false;
         }
 
@@ -126,7 +137,7 @@ namespace Di3BCLI
             }
 
             if (!Load(args[1])) return false;
-            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.intervals));
+            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.intervals, _indexingMode));
             return true;
         }
         private bool BatchIndex(string[] args)
@@ -186,7 +197,7 @@ namespace Di3BCLI
         {
             if (!ValidateFileName(fileName, out fileName)) return false;
 
-            parserSTW.Restart();
+            _parserSTW.Restart();
             BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileName, Genomes.HomoSapiens, Assemblies.hm19, true);
 
             try { Repository.parsedSample = bedParser.Parse(); }
@@ -199,9 +210,9 @@ namespace Di3BCLI
                     Herald.Announce(Herald.MessageType.Error, String.Format("{0}", e.Message));
                 return false;
             }
-            parserSTW.Stop();
+            _parserSTW.Stop();
 
-            Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedSample.intervalsCount, parserSTW.Elapsed));
+            Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedSample.intervalsCount, _parserSTW.Elapsed));
             
             return true;
         }
@@ -287,6 +298,29 @@ namespace Di3BCLI
         {
             Herald.AnnounceExeReport("2R Index", di3B.SecondResolutionIndex());
             return true;
+        }
+        private bool SetIndexingMode(string[] args)
+        {
+            if (args.Length < 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing argument."));
+                return false;
+            }
+
+            switch(args[1].Trim().ToLower())
+            {
+                case "single":
+                    _indexingMode = IndexingMode.SinglePass;
+                    return true;
+
+                case "multi":
+                    _indexingMode = IndexingMode.MultiPass;
+                    return true;
+
+                default:
+                    Herald.Announce(Herald.MessageType.Error, String.Format("Incorrect argument."));
+                    return false;
+            }
         }
 
         

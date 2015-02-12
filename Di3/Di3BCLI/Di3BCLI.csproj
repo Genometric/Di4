@@ -86,6 +86,10 @@
       <Project>{d17dd4b8-ea5a-4a0c-a029-7b353b092aa1}</Project>
       <Name>Di3B</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Di3\Di3.csproj">
+      <Project>{a18501a2-6959-40b2-9d17-9bb563c51bdc}</Project>
+      <Name>Di3</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

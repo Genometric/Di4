@@ -268,11 +268,11 @@ namespace DI3
         {
             INDEX.Index(interval);
         }
-        public void Add(List<I> intervals, Mode mode)
+        public void Add(List<I> intervals, IndexingMode mode)
         {
             Add(intervals, mode, Environment.ProcessorCount);
         }
-        public void Add(List<I> intervals, Mode mode, int threads)
+        public void Add(List<I> intervals, IndexingMode mode, int threads)
         {
             int start = 0, stop = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             using (WorkQueue work = new WorkQueue(threads))

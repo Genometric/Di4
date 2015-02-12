@@ -36,7 +36,7 @@ namespace DI3
         {
             _di3 = di3;
         }
-        internal SingleIndex(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, Mode mode)
+        internal SingleIndex(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, IndexingMode mode)
         {
             _di3 = di3;
             _intervals = Intervals;
@@ -54,7 +54,7 @@ namespace DI3
         /// namespace.
         /// </summary>
         private BPlusTree<C, B> _di3 { set; get; }
-        private Mode _mode { set; get; }
+        private IndexingMode _mode { set; get; }
         private int _start { set; get; }
         private int _stop { set; get; }
         /// <summary>
@@ -71,12 +71,12 @@ namespace DI3
             int i;
             switch (_mode)
             {
-                case Mode.SinglePass:
+                case IndexingMode.SinglePass:
                     for (i = _start; i < _stop; i++)
                         Index(_intervals[i]);
                     break;
 
-                case Mode.MultiPass:
+                case IndexingMode.MultiPass:
                     for (i = _start; i < _stop; i++)
                     {
                         update.hashKey = _intervals[i].hashKey;

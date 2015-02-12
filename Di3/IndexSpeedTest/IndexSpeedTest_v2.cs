@@ -28,7 +28,7 @@ namespace IndexSpeedTest
             int minLenght,
             int maxLenght,
             Di3Options<int> options,
-            Mode mode)
+            IndexingMode mode)
         {
             int right = 0;
             int left = 0;
@@ -90,7 +90,7 @@ namespace IndexSpeedTest
                 writer.WriteLine("Total_Elapsed_Time=" + totalET.ToString());
                 writer.Flush();
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
@@ -148,7 +148,7 @@ namespace IndexSpeedTest
                 writer.WriteLine("Total_Elapsed_Time=" + totalET.ToString());
                 writer.Flush();
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
@@ -179,7 +179,7 @@ namespace IndexSpeedTest
             int minLenght,
             int maxLenght,
             Di3Options<int> options,
-            Mode mode)
+            IndexingMode mode)
         {
             int right = 0;
             int left = 0;
@@ -228,15 +228,15 @@ namespace IndexSpeedTest
                     }
                 }
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / _stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, _stopWatch.Elapsed.ToString());
                     }
             }
             else
@@ -275,15 +275,15 @@ namespace IndexSpeedTest
                     }
                 }
 
-                if (mode == Mode.MultiPass)
+                if (mode == IndexingMode.MultiPass)
                     using (var di3 = new Di3<int, LightPeak, LightPeakData>(options))
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
                         di3.SecondPass();
                         stopWatch.Stop();
-                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(TESTBlockCount / _stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", TESTBlockCount, _stopWatch.Elapsed.ToString());
                     }
             }
         }
@@ -320,7 +320,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_02()
         {
@@ -353,7 +353,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_03()
         {
@@ -386,7 +386,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_04()
         {
@@ -419,7 +419,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_05()
         {
@@ -449,7 +449,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_06()
         {
@@ -479,7 +479,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_07()
         {
@@ -509,7 +509,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_08()
         {
@@ -539,7 +539,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_09()
         {
@@ -569,7 +569,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_10()
         {
@@ -599,7 +599,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_11()
         {
@@ -629,7 +629,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_12()
         {
@@ -659,7 +659,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_13()
         {
@@ -691,7 +691,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_14()
         {
@@ -723,7 +723,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_15()
         {
@@ -755,7 +755,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_16()
         {
@@ -787,7 +787,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_17()
         {
@@ -819,7 +819,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_18()
         {
@@ -851,7 +851,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_19()
         {
@@ -883,7 +883,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_20()
         {
@@ -915,7 +915,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_21()
         {
@@ -953,7 +953,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_22()
         {
@@ -986,7 +986,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_23()
         {
@@ -1022,7 +1022,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_24()
         {
@@ -1058,7 +1058,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_25()
         {
@@ -1094,7 +1094,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_26()
         {
@@ -1130,7 +1130,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_27()
         {
@@ -1161,7 +1161,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
         public void Test_28()
         {
@@ -1194,7 +1194,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.SinglePass);
+                IndexingMode.SinglePass);
         }
     }
 }

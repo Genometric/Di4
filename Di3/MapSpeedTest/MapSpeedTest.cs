@@ -44,7 +44,6 @@ namespace MapSpeedTest
 
             using (var di3 = new Di3<int, Peak, PeakData>(options))
             {
-
                 for (int i = 0; i < 10; i++)
                 {
                     Peaks.Clear();
@@ -66,6 +65,15 @@ namespace MapSpeedTest
                     }
                     Console.Write("Done!");
                     Console.WriteLine("");
+
+
+                    /// TEST DELET LATER
+                    using(var writer = new System.IO.StreamWriter(@"I:\testMAP.bed"))                    
+                        foreach (var peak in Peaks)
+                            writer.WriteLine("chr1\t" + peak.left + "\t" + peak.right + "\t" + peak.hashKey + "\t" + peak.hashKey);
+                    
+
+
 
                     stopWatch.Restart();
                     

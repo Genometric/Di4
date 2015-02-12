@@ -51,7 +51,6 @@ namespace Di3B
             }
         }
 
-
         private string _sectionTitle { set; get; }
         private int _processorCount { set; get; }
         private KeyValueConfigurationCollection _settings { set; get; }
@@ -64,7 +63,7 @@ namespace Di3B
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> chrs { set; get; }
 
 
-        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand)
+        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand, IndexingMode indexinMode)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
@@ -83,7 +82,7 @@ namespace Di3B
                                     using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand)))) // this might be wrong
                                     {
                                         stpWtch.Start();
-                                        di3.Add(strandEntry.Value, Mode.SinglePass);
+                                        di3.Add(strandEntry.Value, indexinMode);
                                         stpWtch.Stop();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
@@ -97,7 +96,7 @@ namespace Di3B
                                     if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
 
                                     stpWtch.Start();
-                                    chrs[chr.Key][strand].Add(strandEntry.Value, Mode.SinglePass);
+                                    chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode);
                                     stpWtch.Stop();
                                     totalIntervals += strandEntry.Value.Count;
                                 }
@@ -120,13 +119,20 @@ namespace Di3B
                             if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options()));
 
                             stpWtch.Start();
-                            chrs[chr.Key][strand].Add(strandEntry.Value, Mode.SinglePass);
+                            chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode);
                             stpWtch.Stop();
                             totalIntervals += strandEntry.Value.Count;
                         }
                     break;
             }
 
+            return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
+        }
+        internal ExecutionReport Add2ndPass()
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            int totalIntervals = 0;
+            ///// implement this option.
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
@@ -173,8 +179,10 @@ namespace Di3B
 
             foreach (var refChr in references)
             {
+                if (!chrs.ContainsKey(refChr.Key)) continue;
                 foreach (var refStrand in refChr.Value)
                 {
+                    if (!chrs[refChr.Key].ContainsKey(refStrand.Key)) continue;
                     if (!result.Chrs.ContainsKey(refChr.Key)) result.Chrs.Add(refChr.Key, new Dictionary<char, ConcurrentBag<Output<C, I, M>>>());
                     if (!result.Chrs[refChr.Key].ContainsKey(refStrand.Key)) result.Chrs[refChr.Key].Add(refStrand.Key, new ConcurrentBag<Output<C, I, M>>());
 
@@ -225,8 +233,8 @@ namespace Di3B
             /// Following codes will be met in two conditions:
             /// 1. _memory = RAM 
             /// 2. _memory = HDD but no index for the defined chromosome is defined in _config file.
-            if (_settings[chr] == null) _settings.Add(chr, _settings["WorkingDirectory"].Value + "Di3" + chr + s + ".indx");
-            else _settings[chr].Value = _settings["WorkingDirectory"].Value + "Di3" + chr + s + ".indx";
+            if (_settings[chr] == null) _settings.Add(chr, _settings["WorkingDirectory"].Value + "Di3" + chr + s);
+            else _settings[chr].Value = _settings["WorkingDirectory"].Value + "Di3" + chr + s;
             _chrSection.genomeChrs.Add(new ChrConfigElement(Chr: chr, Strand: strand, Index: _settings[chr].Value));
 
             /// There might be better way to wipe-out the default currentValue, even in different place with different strategy; 
