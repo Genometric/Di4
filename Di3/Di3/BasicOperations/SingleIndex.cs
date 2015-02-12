@@ -2,6 +2,7 @@
 using IGenomics;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 
 namespace DI3
@@ -157,9 +158,8 @@ namespace DI3
             }
         }
 
-        public int SecondPass()
+        public void SecondPass()
         {
-            int blockCount = 0;
             KeyValuePair<C, B> firstItem;
             _di3.TryGetFirst(out firstItem);
 
@@ -168,9 +168,9 @@ namespace DI3
             List<uint> keysToRemove = new List<uint>();
             List<uint> keys;
 
-            foreach (var block in _di3.EnumerateFrom(firstItem.Key))
+            foreach (var bookmark in _di3.EnumerateFrom(firstItem.Key))
             {
-                foreach (var lambda in block.Value.lambda)
+                foreach (var lambda in bookmark.Value.lambda)
                 {
                     if (lambdaCarrier.ContainsKey(lambda.atI))
                         lambdaCarrier[lambda.atI] = lambda;
@@ -180,7 +180,8 @@ namespace DI3
                     if (lambda.phi == 'R') keysToRemove.Add(lambda.atI);
                 }
 
-                _di3.TryUpdate(block.Key, updateFunction);
+                if (UpdateRequired(bookmark.Value.lambda, lambdaCarrier))
+                    _di3.TryUpdate(bookmark.Key, updateFunction);
 
                 foreach (uint item in keysToRemove)
                     lambdaCarrier.Remove(item);
@@ -189,11 +190,15 @@ namespace DI3
                 keys = new List<uint>(lambdaCarrier.Keys);
                 foreach (var key in keys)
                     lambdaCarrier[key] = new Lambda('M', lambdaCarrier[key].atI);
-
-                blockCount++;
             }
-
-            return blockCount;
+        }
+        private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda,Dictionary<uint, Lambda> lambdaCarrier )
+        {
+            if (lambda.Count != lambdaCarrier.Count) return true;
+            foreach (var item in lambda)
+                if (!lambdaCarrier.ContainsKey(item.atI))
+                    return true;
+            return false;
         }
 
         private bool HandleFirstItem(KeyValuePair<C, B> item)
@@ -209,7 +214,7 @@ namespace DI3
 
                 switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // _interval.right is bigger than item.newKey
+                    case 1: // _interval.right is bigger than lambda.newKey
                         _di3.AddOrUpdate(_interval.left, ref update);
 
                         update.tau = 'M';

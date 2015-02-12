@@ -30,7 +30,7 @@ namespace Di3B
         }
         public ExecutionReport Add2ndPass()
         {
-            return Add2ndPass();
+            return genome.Add2ndPass();
         }
         public ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
         {

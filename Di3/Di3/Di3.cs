@@ -288,9 +288,9 @@ namespace DI3
                 work.Complete(true, -1);
             }
         }
-        public int SecondPass()
+        public void SecondPass()
         {
-            return INDEX.SecondPass();
+            INDEX.SecondPass();
         }
 
 

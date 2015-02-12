@@ -93,14 +93,15 @@ namespace Di3BCLI
                     SecondResolutionIndex();
                     break;
 
+                case "getim": // get indexing mode.
+                    return GetIndexingMode();
+
                 case "setim": // set indexing mode.
-                    SetIndexingMode(splittedCommand);
-                    break;
+                    return SetIndexingMode(splittedCommand);                    
 
                 case "2pass": // 2nd pass of indexing.
-                    // this command should be available only if _indexingMode is set to multi-pass
+                    Index_2ndpass();
                     break;
-
 
                 default:
                     Herald.Announce(Herald.MessageType.Error, "Unknown Command.");
@@ -192,6 +193,11 @@ namespace Di3BCLI
             }
 
             return true;
+        }
+        private bool Index_2ndpass()
+        {
+            Herald.AnnounceExeReport("2nd-pass", di3B.Add2ndPass());
+            return false;
         }
         private bool Load(string fileName)
         {
@@ -311,15 +317,32 @@ namespace Di3BCLI
             {
                 case "single":
                     _indexingMode = IndexingMode.SinglePass;
-                    return true;
+                    break;
 
                 case "multi":
                     _indexingMode = IndexingMode.MultiPass;
-                    return true;
+                    break;
 
                 default:
                     Herald.Announce(Herald.MessageType.Error, String.Format("Incorrect argument."));
+                    break;
+            }
+
+            return GetIndexingMode();
+        }
+        private bool GetIndexingMode()
+        {
+            switch (_indexingMode)
+            {
+                case IndexingMode.SinglePass:
+                    Console.WriteLine("Indexing mode is set to <Single-pass> indexing");
                     return false;
+
+                case IndexingMode.MultiPass:
+                    Console.WriteLine("Indexing mode is set to <Multi-pass>  indexing");
+                    return false;
+
+                default: return false;
             }
         }
 

@@ -76,6 +76,8 @@ namespace Di3B
 
                     switch (_hddPerformance)
                     {
+                        /// this case is problematic, because other operations 
+                        /// are not implemented as they can work this way.
                         case HDDPerformance.LeastMemory:
                             foreach (var chr in peaks)
                                 foreach (var strandEntry in chr.Value)
@@ -132,7 +134,14 @@ namespace Di3B
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
-            ///// implement this option.
+            foreach(var chr in chrs)
+                foreach(var sDi3 in chr.Value)
+                {
+                    stpWtch.Start();
+                    totalIntervals += sDi3.Value.blockCount;
+                    sDi3.Value.SecondPass();
+                    stpWtch.Stop();
+                }
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 

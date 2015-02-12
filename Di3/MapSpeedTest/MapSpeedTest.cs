@@ -68,15 +68,15 @@ namespace MapSpeedTest
 
 
                     /// TEST DELET LATER
-                    using(var writer = new System.IO.StreamWriter(@"I:\testMAP.bed"))                    
+                    using (var writer = new System.IO.StreamWriter(@"I:\testMAP.bed"))
                         foreach (var peak in Peaks)
                             writer.WriteLine("chr1\t" + peak.left + "\t" + peak.right + "\t" + peak.hashKey + "\t" + peak.hashKey);
-                    
+
 
 
 
                     stopWatch.Restart();
-                    
+
                     /// the following functions were using Light version of Peak and PeakData.
                     var outputStrategy = new AggregateFactory<int, Peak, PeakData>().GetAggregateFunction(Aggregate.Count);
                     di3.Map<Output<int, Peak, PeakData>>(ref outputStrategy, Peaks, cpuCount);

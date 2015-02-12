@@ -62,7 +62,7 @@ namespace DI3
 
         private void Update(C leftEnd, C rightEnd, int maxAccumulation, int count)
         {
-            /// item is an element of di3_1R that intersects newKey.
+            /// lambda is an element of di3_1R that intersects newKey.
             var newKey = new BlockKey<C>(leftEnd, rightEnd);
             var newValue = new BlockValue(maxAccumulation, count);
 
@@ -73,26 +73,26 @@ namespace DI3
                     newKey.rightEnd.CompareTo(item.Key.rightEnd) == 0)
                     return;
 
-                /// "item" occures after "newKey" and does not intersect with it.
-                if (newKey.rightEnd.CompareTo(item.Key.leftEnd) == -1) // newKey.rightEnd < item.key.leftEnd
+                /// "lambda" occures after "newKey" and does not intersect with it.
+                if (newKey.rightEnd.CompareTo(item.Key.leftEnd) == -1) // newKey.rightEnd < lambda.key.leftEnd
                     break;
 
-                /// The block that is already in di3_1R covers new interval,
+                /// The bookmark that is already in di3_1R covers new interval,
                 /// therefore no update is required.
-                if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1 &&  // newKey.LeftEnd > item.newKey.LeftEnd
-                    newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < item.newKey.rightEnd
+                if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1 &&  // newKey.LeftEnd > lambda.newKey.LeftEnd
+                    newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < lambda.newKey.rightEnd
                     return;
 
                 /// Theoretically, these conditions may not be needed ever !!
-                //if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1) // newKey.leftEnd > item.newKey.leftEnd
-                    //newKey = newKey.UpdateLeft(LeftEnd: item.Key.leftEnd);
-                //if (newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < item.newKey.rightEnd
-                    //newKey = newKey.UpdateRight(RightEnd: item.Key.rightEnd);
+                //if (newKey.leftEnd.CompareTo(lambda.Key.leftEnd) == 1) // newKey.leftEnd > lambda.newKey.leftEnd
+                    //newKey = newKey.UpdateLeft(LeftEnd: lambda.Key.leftEnd);
+                //if (newKey.rightEnd.CompareTo(lambda.Key.rightEnd) == -1) // newKey.rightEnd < lambda.newKey.rightEnd
+                    //newKey = newKey.UpdateRight(RightEnd: lambda.Key.rightEnd);
 
                 _di32R.Remove(item.Key);
 
 
-                /// yeah, true ;-) process only one item. 
+                /// yeah, true ;-) process only one lambda. 
                 /// maybe there would be a better way to do this. 
                 /// possibly using: _di3_2R.EnumerateFrom(newKey).GetEnumerator().Current
                 /// we can do this iteration. But GetEnumerator throws an exception when tree

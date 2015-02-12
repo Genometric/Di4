@@ -168,26 +168,23 @@ namespace DI3
                 /// is maximum <= to reference.right. Of course if no such blocks are available
                 /// this iteration wont iteratre over anything. 
                 #endregion
-                foreach (var block in _di3_1R.EnumerateRange(reference.left, reference.right))
+                foreach (var bookmark in _di3_1R.EnumerateRange(reference.left, reference.right))
                 {
-                    UpdateLambdas(block.Value.lambda);
+                    UpdateLambdas(bookmark.Value.lambda);
                 }
 
                 _outputStrategy.Output(reference, _lambdas);
             }
-
-            //return _outputStrategy.output;
         }
 
-        private void UpdateLambdas(ReadOnlyCollection<Lambda> newLambdas)
+        private void UpdateLambdas(ReadOnlyCollection<Lambda> lambdas)
         {
-            foreach (var item in newLambdas)
+            foreach (var lambda in lambdas)
             {
-                if (//bookmark.phi != 'R' &&
-                    !_intervalsKeys.ContainsKey(item.atI))
+                if (!_intervalsKeys.ContainsKey(lambda.atI))
                 {
-                    _lambdas.Add(item);
-                    _intervalsKeys.Add(item.atI, "Hmd");
+                    _lambdas.Add(lambda);
+                    _intervalsKeys.Add(lambda.atI, "Hmd");
                 }
             }
         }
