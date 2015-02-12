@@ -67,6 +67,13 @@ namespace IndexSpeedTest
 
                         stopWatch.Restart();
                         di3.Add(peaks, mode);
+                        /*
+                        using(var wwww = new StreamWriter(outputPath+Path.DirectorySeparatorChar+"sample_"+sample.ToString()+".bed"))
+                        {
+                            foreach (var interval in peaks)
+                                wwww.WriteLine("chr1\t" + interval.left + "\t" + interval.right + "\t" + interval.hashKey.ToString() + "\t" + interval.hashKey.ToString());
+                        }*/
+
                         stopWatch.Stop();
                         //Console.WriteLine("");
                         Console.WriteLine(".::. Writting Speed : {0} intervals\\sec", Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2));
@@ -76,6 +83,7 @@ namespace IndexSpeedTest
 
                         writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2).ToString() + "\t" + stopWatch.Elapsed.ToString() + "\t" + stopWatch.ElapsedMilliseconds.ToString());
                         writer.Flush();
+                        right = 0;
                     }
                 }
 
@@ -133,6 +141,7 @@ namespace IndexSpeedTest
 
                         writer.WriteLine(Math.Round(regionCount / stopWatch.Elapsed.TotalSeconds, 2).ToString() + "\t" + stopWatch.Elapsed.ToString() + "\t" + stopWatch.ElapsedMilliseconds.ToString());
                         writer.Flush();
+                        right = 0;
                     }
                 }
 
@@ -1185,7 +1194,7 @@ namespace IndexSpeedTest
                 500,
                 1000,
                 options,
-                Mode.MultiPass);
+                Mode.SinglePass);
         }
     }
 }
