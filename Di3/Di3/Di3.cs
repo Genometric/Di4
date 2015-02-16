@@ -104,13 +104,13 @@ namespace DI3
         public Di3(Di3Options<C> options)
         {
             _di3_1R = new BPlusTree<C, B>(Get1ROptions(options));
-            _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
+            //////////////_di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
             INDEX = new SingleIndex<C, I, M>(_di3_1R);
 
             /// This might slow-down the Add, Delete, and Update procedures.
             /// TODO: Test initialization with and without this command. 
             _di3_1R.EnableCount();
-            _di3_2R.EnableCount();
+            //////////////_di3_2R.EnableCount();
         }
 
         /// <summary>

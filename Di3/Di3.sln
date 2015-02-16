@@ -30,9 +30,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{42546D
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulationDataGenerator", "SimulationDataGenerator\SimulationDataGenerator.csproj", "{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 9
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -63,6 +65,10 @@ Global
 		SccProjectUniqueName7 = Di3BCLI\\Di3BCLI.csproj
 		SccProjectName7 = Di3BCLI
 		SccLocalPath7 = Di3BCLI
+		SccProjectUniqueName8 = SimulationDataGenerator\\SimulationDataGenerator.csproj
+		SccProjectTopLevelParentUniqueName8 = Di3.sln
+		SccProjectName8 = SimulationDataGenerator
+		SccLocalPath8 = SimulationDataGenerator
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +103,10 @@ Global
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,6 +118,7 @@ Global
 		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 		{39F5704E-F83C-42E2-A09E-1E453C66ED04} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285} = {D4532791-94FB-467A-83D1-5D449D3A3653}
+		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

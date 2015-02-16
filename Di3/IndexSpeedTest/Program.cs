@@ -5,7 +5,7 @@ namespace IndexSpeedTest
     {
         static void Main(string[] args)
         {
-            string path = @"F:\VahidTest";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+            string path = @"F:\directSim";//Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
 
             //SpeedTest_v1(path);
             SpeedTest_v2(path);

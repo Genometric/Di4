@@ -7,7 +7,7 @@ namespace MapSpeedTest
         {
             MapSpeedTest mapSpeedTest = new MapSpeedTest();
 
-            mapSpeedTest.Run(@"I:\\test\\Di3chr1U.indx.idx1R", 100000, 5, 50);
+            mapSpeedTest.Run(@"F:\directSim\Di3_Test_28.idx1R", 100000, 50, 5000);
         }
     }
 }

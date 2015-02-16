@@ -38,7 +38,7 @@ namespace MapSpeedTest
 
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.CachePolicy = CachePolicy.None;
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -49,31 +49,37 @@ namespace MapSpeedTest
                     Peaks.Clear();
 
                     /// Creating some random regions. 
-                    Console.WriteLine("");
-                    Console.Write("Creating Random Files ...  ");
-                    for (int r = 0; r < RegionCount; r++)
-                    {
-                        rndLeft = rnd.Next(0, 1000000);
-                        rndRight = rndLeft + rnd.Next(MinLenght, MaxLenght);
+                    //Console.WriteLine("");
+                    //Console.Write("Creating Random Files ...  ");
 
-                        Peaks.Add(new Peak()
+                    //// TEST, DELET AFTER TEST.
+                    //for (int sampleCount = 0; sampleCount < 50; sampleCount++)
+                    //{
+                        for (int r = 0; r < RegionCount; r++)
                         {
-                            left = rndLeft,
-                            right = rndRight,
-                            hashKey = (uint)rnd.Next(1, 1000000)
-                        });
-                    }
-                    Console.Write("Done!");
-                    Console.WriteLine("");
+                            rndLeft = rnd.Next(/*rndRight + 10, rndRight + 10012);*/0, 10000000);
+                            rndRight = rndLeft + rnd.Next(MinLenght, MaxLenght);
+
+                            Peaks.Add(new Peak()
+                            {
+                                left = rndLeft,
+                                right = rndRight,
+                                hashKey = (uint)rnd.Next(1, 1000000)
+                            });
+                        }
+                        //Console.Write("Done!");
+                        //Console.WriteLine("");
+                        rndRight = 0;
 
 
-                    /// TEST DELET LATER
-                    using (var writer = new System.IO.StreamWriter(@"I:\testMAP.bed"))
-                        foreach (var peak in Peaks)
-                            writer.WriteLine("chr1\t" + peak.left + "\t" + peak.right + "\t" + peak.hashKey + "\t" + peak.hashKey);
+                        /// TEST DELET LATER
+                        //using (var writer = new System.IO.StreamWriter(@"F:\simulationB\sample_" + sampleCount + ".bed"))
+                        //    foreach (var peak in Peaks)
+                        //        writer.WriteLine("chr1\t" + peak.left + "\t" + peak.right + "\t" + peak.hashKey + "\t" + peak.hashKey);
+                        //Peaks.Clear();
 
 
-
+                    //} break;
 
                     stopWatch.Restart();
 
@@ -85,6 +91,7 @@ namespace MapSpeedTest
                     Console.WriteLine("ET: {0}", stopWatch.Elapsed);
                 }
             }
+            Console.ReadKey();
         }
     }
 }

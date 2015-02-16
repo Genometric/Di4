@@ -280,10 +280,15 @@ namespace Di3B
             options.AverageValueSize = 32;
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
-            options.CacheKeepAliveTimeOut = 60000;
-            options.CacheMinimumHistory = 10240;
-            options.CacheMaximumHistory = 40960;
+            //options.CachePolicy = CachePolicy.Recent;
+            //options.CacheKeepAliveTimeOut = 60000;
+            //options.CacheMinimumHistory = 10240;
+            //options.CacheMaximumHistory = 40960;
+
+            options.CachePolicy = CachePolicy.None;
+            options.CacheKeepAliveTimeOut = 0;
+            options.CacheMinimumHistory = 0;
+            options.CacheMaximumHistory = 0;
 
             options.StoragePerformance = StoragePerformance.Fastest;
 

@@ -95,14 +95,14 @@ namespace IndexSpeedTest
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
-                        int blockCount = di3.SecondPass();
+                        di3.SecondPass();
                         stopWatch.Stop();
-                        Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", blockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", blockCount, stopWatch.Elapsed.ToString());
 
                         writer.WriteLine("_____Second__pass_____");
-                        writer.WriteLine("totalBlockCount=" + blockCount);
-                        writer.WriteLine("speed=" + Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2) + "block\\sec");
+                        //writer.WriteLine("totalBlockCount=" + blockCount);
+                        //writer.WriteLine("speed=" + Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2) + "block\\sec");
                         writer.WriteLine("ET=" + stopWatch.Elapsed.ToString());
                         writer.Flush();
                     }
@@ -153,14 +153,14 @@ namespace IndexSpeedTest
                     {
                         Console.WriteLine(".::.     SECOND PASS    .::.");
                         stopWatch.Restart();
-                        int blockCount = di3.SecondPass();
+                        //int blockCount = di3.SecondPass();
                         stopWatch.Stop();
-                        Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2));
-                        Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", blockCount, stopWatch.Elapsed.ToString());
+                        //Console.WriteLine(".::. Writting Speed : {0} _intervals\\sec", Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2));
+                        //Console.WriteLine(".::. Total of {0:N0} blocks processed in {1}", blockCount, stopWatch.Elapsed.ToString());
 
                         writer.WriteLine("_____Second__pass_____");
-                        writer.WriteLine("totalBlockCount=" + blockCount);
-                        writer.WriteLine("speed=" + Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2) + "block\\sec");
+                        //writer.WriteLine("totalBlockCount=" + blockCount);
+                        //writer.WriteLine("speed=" + Math.Round(blockCount / stopWatch.Elapsed.TotalSeconds, 2) + "block\\sec");
                         writer.WriteLine("ET=" + stopWatch.Elapsed.ToString());
                         writer.Flush();
                     }
@@ -1184,7 +1184,7 @@ namespace IndexSpeedTest
             options.StoragePerformance = StoragePerformance.Fastest;
 
             Run(
-                800,
+                50,
                 200000,
                 true,
                 path,
