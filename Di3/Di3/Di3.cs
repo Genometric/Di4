@@ -2,15 +2,15 @@
 using CSharpTest.Net.Serialization;
 using CSharpTest.Net.Synchronization;
 using CSharpTest.Net.Threading;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     /// <summary>
-    /// Dynamic _intervals inverted index (DI3) 
+    /// Dynamic _intervals inverted index (Polimi.DEIB.VahidJalili.DI3) 
     /// is an indexing system aimed at providing
     /// efficient means of processing the _intervals
     /// it indexes for common information retrieval 
@@ -33,7 +33,7 @@ namespace DI3
         where M : IMetaData, new()
     {
         /// <summary>
-        /// Dynamic _intervals inverted index (DI3) 
+        /// Dynamic _intervals inverted index (Polimi.DEIB.VahidJalili.DI3) 
         /// is an indexing system aimed at providing
         /// efficient means of processing the _intervals
         /// it indexes for common information retrieval 
@@ -127,12 +127,12 @@ namespace DI3
         /// <summary>
         /// Is an instance of SingleIndex class which 
         /// provides efficient means of inserting an 
-        /// _interval to DI3; i.e., _di3_1R indexding.
+        /// _interval to Polimi.DEIB.VahidJalili.DI3; i.e., _di3_1R indexding.
         /// </summary>
         private SingleIndex<C, I, M> INDEX { set; get; }
 
         /// <summary>
-        /// Gets the number of blocks contained in DI3.
+        /// Gets the number of blocks contained in Polimi.DEIB.VahidJalili.DI3.
         /// </summary>
         public int blockCount { private set { } get { return _di3_1R.Count; } }
 

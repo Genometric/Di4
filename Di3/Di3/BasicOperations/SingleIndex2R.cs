@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using CSharpTest.Net.Collections;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     /// <summary>
     /// Second resolution index.

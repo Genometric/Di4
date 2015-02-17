@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     public class Int32Comparer : IComparer<int>
     {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using CSharpTest.Net.Serialization;
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     class PrimitiveSerializer : ISerializer<int>, ISerializer<uint>
     {

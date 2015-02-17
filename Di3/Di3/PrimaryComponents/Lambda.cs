@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     /// <summary>
     /// Represents the interval intersecting with 

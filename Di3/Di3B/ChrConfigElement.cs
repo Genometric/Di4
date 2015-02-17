@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     public class ChrConfigElement : ConfigurationElement
     {

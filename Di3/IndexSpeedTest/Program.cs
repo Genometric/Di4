@@ -22,7 +22,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_1", // Test Name
                 5,        // min gap
@@ -40,7 +40,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_2", // Test Name
                 50,       // min gap
@@ -58,7 +58,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_3", // Test Name
                 50,       // min gap
@@ -80,7 +80,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_4", // Test Name
                 50,       // min gap
@@ -102,7 +102,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_5", // Test Name
                 5,        // min gap
@@ -120,7 +120,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,        // sample count
                 200000,      // region count
-                true,        // Keep or Dispose Di3?
+                true,        // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,        // output path
                 "Test_6",    // Test Name
                 5,           // min gap
@@ -140,7 +140,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,        // sample count
                 200000,      // region count
-                true,        // Keep or Dispose Di3?
+                true,        // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,        // output path
                 "Test_7",    // Test Name
                 5,           // min gap
@@ -160,7 +160,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,        // sample count
                 200000,      // region count
-                true,        // Keep or Dispose Di3?
+                true,        // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,        // output path
                 "Test_9",    // Test Name
                 5,           // min gap
@@ -179,7 +179,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,            // sample count
                 200000,          // region count
-                true,            // Keep or Dispose Di3?
+                true,            // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,            // output path
                 "Test_9",        // Test Name
                 5,               // min gap
@@ -198,7 +198,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,            // sample count
                 200000,          // region count
-                true,            // Keep or Dispose Di3?
+                true,            // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,            // output path
                 "Test_10",       // Test Name
                 5,               // min gap
@@ -217,7 +217,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 2000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_11", // Test Name
                 5,        // min gap
@@ -237,7 +237,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 1000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_12", // Test Name
                 50,        // min gap
@@ -257,7 +257,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 1000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_17", // Test Name
                 50,        // min gap
@@ -279,7 +279,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 1000,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_18", // Test Name
                 50,        // min gap
@@ -300,7 +300,7 @@ namespace IndexSpeedTest
             indexSpeedTest_v1.Run(
                 150,     // sample count
                 200000,   // region count
-                true,     // Keep or Dispose Di3?
+                true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
                 path,     // output path
                 "Test_20_MultiThread", // Test Name
                 50,        // min gap

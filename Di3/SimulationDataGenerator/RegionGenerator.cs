@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Polimi.DEIB.VahidJalili.Di3.SimulationDataGenerator
+namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 {
     internal class RegionGenerator
     {
-        const int minGap = 2;
-        const int maxGap = 10;
+        const int minGap = 1000;
+        const int maxGap = 2000;
         const int maxLenght = 100; // this value must be >= 4
         const int chrCount = 1;
         const int regionsCount = 35; // per sample
@@ -21,7 +21,7 @@ namespace Polimi.DEIB.VahidJalili.Di3.SimulationDataGenerator
         /// Maximum accumulation.
         /// This number must be less than sampleCount.
         /// </summary>
-        const int maxAcc = 3;
+        const int maxAcc = 2;
 
         static Random rnd = new Random();
 
@@ -221,24 +221,23 @@ namespace Polimi.DEIB.VahidJalili.Di3.SimulationDataGenerator
 
                     case 'V':
                         var tmpLst = new List<int[]>();
-                        bool regenerateLastRegion = true;
-                        bool regenerateAllRegions = true;
+                        bool regenerateLastRegion = false;
+                        bool regenerateAllRegions = false;
                         int intCount = 0;
                         int maxReTr = 5; // maximum allowed regeneration trials.
-                        int retrCount = 0; // regeneration trials count.
+                        int regenTrialCount = 0; // regeneration trials count.
                         int tmpLastStop = 0;
                         for (int s = 0; s < sampleCount; s++)
                         {
                             regenerateLastRegion = true;
-                            regenerateAllRegions = true;
-                            retrCount = 0;
+                            regenerateAllRegions = false;
+                            regenTrialCount = 0;
 
-                            while (regenerateAllRegions)
+                            do
                             {
-                                while (regenerateLastRegion || retrCount >= maxReTr)
+                                do
                                 {
-                                    retrCount++;
-                                    regenerateLastRegion = false;
+                                    regenTrialCount++;
                                     newStart = rnd.Next(lastStop + gapPG, lastStop + gapPG + maxLenght);
                                     newStop = rnd.Next(newStart + 1, newStart + 1 + maxLenght);
 
@@ -254,18 +253,19 @@ namespace Polimi.DEIB.VahidJalili.Di3.SimulationDataGenerator
                                         tmpLst.Add(new int[] { newStart, newStop });
                                     else
                                         regenerateLastRegion = true;
-                                }
+                                } while (regenerateLastRegion && regenTrialCount < maxReTr);
 
                                 regenerateAllRegions = false;
-                                if (retrCount >= maxReTr)
+                                if (regenTrialCount >= maxReTr)
                                 {
                                     rtvS = new string[sampleCount];
                                     tmpLst.Clear();
                                     regenerateLastRegion = true;
-                                    retrCount = 0;
+                                    regenTrialCount = 0;
                                     regenerateAllRegions = true;
+                                    s = 0;
                                 }
-                            }
+                            } while (regenerateAllRegions);
                             
                             rtvS[s] =
                                 chrTitle + "\t" +

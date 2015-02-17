@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using CSharpTest.Net.Collections;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     internal class BulkIndex<C, I, M>
         where C : IComparable<C>, IFormattable

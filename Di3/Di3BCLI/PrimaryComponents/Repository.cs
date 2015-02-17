@@ -1,6 +1,6 @@
-﻿using GIFP;
+﻿using Polimi.DEIB.VahidJalili.GIFP;
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     public static class Repository
     {

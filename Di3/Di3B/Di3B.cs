@@ -1,11 +1,11 @@
 ﻿using CSharpTest.Net.Serialization;
-using Di3B.Logging;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using DI3;
+using Polimi.DEIB.VahidJalili.DI3;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     public class Di3B<C, I, M>
         where C : IComparable<C>, IFormattable

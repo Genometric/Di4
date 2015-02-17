@@ -1,7 +1,7 @@
-﻿using IGenomics;
+﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     public class Peak : IInterval<int, PeakData>, IFormattable
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Di3B.Logging
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B.Logging
 {
     public struct ExecutionReport
     {

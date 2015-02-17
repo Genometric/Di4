@@ -1,7 +1,7 @@
 ﻿using System;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.IGenomics;
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     public class LightPeakData : IMetaData
     {

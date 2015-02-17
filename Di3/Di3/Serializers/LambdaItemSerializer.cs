@@ -1,7 +1,7 @@
 ﻿using CSharpTest.Net.Serialization;
 using System;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     class LambdaItemSerializer : ISerializer<Lambda>
     {

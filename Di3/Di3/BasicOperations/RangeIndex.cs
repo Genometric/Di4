@@ -1,8 +1,8 @@
 ﻿using System;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using CSharpTest.Net.Collections;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     internal class RangeIndex<C, I, M>
         where C : IComparable<C>, IFormattable

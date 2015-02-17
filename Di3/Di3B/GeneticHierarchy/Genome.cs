@@ -1,15 +1,15 @@
 ﻿using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using DI3;
-using Di3B.Logging;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.DI3;
+using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     public class Genome<C, I, M>
         where C : IComparable<C>, IFormattable

@@ -1,9 +1,9 @@
-﻿using Di3B;
-using Di3B.Logging;
+﻿using Polimi.DEIB.VahidJalili.DI3.DI3B;
+using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
 using System.Diagnostics;
 using System.IO;
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     internal static class Exporter
     {

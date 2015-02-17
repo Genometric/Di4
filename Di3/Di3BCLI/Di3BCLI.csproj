@@ -7,7 +7,7 @@
     <ProjectGuid>{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Di3BCLI</RootNamespace>
+    <RootNamespace>Polimi.DEIB.VahidJalili.DI3.CLI</RootNamespace>
     <AssemblyName>Di3BCLI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -38,7 +38,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Di3BCLI.Program</StartupObject>
+    <StartupObject>Polimi.DEIB.VahidJalili.DI3.CLI.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CSharpTest.Net.BPlusTree">

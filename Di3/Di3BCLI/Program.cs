@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.IO;
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     class Program
     {

@@ -1,7 +1,7 @@
 ﻿using CSharpTest.Net.Serialization;
 using System.Collections.ObjectModel;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     class BookmarkSerializer : ISerializer<B>
     {

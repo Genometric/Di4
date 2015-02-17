@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     public class FunctionOutput<O>
     {

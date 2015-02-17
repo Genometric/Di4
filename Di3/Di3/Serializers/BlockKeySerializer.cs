@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     internal class BlockKeySerializer<C> : ISerializer<BlockKey<C>>
         where C : IComparable<C>, IFormattable

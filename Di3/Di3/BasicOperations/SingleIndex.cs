@@ -1,11 +1,11 @@
 ﻿using CSharpTest.Net.Collections;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     /// <summary>
     /// Provides efficient means of inserting an 
@@ -29,7 +29,7 @@ namespace DI3
     {
         /// <summary>
         /// Provides efficient means of inserting an 
-        /// interval to DI3; i.e., _di3_1R indexding.
+        /// interval to Polimi.DEIB.VahidJalili.DI3; i.e., _di3_1R indexding.
         /// </summary>
         /// <param name="_di3_1R">The reference _di3_1R to be 
         /// manipulated.</param>

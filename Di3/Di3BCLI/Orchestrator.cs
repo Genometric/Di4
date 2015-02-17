@@ -1,7 +1,7 @@
-﻿using DI3;
-using Di3B;
-using Di3B.Logging;
-using GIFP;
+﻿using Polimi.DEIB.VahidJalili.DI3;
+using Polimi.DEIB.VahidJalili.DI3.DI3B;
+using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
+using Polimi.DEIB.VahidJalili.GIFP;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 
 
-namespace Di3BCLI
+namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     public class Orchestrator
     {

@@ -1,8 +1,8 @@
 ﻿using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using DI3;
-using Di3B;
-using Di3BCLI;
+using Polimi.DEIB.VahidJalili.DI3;
+using Polimi.DEIB.VahidJalili.DI3.DI3B;
+using Polimi.DEIB.VahidJalili.DI3.CLI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

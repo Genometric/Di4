@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     internal struct Partition<C>
         where C : IComparable<C>, IFormattable

@@ -1,9 +1,9 @@
-﻿using IGenomics;
+﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     /// <summary>
     /// Interface for Cover/Summit Output.

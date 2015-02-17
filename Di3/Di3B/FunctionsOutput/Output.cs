@@ -1,7 +1,7 @@
-﻿using IGenomics;
+﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     public class Output<C, I, M> : IFormattable
         where C : IComparable<C>, IFormattable

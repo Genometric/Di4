@@ -1,8 +1,8 @@
-﻿using DI3;
-using IGenomics;
+﻿using Polimi.DEIB.VahidJalili.DI3;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     public class AggregateFactory<C, I, M>
         where C : IComparable<C>, IFormattable

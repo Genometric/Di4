@@ -3,7 +3,7 @@ using CSharpTest.Net.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     public class Di3Options<C>
         where C : IComparable<C>

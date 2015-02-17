@@ -1,10 +1,10 @@
-﻿using DI3;
-using IGenomics;
+﻿using Polimi.DEIB.VahidJalili.DI3;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     /// <summary>
     /// Cover/Summit Output with the Count of regions present 

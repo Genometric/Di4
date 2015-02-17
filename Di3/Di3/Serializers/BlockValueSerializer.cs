@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     internal class BlockValueSerializer : ISerializer<BlockValue>
     {

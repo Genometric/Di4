@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace Di3B
+namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
     /// <summary>
     /// Class holds the <Message> element

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Polimi.DEIB.VahidJalili.Di3.SimulationDataGenerator
+namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 {
     class Program
     {

@@ -1,11 +1,11 @@
 ﻿using CSharpTest.Net.Collections;
-using IGenomics;
+using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace DI3
+namespace Polimi.DEIB.VahidJalili.DI3
 {
     internal class HigherOrderFuncs<C, I, M, O>
         where C : IComparable<C>, IFormattable
@@ -169,9 +169,7 @@ namespace DI3
                 /// this iteration wont iteratre over anything. 
                 #endregion
                 foreach (var bookmark in _di3_1R.EnumerateRange(reference.left, reference.right))
-                {
                     UpdateLambdas(bookmark.Value.lambda);
-                }
 
                 _outputStrategy.Output(reference, _lambdas);
             }
@@ -179,14 +177,12 @@ namespace DI3
 
         private void UpdateLambdas(ReadOnlyCollection<Lambda> lambdas)
         {
-            foreach (var lambda in lambdas)
-            {
+            foreach (var lambda in lambdas)            
                 if (!_intervalsKeys.ContainsKey(lambda.atI))
                 {
                     _lambdas.Add(lambda);
                     _intervalsKeys.Add(lambda.atI, "Hmd");
                 }
-            }
         }
     }
 }
