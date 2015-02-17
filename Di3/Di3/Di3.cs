@@ -6,6 +6,7 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
@@ -391,6 +392,23 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 //watch.Stop();
                 //Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
+        }
+
+        public ConcurrentDictionary<C[], int> AccumulationHistogram()
+        {
+            return AccumulationHistogram(Environment.ProcessorCount);
+        }
+        public ConcurrentDictionary<C[], int> AccumulationHistogram(int nThreads)
+        {
+            var partitions = Fragment_1R(nThreads);
+            var rtv = new ConcurrentDictionary<C[], int>();
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, rtv).AccumulationHistogram);
+                work.Complete(true, -1);
+            }
+            return rtv;
         }
 
         private Partition<C>[] Fragment_1R(int fCount)

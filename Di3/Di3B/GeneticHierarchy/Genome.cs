@@ -206,6 +206,24 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
+        internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, ConcurrentDictionary<C[], int>>> result)
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            result = new Dictionary<string, Dictionary<char, ConcurrentDictionary<C[], int>>>();
+
+            foreach(var chr in chrs)
+                foreach(var sDi3 in chr.Value)
+                {
+                    if(!result.ContainsKey(chr.Key))result.Add(chr.Key, new Dictionary<char,ConcurrentDictionary<C[],int>>());
+                    if(!result[chr.Key].ContainsKey(sDi3.Key))result[chr.Key].Add(sDi3.Key, new ConcurrentDictionary<C[],int>());
+                    stpWtch.Start();
+                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram();
+                    stpWtch.Stop();
+                }
+
+            return new ExecutionReport(1, stpWtch.Elapsed);
+        }
+
         internal ExecutionReport SecondResolutionIndex()
         {
             Stopwatch stpWtch = new Stopwatch();

@@ -3,6 +3,7 @@ using Polimi.DEIB.VahidJalili.DI3.DI3B;
 using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
 using Polimi.DEIB.VahidJalili.GIFP;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -90,7 +91,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     return false;
 
                 case "2ri": // 2nd resolution index
-                    SecondResolutionIndex();
+                    _stopWatch.Restart();
+                    if(!SecondResolutionIndex())
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
                     break;
 
                 case "getim": // get indexing mode.
@@ -100,7 +106,21 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     return SetIndexingMode(splittedCommand);                    
 
                 case "2pass": // 2nd pass of indexing.
-                    Index_2ndpass();
+                    _stopWatch.Restart();
+                    if(!Index_2ndpass())
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "getacchis": // get Accumulation Histogram.
+                    _stopWatch.Restart();
+                    if(!AccumulationHistogram(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
                     break;
 
                 default:
@@ -274,15 +294,15 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         }
         private bool Map(string[] args)
         {
-            string resultFile = "";
-            if (!ExtractResultsFile(args[2], out resultFile)) return false; // invalid file URI.
-
             if (args.Length != 5)
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Missing arguments."));
                 return false;
             }
 
+            string resultFile = "";
+            if (!ExtractResultsFile(args[2], out resultFile)) return false; // invalid file URI.
+            
             char strand = '*';
             if (!Char.TryParse(args[3], out strand))
             {
@@ -297,6 +317,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             FunctionOutput<Output<int, Peak, PeakData>> result;
             Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result));
 
             return true;
         }
@@ -344,6 +365,22 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
                 default: return false;
             }
+        }
+        private bool AccumulationHistogram(string[] args)
+        {
+            if (args.Length != 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing argument."));
+                return false;
+            }
+
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
+
+            Dictionary<string, Dictionary<char, ConcurrentDictionary<int[], int>>> result;
+            Herald.AnnounceExeReport("AccHistogram", di3B.AccumulationHistogram(out result));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result));
+            return true;
         }
 
         

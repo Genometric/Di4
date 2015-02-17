@@ -4,6 +4,7 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 using Polimi.DEIB.VahidJalili.DI3;
+using System.Collections.Concurrent;
 
 namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
@@ -11,7 +12,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>, IFormattable, new()
         where M : IMetaData, IFormattable, new()
-    {        
+    {
         public Di3B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
@@ -39,6 +40,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         public ExecutionReport Map(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
         {
             return genome.Map(references, strand, aggregate, out result);
+        }
+        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, ConcurrentDictionary<C[], int>>> result)
+        {
+            return genome.AccumulationHistogram(out result);
         }
         public ExecutionReport SecondResolutionIndex()
         {
