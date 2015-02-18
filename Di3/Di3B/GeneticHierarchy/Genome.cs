@@ -17,13 +17,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         where M : IMetaData, IFormattable, new()
     {
         public Genome(string workingDirectory, string sectionTitle, Memory memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
-        {            
+        {
             _memory = memory;
             _hddPerformance = hddPerformance;
             _CSerializer = CSerializer;
             _CComparer = CComparer;
             _sectionTitle = sectionTitle;
-            _processorCount = Environment.ProcessorCount;
 
             _config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             _settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
@@ -52,7 +51,6 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         }
 
         private string _sectionTitle { set; get; }
-        private int _processorCount { set; get; }
         private KeyValueConfigurationCollection _settings { set; get; }
         private ISerializer<C> _CSerializer { set; get; }
         private IComparer<C> _CComparer { set; get; }
@@ -63,7 +61,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> chrs { set; get; }
 
 
-        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand, IndexingMode indexinMode)
+        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand, IndexingMode indexinMode, int nThreads)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
@@ -84,7 +82,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                                     using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand)))) // this might be wrong
                                     {
                                         stpWtch.Start();
-                                        di3.Add(strandEntry.Value, indexinMode);
+                                        di3.Add(strandEntry.Value, indexinMode, nThreads);
                                         stpWtch.Stop();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
@@ -98,7 +96,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                                     if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
 
                                     stpWtch.Start();
-                                    chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode);
+                                    chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, nThreads);
                                     stpWtch.Stop();
                                     totalIntervals += strandEntry.Value.Count;
                                 }
@@ -121,7 +119,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                             if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options()));
 
                             stpWtch.Start();
-                            chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode);
+                            chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, nThreads);
                             stpWtch.Stop();
                             totalIntervals += strandEntry.Value.Count;
                         }
@@ -134,8 +132,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
-            foreach(var chr in chrs)
-                foreach(var sDi3 in chr.Value)
+            foreach (var chr in chrs)
+                foreach (var sDi3 in chr.Value)
                 {
                     stpWtch.Start();
                     totalIntervals += sDi3.Value.blockCount;
@@ -145,7 +143,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
+        internal ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalBookmarks = 0;
@@ -164,11 +162,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     switch (coverVariation)
                     {
                         case CoverVariation.Cover:
-                            sDi3.Value.Cover<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, _processorCount);
+                            sDi3.Value.Cover<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, nThreads);
                             break;
 
                         case CoverVariation.Summit:
-                            sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, _processorCount);
+                            sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, nThreads);
                             break;
                     }
                     result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
@@ -178,7 +176,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Map(Dictionary<string, Dictionary<char, List<I>>> references, char strand, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
+        internal ExecutionReport Map(Dictionary<string, Dictionary<char, List<I>>> references, char strand, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
@@ -196,7 +194,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!result.Chrs[refChr.Key].ContainsKey(refStrand.Key)) result.Chrs[refChr.Key].Add(refStrand.Key, new ConcurrentBag<Output<C, I, M>>());
 
                     stpWtch.Start();
-                    chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, _processorCount);
+                    chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, nThreads);
                     result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
                     stpWtch.Stop();
                     totalIntervals += refStrand.Value.Count;
@@ -206,34 +204,52 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, IEnumerable<AccEntry<C>>>> result)
+        internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, int nThreads)
         {
             Stopwatch stpWtch = new Stopwatch();
-            result = new Dictionary<string, Dictionary<char, IEnumerable<AccEntry<C>>>>();
+            result = new Dictionary<string, Dictionary<char, List<AccEntry<C>>>>();
 
-            foreach(var chr in chrs)
-                foreach(var sDi3 in chr.Value)
+            foreach (var chr in chrs)
+                foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, IEnumerable<AccEntry<C>>>());
+                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, List<AccEntry<C>>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram();
+                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram(nThreads);
                     stpWtch.Stop();
                 }
 
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport SecondResolutionIndex()
+        internal ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, int nThreads)
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            result = new Dictionary<string, Dictionary<char, SortedDictionary<int, int>>>();
+
+            foreach (var chr in chrs)
+                foreach (var sDi3 in chr.Value)
+                {
+                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, SortedDictionary<int, int>>());
+                    if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
+                    stpWtch.Start();
+                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationDistribution(nThreads);
+                    stpWtch.Stop();
+                }
+
+            return new ExecutionReport(1, stpWtch.Elapsed);
+        }
+
+        internal ExecutionReport SecondResolutionIndex(int nthreads)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalBookmarks = 0;
 
-            foreach(var chr in chrs)
-                foreach(var sDi3 in chr.Value)
+            foreach (var chr in chrs)
+                foreach (var sDi3 in chr.Value)
                 {
                     stpWtch.Start();
-                    totalBookmarks += sDi3.Value.SecondResolutionIndex();
+                    totalBookmarks += sDi3.Value.SecondResolutionIndex(nthreads);
                     stpWtch.Stop();
                 }
 

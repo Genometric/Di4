@@ -70,8 +70,8 @@ namespace IndexSpeedTest
                         /*
                         using(var wwww = new StreamWriter(outputPath+Path.DirectorySeparatorChar+"sample_"+sample.ToString()+".bed"))
                         {
-                            foreach (var interval in peaks)
-                                wwww.WriteLine("chr1\t" + interval.left + "\t" + interval.right + "\t" + interval.hashKey.ToString() + "\t" + interval.hashKey.ToString());
+                            foreach (var distribution in peaks)
+                                wwww.WriteLine("chr1\t" + distribution.left + "\t" + distribution.right + "\t" + distribution.hashKey.ToString() + "\t" + distribution.hashKey.ToString());
                         }*/
 
                         stopWatch.Stop();

@@ -399,24 +399,56 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
         }
 
-        public IEnumerable<AccEntry<C>> AccumulationHistogram()
+        public List<AccEntry<C>> AccumulationHistogram()
         {
             return AccumulationHistogram(Environment.ProcessorCount);
         }
-        public IEnumerable<AccEntry<C>> AccumulationHistogram(int nThreads)
+        public List<AccEntry<C>> AccumulationHistogram(int nThreads)
         {
             Object lockOnMe = new Object();
-            //IEnumerable<AccEntry<C>> results = new List<AccEntry<C>>();
+            //IEnumerable<AccEntry<C>> accHistogram = new List<AccEntry<C>>();
             var results = new List<AccEntry<C>>();
-            
+
             var partitions = Fragment_1R(nThreads);
-            var rtv = new ConcurrentDictionary<C[], int>();
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, ref results, lockOnMe).AccumulationHistogram);
+                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccumulationHistogram);
                 work.Complete(true, -1);
             }
+
+            /// Partitions define dichotomies, hence iterating over ranges it would not be 
+            /// possible to see inter-dichotomies gaps. Therefore, there will be #nThreads 
+            /// gaps that are not reported in output. The following loop addresses the point.
+            for (int i = 0; i < nThreads - 1; i++)
+                results.Add(new AccEntry<C>(partitions[i].right, partitions[i + 1].left, 0));
+
+            return results;
+        }
+
+        public SortedDictionary<int, int> AccumulationDistribution()
+        {
+            return AccumulationDistribution(Environment.ProcessorCount);
+        }
+        public SortedDictionary<int, int> AccumulationDistribution(int nThreads)
+        {
+            Object lockOnMe = new Object();
+            var results = new SortedDictionary<int, int>();
+            var partitions = Fragment_1R(nThreads);
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccumulationDistribution);
+                work.Complete(true, -1);
+            }
+
+            /// These three lines are to make sure no accumulation is 
+            /// skipped. For instance, lets say results have 1, 2, and 4 
+            /// as keys. Then 3 is skipped, and these lines will add 3 with 
+            /// a value of 0 to the results.
+            int maxValue = results.ElementAt(results.Count - 1).Key;
+            for (int i = 0; i < maxValue; i++)
+                if (!results.ContainsKey(i)) results.Add(i, 0);
             return results;
         }
 

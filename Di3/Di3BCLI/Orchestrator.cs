@@ -17,7 +17,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
     {
         public Orchestrator(string workingDirectory, string logFileExtension)
         {
-            _threadCount = Environment.ProcessorCount;
+            _nThread = Environment.ProcessorCount;
             _workingDirectory = workingDirectory;
             _logFileExtension = logFileExtension;
             _sectionTitle = "Chromosome";
@@ -29,7 +29,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
         }
 
-        private int _threadCount { set; get; }
+        private int _nThread { set; get; }
         private string _workingDirectory { set; get; }
         private string _logFileExtension { set; get; }
         private string _sectionTitle { set; get; }
@@ -94,7 +94,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
                 case "2ri": // 2nd resolution index
                     _stopWatch.Restart();
-                    if(!SecondResolutionIndex())
+                    if (!SecondResolutionIndex())
                     {
                         _stopWatch.Stop();
                         return false;
@@ -105,8 +105,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     return GetIndexingMode();
 
                 case "setim": // set indexing mode.
-                    return SetIndexingMode(splittedCommand);  
-                  
+                    return SetIndexingMode(splittedCommand);
+
                 case "gettc": // get thread count
                     return GetTC();
 
@@ -116,7 +116,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
                 case "2pass": // 2nd pass of indexing.
                     _stopWatch.Restart();
-                    if(!Index_2ndpass())
+                    if (!Index_2ndpass())
                     {
                         _stopWatch.Stop();
                         return false;
@@ -125,7 +125,16 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
                 case "acchis": // get Accumulation Histogram.
                     _stopWatch.Restart();
-                    if(!AccumulationHistogram(splittedCommand))
+                    if (!AccumulationHistogram(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "accdis": // get Accumulation Distribution.
+                    _stopWatch.Restart();
+                    if (!AccumulationDistribution(splittedCommand))
                     {
                         _stopWatch.Stop();
                         return false;
@@ -167,7 +176,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             }
 
             if (!Load(args[1])) return false;
-            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.intervals, _indexingMode));
+            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.intervals, _indexingMode, _nThread));
             return true;
         }
         private bool BatchIndex(string[] args)
@@ -248,7 +257,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             _parserSTW.Stop();
 
             Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedSample.intervalsCount, _parserSTW.Elapsed));
-            
+
             return true;
         }
         private bool Cover(string[] args)
@@ -289,11 +298,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             switch (coverOrSummit)
             {
                 case "cover":
-                    Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result), Herald.SpeedUnit.bookmarkPerSecond);
+                    Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result, _nThread), Herald.SpeedUnit.bookmarkPerSecond);
                     break;
 
                 case "summit":
-                    Herald.AnnounceExeReport("Summit", di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg, out result), Herald.SpeedUnit.bookmarkPerSecond);
+                    Herald.AnnounceExeReport("Summit", di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg, out result, _nThread), Herald.SpeedUnit.bookmarkPerSecond);
                     break;
             }
 
@@ -311,7 +320,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             string resultFile = "";
             if (!ExtractResultsFile(args[2], out resultFile)) return false; // invalid file URI.
-            
+
             char strand = '*';
             if (!Char.TryParse(args[3], out strand))
             {
@@ -325,14 +334,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!Load(args[1])) return false;
 
             FunctionOutput<Output<int, Peak, PeakData>> result;
-            Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result));
+            Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result, _nThread));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result));
 
             return true;
         }
         private bool SecondResolutionIndex()
         {
-            Herald.AnnounceExeReport("2R Index", di3B.SecondResolutionIndex());
+            Herald.AnnounceExeReport("2R Index", di3B.SecondResolutionIndex(_nThread));
             return true;
         }
         private bool SetIndexingMode(string[] args)
@@ -343,7 +352,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 return false;
             }
 
-            switch(args[1].Trim().ToLower())
+            switch (args[1].Trim().ToLower())
             {
                 case "single":
                     _indexingMode = IndexingMode.SinglePass;
@@ -386,14 +395,30 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Dictionary<string, Dictionary<char, IEnumerable<AccEntry<int>>>> result;
-            Herald.AnnounceExeReport("AccHistogram", di3B.AccumulationHistogram(out result));
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result));
+            Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results;
+            Herald.AnnounceExeReport("AccHistogram", di3B.AccumulationHistogram(out results, _nThread));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            return true;
+        }
+        private bool AccumulationDistribution(string[] args)
+        {
+            if(args.Length != 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing argument."));
+                return false;
+            }
+
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
+
+            Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results;
+            Herald.AnnounceExeReport("AccDistribution", di3B.AccumulationDistribution(out results, _nThread));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;
         }
         private bool GetTC()
         {
-            Herald.Announce(Herald.MessageType.Info, "ThreadCount = " + _threadCount.ToString());
+            Herald.Announce(Herald.MessageType.Info, "ThreadCount = " + _nThread.ToString());
             return false;
         }
         private bool SetTC(string[] arg)
@@ -405,12 +430,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 return false;
             }
 
-            _threadCount = threadCount;
+            _nThread = threadCount;
             return GetTC();
         }
 
 
-        
+
         private bool ValidateURI(string strUri, out Uri uri)
         {
             uri = null;

@@ -6,18 +6,18 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
     public class Peak : IInterval<int, PeakData>, IFormattable
     {
         /// <summary>
-        /// Sets and gets the left-end of the interval.
+        /// Sets and gets the left-end of the distribution.
         /// </summary>
         public int left { set; get; }
 
         /// <summary>
-        /// Sets and gets the right-end of the interval.
+        /// Sets and gets the right-end of the distribution.
         /// </summary>
         public int right { set; get; }
 
         /// <summary>
         /// Sets and gets the descriptive metadata
-        /// of the interval. It could be a refChr
+        /// of the distribution. It could be a refChr
         /// to a _memory object, or a pointer, or 
         /// an entry ID on database, or etc. 
         /// </summary>

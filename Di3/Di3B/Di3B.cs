@@ -23,29 +23,33 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         private IComparer<C> CComparer { set; get; }
         private Genome<C, I, M> genome { set; get; }
 
-        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode)
+        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, int nThreads)
         {
-            return genome.Add(peaks, '*', indexingMode);
+            return genome.Add(peaks, '*', indexingMode, nThreads);
         }
         public ExecutionReport Add2ndPass()
         {
             return genome.Add2ndPass();
         }
-        public ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
+        public ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
         {
-            return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate, out result);
+            return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate, out result, nThreads);
         }
-        public ExecutionReport Map(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result)
+        public ExecutionReport Map(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
         {
-            return genome.Map(references, strand, aggregate, out result);
+            return genome.Map(references, strand, aggregate, out result, nThreads);
         }
-        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, IEnumerable<AccEntry<C>>>> result)
+        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, int nThreads)
         {
-            return genome.AccumulationHistogram(out result);
+            return genome.AccumulationHistogram(out result, nThreads);
         }
-        public ExecutionReport SecondResolutionIndex()
+        public ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, int nThreads)
         {
-            return genome.SecondResolutionIndex();
+            return genome.AccumulationDistribution(out result, nThreads);
+        }
+        public ExecutionReport SecondResolutionIndex(int nThreads)
+        {
+            return genome.SecondResolutionIndex(nThreads);
         }
     }
 }

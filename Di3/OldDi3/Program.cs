@@ -93,8 +93,6 @@ namespace OldDi3
             Console.WriteLine(".::.     Index     Time (msec) : {0}", index_Time.Elapsed.ToString());
             Console.WriteLine(".::.  Map Process  Time (msec) : {0}", process_Time.Elapsed.ToString());
             Console.WriteLine(".::.     Write     Time (msec) : {0}", write_Time.Elapsed.ToString());
-
-            int wait = 0;
         }
     }
 
