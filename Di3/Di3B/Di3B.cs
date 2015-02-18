@@ -3,8 +3,6 @@ using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using Polimi.DEIB.VahidJalili.DI3;
-using System.Collections.Concurrent;
 
 namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
@@ -41,7 +39,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.Map(references, strand, aggregate, out result);
         }
-        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, ConcurrentDictionary<C[], int>>> result)
+        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, IEnumerable<AccEntry<C>>>> result)
         {
             return genome.AccumulationHistogram(out result);
         }

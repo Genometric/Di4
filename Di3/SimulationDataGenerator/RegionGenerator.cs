@@ -9,19 +9,19 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 {
     internal class RegionGenerator
     {
-        const int minGap = 1000;
-        const int maxGap = 2000;
+        const int minGap = 500;
+        const int maxGap = 1000;
         const int maxLenght = 100; // this value must be >= 4
         const int chrCount = 1;
-        const int regionsCount = 30; // per sample
+        const int regionsCount = 4; // per sample
         const string outputPath = "F:\\";
-        const int sampleCount = 10; // IF YOU CHANGE THIS: remember to revise maxAcc.
+        const int sampleCount = 3; // IF YOU CHANGE THIS: remember to revise maxAcc.
 
         /// <summary>
         /// Maximum accumulation.
         /// This number must be less than sampleCount.
         /// </summary>
-        const int maxAcc = 5;
+        const int maxAcc = 2;
 
         static Random rnd = new Random();
 

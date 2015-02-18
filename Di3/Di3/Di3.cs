@@ -326,12 +326,14 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public void Cover<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation, int nThreads)
         {
+            Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
                         new HigherOrderFuncs<C, I, M, O>(
+                            lockOnMe,
                             _di3_1R,
                             _di3_2R,
                             outputStrategy,
@@ -349,12 +351,14 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public void Summit<O>(ref ICSOutput<C, I, M, O> outputStrategy, byte minAccumulation, byte maxAccumulation, int nThreads)
         {
+            Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
                         new HigherOrderFuncs<C, I, M, O>(
+                            lockOnMe,
                             _di3_1R,
                             _di3_2R,
                             outputStrategy,
@@ -373,9 +377,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
         {
+            Object lockOnMe = new Object();
             //Stopwatch watch = new Stopwatch();
             int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
-
+            
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
@@ -383,7 +388,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > references.Count) stop = references.Count;
-                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(_di3_1R, outputStrategy, references, start, stop).Map);
+                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(lockOnMe, _di3_1R, outputStrategy, references, start, stop).Map);
                     else break;
                 }
 
@@ -394,21 +399,25 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
         }
 
-        public ConcurrentDictionary<C[], int> AccumulationHistogram()
+        public IEnumerable<AccEntry<C>> AccumulationHistogram()
         {
             return AccumulationHistogram(Environment.ProcessorCount);
         }
-        public ConcurrentDictionary<C[], int> AccumulationHistogram(int nThreads)
+        public IEnumerable<AccEntry<C>> AccumulationHistogram(int nThreads)
         {
+            Object lockOnMe = new Object();
+            //IEnumerable<AccEntry<C>> results = new List<AccEntry<C>>();
+            var results = new List<AccEntry<C>>();
+            
             var partitions = Fragment_1R(nThreads);
             var rtv = new ConcurrentDictionary<C[], int>();
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, rtv).AccumulationHistogram);
+                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, ref results, lockOnMe).AccumulationHistogram);
                 work.Complete(true, -1);
             }
-            return rtv;
+            return results;
         }
 
         private Partition<C>[] Fragment_1R(int fCount)

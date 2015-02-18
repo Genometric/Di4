@@ -206,16 +206,16 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, ConcurrentDictionary<C[], int>>> result)
+        internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, IEnumerable<AccEntry<C>>>> result)
         {
             Stopwatch stpWtch = new Stopwatch();
-            result = new Dictionary<string, Dictionary<char, ConcurrentDictionary<C[], int>>>();
+            result = new Dictionary<string, Dictionary<char, IEnumerable<AccEntry<C>>>>();
 
             foreach(var chr in chrs)
                 foreach(var sDi3 in chr.Value)
                 {
-                    if(!result.ContainsKey(chr.Key))result.Add(chr.Key, new Dictionary<char,ConcurrentDictionary<C[],int>>());
-                    if(!result[chr.Key].ContainsKey(sDi3.Key))result[chr.Key].Add(sDi3.Key, new ConcurrentDictionary<C[],int>());
+                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, IEnumerable<AccEntry<C>>>());
+                    if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
                     result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram();
                     stpWtch.Stop();
@@ -298,10 +298,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             options.AverageValueSize = 32;
             options.FileBlockSize = 8192;
 
-            //options.CachePolicy = CachePolicy.Recent;
-            //options.CacheKeepAliveTimeOut = 60000;
-            //options.CacheMinimumHistory = 10240;
-            //options.CacheMaximumHistory = 40960;
+            options.CachePolicy = CachePolicy.Recent;
+            options.CacheKeepAliveTimeOut = 60000;
+            options.CacheMinimumHistory = 10240;
+            options.CacheMaximumHistory = 40960;
 
             options.CachePolicy = CachePolicy.None;
             options.CacheKeepAliveTimeOut = 0;

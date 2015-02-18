@@ -12,14 +12,16 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal HigherOrderFuncs(BPlusTree<C, B> di3)
+        internal HigherOrderFuncs(Object lockOnMe, BPlusTree<C, B> di3)
         {
+            _lockOnMe = lockOnMe;
             _di3_1R = di3;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
         }
-        internal HigherOrderFuncs(BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
+        internal HigherOrderFuncs(Object lockOnMe, BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
         {
+            _lockOnMe = lockOnMe;
             _di3_1R = di3_1R;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
@@ -28,8 +30,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _stop = stop;
             _outputStrategy = outputStrategy;
         }
-        internal HigherOrderFuncs(BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, ICSOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
+        internal HigherOrderFuncs(Object lockOnMe, BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, ICSOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
         {
+            _lockOnMe = lockOnMe;
             _di3_1R = di3_1R;
             _di3_2R = di3_2R;
             _intervalsKeys = new Hashtable();
@@ -54,6 +57,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         internal ICSOutput<C, I, M, O> outputStrategy { get { return _outputStrategy; } }
         private Hashtable _intervalsKeys { set; get; }
         private List<Lambda> _lambdas { set; get; }
+        private Object _lockOnMe { set; get; }
 
         internal void Cover()
         {

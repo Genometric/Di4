@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuxiliaryComponents\AccEntryStruct.cs" />
     <Compile Include="AuxiliaryComponents\BlockKeyComparer.cs" />
     <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
     <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />
