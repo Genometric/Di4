@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Concurrent;
+using Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
@@ -128,7 +129,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// <summary>
         /// Is an instance of SingleIndex class which 
         /// provides efficient means of inserting an 
-        /// _interval to Polimi.DEIB.VahidJalili.DI3; i.e., _di3_1R indexding.
+        /// interval to Polimi.DEIB.VahidJalili.DI3; i.e., di3_1R indexding.
         /// </summary>
         private SingleIndex<C, I, M> INDEX { set; get; }
 
@@ -406,14 +407,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
         public List<AccEntry<C>> AccumulationHistogram(int nThreads)
         {
             Object lockOnMe = new Object();
-            //IEnumerable<AccEntry<C>> accHistogram = new List<AccEntry<C>>();
             var results = new List<AccEntry<C>>();
 
             var partitions = Fragment_1R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccumulationHistogram);
+                    work.Enqueue(new AccumulationStats<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccHistogram);
                 work.Complete(true, -1);
             }
 
@@ -438,7 +438,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new FirstOrderFuncs<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccumulationDistribution);
+                    work.Enqueue(new AccumulationStats<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccDistribution);
                 work.Complete(true, -1);
             }
 
@@ -450,6 +450,60 @@ namespace Polimi.DEIB.VahidJalili.DI3
             for (int i = 0; i < maxValue; i++)
                 if (!results.ContainsKey(i)) results.Add(i, 0);
             return results;
+        }
+
+        public SortedDictionary<BlockKey<C>, int> Merge()
+        {
+            return Merge(Environment.ProcessorCount);
+        }
+        public SortedDictionary<BlockKey<C>, int> Merge(int nThreads)
+        {
+            Object lockOnMe = new Object();
+            PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
+            var blocks = new SortedDictionary<BlockKey<C>, int>();
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(
+                        new Merge<C, I, M>(
+                            _di3_2R,
+                            partitions[i].left,
+                            partitions[i].right,
+                            blocks,
+                            lockOnMe).Merge);
+
+                work.Complete(true, -1);
+            }
+            return blocks;
+        }
+
+        public SortedDictionary<BlockKey<C>, int> Complement()
+        {
+            return Complement(Environment.ProcessorCount);
+        }
+        public SortedDictionary<BlockKey<C>, int> Complement(int nThreads)
+        {
+            Object lockOnMe = new Object();
+            PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
+            var blocks = new SortedDictionary<BlockKey<C>, int>();
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(
+                        new Merge<C, I, M>(
+                            _di3_2R,
+                            partitions[i].left,
+                            partitions[i].right,
+                            blocks,
+                            lockOnMe).Complement);
+
+                work.Complete(true, -1);
+            }
+
+            for (int i = 0; i < nThreads - 1; i++)
+                blocks.Add(new BlockKey<C>(partitions[i].right.rightEnd, partitions[i + 1].left.leftEnd), 0);
+
+            return blocks;
         }
 
         private Partition<C>[] Fragment_1R(int fCount)

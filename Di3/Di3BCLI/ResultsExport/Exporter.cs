@@ -8,7 +8,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     internal static class Exporter
     {
-        public static ExecutionReport Export(string fileName, FunctionOutput<Output<int, Peak, PeakData>> result, string separator = "\t")
+        public static ExecutionReport Export(string fileName, FunctionOutput<Output<int, Peak, PeakData>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -17,7 +17,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
-                foreach (var chr in result.Chrs)
+                foreach (var chr in results.Chrs)
                     foreach (var strand in chr.Value)
                         foreach (var interval in strand.Value)
                         {
@@ -28,8 +28,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-
-        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, List<AccEntry<int>>>> result, string separator = "\t")
+        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -37,7 +36,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
-                foreach (var chr in result)
+                foreach (var chr in results)
                     foreach (var strand in chr.Value)
                     {
                         strand.Value.Sort();
@@ -51,8 +50,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-
-        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<int,int>>> result, string separator = "\t")
+        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -60,12 +58,33 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
-                foreach (var chr in result)
+                foreach (var chr in results)
                     foreach (var strand in chr.Value)
                     {
                         foreach (var distribution in strand.Value)
                         {
                             writter.WriteLine(chr.Key + separator + strand.Key + distribution.Key.ToString() + separator + distribution.Value.ToString());
+                            intervalCount++;
+                        }
+                    }
+
+            stp.Stop();
+            return new ExecutionReport(intervalCount, stp.Elapsed);
+        }
+        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<int>, int>>> results, string separator = "\t")
+        {
+            int intervalCount = 0;
+            Stopwatch stp = new Stopwatch();
+            stp.Restart();
+            if (!File.Exists(fileName)) File.Delete(fileName);
+            using (File.Create(fileName)) { }
+            using (var writter = new StreamWriter(fileName))
+                foreach (var chr in results)
+                    foreach (var strand in chr.Value)
+                    {
+                        foreach (var block in strand.Value)
+                        {
+                            writter.WriteLine(chr.Key + separator + strand.Key + block.Key.leftEnd + separator + block.Key.rightEnd + separator + block.Value);
                             intervalCount++;
                         }
                     }

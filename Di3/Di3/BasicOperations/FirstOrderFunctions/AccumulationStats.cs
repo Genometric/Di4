@@ -7,14 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
-namespace Polimi.DEIB.VahidJalili.DI3
+namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
 {
-    internal class FirstOrderFuncs<C, I, M>
+    internal class AccumulationStats<C, I, M>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal FirstOrderFuncs(BPlusTree<C, B> di3_1R, C left, C right, List<AccEntry<C>> accHistogram, Object lockOnMe)
+        internal AccumulationStats(BPlusTree<C, B> di3_1R, C left, C right, List<AccEntry<C>> accHistogram, Object lockOnMe)
         {
             _di3_1R = di3_1R;
             _left = left;
@@ -22,7 +22,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _lockOnMe = lockOnMe;
             _accHistogram = accHistogram;
         }
-        internal FirstOrderFuncs(BPlusTree<C, B> di3_1R, C left, C right, SortedDictionary<int, int> accDistribution, Object lockOnMe)
+        internal AccumulationStats(BPlusTree<C, B> di3_1R, C left, C right, SortedDictionary<int, int> accDistribution, Object lockOnMe)
         {
             _di3_1R = di3_1R;
             _left = left;
@@ -30,26 +30,27 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _lockOnMe = lockOnMe;
             _accDistribution = accDistribution;
         }
+        
 
         private BPlusTree<C, B> _di3_1R { set; get; }
         private C _left { set; get; }
         private C _right { set; get; }
         private List<AccEntry<C>> _accHistogram { set; get; }
-        private SortedDictionary<int, int> _accDistribution { set; get; }        
+        private SortedDictionary<int, int> _accDistribution { set; get; }
         private Object _lockOnMe { set; get; }
 
 
-        internal void AccumulationHistogram()
+        internal void AccHistogram()
         {
             C tmp = default(C);
             int tmpAcc = 0;
             bool doBreak = false;
             var _localAccHistogram = new List<AccEntry<C>>();
 
-            /// This is to initeialize tmp and tmpAcc. 
+            /// This is to initeialize tmpDic and tmpAcc. 
             /// It's true that this implementation requires double dichotomic search,
             /// but in long run can perform better than single iteration with condition checks.
-            foreach (var bookmark in _di3_1R.EnumerateFrom(_left))
+            foreach (var bookmark in _di3_1R.EnumerateRange(_left, _right))
             {
                 if (doBreak)
                 {
@@ -74,7 +75,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 else _accHistogram = */_accHistogram.AddRange(_localAccHistogram);
             }
         }
-        internal void AccumulationDistribution()
+        internal void AccDistribution()
         {
             int tmpAcc = 0;
             var localDistribution = new Dictionary<int, int>();
@@ -102,18 +103,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     _accDistribution[item.Key] += item.Value;
                 }
             }
-        }
-    }
-
-
-
-    public class MyClass
-    {
-        int A = 0;
-        public MyClass con1(int a, int b)
-        {
-            A = a;
-            return new MyClass();
         }
     }
 }

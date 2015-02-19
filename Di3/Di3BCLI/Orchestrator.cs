@@ -29,6 +29,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
         }
 
+        /// <summary>
+        /// Sets and gets the total number of indexed intervals.
+        /// </summary>
+        private int _tN2i { set; get; }
         private int _nThread { set; get; }
         private string _workingDirectory { set; get; }
         private string _logFileExtension { set; get; }
@@ -67,6 +71,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                         _stopWatch.Stop();
                         return false;
                     }
+                    _stopWatch.Stop();
+                    Herald.Announce(Herald.MessageType.Info, String.Format("Total number of indexed intervals: {0:N0} ", _tN2i));
+                    Herald.Announce(Herald.MessageType.Info, String.Format("       Average indexing speed was: {0}", Math.Round(_tN2i / _stopWatch.Elapsed.TotalSeconds, 2) + "  #i\\sec"));
                     break;
 
                 case "cover":
@@ -82,6 +89,24 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 case "map": // example: Map E:\refChr.bed * count
                     _stopWatch.Restart();
                     if (!Map(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "merge":
+                    _stopWatch.Restart();
+                    if(!Merge(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "complement":
+                    _stopWatch.Restart();
+                    if (!Complement(splittedCommand))
                     {
                         _stopWatch.Stop();
                         return false;
@@ -175,11 +200,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             }
 
             if (!Load(args[1])) return false;
-            Herald.AnnounceExeReport("Indexed", di3B.Add(Repository.parsedSample.intervals, _indexingMode, _nThread));
+            var report = di3B.Add(Repository.parsedSample.intervals, _indexingMode, _nThread);
+            Herald.AnnounceExeReport("Indexed", report);
+            _tN2i += report.count;
             return true;
         }
         private bool BatchIndex(string[] args)
         {
+            _tN2i = 0;
             DirectoryInfo dirInfo;
             if (args.Length == 2 && args[1].Length > 2 && args[1][0] == '*' && args[1][1] == '.')
             {
@@ -434,10 +462,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             Herald.Announce(Herald.MessageType.Info, "ThreadCount = " + _nThread.ToString());
             return false;
         }
-        private bool SetTC(string[] arg)
+        private bool SetTC(string[] args)
         {
             int threadCount = 0;
-            if (arg.Length != 2 || !int.TryParse(arg[1], out threadCount))
+            if (args.Length != 2 || !int.TryParse(args[1], out threadCount))
             {
                 Herald.Announce(Herald.MessageType.Error, "Invalid arguments");
                 return false;
@@ -445,6 +473,36 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             _nThread = threadCount;
             return GetTC();
+        }
+        private bool Merge(string[] args)
+        {
+            if(args.Length != 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing parameter."));
+                return false;
+            }
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
+
+            Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<int>, int>>> results = null;
+            Herald.AnnounceExeReport("Merge", di3B.Merge(out results, _nThread));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            return true;
+        }
+        private bool Complement(string[] args)
+        {
+            if (args.Length != 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing parameter."));
+                return false;
+            }
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
+
+            Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<int>, int>>> results = null;
+            Herald.AnnounceExeReport("Complement", di3B.Complement(out results, _nThread));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            return true;
         }
 
 

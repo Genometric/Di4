@@ -256,6 +256,43 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
         }
 
+        internal ExecutionReport Merge(out Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>> result, int nThreads)
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            result = new Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>>();
+
+            foreach (var chr in chrs)
+                foreach (var sDi3 in chr.Value)
+                {
+                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, SortedDictionary<BlockKey<C>, int>>());
+                    if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
+                    stpWtch.Start();
+                    result[chr.Key][sDi3.Key] = sDi3.Value.Merge(nThreads);
+                    stpWtch.Stop();
+                }
+
+            return new ExecutionReport(1, stpWtch.Elapsed);
+        }
+
+        internal ExecutionReport Complement(out Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>> result, int nThreads)
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            result = new Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>>();
+
+            foreach (var chr in chrs)
+                foreach (var sDi3 in chr.Value)
+                {
+                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, SortedDictionary<BlockKey<C>, int>>());
+                    if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
+                    stpWtch.Start();
+                    result[chr.Key][sDi3.Key] = sDi3.Value.Complement(nThreads);
+                    stpWtch.Stop();
+                }
+
+            return new ExecutionReport(1, stpWtch.Elapsed);
+        }
+
+
         private string GetDi3File(string chr, char strand)
         {
             string s = "";

@@ -9,7 +9,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
     /// <summary>
     /// for second resolution.
     /// </summary>
-    internal struct BlockKey<C>
+    public struct BlockKey<C>
         where C : IComparable<C>, IFormattable
     {
         internal BlockKey(C LeftEnd, C RightEnd)
@@ -19,8 +19,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
             rightEnd = RightEnd;
         }
 
-        internal C leftEnd { private set; get; }
-        internal C rightEnd { private set; get; }
+        public C leftEnd { private set; get; }
+        public C rightEnd { private set; get; }
 
         internal BlockKey<C> UpdateLeft(C LeftEnd)
         {
