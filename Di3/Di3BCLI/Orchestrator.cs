@@ -111,8 +111,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     return GetTC();
 
                 case "settc": // set thread count
-
-                    break;
+                    return SetTC(splittedCommand);
 
                 case "2pass": // 2nd pass of indexing.
                     _stopWatch.Restart();
@@ -242,7 +241,21 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!ValidateFileName(fileName, out fileName)) return false;
 
             _parserSTW.Restart();
-            BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileName, Genomes.HomoSapiens, Assemblies.hm19, true);
+            BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(
+                source: fileName,
+                species: Genomes.HomoSapiens,
+                assembly: Assemblies.hm19,
+                readOnlyValidChrs: true,
+                startOffset: 0,
+                chrColumn: 0,
+                leftEndColumn: 3,
+                rightEndColumn: 4,
+                nameColumn: 1,
+                valueColumn: 5,
+                strandColumn: -1,
+                defaultValue: 0.01,
+                pValueFormat: pValueFormat.minus10_Log10_pValue,
+                dropPeakIfInvalidValue: false);
 
             try { Repository.parsedSample = bedParser.Parse(); }
             catch (Exception e)
@@ -402,7 +415,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         }
         private bool AccumulationDistribution(string[] args)
         {
-            if(args.Length != 2)
+            if (args.Length != 2)
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Missing argument."));
                 return false;

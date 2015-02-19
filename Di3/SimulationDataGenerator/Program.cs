@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Configuration;
 
 namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 {
@@ -11,9 +13,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         static void Main(string[] args)
         {
             RegionGenerator gR = new RegionGenerator();
-            Console.WriteLine("");
-
-            gR.GenerateRegions();
+            gR.GenerateSimulationRegions();
         }
     }
 }

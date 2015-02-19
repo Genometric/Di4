@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Polimi.DEIB.VahidJalili.DI3.CLI;
+using Polimi.DEIB.VahidJalili.GIFP;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,110 +12,56 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
     internal class RegionGenerator
     {
         const int minGap = 50;
-        const int maxGap = 500;
-        const int maxLenght = 10000; // this value must be >= 4
+        const int maxGap = 100;
+        const int maxLenght = 500; // this value must be >= 4
         const int chrCount = 1;
         const int regionsCount = 200000; // per sample
-        const string outputPath = "";
-        const int sampleCount = 800; // IF YOU CHANGE THIS: remember to revise maxAcc.
-
-        /// <summary>
-        /// Maximum accumulation.
-        /// This number must be less than sampleCount.
-        /// </summary>
-        const int maxAcc = 600;
-
-        static Random rnd = new Random();
-
-
-        static readonly int[] similarity = new int[] { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
-
-        static readonly string[] chrTitles = new string[] { "chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX" };
-        int[] regionsDistribution { set; get; }
+        const int sampleCount = 500; // IF YOU CHANGE THIS: remember to revise maxAcc.
+        const int maxAcc = 400; // Maximum accumulation. This number must be less than sampleCount.
 
         int newStart = 0;
         int newStop = 0;
         int lastStart = maxLenght + 1;
         int lastStop = maxLenght;
-
         int interStart = 0;
         int interStop = 0;
 
-        public void GenerateRegions()
+        string outputPath = "\\";
+        static string filesExtension = "bed";
+
+        static readonly int[] similarity = new int[] { 0 , 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+
+        static readonly string[] chrTitles = new string[] {
+            "chr1","chr2","chr3","chr4","chr5",
+            "chr6","chr7","chr8","chr9","chr10",
+            "chr11","chr12", "chr13", "chr14", "chr15",
+            "chr16", "chr17", "chr18", "chr19", "chr20",
+            "chr21", "chr22", "chrX" };
+
+        int[] regionsDistribution { set; get; }
+        static Random rnd = new Random();
+        
+
+        public void GenerateSimulationRegions()
         {
             regionsDistribution = GetRegionsDistribution();
-
-            // 0 : sample
-            // 1 : chromosome
-            // 2 : region
-            var allRegions = new Dictionary<int, Dictionary<int, SortedDictionary<int, string>>>();
-
-            Directory.CreateDirectory(outputPath + "\\count_" + regionsCount.ToString());
+            Directory.CreateDirectory(outputPath + "count_" + regionsCount.ToString());
 
             for (int simIndex = 0; simIndex < similarity.Length; simIndex++)
             {
-                Console.WriteLine("\nPreparing similarity : " + similarity[simIndex].ToString() + "%");
-                Console.WriteLine("");
+                Console.WriteLine("Preparing similarity : " + similarity[simIndex].ToString() + "%");
 
-                Directory.CreateDirectory("count_" + regionsCount.ToString() + "\\similarity_" + similarity[simIndex].ToString() + "\\sorted\\");
-                Directory.CreateDirectory("count_" + regionsCount.ToString() + "\\similarity_" + similarity[simIndex].ToString() + "\\unsorted\\");
-
-                string path = outputPath + "\\count_" + regionsCount.ToString() + "\\similarity_" + similarity[simIndex].ToString() + "\\";
-
-                allRegions.Clear();
-                for (int sample = 0; sample < sampleCount; sample++)
-                    allRegions.Add(sample, new Dictionary<int, SortedDictionary<int, string>>());
-
+                outputPath = outputPath + "count_" + regionsCount.ToString() + "\\similarity_" + similarity[simIndex].ToString() + "\\";
+                Directory.CreateDirectory(outputPath + "\\sorted\\");
+                Directory.CreateDirectory(outputPath + "\\shuffled\\");
 
                 for (int chr = 0; chr < chrCount; chr++)
                 {
-                    Console.WriteLine("\nGenerating Regions for chr" + chr.ToString());
-
-                    // Each string[] representes a group; and each string in string[]
-                    // represents the similar interval of different samples. 
-                    List<string[]> regions = GetRegions(simIndex, chr, chrTitles[chr]);
-
-                    for (int sample = 0; sample < sampleCount; sample++)
-                    {
-                        allRegions[sample].Add(chr, new SortedDictionary<int, string>());
-
-                        for (int r = 0; r < regions.Count; r++)
-                            allRegions[sample][chr].Add(r, regions[r][sample]);
-                    }
+                    Console.WriteLine("Generating Regions for chr" + chr.ToString());
+                    CreateSortedRegions(simIndex, chr, chrTitles[chr], outputPath);
                 }
 
-                Console.WriteLine("\n\nWriting to sorded file");
-                for (int sample = 0; sample < sampleCount; sample++)
-                {
-                    if (!Directory.Exists(path + "sorted\\")) Directory.CreateDirectory(path + "sorted\\");
-                    using (FileStream fs =
-                        new FileStream(path + "sorted\\sample_" + sample.ToString() + ".bed", FileMode.Append, FileAccess.Write))
-                    using (StreamWriter sw = new StreamWriter(fs))
-                        for (int chr = 0; chr < chrCount; chr++)
-                            for (int r = 0; r < allRegions[sample][chr].Count; r++)
-                                sw.WriteLine(allRegions[sample][chr][r]);
-                }
-
-
-                int randomChr = 0;
-                int randomRegion = 0;
-                Console.WriteLine("\nWriting to unsorded file");
-                for (int sample = 0; sample < sampleCount; sample++)
-                {
-                    if (!Directory.Exists(path + "unsorted\\")) Directory.CreateDirectory(path + "unsorted\\");
-                    using (FileStream fs =
-                        new FileStream(path + "unsorted\\sample_" + sample.ToString() + ".bed", FileMode.Append, FileAccess.Write))
-                        using (StreamWriter sw = new StreamWriter(fs))
-                            while (allRegions[sample].Count > 0)
-                            {
-                                randomChr = allRegions[sample].ElementAt(rnd.Next(0, allRegions[sample].Count)).Key;
-                                randomRegion = allRegions[sample][randomChr].ElementAt(rnd.Next(0, allRegions[sample][randomChr].Count)).Key;
-                                sw.WriteLine(allRegions[sample][randomChr][randomRegion]);
-                                allRegions[sample][randomChr].Remove(randomRegion);
-                                if (allRegions[sample][randomChr].Count == 0)
-                                    allRegions[sample].Remove(randomChr);
-                            }
-                }
+                CreateShuffleRegions(outputPath);
 
                 newStart = 0;
                 newStop = 0;
@@ -141,16 +89,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 
             return rtv;
         }
-        private List<string[]> GetRegions(int varIndex, int chr, string chrTitle)
+        private void CreateSortedRegions(int varIndex, int chr, string chrTitle, string filePath)
         {
             // similarity combination count
             // Based on similarity percentage, how many dichotomic silimarity-groups are needed ?
             int simCount = (int)Math.Round((similarity[varIndex] * regionsDistribution[chr]) / 100.0);
-
-            List<string[]> rtv = new List<string[]>();
-
-            // similar or variant random switch.
-            //Random svRS = new Random();
 
             // similar or variant switch.
             char svS = 'S';
@@ -166,7 +109,6 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
             for (int group = 0; group < regionsDistribution[chr]; group++)
             {
                 #region .::. Create Variant or Similar groups ?     .::.
-
 
                 if (simCount != 0 && simCount - gSimCount < regionsDistribution[chr] - group)
                 { // Generate either similar or variant groups.
@@ -193,7 +135,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
                 {
                     case 'S':
                         interStart = rnd.Next(lastStop + gapPG + maxLenght + 2, lastStop + gapPG + (2 * maxLenght));
-                        interStop = rnd.Next(interStart + 1, interStart + 1 + (int)Math.Floor(maxLenght / 10.0)); 
+                        interStop = rnd.Next(interStart + 1, interStart + 1 + (int)Math.Floor(maxLenght / 10.0));
                         /// why maxLength / 10.0 ?
                         /// This specifies the maximum allowed portion of available window to be dedicated
                         /// to intersection region. For instance, for a window of length 100, intersection
@@ -266,7 +208,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
                                     s = 0;
                                 }
                             } while (regenerateAllRegions);
-                            
+
                             rtvS[s] =
                                 chrTitle + "\t" +
                                 newStart.ToString() + "\t" +
@@ -279,12 +221,55 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
                         break;
                 }
 
-                rtv.Add(rtvS);
+                for (int sample = 0; sample < sampleCount; sample++)
+                {
+                    if (!Directory.Exists(filePath + "sorted\\")) Directory.CreateDirectory(filePath + "sorted\\");
+                    using (FileStream fs =
+                        new FileStream(filePath + "sorted\\sample_" + sample.ToString() + "." + filesExtension, FileMode.Append, FileAccess.Write))
+                    using (StreamWriter sw = new StreamWriter(fs))
+                        sw.WriteLine(rtvS[sample]);
+                }
 
-                Console.Write("\r{0} \\ {1}", group.ToString(), regionsDistribution[chr].ToString());
+                Console.Write("\r{0:N0} \\ {1:N0}", (group + 1).ToString(), regionsDistribution[chr].ToString());
             }
 
-            return rtv;
+            Console.WriteLine("Done !");
+        }
+        private void CreateShuffleRegions(string folderPath)
+        {
+            Console.WriteLine("Writing shuffled files.");
+            string randomChr = null;
+            char randomStrand = 'V';
+            int randomRegion = 0;
+            Peak peak = null;
+            var dirInfo = new DirectoryInfo(folderPath + "\\sorted");
+            FileInfo[] determinedFiles = dirInfo.GetFiles("*." + filesExtension);
+            foreach (FileInfo fileInfo in determinedFiles)
+            {
+                Console.WriteLine(string.Format("Now writing: {0}", Path.GetFileNameWithoutExtension(fileInfo.FullName)));
+                BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileInfo.FullName, Genomes.HomoSapiens, Assemblies.hm19, true);
+                var parsedSample = bedParser.Parse();
+                var intervals = parsedSample.intervals;
+
+                if (!Directory.Exists(folderPath + "shuffled\\")) Directory.CreateDirectory(folderPath + "shuffled\\");
+                using (FileStream fs =
+                    new FileStream(folderPath + "shuffled\\" + Path.GetFileNameWithoutExtension(fileInfo.FullName) + "." + filesExtension, FileMode.Append, FileAccess.Write))
+                using (StreamWriter sw = new StreamWriter(fs))
+                    while (intervals.Count > 0)
+                    {
+                        randomChr = intervals.ElementAt(rnd.Next(0, intervals.Count)).Key;
+                        randomStrand = intervals[randomChr].ElementAt(rnd.Next(0, intervals[randomChr].Count)).Key;
+                        randomRegion = rnd.Next(0, intervals[randomChr][randomStrand].Count);
+                        peak = intervals[randomChr][randomStrand][randomRegion];
+                        sw.WriteLine(randomChr + "\t" + peak.ToString("\t") + "\t" + randomStrand);
+                        intervals[randomChr][randomStrand].RemoveAt(randomRegion);
+                        if (intervals[randomChr][randomStrand].Count == 0)
+                            intervals[randomChr].Remove(randomStrand);
+                        if (intervals[randomChr].Count == 0)
+                            intervals.Remove(randomChr);
+                    }
+            }
+            Console.WriteLine("Done");
         }
 
         private string GetRandomName()
