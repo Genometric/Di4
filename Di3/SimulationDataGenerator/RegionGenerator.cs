@@ -9,24 +9,24 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 {
     internal class RegionGenerator
     {
-        const int minGap = 500;
-        const int maxGap = 1000;
-        const int maxLenght = 100; // this value must be >= 4
+        const int minGap = 50;
+        const int maxGap = 500;
+        const int maxLenght = 10000; // this value must be >= 4
         const int chrCount = 1;
-        const int regionsCount = 30; // per sample
-        const string outputPath = "F:\\";
-        const int sampleCount = 10; // IF YOU CHANGE THIS: remember to revise maxAcc.
+        const int regionsCount = 200000; // per sample
+        const string outputPath = "";
+        const int sampleCount = 800; // IF YOU CHANGE THIS: remember to revise maxAcc.
 
         /// <summary>
         /// Maximum accumulation.
         /// This number must be less than sampleCount.
         /// </summary>
-        const int maxAcc = 5;
+        const int maxAcc = 600;
 
         static Random rnd = new Random();
 
 
-        static readonly int[] similarity = new int[] { 0 };//new int[] { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+        static readonly int[] similarity = new int[] { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
 
         static readonly string[] chrTitles = new string[] { "chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX" };
         int[] regionsDistribution { set; get; }
