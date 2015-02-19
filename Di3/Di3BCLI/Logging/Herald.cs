@@ -12,6 +12,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         internal static StreamWriter writer { set; get; }
         private static Destination _heraldDestination { set; get; }
 
+        /// <summary>
+        /// ONLY FOR TEST PURPOSE.
+        /// </summary>
+        private static StreamWriter _indexSpeedWriter { set; get; }
+
         internal static void Initialize(Destination HeraldDestination, string FileFullName)
         {
             _heraldDestination = HeraldDestination;
@@ -21,6 +26,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 if (!Directory.Exists(Path.GetDirectoryName(FileFullName))) Directory.CreateDirectory(Path.GetDirectoryName(FileFullName));
                 if (!File.Exists(Path.GetFileName(FileFullName))) File.Create(Path.GetFileName(FileFullName));
                 writer = new StreamWriter(FileFullName, true);
+
+                if (!File.Exists(Path.GetFileName(FileFullName + ".indxSpeed"))) File.Create(Path.GetFileName(FileFullName + ".indxSpeed"));
+                _indexSpeedWriter = new StreamWriter(FileFullName + ".indxSpeed", true);
             }
         }
 
@@ -81,6 +89,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 /*2*/ String.Format("{0:N0}", report.count),
                 /*3*/ report.ET,
                 /*4*/ String.Format("{0:N0} {1}\\sec", Math.Round(report.count / report.ET.TotalSeconds, 2), sUnit)));
+
+            if(command == "Indexed")
+            {
+                _indexSpeedWriter.WriteLine(sUnit + "\t" + report.count + "\t" + report.ET + "\t" + Math.Round(report.count / report.ET.TotalSeconds, 2));
+                _indexSpeedWriter.Flush();
+            }
         }
 
         internal static void Dispose()
