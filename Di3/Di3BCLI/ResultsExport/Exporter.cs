@@ -63,7 +63,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     {
                         foreach (var distribution in strand.Value)
                         {
-                            writter.WriteLine(chr.Key + separator + strand.Key + distribution.Key.ToString() + separator + distribution.Value.ToString());
+                            writter.WriteLine(chr.Key + separator + strand.Key + separator + distribution.Key.ToString() + separator + distribution.Value.ToString());
                             intervalCount++;
                         }
                     }

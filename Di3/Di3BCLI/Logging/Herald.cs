@@ -13,7 +13,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         private static Destination _heraldDestination { set; get; }
 
         /// <summary>
-        /// ONLY FOR TEST PURPOSE.
+        /// FOR TEST PURPOSE ONLY.
         /// </summary>
         private static StreamWriter _indexSpeedWriter { set; get; }
 
@@ -24,10 +24,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 HeraldDestination == Destination.Both)
             {
                 if (!Directory.Exists(Path.GetDirectoryName(FileFullName))) Directory.CreateDirectory(Path.GetDirectoryName(FileFullName));
-                if (!File.Exists(Path.GetFileName(FileFullName))) File.Create(Path.GetFileName(FileFullName));
                 writer = new StreamWriter(FileFullName, true);
 
-                if (!File.Exists(Path.GetFileName(FileFullName + ".indxSpeed"))) File.Create(Path.GetFileName(FileFullName + ".indxSpeed"));
                 _indexSpeedWriter = new StreamWriter(FileFullName + ".indxSpeed", true);
             }
         }

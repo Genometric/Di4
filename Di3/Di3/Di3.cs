@@ -109,10 +109,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
             INDEX = new SingleIndex<C, I, M>(_di3_1R);
             
-            /// This might slow-down the Add, Delete, and Update procedures.
-            /// TODO: Test initialization with and without this command. 
-            _di3_1R.EnableCount();
-            _di3_2R.EnableCount();
+            /// Don't enable following commands.
+            /// The consequences are: initialization becomes very slow,
+            /// specially if the data size is big.
+            //_di3_1R.EnableCount();
+            //_di3_2R.EnableCount();
         }
 
         /// <summary>
@@ -501,9 +502,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 work.Complete(true, -1);
             }
-            
+
             for (int i = 0; i < nThreads - 1; i++)
-                blocks.Add(new BlockKey<C>(partitions[i].right.rightEnd, partitions[i + 1].left.leftEnd), 0);
+            {
+                var partitionsBlock = new BlockKey<C>(partitions[i].right.rightEnd, partitions[i + 1].left.leftEnd);
+                if (!blocks.ContainsKey(partitionsBlock))
+                    blocks.Add(partitionsBlock, 0);
+            }
 
             return blocks.Keys;
         }
