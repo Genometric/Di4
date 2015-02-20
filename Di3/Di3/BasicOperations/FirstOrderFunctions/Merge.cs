@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
 {
-    internal class Merge<C, I, M>
+    internal class MergeComplement<C, I, M>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal Merge(BPlusTree<BlockKey<C>, BlockValue> di3_2R, BlockKey<C> left, BlockKey<C> right, SortedDictionary<BlockKey<C>, int> blocks, Object lockOnMe)
+        internal MergeComplement(BPlusTree<BlockKey<C>, BlockValue> di3_2R, BlockKey<C> left, BlockKey<C> right, SortedDictionary<BlockKey<C>,int> blocks, Object lockOnMe)
         {
             _di3_2R = di3_2R;
             _left = left;
@@ -23,22 +23,22 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
         }
 
         private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
-        private SortedDictionary<BlockKey<C>, int> _blocks { set; get; }
+        private SortedDictionary<BlockKey<C>,int> _blocks { set; get; }
         private BlockKey<C> _left { set; get; }
         private BlockKey<C> _right { set; get; }
         private Object _lockOnMe { set; get; }
 
         internal void Merge()
         {
-            var tmpDic = new SortedDictionary<BlockKey<C>, int>();
+            /*var tmpDic = new SortedDictionary<BlockKey<C>, int>();
             foreach (var block in _di3_2R.EnumerateRange(_left, _right))
                 tmpDic.Add(block.Key, block.Value.intervalCount);
-
+            
             lock (_lockOnMe)
             {
                 foreach (var item in tmpDic)
                     _blocks.Add(item.Key, item.Value);
-            }
+            }*/
         }
         internal void Complement()
         {
@@ -47,9 +47,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
             C tmpBookmark = default(C);
 
             /// As usual, this little iteration is for initialization.
-            foreach(var block in _di3_2R.EnumerateRange(_left, _right))
+            foreach (var block in _di3_2R.EnumerateRange(_left, _right))
             {
-                if(doBreak)
+                if (doBreak)
                 {
                     _left = block.Key;
                     break;
@@ -57,16 +57,16 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
                 tmpBookmark = block.Key.rightEnd;
                 doBreak = true;
             }
-            foreach(var block in _di3_2R.EnumerateRange(_left, _right))
+            foreach (var block in _di3_2R.EnumerateRange(_left, _right))
             {
-                tmpDic.Add(new BlockKey<C>(tmpBookmark, block.Key.leftEnd), block.Value.intervalCount);
+                tmpDic.Add(new BlockKey<C>(tmpBookmark, block.Key.leftEnd), 0);
                 tmpBookmark = block.Key.rightEnd;
             }
 
-            lock(_lockOnMe)
+            lock (_lockOnMe)
             {
                 foreach (var item in tmpDic)
-                    _blocks.Add(item.Key, item.Value);
+                    _blocks.Add(item.Key, 0);
             }
         }
     }

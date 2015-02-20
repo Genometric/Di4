@@ -97,6 +97,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 
                                     stpWtch.Start();
                                     chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, nThreads);
+                                    chrs[chr.Key][strand].Commit();
                                     stpWtch.Stop();
                                     totalIntervals += strandEntry.Value.Count;
                                 }
@@ -120,6 +121,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 
                             stpWtch.Start();
                             chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, nThreads);
+                            // Check if it's needed to call Commit().
                             stpWtch.Stop();
                             totalIntervals += strandEntry.Value.Count;
                         }
@@ -138,6 +140,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     stpWtch.Start();
                     totalIntervals += sDi3.Value.blockCount;
                     sDi3.Value.SecondPass();
+                    sDi3.Value.Commit();
                     stpWtch.Stop();
                 }
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
@@ -250,21 +253,22 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 {
                     stpWtch.Start();
                     totalBookmarks += sDi3.Value.SecondResolutionIndex(nthreads);
+                    sDi3.Value.Commit();
                     stpWtch.Stop();
                 }
 
             return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Merge(out Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>> result, int nThreads)
+        internal ExecutionReport Merge(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
         {
             Stopwatch stpWtch = new Stopwatch();
-            result = new Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>>();
+            result = new Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>>();
 
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, SortedDictionary<BlockKey<C>, int>>());
+                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, ICollection<BlockKey<C>>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
                     result[chr.Key][sDi3.Key] = sDi3.Value.Merge(nThreads);
@@ -274,15 +278,15 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Complement(out Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>> result, int nThreads)
+        internal ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
         {
             Stopwatch stpWtch = new Stopwatch();
-            result = new Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>>();
+            result = new Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>>();
 
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, SortedDictionary<BlockKey<C>, int>>());
+                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, ICollection<BlockKey<C>>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
                     result[chr.Key][sDi3.Key] = sDi3.Value.Complement(nThreads);

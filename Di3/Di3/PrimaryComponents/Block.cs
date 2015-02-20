@@ -9,11 +9,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
     /// <summary>
     /// for second resolution.
     /// </summary>
-    public struct BlockKey<C>
+    public struct BlockKey<C> : IComparable<BlockKey<C>>
         where C : IComparable<C>, IFormattable
     {
         internal BlockKey(C LeftEnd, C RightEnd)
-            :this()
+            : this()
         {
             leftEnd = LeftEnd;
             rightEnd = RightEnd;
@@ -33,6 +33,15 @@ namespace Polimi.DEIB.VahidJalili.DI3
         internal BlockKey<C> Update(C LeftEnd, C RightEnd)
         {
             return new BlockKey<C>(LeftEnd: LeftEnd, RightEnd: RightEnd);
+        }
+
+        public int CompareTo(BlockKey<C> other)
+        {
+            if (other.Equals(null)) return 1;
+
+            int tmpCmp = this.leftEnd.CompareTo(other.leftEnd);
+            if (tmpCmp != 0) return tmpCmp;
+            return this.rightEnd.CompareTo(other.rightEnd);
         }
     }
 

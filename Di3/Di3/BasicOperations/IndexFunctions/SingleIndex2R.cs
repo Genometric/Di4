@@ -39,9 +39,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
             foreach (var bookmark in _di31R.EnumerateRange(_left, _right))
             {
                 maxAccumulation = Math.Max(maxAccumulation, bookmark.Value.lambda.Count);
-                foreach (var interval in bookmark.Value.lambda)
-                    if (!presentIntervals.ContainsKey(interval.atI))
-                        presentIntervals.Add(interval.atI, true);
+                //foreach (var interval in bookmark.Value.lambda)
+                    //if (!presentIntervals.ContainsKey(interval.atI))
+                        //presentIntervals.Add(interval.atI, true);
 
                 if (startNewBlock)
                 {

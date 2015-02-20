@@ -108,7 +108,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _di3_1R = new BPlusTree<C, B>(Get1ROptions(options));
             _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
             INDEX = new SingleIndex<C, I, M>(_di3_1R);
-
+            
             /// This might slow-down the Add, Delete, and Update procedures.
             /// TODO: Test initialization with and without this command. 
             _di3_1R.EnableCount();
@@ -452,20 +452,20 @@ namespace Polimi.DEIB.VahidJalili.DI3
             return results;
         }
 
-        public SortedDictionary<BlockKey<C>, int> Merge()
+        public ICollection<BlockKey<C>> Merge()
         {
             return Merge(Environment.ProcessorCount);
         }
-        public SortedDictionary<BlockKey<C>, int> Merge(int nThreads)
+        public ICollection<BlockKey<C>> Merge(int nThreads)
         {
-            Object lockOnMe = new Object();
+            /*Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             var blocks = new SortedDictionary<BlockKey<C>, int>();
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new Merge<C, I, M>(
+                        new MergeComplement<C, I, M>(
                             _di3_2R,
                             partitions[i].left,
                             partitions[i].right,
@@ -474,14 +474,16 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 work.Complete(true, -1);
             }
-            return blocks;
+            return blocks;*/
+
+            return _di3_2R.Keys;
         }
 
-        public SortedDictionary<BlockKey<C>, int> Complement()
+        public ICollection<BlockKey<C>> Complement()
         {
             return Complement(Environment.ProcessorCount);
         }
-        public SortedDictionary<BlockKey<C>, int> Complement(int nThreads)
+        public ICollection<BlockKey<C>> Complement(int nThreads)
         {
             Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
@@ -490,7 +492,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new Merge<C, I, M>(
+                        new MergeComplement<C, I, M>(
                             _di3_2R,
                             partitions[i].left,
                             partitions[i].right,
@@ -499,11 +501,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 work.Complete(true, -1);
             }
-
+            
             for (int i = 0; i < nThreads - 1; i++)
                 blocks.Add(new BlockKey<C>(partitions[i].right.rightEnd, partitions[i + 1].left.leftEnd), 0);
 
-            return blocks;
+            return blocks.Keys;
         }
 
         private Partition<C>[] Fragment_1R(int fCount)
@@ -611,6 +613,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             // Free unmanaged objects here. 
             disposed = true;
+        }
+
+        public void Commit()
+        {
+            _di3_1R.Commit();
+            _di3_2R.Commit();
         }
     }
 }

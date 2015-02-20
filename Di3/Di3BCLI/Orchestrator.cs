@@ -276,10 +276,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 readOnlyValidChrs: true,
                 startOffset: 0,
                 chrColumn: 0,
-                leftEndColumn: 3,
-                rightEndColumn: 4,
-                nameColumn: 1,
-                valueColumn: 5,
+                leftEndColumn: 1,//3,
+                rightEndColumn: 2,//4,
+                nameColumn: 3,//1,
+                valueColumn: 4,//5,
                 strandColumn: -1,
                 defaultValue: 0.01,
                 pValueFormat: pValueFormat.minus10_Log10_pValue,
@@ -484,7 +484,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<int>, int>>> results = null;
+            Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results = null;
             Herald.AnnounceExeReport("Merge", di3B.Merge(out results, _nThread));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;
@@ -499,7 +499,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<int>, int>>> results = null;
+            Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results = null;
             Herald.AnnounceExeReport("Complement", di3B.Complement(out results, _nThread));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;

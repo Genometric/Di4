@@ -26,7 +26,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         int interStart = 0;
         int interStop = 0;
 
-        string outputPath = "\\";
+        const string parentPath = "\\";
         static string filesExtension = "bed";
 
         static readonly int[] similarity = new int[] { 0 , 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
@@ -45,13 +45,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         public void GenerateSimulationRegions()
         {
             regionsDistribution = GetRegionsDistribution();
-            Directory.CreateDirectory(outputPath + "count_" + regionsCount.ToString());
+            Directory.CreateDirectory(parentPath + "count_" + regionsCount.ToString());
+            string outputPath = "";
 
             for (int simIndex = 0; simIndex < similarity.Length; simIndex++)
             {
                 Console.WriteLine("Preparing similarity : " + similarity[simIndex].ToString() + "%");
 
-                outputPath = outputPath + "count_" + regionsCount.ToString() + "\\similarity_" + similarity[simIndex].ToString() + "\\";
+                outputPath = parentPath + "count_" + regionsCount.ToString() + "\\similarity_" + similarity[simIndex].ToString() + "\\";
                 Directory.CreateDirectory(outputPath + "\\sorted\\");
                 Directory.CreateDirectory(outputPath + "\\shuffled\\");
 

@@ -51,11 +51,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.SecondResolutionIndex(nThreads);
         }
-        public ExecutionReport Merge(out Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>,int>>> result, int nThreads)
+        public ExecutionReport Merge(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
         {
             return genome.Merge(out result, nThreads);
         }
-        public ExecutionReport Complement(out Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<C>, int>>> result, int nThreads)
+        public ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
         {
             return genome.Complement(out result, nThreads);
         }

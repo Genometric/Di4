@@ -8,7 +8,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     internal static class Exporter
     {
-        public static ExecutionReport Export(string fileName, FunctionOutput<Output<int, Peak, PeakData>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, FunctionOutput<Output<int, Peak, PeakData>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -28,7 +28,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -50,7 +50,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -71,7 +71,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        public static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<BlockKey<int>, int>>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -81,13 +81,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             using (var writter = new StreamWriter(fileName))
                 foreach (var chr in results)
                     foreach (var strand in chr.Value)
-                    {
                         foreach (var block in strand.Value)
                         {
-                            writter.WriteLine(chr.Key + separator + strand.Key + block.Key.leftEnd + separator + block.Key.rightEnd + separator + block.Value);
+                            writter.WriteLine(chr.Key + separator + block.leftEnd + separator + block.rightEnd + separator + strand.Key);
                             intervalCount++;
                         }
-                    }
 
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
