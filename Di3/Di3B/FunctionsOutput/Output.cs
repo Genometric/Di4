@@ -18,7 +18,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             /// Note:
             /// If constructor is not expensive, execute following command,
             /// otherwise, leave it commented-out as it is now.
-            //interval.metadata = new M();
+            //interval.atI = new M();
         }
 
         internal Output(I Interval, int Count)

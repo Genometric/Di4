@@ -13,14 +13,15 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         public B ReadFrom(System.IO.Stream stream)
         {
-            return new B(PrimitiveSerializer.Int32.ReadFrom(stream), _lambdaArraySerializer.ReadFrom(stream));
+            return new B(PrimitiveSerializer.Int32.ReadFrom(stream), PrimitiveSerializer.UInt16.ReadFrom(stream), _lambdaArraySerializer.ReadFrom(stream));
         }
 
         public void WriteTo(B value, System.IO.Stream stream)
         {
             if (value == null) return;
 
-            PrimitiveSerializer.Int32.WriteTo(value.omega, stream);
+            PrimitiveSerializer.Int32.WriteTo(value.mu, stream);
+            PrimitiveSerializer.UInt16.WriteTo(value.omega, stream);
             _lambdaArraySerializer.WriteTo(value.lambda, stream);
         }
     }

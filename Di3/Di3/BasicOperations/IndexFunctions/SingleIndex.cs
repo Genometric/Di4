@@ -66,6 +66,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private List<I> _intervals { set; get; }
         private AddUpdateValue update = new AddUpdateValue();
         
+        
 
         public void Index()
         {
@@ -80,34 +81,29 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 case IndexingMode.MultiPass:
                     for (i = _start; i < _stop; i++)
                     {
-                        update.hashKey = _intervals[i].hashKey;
-                        update.tau = 'L';
+                        update.atI = _intervals[i].hashKey;
+                        update.iC = IntersectionCondition.LeftEnd;
                         _di3.AddOrUpdate(_intervals[i].left, ref update);
 
-                        update.tau = 'R';
+                        update.iC = IntersectionCondition.RightEnd;
                         _di3.AddOrUpdate(_intervals[i].right, ref update);
                     }
                     break;
             }
         }
-
-        /// <summary>
-        /// Indexes the provided interval.
-        /// </summary>
-        /// <param name="interval">The interval to be index.</param>
         public void Index(I interval)
         {
             _interval = interval;
             bool isLeftEnd = true;
             bool enumerated = false;
-            update.tau = 'L';
-            update.hashKey = _interval.hashKey;
+            update.atI = _interval.hashKey;
+            update.iC = IntersectionCondition.LeftEnd;
             int compareResult;
 
             foreach (var item in _di3.EnumerateFrom(_interval.left))
             {
                 enumerated = true;
-                update.NextBlock = null;
+                update.NextBookmark = null;
 
                 if (isLeftEnd)
                 {
@@ -120,25 +116,25 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                     if (compareResult == 0)
                     {
-                        update.tau = 'R';
+                        update.iC = IntersectionCondition.RightEnd;
                         break;
                     }
                     else if (compareResult == 1)// interval.right is bigger than bookmark.Key
                     {
-                        update.tau = 'M';
+                        update.iC = IntersectionCondition.Middle;
                         _di3.AddOrUpdate(item.Key, ref update);
                     }
                     else
                     {
-                        update.tau = 'R';
-                        update.NextBlock = item.Value;
+                        update.iC = IntersectionCondition.RightEnd;
+                        update.NextBookmark = item.Value;
                         break;
                     }
                 }
 
                 /// this will be useful when the iteration reaches the 
-                /// end of collection while right-end is not handled yet. 
-                update.tau = 'R';
+                /// end of collection while right-end is not handled yet.
+                update.iC = IntersectionCondition.RightEnd;
             }
 
             if (enumerated)
@@ -147,13 +143,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
             else
             {
-                update.NextBlock = null;
-                update.tau = 'L';
-                update.hashKey = _interval.hashKey;
+                update.NextBookmark = null;
+                update.iC = IntersectionCondition.LeftEnd;
+                update.atI = _interval.hashKey;
                 _di3.AddOrUpdate(_interval.left, ref update);
 
-                update.tau = 'R';
-                update.hashKey = _interval.hashKey;
+                update.iC = IntersectionCondition.RightEnd;
                 _di3.AddOrUpdate(_interval.right, ref update);
             }
         }
@@ -163,33 +158,55 @@ namespace Polimi.DEIB.VahidJalili.DI3
             KeyValuePair<C, B> firstItem;
             _di3.TryGetFirst(out firstItem);
 
-            Dictionary<uint, Lambda> lambdaCarrier = new Dictionary<uint, Lambda>();
-            KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(lambdaCarrier); };
+            int mu = 0;
+            UInt16 omega = 0;
+            ReadOnlyCollection<Lambda> currentBookmarkLambda = null;
+            var lambdaCarrier = new Dictionary<uint, bool>();
+            KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
             List<uint> keysToRemove = new List<uint>();
-            List<uint> keys;
+            //List<uint> keys;
 
+            
             foreach (var bookmark in _di3.EnumerateFrom(firstItem.Key))
             {
                 foreach (var lambda in bookmark.Value.lambda)
                 {
+                    /// if any error rises on following Add/Remove operations, 
+                    /// it's an indication that 1st pass did not work properly.
+                    if (lambda.phi == true)
+                        lambdaCarrier.Add(lambda.atI, true);
+                    else
+                        lambdaCarrier.Remove(lambda.atI);
+                    /*
                     if (lambdaCarrier.ContainsKey(lambda.atI))
                         lambdaCarrier[lambda.atI] = lambda;
                     else
-                        lambdaCarrier.Add(lambda.atI, lambda);
-
-                    if (lambda.phi == 'R') keysToRemove.Add(lambda.atI);
+                        lambdaCarrier.Add(lambda.atI, lambda);*/
+                    //if (lambda.phi == false) keysToRemove.Add(lambda.atI);
                 }
 
-                if (UpdateRequired(bookmark.Value.lambda, lambdaCarrier))
+
+                mu = lambdaCarrier.Count - bookmark.Value.lambda.Count + bookmark.Value.omega; // ;-)
+                if (bookmark.Value.mu != mu)
+                {
+                    omega = bookmark.Value.omega;
+                    currentBookmarkLambda = bookmark.Value.lambda;
                     _di3.TryUpdate(bookmark.Key, updateFunction);
+                }
 
-                foreach (uint item in keysToRemove)
-                    lambdaCarrier.Remove(item);
-                keysToRemove.Clear();
+                //if (UpdateRequired(bookmark.Value.lambda, lambdaCarrier))
+                    //_di3.TryUpdate(bookmark.Key, updateFunction);
 
-                keys = new List<uint>(lambdaCarrier.Keys);
-                foreach (var key in keys)
-                    lambdaCarrier[key] = new Lambda('M', lambdaCarrier[key].atI);
+                //foreach (uint item in keysToRemove)
+                    //lambdaCarrier.Remove(item);
+                //keysToRemove.Clear();
+
+                /////////////////////////////////////////////////////
+                ///////// UPDATE THIS LINE /////////////////////////
+                ///////////////////////////////////////////////////
+                //keys = new List<uint>(lambdaCarrier.Keys);
+                //foreach (var key in keys)
+                //    lambdaCarrier[key] = new Lambda('M', lambdaCarrier[key].atI);
             }
         }
         private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda,Dictionary<uint, Lambda> lambdaCarrier )
@@ -210,23 +227,22 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
             else
             {
-                update.NextBlock = item.Value;
+                update.NextBookmark = item.Value;
 
                 switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // _interval.right is bigger than lambda.newKey
+                    case 1: // _interval.right is bigger than item.Key
                         _di3.AddOrUpdate(_interval.left, ref update);
 
-                        update.tau = 'M';
-                        update.NextBlock = null;
+                        update.iC = IntersectionCondition.Middle;
+                        update.NextBookmark = null;
                         _di3.AddOrUpdate(item.Key, ref update);
                         return false;
 
                     case 0:
                     case -1:
                         _di3.AddOrUpdate(_interval.left, ref update);
-
-                        update.tau = 'R';
+                        update.iC = IntersectionCondition.RightEnd;
                         return true;
                 }
             }
@@ -235,49 +251,60 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
 
 
-
+        
         struct AddUpdateValue : ICreateOrUpdateValue<C, B>, IRemoveValue<C, B>
         {
             public B oldValue;
-            public char tau { set; get; }
-            public UInt32 hashKey { set; get; }
+            //public bool phi { set; get; }
+            //public bool middle { set; get; }
+            public IntersectionCondition iC { set; get; }
+            public UInt32 atI { set; get; }
 
-            public B NextBlock { set; get; }
+            public B NextBookmark { set; get; }
 
             public bool CreateValue(C key, out B value)
             {
                 oldValue = null;
-                value = GetNewBlock();
-                return hashKey != 0 && tau != default(char);
+
+                if (NextBookmark == null)
+                    value = new B(condition: iC, atI: atI);
+                else
+                    value = new B(condition: iC, atI: atI, nextBookmark: NextBookmark);
+                //value = GetNewBlock();
+                return atI != 0; //&& phi != default(char);
             }
             public bool UpdateValue(C key, ref B value)
             {
                 oldValue = value;
 
-                if (tau == 'R')
-                    value = value.Update(omega: value.omega + 1, tau: tau, hashKey: hashKey);
-                else
-                    value = value.Update(omega: value.omega, tau: tau, hashKey: hashKey);
+                //if (phi == 'R')
+                    //value = value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
+                //else
+                    //value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
 
-                return hashKey != 0 && tau != default(char);
+                value = value.Update(atI: atI, condition: iC);
+
+                return atI != 0; //&& phi != default(char);
             }
             public bool RemoveValue(C key, B value)
             {
                 oldValue = value;
 
-                if (tau == 'R')
-                    return value == value.Update(omega: value.omega + 1, tau: tau, hashKey: hashKey);
-                else
-                    return value == value.Update(omega: value.omega, tau: tau, hashKey: hashKey);
+                //if (phi == 'R')
+                    //return value == value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
+                //else
+                    //return value == value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
+
+                return value == value.Update(atI: atI, condition: iC);
             }
 
-            private B GetNewBlock()
+            /*private B GetNewBlock()
             {
-                if (NextBlock == null)
-                    return new B(tau: tau, hashKey: hashKey);
+                if (NextBookmark == null)
+                    return new B(phi: phi, atI: atI);
                 else
-                    return new B(tau: tau, metadata: hashKey, nextBlock: NextBlock);
-            }
+                    return new B(phi: phi, atI: atI, nextBookmark: NextBookmark);
+            }*/
         }
     }
 }

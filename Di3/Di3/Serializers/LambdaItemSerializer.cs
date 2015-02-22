@@ -7,13 +7,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
     {
         public Lambda ReadFrom(System.IO.Stream stream)
         {
-            return new Lambda(PrimitiveSerializer.Char.ReadFrom(stream), PrimitiveSerializer.UInt32.ReadFrom(stream));
+            return new Lambda(PrimitiveSerializer.Boolean.ReadFrom(stream), PrimitiveSerializer.UInt32.ReadFrom(stream));
         }
 
         public void WriteTo(Lambda value, System.IO.Stream stream)
         {
-            if (value.atI == default(UInt32) && value.phi == default(char)) return;
-            PrimitiveSerializer.Char.WriteTo(value.phi, stream);
+            if (value.atI == default(UInt32) && value.phi == default(bool)) return;
+            PrimitiveSerializer.Boolean.WriteTo(value.phi, stream);
             PrimitiveSerializer.UInt32.WriteTo(value.atI, stream);
         }
     }

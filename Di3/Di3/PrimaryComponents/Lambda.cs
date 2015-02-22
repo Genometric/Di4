@@ -21,28 +21,26 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// </para>
         /// </summary>
         /// <param name="phi">The intersection type of interval
-        /// wtih c of corresponding bookmark.</param>
+        /// wtih e of corresponding bookmark.</param>
         /// <param name="atI">Descriptive hashKey of the intereval.</param>
-        internal Lambda(char tau, UInt32 atI)
+        internal Lambda(bool phi, UInt32 atI)
             : this()
         {
-            this.phi = tau;
+            this.phi = phi;
             this.atI = atI;
         }
 
 
         /// <summary>
-        /// Gets the intersection type of _interval
-        /// wtih c of corresponding bookmark.
-        /// <para>[currentValue] = L  ::>  Left-end  intersecting the coordiante.</para>
-        /// <para>[currentValue] = M  ::>  Middle    intersecting the coordiante.</para>
-        /// <para>[currentValue] = R  ::>  Right-end intersecting the coordiante.</para>
+        /// Gets the intersection type of interval wtih e of corresponding bookmark.
+        /// <para>[currentValue] = true   ::>  Left-end  intersecting the coordiante.</para>
+        /// <para>[currentValue] = false  ::>  Right-end intersecting the coordiante.</para>
         /// </summary>
-        internal char phi { private set; get; }
+        internal bool phi { private set; get; }
 
         /// <summary>
-        /// Gets descriptive hashKey of the intereval
-        /// represented by generic type M.
+        /// Gets hashKey of the intereval pointing to descriptive atI of 
+        /// the interval. The hashkey is represented by generic type M.
         /// </summary>
         internal UInt32 atI { private set; get; }
     }

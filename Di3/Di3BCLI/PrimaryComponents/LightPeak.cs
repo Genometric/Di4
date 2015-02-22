@@ -15,7 +15,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         public int right { set; get; }
 
         /// <summary>
-        /// Sets and gets the descriptive metadata
+        /// Sets and gets the descriptive atI
         /// of the distribution. It could be a refChr
         /// to a _memory object, or a pointer, or 
         /// an entry ID on database, or etc. 

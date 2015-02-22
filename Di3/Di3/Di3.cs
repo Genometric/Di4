@@ -27,7 +27,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
     /// parameter in terms of Lowest Common Denominator.
     /// </para></typeparam>
     /// <typeparam name="M">Represents generic
-    /// type of pointer to descriptive hashKey cooresponding
+    /// type of pointer to descriptive atI cooresponding
     /// to the _interval.</typeparam>
     public class Di3<C, I, M> : IDisposable
         where C : IComparable<C>, IFormattable
