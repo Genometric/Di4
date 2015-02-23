@@ -28,7 +28,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results, string header, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -36,6 +36,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
+            {
+                writter.WriteLine(header);
                 foreach (var chr in results)
                     foreach (var strand in chr.Value)
                     {
@@ -46,11 +48,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                             intervalCount++;
                         }
                     }
+            }
 
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results, string header, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -58,6 +61,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
+            {
+                writter.WriteLine(header);
                 foreach (var chr in results)
                     foreach (var strand in chr.Value)
                     {
@@ -67,6 +72,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                             intervalCount++;
                         }
                     }
+            }
 
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);

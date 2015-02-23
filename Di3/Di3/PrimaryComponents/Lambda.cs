@@ -4,7 +4,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 {
     /// <summary>
     /// Represents the interval intersecting with 
-    /// the e of corresponding bookmark. 
+    /// the e of corresponding keyBookmark. 
     /// <para>For intervals of possibly different types,
     /// it is recommended to define this generic type
     /// parameter in terms of Lowest Common Denominator.
@@ -14,14 +14,14 @@ namespace Polimi.DEIB.VahidJalili.DI3
     {
         /// <summary>
         /// Represents the interval intersecting with 
-        /// the e of corresponding bookmark. 
+        /// the e of corresponding keyBookmark. 
         /// <para>For intervals of possibly different types,
         /// it is recommended to define this generic type
         /// parameter in terms of Lowest Common Denominator.
         /// </para>
         /// </summary>
         /// <param name="phi">The intersection type of interval
-        /// wtih e of corresponding bookmark.</param>
+        /// wtih e of corresponding keyBookmark.</param>
         /// <param name="atI">Descriptive hashKey of the intereval.</param>
         internal Lambda(bool phi, UInt32 atI)
             : this()
@@ -32,7 +32,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
 
         /// <summary>
-        /// Gets the intersection type of interval wtih e of corresponding bookmark.
+        /// Gets the intersection type of interval wtih e of corresponding keyBookmark.
         /// <para>[currentValue] = true   ::>  Left-end  intersecting the coordiante.</para>
         /// <para>[currentValue] = false  ::>  Right-end intersecting the coordiante.</para>
         /// </summary>

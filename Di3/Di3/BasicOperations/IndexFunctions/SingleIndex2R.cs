@@ -38,10 +38,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
             Dictionary<uint, bool> presentIntervals = new Dictionary<uint, bool>();
             foreach (var bookmark in _di31R.EnumerateRange(_left, _right))
             {
-                maxAccumulation = Math.Max(maxAccumulation, bookmark.Value.lambda.Count);
-                //foreach (var interval in bookmark.Value.lambda)
-                    //if (!presentIntervals.ContainsKey(interval.atI))
-                        //presentIntervals.Add(interval.atI, true);
+                maxAccumulation = Math.Max(maxAccumulation, bookmark.Value.mu + bookmark.Value.lambda.Count - bookmark.Value.omega);
+                //foreach (var interval in keyBookmark.Value.lambda)
+                //if (!presentIntervals.ContainsKey(interval.atI))
+                //presentIntervals.Add(interval.atI, true);
 
                 if (startNewBlock)
                 {
@@ -50,7 +50,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     continue;
                 }
 
-                if (bookmark.Value.lambda.Count == bookmark.Value.omega)
+                if (bookmark.Value.lambda.Count == bookmark.Value.omega && bookmark.Value.mu == 0)
                 {
                     Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, presentIntervals.Count);
                     maxAccumulation = 0;
@@ -77,7 +77,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 if (newKey.rightEnd.CompareTo(item.Key.leftEnd) == -1) // newKey.rightEnd < lambda.key.leftEnd
                     break;
 
-                /// The bookmark that is already in di3_1R covers new interval,
+                /// The keyBookmark that is already in di3_1R covers new interval,
                 /// therefore no update is required.
                 if (newKey.leftEnd.CompareTo(item.Key.leftEnd) == 1 &&  // newKey.LeftEnd > lambda.newKey.LeftEnd
                     newKey.rightEnd.CompareTo(item.Key.rightEnd) == -1) // newKey.rightEnd < lambda.newKey.rightEnd

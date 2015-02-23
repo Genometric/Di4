@@ -439,7 +439,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results;
             Herald.AnnounceExeReport("AccHistogram", di3B.AccumulationHistogram(out results, _nThread));
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tleft\tright\taccumulation\tstrand"));
             return true;
         }
         private bool AccumulationDistribution(string[] args)
@@ -455,7 +455,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results;
             Herald.AnnounceExeReport("AccDistribution", di3B.AccumulationDistribution(out results, _nThread));
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tstrand\taccumulation\tcount"));
             return true;
         }
         private bool GetTC()

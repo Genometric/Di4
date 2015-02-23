@@ -172,7 +172,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                             sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, nThreads);
                             break;
                     }
-                    result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
+                    /// return this line back
+                    //result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
                     stpWtch.Stop();
                 }
 
@@ -198,7 +199,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 
                     stpWtch.Start();
                     chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, nThreads);
-                    result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
+
+                    /// return this line back
+                    //result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
                     stpWtch.Stop();
                     totalIntervals += refStrand.Value.Count;
                 }

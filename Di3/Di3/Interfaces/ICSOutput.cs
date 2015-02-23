@@ -25,10 +25,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        void Output(C left, C right, List<Lambda> intervals);
+        void Output(C left, C right, List<UInt32> intervals, Object lockOnMe);
 
-        void Output(I interval, List<Lambda> intervals);
+        void Output(I interval, List<UInt32> intervals, Object lockOnMe);
 
-        ConcurrentBag<O> output { set; get; }
+        List<O> output { set; get; }
     }
 }

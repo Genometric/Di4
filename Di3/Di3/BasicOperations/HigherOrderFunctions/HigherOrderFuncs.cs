@@ -18,6 +18,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _di3_1R = di3;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
+            _determinedLambdas = new Dictionary<uint, bool>();
         }
         internal HigherOrderFuncs(Object lockOnMe, BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
         {
@@ -25,6 +26,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _di3_1R = di3_1R;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
+            _determinedLambdas = new Dictionary<uint, bool>();
             _intervals = intervals;
             _start = start;
             _stop = stop;
@@ -37,6 +39,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _di3_2R = di3_2R;
             _intervalsKeys = new Hashtable();
             _lambdas = new List<Lambda>();
+            _determinedLambdas = new Dictionary<uint, bool>();
             _left = left;
             _right = right;
             _minAcc = minAcc;
@@ -57,25 +60,26 @@ namespace Polimi.DEIB.VahidJalili.DI3
         internal ICSOutput<C, I, M, O> outputStrategy { get { return _outputStrategy; } }
         private Hashtable _intervalsKeys { set; get; }
         private List<Lambda> _lambdas { set; get; }
+        private Dictionary<UInt32, bool> _determinedLambdas { set; get; }
         private Object _lockOnMe { set; get; }
 
         internal void Cover()
         {
-            foreach(var block in _di3_2R.EnumerateRange(_left, _right))
-                if(_minAcc <= block.Value.maxAccumulation)                
+            foreach (var block in _di3_2R.EnumerateRange(_left, _right))
+                if (_minAcc <= block.Value.maxAccumulation)
                     _Cover(block.Key.leftEnd, block.Key.rightEnd);
         }
         private void _Cover(C left, C right)
         {
             C markedKey = default(C);
             int markedAcc = -1;
-            byte accumulation = 0;
+            int accumulation = 0;
             _lambdas.Clear();
             _intervalsKeys.Clear();
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                accumulation = (byte)(bookmark.Value.lambda.Count - bookmark.Value.omega);
+                accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
 
                 if (markedAcc == -1 &&
                     accumulation >= _minAcc &&
@@ -83,25 +87,29 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 {
                     markedKey = bookmark.Key;
                     markedAcc = accumulation;
-                    UpdateLambdas(bookmark.Value.lambda);
+                    //UpdateLambdas(keyBookmark.Value.lambda);
+                    UpdateLambdas(bookmark.Key, bookmark.Value);
                 }
                 else if (markedAcc != -1)
                 {
                     if (accumulation < _minAcc ||
                         accumulation > _maxAcc)
                     {
-                        UpdateLambdas(bookmark.Value.lambda);
-                        _outputStrategy.Output(markedKey, bookmark.Key, _lambdas);
+                        //UpdateLambdas(keyBookmark.Value.lambda);
+                        UpdateLambdas(bookmark.Key, bookmark.Value);
+                        _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
 
                         markedKey = default(C);
                         markedAcc = -1;
-                        _lambdas.Clear();
+                        //_lambdas.Clear();
+                        _determinedLambdas.Clear();
                         _intervalsKeys.Clear();
                     }
                     else if (accumulation >= _minAcc &&
                         accumulation <= _maxAcc)
                     {
-                        UpdateLambdas(bookmark.Value.lambda);
+                        //UpdateLambdas(keyBookmark.Value.lambda);
+                        UpdateLambdas(bookmark.Key, bookmark.Value);
                     }
                 }
             }
@@ -117,13 +125,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
         {
             C markedKey = default(C);
             int markedAcc = -1;
-            byte accumulation = 0;
+            int accumulation = 0;
             _lambdas.Clear();
             _intervalsKeys.Clear();
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                accumulation = (byte)(bookmark.Value.lambda.Count - bookmark.Value.omega);
+                accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
 
                 if (markedAcc < accumulation &&
                     accumulation >= _minAcc &&
@@ -131,7 +139,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 {
                     markedKey = bookmark.Key;
                     markedAcc = accumulation;
-                    UpdateLambdas(bookmark.Value.lambda);
+                    //UpdateLambdas(keyBookmark.Value.lambda);
+                    UpdateLambdas(bookmark.Key, bookmark.Value);
                 }
                 else if (markedAcc > accumulation ||
                     (markedAcc < accumulation && (
@@ -139,19 +148,22 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     accumulation > _maxAcc) &&
                     markedAcc != -1))
                 {
-                    UpdateLambdas(bookmark.Value.lambda);
-                    _outputStrategy.Output(markedKey, bookmark.Key, _lambdas);
+                    //UpdateLambdas(keyBookmark.Value.lambda);
+                    UpdateLambdas(bookmark.Key, bookmark.Value);
+                    _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
 
                     markedKey = default(C);
                     markedAcc = -1;
-                    _lambdas.Clear();
+                    //_lambdas.Clear();
+                    _determinedLambdas.Clear();
                     _intervalsKeys.Clear();
                 }
                 else if (accumulation >= _minAcc &&
                     accumulation <= _maxAcc &&
                     markedAcc != -1)
                 {
-                    UpdateLambdas(bookmark.Value.lambda);
+                    //UpdateLambdas(keyBookmark.Value.lambda);
+                    UpdateLambdas(bookmark.Key, bookmark.Value);
                 }
             }
         }
@@ -167,26 +179,69 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 _intervalsKeys.Clear();
 
                 #region .::.     a quick note     .::.
-                /// This iteration starts from a bookmark which it's newKey (i.e., coordinate)
-                /// is the minimum >= to reference.currentBlockLeftEnd; and goes to the bookmark which the newKey
+                /// This iteration starts from a keyBookmark which it's newKey (i.e., coordinate)
+                /// is the minimum >= to reference.currentBlockLeftEnd; and goes to the keyBookmark which the newKey
                 /// is maximum <= to reference.right. Of course if no such blocks are available
                 /// this iteration wont iteratre over anything. 
                 #endregion
                 foreach (var bookmark in _di3_1R.EnumerateRange(reference.left, reference.right))
-                    UpdateLambdas(bookmark.Value.lambda);
+                    //UpdateLambdas(keyBookmark.Value.lambda);
+                    UpdateLambdas(bookmark.Key, bookmark.Value);
 
-                _outputStrategy.Output(reference, _lambdas);
+                _outputStrategy.Output(reference, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
             }
         }
 
-        private void UpdateLambdas(ReadOnlyCollection<Lambda> lambdas)
+        private void UpdateLambdas(C coordinate, B keyBookmark) //ReadOnlyCollection<Lambda> lambdas)
         {
-            foreach (var lambda in lambdas)            
-                if (!_intervalsKeys.ContainsKey(lambda.atI))
+            if (_determinedLambdas.Count == 0)
+            {
+                int mu = keyBookmark.mu;
+                bool skipFirst = true;
+                var tmpLambdas = new Dictionary<UInt32, bool>();
+
+                foreach (var lambda in keyBookmark.lambda)
+                    if (lambda.phi == true)
+                        _determinedLambdas.Add(lambda.atI, lambda.phi);
+
+                foreach (var bookmark in _di3_1R.EnumerateFrom(coordinate))
                 {
-                    _lambdas.Add(lambda);
-                    _intervalsKeys.Add(lambda.atI, "Hmd");
+                    if (skipFirst)
+                    {
+                        skipFirst = false;
+                        continue;
+                    }
+
+                    foreach (var lambda in bookmark.Value.lambda)
+                    {
+                        if (lambda.phi == true)
+                        {
+                            tmpLambdas.Add(lambda.atI, true);
+                            continue;
+                        }
+
+                        if (tmpLambdas.ContainsKey(lambda.atI))
+                        {
+                            tmpLambdas.Remove(lambda.atI);
+                            continue;
+                        }
+
+                        if (!_determinedLambdas.ContainsKey(lambda.atI))
+                        {
+                            _determinedLambdas.Add(lambda.atI, lambda.phi);
+                            mu--;
+                        }
+                    }
+
+                    if (mu == 0) break;
                 }
+            }
+            else
+            {
+                foreach (var lambda in keyBookmark.lambda)
+                    if (lambda.phi == true && _determinedLambdas.ContainsKey(lambda.atI) == false)
+                        _determinedLambdas.Add(lambda.atI, lambda.phi);
+            }
         }
     }
 }

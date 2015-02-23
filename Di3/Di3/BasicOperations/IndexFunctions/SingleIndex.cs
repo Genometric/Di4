@@ -119,7 +119,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                         update.iC = IntersectionCondition.RightEnd;
                         break;
                     }
-                    else if (compareResult == 1)// interval.right is bigger than bookmark.Key
+                    else if (compareResult == 1)// interval.right is bigger than keyBookmark.Key
                     {
                         update.iC = IntersectionCondition.Middle;
                         _di3.AddOrUpdate(item.Key, ref update);
@@ -194,8 +194,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     _di3.TryUpdate(bookmark.Key, updateFunction);
                 }
 
-                //if (UpdateRequired(bookmark.Value.lambda, lambdaCarrier))
-                    //_di3.TryUpdate(bookmark.Key, updateFunction);
+                //if (UpdateRequired(keyBookmark.Value.lambda, lambdaCarrier))
+                    //_di3.TryUpdate(keyBookmark.Key, updateFunction);
 
                 //foreach (uint item in keysToRemove)
                     //lambdaCarrier.Remove(item);

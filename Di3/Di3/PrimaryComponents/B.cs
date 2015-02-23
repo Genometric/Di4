@@ -24,7 +24,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _lambda = new Lambda[0];
         }
         internal B(bool phi, UInt32 atI)
-        { // initializes a bookmark and adds one Lambda to lambda according to phi and hashKey.
+        { // initializes a keyBookmark and adds one Lambda to lambda according to phi and hashKey.
             if (phi == false) omega = 1;
             else omega = 0;
             _lambda = new Lambda[] { new Lambda(phi: phi, atI: atI) };
@@ -178,13 +178,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         /// <summary>
         /// Represents the intervals intersecting with
-        /// the e of corresponding bookmark.
+        /// the e of corresponding keyBookmark.
         /// </summary>
         private Lambda[] _lambda { set; get; }
 
         /// <summary>
         /// Represents the intervals intersecting with
-        /// the e of corresponding bookmark.
+        /// the e of corresponding keyBookmark.
         /// </summary>
         internal ReadOnlyCollection<Lambda> lambda { get { return Array.AsReadOnly(_lambda); } }
 

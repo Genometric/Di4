@@ -18,20 +18,20 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
     {
         public CSOutputCount()
         {
-            //output = new List<Output<C, I, M>>();
-            output = new ConcurrentBag<Output<C, I, M>>();
+            output = new List<Output<C, I, M>>();
+            //output = new ConcurrentBag<Output<C, I, M>>();
         }
 
-        public ConcurrentBag<Output<C, I, M>> output { set; get; }
+        public List<Output<C, I, M>> output { set; get; }
 
-        void ICSOutput<C, I, M, Output<C, I, M>>.Output(C left, C right, List<Lambda> intervals)
+        void ICSOutput<C, I, M, Output<C, I, M>>.Output(C left, C right, List<UInt32> intervals, Object lockOnMe)
         {
-            output.Add(new Output<C, I, M>(left, right, intervals.Count));
+            lock (lockOnMe) { output.Add(new Output<C, I, M>(left, right, intervals.Count)); }
         }
 
-        void ICSOutput<C, I, M, Output<C, I, M>>.Output(I interval, List<Lambda> intervals)
+        void ICSOutput<C, I, M, Output<C, I, M>>.Output(I interval, List<UInt32> intervals, Object lockOnMe)
         {
-            output.Add(new Output<C, I, M>(interval, intervals.Count));
+            lock (lockOnMe) { output.Add(new Output<C, I, M>(interval, intervals.Count)); }
         }
     }
 }

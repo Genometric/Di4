@@ -58,14 +58,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
                     break;
                 }
                 tmp = bookmark.Key;
-                tmpAcc = bookmark.Value.lambda.Count - bookmark.Value.omega;
+                tmpAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 doBreak = true;
             }
 
             foreach (var bookmark in _di3_1R.EnumerateRange(_left, _right))
             {
                 _localAccHistogram.Add(new AccEntry<C>(tmp, bookmark.Key, tmpAcc));
-                tmpAcc = bookmark.Value.lambda.Count - bookmark.Value.omega;
+                tmpAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 tmp = bookmark.Key;
             }
 
@@ -82,10 +82,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
 
             foreach (var bookmark in _di3_1R.EnumerateRange(_left, _right))
             {
-                tmpAcc = bookmark.Value.lambda.Count - bookmark.Value.omega;
+                tmpAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 if (!localDistribution.ContainsKey(tmpAcc))
                 {
-                    localDistribution.Add(tmpAcc, 0);
+                    localDistribution.Add(tmpAcc, 1);
                     continue;
                 }
                 localDistribution[tmpAcc]++;

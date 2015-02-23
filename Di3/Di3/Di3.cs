@@ -574,18 +574,18 @@ namespace Polimi.DEIB.VahidJalili.DI3
             fCount--;
             for (int i = 0; i < fCount; i++)
             {
-                foreach (var bookmark in _di3_2R.EnumerateFrom(partitions[i].right))
+                foreach (var keyBookmark in _di3_2R.EnumerateFrom(partitions[i].right))
                 {
                     if (incrementRight)
                     {
-                        partitions[i].right = bookmark.Key;
-                        if (bookmark.Value.omega == bookmark.Value.lambda.Count)
+                        partitions[i].right = keyBookmark.Key;
+                        if (keyBookmark.Value.omega == keyBookmark.Value.lambda.Count)
                             incrementRight = false;
                         continue;
                     }
                     else
                     {
-                        partitions[i + 1].left = bookmark.Key;
+                        partitions[i + 1].left = keyBookmark.Key;
                         break;
                     }
                 }
