@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.IndexFunctions
 {
-    internal class IndexesCardinality
+    internal class InfoIndex
     {
-        public IndexesCardinality(BPlusTree<string, int> di3_info)
+        public InfoIndex(BPlusTree<string, int> di3_info)
         {
             _di3_info = di3_info;
         }
@@ -22,9 +22,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.IndexFunctions
             update.newValue = value;
             _di3_info.AddOrUpdate(key, ref update);
         }
-        public void GetValue(string key, out int value)
+        public int GetValue(string key)
         {
-            _di3_info.TryGetValue(key, out value);
+            int rtv = 0;
+            _di3_info.TryGetValue(key, out rtv);
+            return rtv;
         }
 
 
@@ -44,7 +46,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.IndexFunctions
             {
                 oldValue = value;
                 value = newValue + oldValue;
-                return value == oldValue;
+                return value != oldValue;
             }
 
             public bool RemoveValue(string key, int value)

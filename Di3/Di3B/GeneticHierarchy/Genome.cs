@@ -138,7 +138,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 foreach (var sDi3 in chr.Value)
                 {
                     stpWtch.Start();
-                    totalIntervals += sDi3.Value.blockCount;
+                    totalIntervals += sDi3.Value.bookmarkCount;
                     sDi3.Value.SecondPass();
                     sDi3.Value.Commit();
                     stpWtch.Stop();
@@ -161,7 +161,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!result.Chrs[chr.Key].ContainsKey(sDi3.Key)) result.Chrs[chr.Key].Add(sDi3.Key, new ConcurrentBag<Output<C, I, M>>());
 
                     stpWtch.Start();
-                    totalBookmarks += sDi3.Value.blockCount;
+                    totalBookmarks += sDi3.Value.bookmarkCount;
                     switch (coverVariation)
                     {
                         case CoverVariation.Cover:
@@ -255,7 +255,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 foreach (var sDi3 in chr.Value)
                 {
                     stpWtch.Start();
-                    totalBookmarks += sDi3.Value.SecondResolutionIndex(nthreads);
+                    sDi3.Value.SecondResolutionIndex(nthreads);
+                    totalBookmarks += sDi3.Value.blockCount;
                     sDi3.Value.Commit();
                     stpWtch.Stop();
                 }

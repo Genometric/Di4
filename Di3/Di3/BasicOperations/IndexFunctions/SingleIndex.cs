@@ -38,12 +38,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
         {
             _di3 = di3;
         }
-        internal SingleIndex(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, IndexingMode mode, ConcurrentDictionary<int, int> addedBookmarks)
+        internal SingleIndex(BPlusTree<C, B> di3, List<I> intervals, int start, int stop, IndexingMode mode, ConcurrentDictionary<int, int> addedBookmarks)
         {
             _di3 = di3;
-            _intervals = Intervals;
-            _start = Start;
-            _stop = Stop;
+            _intervals = intervals;
+            _start = start;
+            _stop = stop;
             _mode = mode;
             _addedBookmarks = addedBookmarks;
             _bCounter = new BookmarkCounter();

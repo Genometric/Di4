@@ -81,7 +81,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     return;
 
                 /// "lambda" occures after "newKey" and does not intersect with it.
-                if (newKey.rightEnd.CompareTo(item.Key.leftEnd) == -1) // newKey.rightEnd < lambda.key.leftEnd
+                if (newKey.rightEnd.CompareTo(item.Key.leftEnd) == -1) // newKey.rightEnd < lambda.key.start
                     break;
 
                 /// The keyBookmark that is already in di3_1R covers new interval,
@@ -91,8 +91,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     return;
 
                 /// Theoretically, these conditions may not be needed ever !!
-                //if (newKey.leftEnd.CompareTo(lambda.Key.leftEnd) == 1) // newKey.leftEnd > lambda.newKey.leftEnd
-                    //newKey = newKey.UpdateLeft(LeftEnd: lambda.Key.leftEnd);
+                //if (newKey.start.CompareTo(lambda.Key.start) == 1) // newKey.start > lambda.newKey.start
+                    //newKey = newKey.UpdateLeft(LeftEnd: lambda.Key.start);
                 //if (newKey.rightEnd.CompareTo(lambda.Key.rightEnd) == -1) // newKey.rightEnd < lambda.newKey.rightEnd
                     //newKey = newKey.UpdateRight(RightEnd: lambda.Key.rightEnd);
 

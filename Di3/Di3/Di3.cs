@@ -109,7 +109,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _di3_1R = new BPlusTree<C, B>(Get1ROptions(options));
             _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
             _di3_info = new BPlusTree<string, int>(GetinfoOptions(options));
-            _indexesCardinality = new IndexesCardinality(_di3_info);
+            _indexesCardinality = new InfoIndex(_di3_info);
             INDEX = new SingleIndex<C, I, M>(_di3_1R);
            
 
@@ -131,7 +131,17 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private LambdaArraySerializer _lambdaArraySerializer { set; get; }
         private BlockKeySerializer<C> _blockKeySerializer { set; get; }
         private BlockValueSerializer _blockValueSerializer { set; get; }
-        private IndexesCardinality _indexesCardinality { set; get; }
+        private InfoIndex _indexesCardinality { set; get; }
+        
+        /// <summary>
+        /// Cardinality Key for first resolution.
+        /// </summary>
+        private string cKey_1R { set { } get { return "1st"; } }
+
+        /// <summary>
+        /// Cardinality key for second resolution
+        /// </summary>
+        private string cKey_2R { set { } get { return "2nd"; } }
         
 
         /// <summary>
@@ -144,7 +154,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// <summary>
         /// Gets the number of blocks contained in Polimi.DEIB.VahidJalili.DI3.
         /// </summary>
-        public int blockCount { private set { } get { return _di3_1R.Count; } }
+        public int bookmarkCount { private set { } get { return _indexesCardinality.GetValue(cKey_1R); } }
+        public int blockCount { private set { } get { return _indexesCardinality.GetValue(cKey_2R); } }
 
         private BPlusTree<C, B>.OptionsV2 Get1ROptions(Di3Options<C> options)
         {
@@ -312,7 +323,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             int counted = 0;
             foreach (var item in addedBookmarks)
                 counted += item.Value;
-            _indexesCardinality.AddOrUpdate("1st", counted);
+            _indexesCardinality.AddOrUpdate(cKey_1R, counted);
         }
         public void SecondPass()
         {
@@ -320,11 +331,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
 
 
-        public int SecondResolutionIndex()
+        public void SecondResolutionIndex()
         {
-            return SecondResolutionIndex(Environment.ProcessorCount);
+            SecondResolutionIndex(Environment.ProcessorCount);
         }
-        public int SecondResolutionIndex(int nThreads)
+        public void SecondResolutionIndex(int nThreads)
         {
             // change first resolution options here to be readonly and readonly lock.
 
@@ -347,9 +358,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             int counted = 0;
             foreach (var item in addedBookmarks)
                 counted += item.Value;
-            _indexesCardinality.AddOrUpdate("2nd", counted);
-
-            return _di3_2R.Count; // change this number.
+            _indexesCardinality.AddOrUpdate(cKey_2R, counted);
         }
 
 
@@ -427,7 +436,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 //watch.Restart();
                 work.Complete(true, -1);
-                //watch.Stop();
+                //watch.stop();
                 //Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
         }
@@ -546,9 +555,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         private Partition<C>[] Fragment_1R(int fCount)
         {
-            int bookmarkCount = 0;
-            _indexesCardinality.GetValue("1st", out bookmarkCount);
-            int range = Convert.ToInt32(Math.Floor((double)bookmarkCount / (double)fCount));
+            int range = Convert.ToInt32(Math.Floor((double)_indexesCardinality.GetValue(cKey_1R) / (double)fCount));
 
             /// Initialization
             Partition<C>[] partitions = new Partition<C>[fCount];
@@ -590,16 +597,15 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         private PartitionBlock<C>[] Fragment_2R(int fCount)
         {
-            int blockCount = 0;
-            _indexesCardinality.GetValue("2nd", out blockCount);
-            int range = Convert.ToInt32(Math.Floor((double)blockCount / (double)fCount));
+            // does this gets correct value ?
+            int range = Convert.ToInt32(Math.Floor((double)_indexesCardinality.GetValue(cKey_2R) / (double)fCount));
 
             /// Initialization
             PartitionBlock<C>[] partitions = new PartitionBlock<C>[fCount];
             for (int i = 0; i < fCount; i++)
             {
-                partitions[i].left = _di3_2R.ElementAtOrDefault((i * range) + 1).Key;
-                partitions[i].right = _di3_2R.ElementAtOrDefault((i + 1) * range).Key;
+                partitions[i].left = _di3_2R.ElementAtOrDefault((i * range) ).Key;
+                partitions[i].right = _di3_2R.ElementAtOrDefault((i ) * range).Key;
             }
             partitions[0].left = _di3_2R.First().Key;
             partitions[fCount - 1].right = _di3_2R.Last().Key;
@@ -649,6 +655,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 // Free managed objects here. 
                 _di3_1R.Commit();
                 _di3_1R.Dispose();
+                _di3_2R.Commit();
+                _di3_2R.Dispose();
+                _di3_info.Commit();
+                _di3_info.Dispose();
             }
 
             // Free unmanaged objects here. 
@@ -659,6 +669,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         {
             _di3_1R.Commit();
             _di3_2R.Commit();
+            _di3_info.Commit();
         }
     }
 }

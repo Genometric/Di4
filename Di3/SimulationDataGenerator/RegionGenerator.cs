@@ -15,9 +15,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const int maxGap = 100;
         const int maxLenght = 500; // this value must be >= 4
         const int chrCount = 1;
-        const int regionsCount = 200000; // per sample
-        const int sampleCount = 500; // IF YOU CHANGE THIS: remember to revise maxAcc.
-        const int maxAcc = 400; // Maximum accumulation. This number must be less than sampleCount.
+        const int regionsCount = 4;//200000; // per sample
+        const int sampleCount = 5;//500; // IF YOU CHANGE THIS: remember to revise maxAcc.
+        const int maxAcc = 4;//400; // Maximum accumulation. This number must be less than sampleCount.
 
         int newStart = 0;
         int newStop = 0;
@@ -29,7 +29,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const string parentPath = "\\";
         static string filesExtension = "bed";
 
-        static readonly int[] similarity = new int[] { 0 , 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+        static readonly int[] similarity = new int[] { 0 };//, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
 
         static readonly string[] chrTitles = new string[] {
             "chr1","chr2","chr3","chr4","chr5",
