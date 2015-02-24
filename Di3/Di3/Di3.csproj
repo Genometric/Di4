@@ -81,9 +81,11 @@
     <Compile Include="BasicOperations\FirstOrderFunctions\AccumulationStats.cs" />
     <Compile Include="BasicOperations\FirstOrderFunctions\Merge.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\HigherOrderFuncs.cs" />
+    <Compile Include="BasicOperations\IndexFunctions\IndexesCount.cs" />
     <Compile Include="BasicOperations\IndexFunctions\SingleIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\RangeIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\SingleIndex2R.cs" />
+    <Compile Include="Comparers\StringComparer.cs" />
     <Compile Include="Di3.cs" />
     <Compile Include="Interfaces\ICSOutput.cs" />
     <Compile Include="PrimaryComponents\B.cs" />

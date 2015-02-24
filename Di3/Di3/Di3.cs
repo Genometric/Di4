@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Concurrent;
 using Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions;
+using Polimi.DEIB.VahidJalili.DI3.BasicOperations.IndexFunctions;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
@@ -56,33 +57,33 @@ namespace Polimi.DEIB.VahidJalili.DI3
             //var options = new BPlusTree<C, B>.OptionsV2(CSerializer, bSerializer, comparer);
 
 
-            ////rtv.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
+            ////counted.CalcBTreeOrder(avgKeySize, avgValueSize); //24);
             //options.CreateFile = createPolicy;
-            ////rtv.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
+            ////counted.ExistingLogAction = ExistingLogAction.ReplayAndCommit;
             //options.StoragePerformance = StoragePerformance.Fastest;
 
 
             //////// Multi-Threading 2nd pass test; was commented-out visa versa
-            //rtv.CachePolicy = CachePolicy.All;
+            //counted.CachePolicy = CachePolicy.All;
             //options.CachePolicy = CachePolicy.Recent;
 
 
-            //rtv.FileBlockSize = 512;
+            //counted.FileBlockSize = 512;
 
-            /*rtv.MaximumChildNodes = 8;
-            rtv.MinimumChildNodes = 2;
+            /*counted.MaximumChildNodes = 8;
+            counted.MinimumChildNodes = 2;
 
-            rtv.MaximumValueNodes = 8;
-            rtv.MinimumValueNodes = 2;
+            counted.MaximumValueNodes = 8;
+            counted.MinimumValueNodes = 2;
             */
 
 
             /// There three lines added for multi-threading.
-            //rtv.CallLevelLock = new ReaderWriterLocking();
-            /////rtv.LockingFactory = new LockFactory<SimpleReadWriteLocking>(); //Test 1
-            /////rtv.LockingFactory = new LockFactory<WriterOnlyLocking>(); //Test 2
-            //rtv.LockingFactory = new LockFactory<ReaderWriterLocking>();
-            //rtv.LockTimeout = 10000;
+            //counted.CallLevelLock = new ReaderWriterLocking();
+            /////counted.LockingFactory = new LockFactory<SimpleReadWriteLocking>(); //Test 1
+            /////counted.LockingFactory = new LockFactory<WriterOnlyLocking>(); //Test 2
+            //counted.LockingFactory = new LockFactory<ReaderWriterLocking>();
+            //counted.LockTimeout = 10000;
 
 
 
@@ -107,8 +108,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
         {
             _di3_1R = new BPlusTree<C, B>(Get1ROptions(options));
             _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
+            _di3_info = new BPlusTree<string, int>(GetinfoOptions(options));
+            _indexesCardinality = new IndexesCardinality(_di3_info);
             INDEX = new SingleIndex<C, I, M>(_di3_1R);
-            
+           
+
             /// Don't enable following commands.
             /// The consequences are: initialization becomes very slow,
             /// specially if the data size is big.
@@ -121,11 +125,14 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// </summary>
         private BPlusTree<C, B> _di3_1R { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
+        private BPlusTree<string, int> _di3_info { set; get; }
         private BookmarkSerializer _bookmarkSerializer { set; get; }
         private LambdaItemSerializer _lambdaItemSerializer { set; get; }
         private LambdaArraySerializer _lambdaArraySerializer { set; get; }
         private BlockKeySerializer<C> _blockKeySerializer { set; get; }
         private BlockValueSerializer _blockValueSerializer { set; get; }
+        private IndexesCardinality _indexesCardinality { set; get; }
+        
 
         /// <summary>
         /// Is an instance of SingleIndex class which 
@@ -221,7 +228,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             rtv.FileBlockSize = 8192;
 
-            rtv.CachePolicy = CachePolicy.Recent;
+            //counted.CachePolicy = CachePolicy.Recent;
 
             rtv.StoragePerformance = StoragePerformance.Fastest;
 
@@ -264,11 +271,21 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             return rtv;
         }
+        private BPlusTree<string, int>.OptionsV2 GetinfoOptions(Di3Options<C> options)
+        {
+            var rtv = new BPlusTree<string, int>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.Int32, new Comparers.StringComparer());
+            rtv.FileBlockSize = 1024;
+            rtv.CachePolicy = CachePolicy.All;
+            rtv.StoragePerformance = StoragePerformance.Fastest;
+            rtv.FileName = options.FileName + ".info";
+            rtv.CreateFile = CreatePolicy.IfNeeded;
+            return rtv;
+        }
 
 
 
         public void Add(I interval)
-        {
+        {   
             INDEX.Index(interval);
         }
         public void Add(List<I> intervals, IndexingMode mode)
@@ -278,6 +295,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         public void Add(List<I> intervals, IndexingMode mode, int threads)
         {
             int start = 0, stop = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
+            var addedBookmarks = new ConcurrentDictionary<int, int>();
             using (WorkQueue work = new WorkQueue(threads))
             {
                 for (int i = 0; i < threads; i++)
@@ -285,11 +303,16 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > intervals.Count) stop = intervals.Count;
-                    work.Enqueue(new SingleIndex<C, I, M>(_di3_1R, intervals, start, stop, mode).Index);
+                    work.Enqueue(new SingleIndex<C, I, M>(_di3_1R, intervals, start, stop, mode, addedBookmarks).Index);
                 }
 
                 work.Complete(true, -1);
             }
+
+            int counted = 0;
+            foreach (var item in addedBookmarks)
+                counted += item.Value;
+            _indexesCardinality.AddOrUpdate("1st", counted);
         }
         public void SecondPass()
         {
@@ -306,6 +329,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             // change first resolution options here to be readonly and readonly lock.
 
             Partition<C>[] partitions = Fragment_1R(nThreads);
+            var addedBookmarks = new ConcurrentDictionary<C, int>();
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
@@ -314,10 +338,17 @@ namespace Polimi.DEIB.VahidJalili.DI3
                             _di3_1R,
                             _di3_2R,
                             partitions[i].left,
-                            partitions[i].right).Index);
+                            partitions[i].right,
+                            addedBookmarks).Index);
 
                 work.Complete(true, -1);
             }
+
+            int counted = 0;
+            foreach (var item in addedBookmarks)
+                counted += item.Value;
+            _indexesCardinality.AddOrUpdate("2nd", counted);
+
             return _di3_2R.Count; // change this number.
         }
 
@@ -515,7 +546,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         private Partition<C>[] Fragment_1R(int fCount)
         {
-            int range = Convert.ToInt32(Math.Floor((double)_di3_1R.Count / (double)fCount));
+            int bookmarkCount = 0;
+            _indexesCardinality.GetValue("1st", out bookmarkCount);
+            int range = Convert.ToInt32(Math.Floor((double)bookmarkCount / (double)fCount));
 
             /// Initialization
             Partition<C>[] partitions = new Partition<C>[fCount];
@@ -537,7 +570,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     if (incrementRight)
                     {
                         partitions[i].right = bookmark.Key;
-                        if (bookmark.Value.omega == bookmark.Value.lambda.Count)
+                        if (bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu == 0)
                             incrementRight = false;
                         continue;
                     }
@@ -557,7 +590,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         private PartitionBlock<C>[] Fragment_2R(int fCount)
         {
-            int range = Convert.ToInt32(Math.Floor((double)_di3_2R.Count / (double)fCount));
+            int blockCount = 0;
+            _indexesCardinality.GetValue("2nd", out blockCount);
+            int range = Convert.ToInt32(Math.Floor((double)blockCount / (double)fCount));
 
             /// Initialization
             PartitionBlock<C>[] partitions = new PartitionBlock<C>[fCount];

@@ -1,6 +1,7 @@
 ﻿using CSharpTest.Net.Collections;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -37,16 +38,19 @@ namespace Polimi.DEIB.VahidJalili.DI3
         {
             _di3 = di3;
         }
-        internal SingleIndex(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, IndexingMode mode)
+        internal SingleIndex(BPlusTree<C, B> di3, List<I> Intervals, int Start, int Stop, IndexingMode mode, ConcurrentDictionary<int, int> addedBookmarks)
         {
             _di3 = di3;
             _intervals = Intervals;
             _start = Start;
             _stop = Stop;
             _mode = mode;
+            _addedBookmarks = addedBookmarks;
+            _bCounter = new BookmarkCounter();
+            update.bookmarkCounter = _bCounter;
         }
 
-        
+
 
         /// <summary>
         /// Sets and gets the _di3_1R data structure
@@ -64,9 +68,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// </summary>
         private I _interval { set; get; }
         private List<I> _intervals { set; get; }
+        private ConcurrentDictionary<int, int> _addedBookmarks { set; get; }
+        private BookmarkCounter _bCounter { set; get; }
         private AddUpdateValue update = new AddUpdateValue();
-        
-        
+
+
 
         public void Index()
         {
@@ -90,6 +96,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     }
                     break;
             }
+            _addedBookmarks.TryAdd(_start, _bCounter.value);
         }
         public void Index(I interval)
         {
@@ -166,7 +173,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             List<uint> keysToRemove = new List<uint>();
             //List<uint> keys;
 
-            
+
             foreach (var bookmark in _di3.EnumerateFrom(firstItem.Key))
             {
                 foreach (var lambda in bookmark.Value.lambda)
@@ -195,10 +202,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 }
 
                 //if (UpdateRequired(keyBookmark.Value.lambda, lambdaCarrier))
-                    //_di3.TryUpdate(keyBookmark.Key, updateFunction);
+                //_di3.TryUpdate(keyBookmark.Key, updateFunction);
 
                 //foreach (uint item in keysToRemove)
-                    //lambdaCarrier.Remove(item);
+                //lambdaCarrier.Remove(item);
                 //keysToRemove.Clear();
 
                 /////////////////////////////////////////////////////
@@ -209,7 +216,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 //    lambdaCarrier[key] = new Lambda('M', lambdaCarrier[key].atI);
             }
         }
-        private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda,Dictionary<uint, Lambda> lambdaCarrier )
+        private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda, Dictionary<uint, Lambda> lambdaCarrier)
         {
             if (lambda.Count != lambdaCarrier.Count) return true;
             foreach (var item in lambda)
@@ -251,7 +258,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
 
 
-        
+
         struct AddUpdateValue : ICreateOrUpdateValue<C, B>, IRemoveValue<C, B>
         {
             public B oldValue;
@@ -259,6 +266,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
             //public bool middle { set; get; }
             public IntersectionCondition iC { set; get; }
             public UInt32 atI { set; get; }
+
+            public BookmarkCounter bookmarkCounter { set; get; }
 
             public B NextBookmark { set; get; }
 
@@ -271,16 +280,22 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 else
                     value = new B(condition: iC, atI: atI, nextBookmark: NextBookmark);
                 //value = GetNewBlock();
-                return atI != 0; //&& phi != default(char);
+                //return atI != 0; //&& phi != default(char);
+                if (atI != 0)
+                {
+                    bookmarkCounter.value++;
+                    return true;
+                }
+                return false;
             }
             public bool UpdateValue(C key, ref B value)
             {
                 oldValue = value;
 
                 //if (phi == 'R')
-                    //value = value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
+                //value = value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
                 //else
-                    //value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
+                //value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
 
                 value = value.Update(atI: atI, condition: iC);
 
@@ -291,11 +306,16 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 oldValue = value;
 
                 //if (phi == 'R')
-                    //return value == value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
+                //return value == value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
                 //else
-                    //return value == value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
+                //return value == value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
 
-                return value == value.Update(atI: atI, condition: iC);
+                if (value == value.Update(atI: atI, condition: iC))
+                {
+                    bookmarkCounter.value--;
+                    return true;
+                }
+                return false;
             }
 
             /*private B GetNewBlock()
@@ -305,6 +325,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 else
                     return new B(phi: phi, atI: atI, nextBookmark: NextBookmark);
             }*/
+        }
+
+        private class BookmarkCounter
+        {
+            public int value { set; get; }
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using CSharpTest.Net.Collections;
+using System.Collections.Concurrent;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
@@ -16,18 +17,22 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal SingleIndex2R(BPlusTree<C, B> di31R, BPlusTree<BlockKey<C>, BlockValue> di32R, C left, C right)
+        internal SingleIndex2R(BPlusTree<C, B> di31R, BPlusTree<BlockKey<C>, BlockValue> di32R, C left, C right, ConcurrentDictionary<C, int> addedBlocks)
         {
             _di31R = di31R;
             _di32R = di32R;
             _left = left;
             _right = right;
+            _addedBlocks = addedBlocks;
+            _bCounter = new BlockCounter();
         }
 
         private BPlusTree<C, B> _di31R { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di32R { set; get; }
         private C _left { set; get; }
         private C _right { set; get; }
+        private ConcurrentDictionary<C, int> _addedBlocks { set; get; }
+        private BlockCounter _bCounter { set; get; }
 
 
         public void Index()
@@ -58,6 +63,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     startNewBlock = true;
                 }
             }
+
+            _addedBlocks.TryAdd(_left, _bCounter.value);
         }
 
         private void Update(C leftEnd, C rightEnd, int maxAccumulation, int count)
@@ -89,6 +96,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 //if (newKey.rightEnd.CompareTo(lambda.Key.rightEnd) == -1) // newKey.rightEnd < lambda.newKey.rightEnd
                     //newKey = newKey.UpdateRight(RightEnd: lambda.Key.rightEnd);
 
+                _bCounter.value--;
                 _di32R.Remove(item.Key);
 
 
@@ -100,7 +108,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 /// this method is more clean ;-)
                 break;
             }
+            _bCounter.value++;
             _di32R.TryAdd(newKey, newValue);
+        }
+
+        private class BlockCounter
+        {
+            public int value { set; get; }
         }
     }
 }
