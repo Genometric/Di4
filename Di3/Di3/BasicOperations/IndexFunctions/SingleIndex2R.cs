@@ -38,15 +38,17 @@ namespace Polimi.DEIB.VahidJalili.DI3
         public void Index()
         {
             int maxAccumulation = 0;
+            int distinctIntervalsCount = 0;
             C currentBlockLeftEnd = _left;
             bool startNewBlock = true;
-            Dictionary<uint, bool> presentIntervals = new Dictionary<uint, bool>();
+            //Dictionary<uint, bool> presentIntervals = new Dictionary<uint, bool>();
             foreach (var bookmark in _di31R.EnumerateRange(_left, _right))
             {
                 maxAccumulation = Math.Max(maxAccumulation, bookmark.Value.mu + bookmark.Value.lambda.Count - bookmark.Value.omega);
                 //foreach (var interval in keyBookmark.Value.lambda)
                 //if (!presentIntervals.ContainsKey(interval.atI))
                 //presentIntervals.Add(interval.atI, true);
+                distinctIntervalsCount += bookmark.Value.lambda.Count - bookmark.Value.omega;
 
                 if (startNewBlock)
                 {
@@ -57,9 +59,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 if (bookmark.Value.lambda.Count == bookmark.Value.omega && bookmark.Value.mu == 0)
                 {
-                    Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, presentIntervals.Count);
+                    Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, distinctIntervalsCount);// presentIntervals.Count);
                     maxAccumulation = 0;
-                    presentIntervals.Clear();
+                    //presentIntervals.Clear();
+                    distinctIntervalsCount = 0;
                     startNewBlock = true;
                 }
             }

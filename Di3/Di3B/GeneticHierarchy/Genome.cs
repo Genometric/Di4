@@ -157,8 +157,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.Chrs.ContainsKey(chr.Key)) result.Chrs.Add(chr.Key, new Dictionary<char, ConcurrentBag<Output<C, I, M>>>());
-                    if (!result.Chrs[chr.Key].ContainsKey(sDi3.Key)) result.Chrs[chr.Key].Add(sDi3.Key, new ConcurrentBag<Output<C, I, M>>());
+                    if (!result.Chrs.ContainsKey(chr.Key)) result.Chrs.Add(chr.Key, new Dictionary<char, List<Output<C, I, M>>>());
+                    if (!result.Chrs[chr.Key].ContainsKey(sDi3.Key)) result.Chrs[chr.Key].Add(sDi3.Key, new List<Output<C, I, M>>());
 
                     stpWtch.Start();
                     totalBookmarks += sDi3.Value.bookmarkCount;
@@ -172,8 +172,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                             sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, nThreads);
                             break;
                     }
-                    /// return this line back
-                    //result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
+                    
+                    result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
                     stpWtch.Stop();
                 }
 
@@ -194,14 +194,13 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 foreach (var refStrand in refChr.Value)
                 {
                     if (!chrs[refChr.Key].ContainsKey(refStrand.Key)) continue;
-                    if (!result.Chrs.ContainsKey(refChr.Key)) result.Chrs.Add(refChr.Key, new Dictionary<char, ConcurrentBag<Output<C, I, M>>>());
-                    if (!result.Chrs[refChr.Key].ContainsKey(refStrand.Key)) result.Chrs[refChr.Key].Add(refStrand.Key, new ConcurrentBag<Output<C, I, M>>());
+                    if (!result.Chrs.ContainsKey(refChr.Key)) result.Chrs.Add(refChr.Key, new Dictionary<char, List<Output<C, I, M>>>());
+                    if (!result.Chrs[refChr.Key].ContainsKey(refStrand.Key)) result.Chrs[refChr.Key].Add(refStrand.Key, new List<Output<C, I, M>>());
 
                     stpWtch.Start();
                     chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, nThreads);
-
-                    /// return this line back
-                    //result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
+                    
+                    result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
                     stpWtch.Stop();
                     totalIntervals += refStrand.Value.Count;
                 }

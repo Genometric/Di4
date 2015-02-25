@@ -348,7 +348,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     break;
             }
 
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
 
             return true;
         }
@@ -377,7 +377,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             FunctionOutput<Output<int, Peak, PeakData>> result;
             Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result, _nThread));
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
 
             return true;
         }

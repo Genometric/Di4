@@ -483,7 +483,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 work.Complete(true, -1);
             }
 
-            /// These three lines are to make sure no accumulation is 
+            /// These three lines are to make sure no currentAcc is 
             /// skipped. For instance, lets say results have 1, 2, and 4 
             /// as keys. Then 3 is skipped, and these lines will add 3 with 
             /// a value of 0 to the results.

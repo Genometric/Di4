@@ -8,7 +8,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     internal static class Exporter
     {
-        internal static ExecutionReport Export(string fileName, FunctionOutput<Output<int, Peak, PeakData>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, FunctionOutput<Output<int, Peak, PeakData>> results, string header, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -17,13 +17,21 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
+            {
+                writter.WriteLine(header);
                 foreach (var chr in results.Chrs)
                     foreach (var strand in chr.Value)
                         foreach (var interval in strand.Value)
                         {
-                            writter.WriteLine(chr.Key + separator + interval.interval.ToString() + separator + strand.Key);
+                            writter.WriteLine(
+                                chr.Key + separator +
+                                interval.interval.left.ToString() + separator +
+                                interval.interval.right.ToString() + separator +
+                                interval.count.ToString() + separator +
+                                strand.Key);
                             intervalCount++;
                         }
+            }
 
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);

@@ -297,6 +297,15 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 //else
                 //value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
 
+                foreach(var lambda in oldValue.lambda)
+                    if(lambda.atI == atI)
+                    {
+                        Console.WriteLine("____________________");
+                        Console.WriteLine(" Duplicate Interval");
+                        Console.WriteLine("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                        return false;
+                    }
+
                 value = value.Update(atI: atI, condition: iC);
 
                 return atI != 0; //&& phi != default(char);
