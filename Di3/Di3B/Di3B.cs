@@ -31,7 +31,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.Add2ndPass();
         }
-        public ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
+        public ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
         {
             return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate, out result, nThreads);
         }

@@ -279,7 +279,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 chrColumn: 0,
                 leftEndColumn: 1,//3,
                 rightEndColumn: 2,//4,
-                nameColumn: 3,//1,
+                nameColumn: 3,//8,
                 valueColumn: 4,//5,
                 strandColumn: -1,
                 defaultValue: 0.01,
@@ -311,7 +311,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             }
 
             char strand;
-            byte minAcc, maxAcc;
+            int minAcc, maxAcc;
             string coverOrSummit = args[0].ToLower();
 
             string resultFile = "";
@@ -322,12 +322,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid strand parameter."));
                 return false;
             }
-            if (!Byte.TryParse(args[3], out minAcc))
+            if (!int.TryParse(args[3], out minAcc))
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid minimum accumulation parameter."));
                 return false;
             }
-            if (!Byte.TryParse(args[4], out maxAcc))
+            if (!int.TryParse(args[4], out maxAcc))
             {
                 Herald.Announce(Herald.MessageType.Error, String.Format("Invalid maximum accumulation parameter."));
                 return false;

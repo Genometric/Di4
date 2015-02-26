@@ -146,7 +146,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Cover(CoverVariation coverVariation, char strand, byte minAcc, byte maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
+        internal ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalBookmarks = 0;

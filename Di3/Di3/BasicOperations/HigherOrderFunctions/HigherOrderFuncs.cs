@@ -54,7 +54,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private int _maxAcc { set; get; }
         private List<I> _intervals { set; get; }
         private ICSOutput<C, I, M, O> _outputStrategy { set; get; }
-        internal ICSOutput<C, I, M, O> outputStrategy { get { return _outputStrategy; } }
         private Dictionary<UInt32, bool> _determinedLambdas { set; get; }
         private Object _lockOnMe { set; get; }
         private bool _reserveRightEnds { set; get; }

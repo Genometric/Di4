@@ -180,7 +180,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 {
                     /// if any error rises on following Add/Remove operations, 
                     /// it's an indication that 1st pass did not work properly.
-                    if (lambda.phi == true)
+                    if (lambda.phi == true)//////////// &&
+
+                        /// this control should not be here, but it seems that GMQL data has duplicate regions,
+                        /// hence causes duplications in hashkeys. 
+                        ///////////!lambdaCarrier.ContainsKey(lambda.atI)) 
                         lambdaCarrier.Add(lambda.atI, true);
                     else
                         lambdaCarrier.Remove(lambda.atI);
@@ -297,14 +301,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 //else
                 //value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
 
-                foreach(var lambda in oldValue.lambda)
+                /*foreach(var lambda in oldValue.lambda)
                     if(lambda.atI == atI)
                     {
                         Console.WriteLine("____________________");
-                        Console.WriteLine(" Duplicate Interval");
-                        Console.WriteLine("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                        Console.WriteLine(String.Format(" Duplicate Interval @{0}", key.ToString()));
                         return false;
-                    }
+                    }*/
 
                 value = value.Update(atI: atI, condition: iC);
 
