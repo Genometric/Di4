@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 {
@@ -61,7 +62,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> chrs { set; get; }
 
 
-        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand, IndexingMode indexinMode, int nThreads)
+        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand, IndexingMode indexinMode, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
@@ -82,25 +83,35 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                                     using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand)))) // this might be wrong
                                     {
                                         stpWtch.Start();
-                                        di3.Add(strandEntry.Value, indexinMode, nThreads);
+                                        di3.Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree);
                                         stpWtch.Stop();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
                             break;
 
                         case HDDPerformance.Fastest:
-                            foreach (var chr in peaks)
-                                foreach (var strandEntry in chr.Value)
+                            /// Initialize inside a sequential foreach loop.
+                            foreach(var chr in peaks)
+                                foreach(var strandEntry in chr.Value)
                                 {
                                     if (!chrs.ContainsKey(chr.Key)) chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
                                     if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
-
-                                    stpWtch.Start();
-                                    chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, nThreads);
-                                    chrs[chr.Key][strand].Commit();
-                                    stpWtch.Stop();
-                                    totalIntervals += strandEntry.Value.Count;
                                 }
+
+                            /// Populate inside a parallel foreach loop.
+                            Parallel.ForEach(peaks,
+                                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                                chr =>
+                                {
+                                    foreach (var strandEntry in chr.Value)
+                                    {
+                                        stpWtch.Start();
+                                        chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree);
+                                        chrs[chr.Key][strand].Commit();
+                                        stpWtch.Stop();
+                                        totalIntervals += strandEntry.Value.Count;
+                                    }
+                                });
                             break;
                     }
 
@@ -120,7 +131,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                             if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options()));
 
                             stpWtch.Start();
-                            chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, nThreads);
+                            chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree);
                             // Check if it's needed to call Commit().
                             stpWtch.Stop();
                             totalIntervals += strandEntry.Value.Count;
@@ -130,23 +141,27 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
-        internal ExecutionReport Add2ndPass()
+        internal ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
-            foreach (var chr in chrs)
-                foreach (var sDi3 in chr.Value)
-                {
-                    stpWtch.Start();
-                    totalIntervals += sDi3.Value.bookmarkCount;
-                    sDi3.Value.SecondPass();
-                    sDi3.Value.Commit();
-                    stpWtch.Stop();
-                }
+            Parallel.ForEach(chrs, //var chr in chrs
+               new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+               chr =>
+               {
+                   foreach (var sDi3 in chr.Value)
+                   {
+                       stpWtch.Start();
+                       totalIntervals += sDi3.Value.bookmarkCount;
+                       sDi3.Value.SecondPass();
+                       sDi3.Value.Commit();
+                       stpWtch.Stop();
+                   }
+               });
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
+        internal ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalBookmarks = 0;
@@ -165,14 +180,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     switch (coverVariation)
                     {
                         case CoverVariation.Cover:
-                            sDi3.Value.Cover<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, nThreads);
+                            sDi3.Value.Cover<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, maxDegreeOfParallelism.di3Degree);
                             break;
 
                         case CoverVariation.Summit:
-                            sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, nThreads);
+                            sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, maxDegreeOfParallelism.di3Degree);
                             break;
                     }
-                    
+
                     result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
                     stpWtch.Stop();
                 }
@@ -180,7 +195,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Map(Dictionary<string, Dictionary<char, List<I>>> references, char strand, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
+        internal ExecutionReport Map(Dictionary<string, Dictionary<char, List<I>>> references, char strand, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
@@ -198,7 +213,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!result.Chrs[refChr.Key].ContainsKey(refStrand.Key)) result.Chrs[refChr.Key].Add(refStrand.Key, new List<Output<C, I, M>>());
 
                     stpWtch.Start();
-                    chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, nThreads);
+                    chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, maxDegreeOfParallelism.di3Degree);
                     
                     result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
                     stpWtch.Stop();
@@ -209,7 +224,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, int nThreads)
+        internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             result = new Dictionary<string, Dictionary<char, List<AccEntry<C>>>>();
@@ -220,14 +235,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, List<AccEntry<C>>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram(nThreads);
+                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram(maxDegreeOfParallelism.di3Degree);
                     stpWtch.Stop();
                 }
 
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, int nThreads)
+        internal ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             result = new Dictionary<string, Dictionary<char, SortedDictionary<int, int>>>();
@@ -238,32 +253,37 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, SortedDictionary<int, int>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationDistribution(nThreads);
+                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationDistribution(maxDegreeOfParallelism.di3Degree);
                     stpWtch.Stop();
                 }
 
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport SecondResolutionIndex(int nthreads)
+        internal ExecutionReport SecondResolutionIndex(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalBookmarks = 0;
 
-            foreach (var chr in chrs)
-                foreach (var sDi3 in chr.Value)
-                {
-                    stpWtch.Start();
-                    sDi3.Value.SecondResolutionIndex(nthreads);
-                    totalBookmarks += sDi3.Value.blockCount;
-                    sDi3.Value.Commit();
-                    stpWtch.Stop();
-                }
+            //foreach (var chr in chrs)
+            Parallel.ForEach(chrs,
+               new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+               chr =>
+               {
+                   foreach (var sDi3 in chr.Value)
+                   {
+                       stpWtch.Start();
+                       sDi3.Value.SecondResolutionIndex(maxDegreeOfParallelism.di3Degree);
+                       totalBookmarks += sDi3.Value.blockCount;
+                       sDi3.Value.Commit();
+                       stpWtch.Stop();
+                   }
+               });
 
             return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Merge(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
+        internal ExecutionReport Merge(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             result = new Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>>();
@@ -274,14 +294,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, ICollection<BlockKey<C>>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.Merge(nThreads);
+                    result[chr.Key][sDi3.Key] = sDi3.Value.Merge(maxDegreeOfParallelism.di3Degree);
                     stpWtch.Stop();
                 }
 
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
+        internal ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             result = new Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>>();
@@ -292,7 +312,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, ICollection<BlockKey<C>>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
                     stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.Complement(nThreads);
+                    result[chr.Key][sDi3.Key] = sDi3.Value.Complement(maxDegreeOfParallelism.di3Degree);
                     stpWtch.Stop();
                 }
 
@@ -363,10 +383,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             options.CacheMinimumHistory = 10240;
             options.CacheMaximumHistory = 40960;
 
-            options.CachePolicy = CachePolicy.None;
+            /*options.CachePolicy = CachePolicy.None;
             options.CacheKeepAliveTimeOut = 0;
             options.CacheMinimumHistory = 0;
-            options.CacheMaximumHistory = 0;
+            options.CacheMaximumHistory = 0;*/
 
             options.StoragePerformance = StoragePerformance.Fastest;
 

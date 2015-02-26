@@ -17,7 +17,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
     {
         public Orchestrator(string workingDirectory, string logFileExtension)
         {
-            _nThread = Environment.ProcessorCount;
+            _maxDegreeOfParallelism = new MaxDegreeOfParallelism(Environment.ProcessorCount / 2, Environment.ProcessorCount / 2);
             _workingDirectory = workingDirectory;
             _logFileExtension = logFileExtension;
             _sectionTitle = "Chromosome";
@@ -33,7 +33,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         /// Sets and gets the total number of indexed intervals.
         /// </summary>
         private int _tN2i { set; get; }
-        private int _nThread { set; get; }
+        private MaxDegreeOfParallelism _maxDegreeOfParallelism { set; get; }
         private string _workingDirectory { set; get; }
         private string _logFileExtension { set; get; }
         private string _sectionTitle { set; get; }
@@ -48,6 +48,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         {
             Herald.Announce(Herald.MessageType.None, "> " + command, Herald.Destination.File);
 
+            command = command.Trim();
             string[] splittedCommand = command.Split(' ');
 
             switch (splittedCommand[0].ToLower())
@@ -132,11 +133,13 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 case "setim": // set indexing mode.
                     return SetIndexingMode(splittedCommand);
 
-                case "gettc": // get thread count
-                    return GetTC();
+                case "getdp": // get degree of parallelization
+                case "getpd": // get parallelization degree
+                    return GetPD();
 
-                case "settc": // set thread count
-                    return SetTC(splittedCommand);
+                case "setdp": // set degree of parallelization
+                case "setpd": // set parallelization degree
+                    return SetPD(splittedCommand);
 
                 case "2pass": // 2nd pass of indexing.
                     _stopWatch.Restart();
@@ -201,7 +204,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             }
 
             if (!Load(args[1])) return false;
-            var report = di3B.Add(Repository.parsedSample.intervals, _indexingMode, _nThread);
+            var report = di3B.Add(Repository.parsedSample.intervals, _indexingMode, _maxDegreeOfParallelism);
             Herald.AnnounceExeReport("Indexed", report);
             _tN2i += report.count;
             return true;
@@ -262,7 +265,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         }
         private bool Index_2ndpass()
         {
-            Herald.AnnounceExeReport("2nd-pass", di3B.Add2ndPass());
+            Herald.AnnounceExeReport("2nd-pass", di3B.Add2ndPass(_maxDegreeOfParallelism));
             return false;
         }
         private bool Load(string fileName)
@@ -340,11 +343,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             switch (coverOrSummit)
             {
                 case "cover":
-                    Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result, _nThread), Herald.SpeedUnit.bookmarkPerSecond);
+                    Herald.AnnounceExeReport("Cover", di3B.Cover(CoverVariation.Cover, strand, minAcc, maxAcc, agg, out result, _maxDegreeOfParallelism), Herald.SpeedUnit.bookmarkPerSecond);
                     break;
 
                 case "summit":
-                    Herald.AnnounceExeReport("Summit", di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg, out result, _nThread), Herald.SpeedUnit.bookmarkPerSecond);
+                    Herald.AnnounceExeReport("Summit", di3B.Cover(CoverVariation.Summit, strand, minAcc, maxAcc, agg, out result, _maxDegreeOfParallelism), Herald.SpeedUnit.bookmarkPerSecond);
                     break;
             }
 
@@ -376,14 +379,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!Load(args[1])) return false;
 
             FunctionOutput<Output<int, Peak, PeakData>> result;
-            Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result, _nThread));
+            Herald.AnnounceExeReport("Map", di3B.Map(strand, Repository.parsedSample.intervals, agg, out result, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
 
             return true;
         }
         private bool SecondResolutionIndex()
         {
-            Herald.AnnounceExeReport("2R Index", di3B.SecondResolutionIndex(_nThread));
+            Herald.AnnounceExeReport("2R Index", di3B.SecondResolutionIndex(_maxDegreeOfParallelism));
             return true;
         }
         private bool SetIndexingMode(string[] args)
@@ -438,7 +441,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
             Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results;
-            Herald.AnnounceExeReport("AccHistogram", di3B.AccumulationHistogram(out results, _nThread));
+            Herald.AnnounceExeReport("AccHistogram", di3B.AccumulationHistogram(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tleft\tright\taccumulation\tstrand"));
             return true;
         }
@@ -454,26 +457,31 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
             Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results;
-            Herald.AnnounceExeReport("AccDistribution", di3B.AccumulationDistribution(out results, _nThread));
+            Herald.AnnounceExeReport("AccDistribution", di3B.AccumulationDistribution(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tstrand\taccumulation\tcount"));
             return true;
         }
-        private bool GetTC()
+        private bool GetPD()
         {
-            Herald.Announce(Herald.MessageType.Info, "ThreadCount = " + _nThread.ToString());
+            Herald.Announce(
+                Herald.MessageType.Info,
+                String.Format( "Maximum degree of parallelism: \nChr level = {0} threads \nDi3 level = {1} threads",
+                _maxDegreeOfParallelism.chrDegree,
+                _maxDegreeOfParallelism.di3Degree));
             return false;
         }
-        private bool SetTC(string[] args)
+        private bool SetPD(string[] args)
         {
-            int threadCount = 0;
-            if (args.Length != 2 || !int.TryParse(args[1], out threadCount))
+            int chrDP = 0, di3DP = 0;
+
+            if (args.Length != 3 || !int.TryParse(args[1], out chrDP) || !int.TryParse(args[2], out di3DP))
             {
                 Herald.Announce(Herald.MessageType.Error, "Invalid arguments");
                 return false;
             }
 
-            _nThread = threadCount;
-            return GetTC();
+            _maxDegreeOfParallelism = new MaxDegreeOfParallelism(chrDP, di3DP);
+            return GetPD();
         }
         private bool Merge(string[] args)
         {
@@ -486,7 +494,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
             Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results = null;
-            Herald.AnnounceExeReport("Merge", di3B.Merge(out results, _nThread));
+            Herald.AnnounceExeReport("Merge", di3B.Merge(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;
         }
@@ -501,7 +509,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
             Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results = null;
-            Herald.AnnounceExeReport("Complement", di3B.Complement(out results, _nThread));
+            Herald.AnnounceExeReport("Complement", di3B.Complement(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;
         }

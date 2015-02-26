@@ -23,41 +23,41 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         private IComparer<C> CComparer { set; get; }
         private Genome<C, I, M> genome { set; get; }
 
-        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, int nThreads)
+        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Add(peaks, '*', indexingMode, nThreads);
+            return genome.Add(peaks, '*', indexingMode, maxDegreeOfParallelism);
         }
-        public ExecutionReport Add2ndPass()
+        public ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Add2ndPass();
+            return genome.Add2ndPass(maxDegreeOfParallelism);
         }
-        public ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
+        public ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate, out result, nThreads);
+            return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate, out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport Map(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, int nThreads)
+        public ExecutionReport Map(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Map(references, strand, aggregate, out result, nThreads);
+            return genome.Map(references, strand, aggregate, out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, int nThreads)
+        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.AccumulationHistogram(out result, nThreads);
+            return genome.AccumulationHistogram(out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, int nThreads)
+        public ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.AccumulationDistribution(out result, nThreads);
+            return genome.AccumulationDistribution(out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport SecondResolutionIndex(int nThreads)
+        public ExecutionReport SecondResolutionIndex(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.SecondResolutionIndex(nThreads);
+            return genome.SecondResolutionIndex(maxDegreeOfParallelism);
         }
-        public ExecutionReport Merge(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
+        public ExecutionReport Merge(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Merge(out result, nThreads);
+            return genome.Merge(out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, int nThreads)
+        public ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Complement(out result, nThreads);
+            return genome.Complement(out result, maxDegreeOfParallelism);
         }
     }
 }
