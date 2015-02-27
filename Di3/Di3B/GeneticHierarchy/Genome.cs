@@ -166,31 +166,43 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             Stopwatch stpWtch = new Stopwatch();
             int totalBookmarks = 0;
 
-            result = new FunctionOutput<Output<C, I, M>>();
+            //result = new FunctionOutput<Output<C, I, M>>();
+            var tmpResult = new FunctionOutput<Output<C, I, M>>();
             ICSOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
 
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.Chrs.ContainsKey(chr.Key)) result.Chrs.Add(chr.Key, new Dictionary<char, List<Output<C, I, M>>>());
-                    if (!result.Chrs[chr.Key].ContainsKey(sDi3.Key)) result.Chrs[chr.Key].Add(sDi3.Key, new List<Output<C, I, M>>());
-
-                    stpWtch.Start();
-                    totalBookmarks += sDi3.Value.bookmarkCount;
-                    switch (coverVariation)
-                    {
-                        case CoverVariation.Cover:
-                            sDi3.Value.Cover<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, maxDegreeOfParallelism.di3Degree);
-                            break;
-
-                        case CoverVariation.Summit:
-                            sDi3.Value.Summit<Output<C, I, M>>(ref outputStrategy, minAcc, maxAcc, maxDegreeOfParallelism.di3Degree);
-                            break;
-                    }
-
-                    result.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
-                    stpWtch.Stop();
+                    if (!tmpResult.Chrs.ContainsKey(chr.Key)) tmpResult.Chrs.Add(chr.Key, new Dictionary<char, List<Output<C, I, M>>>());
+                    if (!tmpResult.Chrs[chr.Key].ContainsKey(sDi3.Key)) tmpResult.Chrs[chr.Key].Add(sDi3.Key, new List<Output<C, I, M>>());
                 }
+
+            //foreach (var chr in chrs)
+            Parallel.ForEach(chrs,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                chr =>
+                {
+                    foreach (var sDi3 in chr.Value)
+                    {
+                        stpWtch.Start();
+                        totalBookmarks += sDi3.Value.bookmarkCount;
+                        switch (coverVariation)
+                        {
+                            case CoverVariation.Cover:
+                                sDi3.Value.Cover<Output<C, I, M>>(outputStrategy, minAcc, maxAcc, maxDegreeOfParallelism.di3Degree);
+                                break;
+
+                            case CoverVariation.Summit:
+                                sDi3.Value.Summit<Output<C, I, M>>(outputStrategy, minAcc, maxAcc, maxDegreeOfParallelism.di3Degree);
+                                break;
+                        }
+
+                        tmpResult.Chrs[chr.Key][sDi3.Key] = outputStrategy.output;
+                        stpWtch.Stop();
+                    }
+                });
+
+            result = tmpResult;
 
             return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
         }
@@ -200,7 +212,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
 
-            result = new FunctionOutput<Output<C, I, M>>();
+            var tmpResults = new FunctionOutput<Output<C, I, M>>();
             ICSOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
 
             foreach (var refChr in references)
@@ -209,54 +221,87 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 foreach (var refStrand in refChr.Value)
                 {
                     if (!chrs[refChr.Key].ContainsKey(refStrand.Key)) continue;
-                    if (!result.Chrs.ContainsKey(refChr.Key)) result.Chrs.Add(refChr.Key, new Dictionary<char, List<Output<C, I, M>>>());
-                    if (!result.Chrs[refChr.Key].ContainsKey(refStrand.Key)) result.Chrs[refChr.Key].Add(refStrand.Key, new List<Output<C, I, M>>());
-
-                    stpWtch.Start();
-                    chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, maxDegreeOfParallelism.di3Degree);
-                    
-                    result.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
-                    stpWtch.Stop();
-                    totalIntervals += refStrand.Value.Count;
+                    if (!tmpResults.Chrs.ContainsKey(refChr.Key)) tmpResults.Chrs.Add(refChr.Key, new Dictionary<char, List<Output<C, I, M>>>());
+                    if (!tmpResults.Chrs[refChr.Key].ContainsKey(refStrand.Key)) tmpResults.Chrs[refChr.Key].Add(refStrand.Key, new List<Output<C, I, M>>());
                 }
             }
 
+
+            Parallel.ForEach(references,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                refChr =>
+                {
+                    if (chrs.ContainsKey(refChr.Key))
+                        foreach (var refStrand in refChr.Value)
+                        {
+                            if (!chrs[refChr.Key].ContainsKey(refStrand.Key)) continue;
+
+                            stpWtch.Start();
+                            chrs[refChr.Key][refStrand.Key].Map<Output<C, I, M>>(ref outputStrategy, refStrand.Value, maxDegreeOfParallelism.di3Degree);
+
+                            tmpResults.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
+                            stpWtch.Stop();
+                            totalIntervals += refStrand.Value.Count;
+                        }
+                });
+
+            result = tmpResults;
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
         internal ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
-            result = new Dictionary<string, Dictionary<char, List<AccEntry<C>>>>();
+            var tmpResult = new Dictionary<string, Dictionary<char, List<AccEntry<C>>>>();
 
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, List<AccEntry<C>>>());
-                    if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
-                    stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram(maxDegreeOfParallelism.di3Degree);
-                    stpWtch.Stop();
+                    if (!tmpResult.ContainsKey(chr.Key)) tmpResult.Add(chr.Key, new Dictionary<char, List<AccEntry<C>>>());
+                    if (!tmpResult[chr.Key].ContainsKey(sDi3.Key)) tmpResult[chr.Key].Add(sDi3.Key, null);
                 }
 
+            Parallel.ForEach(chrs,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                chr =>
+                {
+                    foreach (var sDi3 in chr.Value)
+                    {
+                        stpWtch.Start();
+                        tmpResult[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram(maxDegreeOfParallelism.di3Degree);
+                        stpWtch.Stop();
+                    }
+                });
+
+            result = tmpResult;
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
         internal ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
-            result = new Dictionary<string, Dictionary<char, SortedDictionary<int, int>>>();
+            var tmpResult = new Dictionary<string, Dictionary<char, SortedDictionary<int, int>>>();
 
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, SortedDictionary<int, int>>());
-                    if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
-                    stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.AccumulationDistribution(maxDegreeOfParallelism.di3Degree);
-                    stpWtch.Stop();
+                    if (!tmpResult.ContainsKey(chr.Key)) tmpResult.Add(chr.Key, new Dictionary<char, SortedDictionary<int, int>>());
+                    if (!tmpResult[chr.Key].ContainsKey(sDi3.Key)) tmpResult[chr.Key].Add(sDi3.Key, null);
                 }
 
+            Parallel.ForEach(chrs,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                chr =>
+                {
+                    foreach (var sDi3 in chr.Value)
+                    {
+                        stpWtch.Start();
+                        tmpResult[chr.Key][sDi3.Key] = sDi3.Value.AccumulationDistribution(maxDegreeOfParallelism.di3Degree);
+                        stpWtch.Stop();
+                    }
+                });
+
+            result = tmpResult;
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
@@ -265,7 +310,6 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             Stopwatch stpWtch = new Stopwatch();
             int totalBookmarks = 0;
 
-            //foreach (var chr in chrs)
             Parallel.ForEach(chrs,
                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                chr =>
@@ -304,18 +348,28 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         internal ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
-            result = new Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>>();
+            var tmpResult = new Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>>();
 
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
-                    if (!result.ContainsKey(chr.Key)) result.Add(chr.Key, new Dictionary<char, ICollection<BlockKey<C>>>());
-                    if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].Add(sDi3.Key, null); // is null correct here?
-                    stpWtch.Start();
-                    result[chr.Key][sDi3.Key] = sDi3.Value.Complement(maxDegreeOfParallelism.di3Degree);
-                    stpWtch.Stop();
+                    if (!tmpResult.ContainsKey(chr.Key)) tmpResult.Add(chr.Key, new Dictionary<char, ICollection<BlockKey<C>>>());
+                    if (!tmpResult[chr.Key].ContainsKey(sDi3.Key)) tmpResult[chr.Key].Add(sDi3.Key, null);
                 }
 
+            Parallel.ForEach(chrs,
+               new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+               chr =>
+               {
+                   foreach (var sDi3 in chr.Value)
+                   {
+                       stpWtch.Start();
+                       tmpResult[chr.Key][sDi3.Key] = sDi3.Value.Complement(maxDegreeOfParallelism.di3Degree);
+                       stpWtch.Stop();
+                   }
+               });
+
+            result = tmpResult;
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 

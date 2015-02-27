@@ -362,11 +362,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
 
 
-        public void Cover<O>(ref ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
+        public void Cover<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
         {
-            Cover<O>(ref outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
+            Cover<O>(outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
         }
-        public void Cover<O>(ref ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
+        public void Cover<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
         {
             Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
@@ -387,11 +387,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 work.Complete(true, -1);
             }
         }
-        public void Summit<O>(ref ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
+        public void Summit<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
         {
-            Summit<O>(ref outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
+            Summit<O>(outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
         }
-        public void Summit<O>(ref ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
+        public void Summit<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
         {
             Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);

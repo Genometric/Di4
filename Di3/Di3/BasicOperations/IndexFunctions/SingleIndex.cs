@@ -180,11 +180,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 {
                     /// if any error rises on following Add/Remove operations, 
                     /// it's an indication that 1st pass did not work properly.
-                    if (lambda.phi == true)//////////// &&
+                    if (lambda.phi == true &&
 
                         /// this control should not be here, but it seems that GMQL data has duplicate regions,
                         /// hence causes duplications in hashkeys. 
-                        ///////////!lambdaCarrier.ContainsKey(lambda.atI)) 
+                        !lambdaCarrier.ContainsKey(lambda.atI)) 
                         lambdaCarrier.Add(lambda.atI, true);
                     else
                         lambdaCarrier.Remove(lambda.atI);
