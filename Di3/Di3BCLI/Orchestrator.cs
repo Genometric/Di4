@@ -17,7 +17,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
     {
         public Orchestrator(string workingDirectory, string logFileExtension)
         {
-            _maxDegreeOfParallelism = new MaxDegreeOfParallelism(Environment.ProcessorCount / 2, Environment.ProcessorCount / 2);
+            _maxDegreeOfParallelism = new MaxDegreeOfParallelism(Environment.ProcessorCount / 2, 2);
             _workingDirectory = workingDirectory;
             _logFileExtension = logFileExtension;
             _sectionTitle = "Chromosome";
@@ -280,10 +280,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 readOnlyValidChrs: true,
                 startOffset: 0,
                 chrColumn: 0,
-                leftEndColumn: 3,
-                rightEndColumn: 4,
-                nameColumn: 8,
-                valueColumn: 5,
+                leftEndColumn: 1,//3,
+                rightEndColumn: 2,//4,
+                nameColumn: 3,//8,
+                valueColumn: 4,//5,
                 strandColumn: -1,
                 defaultValue: 0.01,
                 pValueFormat: pValueFormat.minus10_Log10_pValue,

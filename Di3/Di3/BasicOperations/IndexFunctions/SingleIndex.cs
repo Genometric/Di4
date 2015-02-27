@@ -73,7 +73,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private AddUpdateValue update = new AddUpdateValue();
 
 
-
         public void Index()
         {
             int i;

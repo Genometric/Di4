@@ -13,6 +13,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
 
+
+            int dummyNullCounter = 0;
+
+
             stp.Restart();
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
@@ -23,12 +27,17 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     foreach (var strand in chr.Value)
                         foreach (var interval in strand.Value)
                         {
+                            if (interval == null)
+                                dummyNullCounter++;
+
+
+                            /*
                             writter.WriteLine(
                                 chr.Key + separator +
                                 interval.interval.left.ToString() + separator +
                                 interval.interval.right.ToString() + separator +
                                 interval.count.ToString() + separator +
-                                strand.Key);
+                                strand.Key);*/
                             intervalCount++;
                         }
             }
