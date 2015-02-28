@@ -2,10 +2,6 @@
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
 {
@@ -69,11 +65,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
                 tmp = bookmark.Key;
             }
 
-            lock(_lockOnMe)
-            {
-                /*if (_accHistogram == null) _accHistogram = _localAccHistogram;
-                else _accHistogram = */_accHistogram.AddRange(_localAccHistogram);
-            }
+            lock (_lockOnMe) { _accHistogram.AddRange(_localAccHistogram); }
         }
         internal void AccDistribution()
         {

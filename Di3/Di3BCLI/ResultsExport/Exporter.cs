@@ -1,5 +1,6 @@
 ﻿using Polimi.DEIB.VahidJalili.DI3.DI3B;
 using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,10 +14,6 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
 
-
-            int dummyNullCounter = 0;
-
-
             stp.Restart();
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
@@ -27,17 +24,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     foreach (var strand in chr.Value)
                         foreach (var interval in strand.Value)
                         {
-                            if (interval == null)
-                                dummyNullCounter++;
-
-
-                            /*
                             writter.WriteLine(
                                 chr.Key + separator +
                                 interval.interval.left.ToString() + separator +
                                 interval.interval.right.ToString() + separator +
                                 interval.count.ToString() + separator +
-                                strand.Key);*/
+                                strand.Key);
                             intervalCount++;
                         }
             }
@@ -45,7 +37,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results, string header, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<int>>>> results, string header, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -70,7 +62,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results, string header, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> results, string header, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -94,7 +86,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        internal static ExecutionReport Export(string fileName, Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();

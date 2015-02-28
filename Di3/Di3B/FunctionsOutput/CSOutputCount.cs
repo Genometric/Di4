@@ -19,7 +19,6 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         public CSOutputCount()
         {
             output = new List<Output<C, I, M>>();
-            //output = new ConcurrentBag<Output<C, I, M>>();
         }
 
         public List<Output<C, I, M>> output { set; get; }
@@ -28,7 +27,6 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             lock (lockOnMe) { output.Add(new Output<C, I, M>(left, right, intervals.Count)); }
         }
-
         void ICSOutput<C, I, M, Output<C, I, M>>.Output(I interval, List<UInt32> intervals, Object lockOnMe)
         {
             lock (lockOnMe) { output.Add(new Output<C, I, M>(interval, intervals.Count)); }

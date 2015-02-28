@@ -170,31 +170,14 @@ namespace Polimi.DEIB.VahidJalili.DI3
             var lambdaCarrier = new Dictionary<uint, bool>();
             KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
             List<uint> keysToRemove = new List<uint>();
-            //List<uint> keys;
-
 
             foreach (var bookmark in _di3.EnumerateFrom(firstItem.Key))
             {
                 foreach (var lambda in bookmark.Value.lambda)
-                {
-                    /// if any error rises on following Add/Remove operations, 
-                    /// it's an indication that 1st pass did not work properly.
-                    if (lambda.phi == true &&
-
-                        /// this control should not be here, but it seems that GMQL data has duplicate regions,
-                        /// hence causes duplications in hashkeys. 
-                        !lambdaCarrier.ContainsKey(lambda.atI)) 
+                    if (lambda.phi == true && !lambdaCarrier.ContainsKey(lambda.atI))
                         lambdaCarrier.Add(lambda.atI, true);
                     else
                         lambdaCarrier.Remove(lambda.atI);
-                    /*
-                    if (lambdaCarrier.ContainsKey(lambda.atI))
-                        lambdaCarrier[lambda.atI] = lambda;
-                    else
-                        lambdaCarrier.Add(lambda.atI, lambda);*/
-                    //if (lambda.phi == false) keysToRemove.Add(lambda.atI);
-                }
-
 
                 mu = lambdaCarrier.Count - bookmark.Value.lambda.Count + bookmark.Value.omega; // ;-)
                 if (bookmark.Value.mu != mu)
@@ -203,20 +186,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     currentBookmarkLambda = bookmark.Value.lambda;
                     _di3.TryUpdate(bookmark.Key, updateFunction);
                 }
-
-                //if (UpdateRequired(keyBookmark.Value.lambda, lambdaCarrier))
-                //_di3.TryUpdate(keyBookmark.Key, updateFunction);
-
-                //foreach (uint item in keysToRemove)
-                //lambdaCarrier.Remove(item);
-                //keysToRemove.Clear();
-
-                /////////////////////////////////////////////////////
-                ///////// UPDATE THIS LINE /////////////////////////
-                ///////////////////////////////////////////////////
-                //keys = new List<uint>(lambdaCarrier.Keys);
-                //foreach (var key in keys)
-                //    lambdaCarrier[key] = new Lambda('M', lambdaCarrier[key].atI);
             }
         }
         private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda, Dictionary<uint, Lambda> lambdaCarrier)
@@ -265,8 +234,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
         struct AddUpdateValue : ICreateOrUpdateValue<C, B>, IRemoveValue<C, B>
         {
             public B oldValue;
-            //public bool phi { set; get; }
-            //public bool middle { set; get; }
             public IntersectionCondition iC { set; get; }
             public UInt32 atI { set; get; }
 
@@ -282,8 +249,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     value = new B(condition: iC, atI: atI);
                 else
                     value = new B(condition: iC, atI: atI, nextBookmark: NextBookmark);
-                //value = GetNewBlock();
-                //return atI != 0; //&& phi != default(char);
+
                 if (atI != 0)
                 {
                     bookmarkCounter.value++;
@@ -294,32 +260,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
             public bool UpdateValue(C key, ref B value)
             {
                 oldValue = value;
-
-                //if (phi == 'R')
-                //value = value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
-                //else
-                //value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
-
-                /*foreach(var lambda in oldValue.lambda)
-                    if(lambda.atI == atI)
-                    {
-                        Console.WriteLine("____________________");
-                        Console.WriteLine(String.Format(" Duplicate Interval @{0}", key.ToString()));
-                        return false;
-                    }*/
-
                 value = value.Update(atI: atI, condition: iC);
-
-                return atI != 0; //&& phi != default(char);
+                return atI != 0;
             }
             public bool RemoveValue(C key, B value)
             {
                 oldValue = value;
-
-                //if (phi == 'R')
-                //return value == value.Update(omega: value.omega + 1, phi: phi, hashKey: hashKey);
-                //else
-                //return value == value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
 
                 if (value == value.Update(atI: atI, condition: iC))
                 {
@@ -328,14 +274,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 }
                 return false;
             }
-
-            /*private B GetNewBlock()
-            {
-                if (NextBookmark == null)
-                    return new B(phi: phi, atI: atI);
-                else
-                    return new B(phi: phi, atI: atI, nextBookmark: NextBookmark);
-            }*/
         }
 
         private class BookmarkCounter

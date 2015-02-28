@@ -1,9 +1,7 @@
 ﻿using CSharpTest.Net.Collections;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
@@ -83,32 +81,17 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     markedKey = bookmark.Key;
                     markedAcc = accumulation;
                     _reserveRightEnds = true;
-
-                    //UpdateLambdas(keyBookmark.Value.lambda);
-                    //UpdateLambdas(bookmark.Key, bookmark.Value);
                 }
-                else if (markedAcc != -1)
+                else if (markedAcc != -1 &&
+                    (accumulation < _minAcc ||
+                    accumulation > _maxAcc))
                 {
-                    if (accumulation < _minAcc ||
-                        accumulation > _maxAcc)
-                    {
-                        //UpdateLambdas(keyBookmark.Value.lambda);
-                        //UpdateLambdas(bookmark.Key, bookmark.Value);
-                        _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
+                    _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
 
-                        markedKey = default(C);
-                        markedAcc = -1;
-                        //_lambdas.Clear();
-                        //_determinedLambdas.Clear();
-                        ExcludeRservedRightEnds();
-                        _reserveRightEnds = false;
-                    }
-                    //else if (currentAcc >= _minAcc &&
-                       // currentAcc <= _maxAcc)
-                    //{
-                        //UpdateLambdas(keyBookmark.Value.lambda);
-                        //UpdateLambdas(bookmark.Key, bookmark.Value);
-                    //}
+                    markedKey = default(C);
+                    markedAcc = -1;
+                    ExcludeRservedRightEnds();
+                    _reserveRightEnds = false;
                 }
             }
         }
@@ -138,17 +121,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 {
                     markedKey = bookmark.Key;
                     markedAcc = currentAcc;
-                    //UpdateLambdas(keyBookmark.Value.lambda);
-                    //UpdateLambdas(bookmark.Key, bookmark.Value);
                     _reserveRightEnds = true;
-
-                    /// This section helps avoiding intervals determined previously and 
-                    /// ended at current start of summit region. This can happen when an 
-                    /// interval's left-end is colocallized with another interval's right-end.
-                    //if (bookmark.Value.omega > 0)
-                        //foreach (var lambda in bookmark.Value.lambda)
-                            //if (lambda.phi == false)
-                                //_determinedLambdas.Remove(lambda.atI);
                 }
                 else if (markedAcc > currentAcc ||
                     (markedAcc < currentAcc && (
@@ -156,24 +129,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     currentAcc > _maxAcc) &&
                     markedAcc != -1))
                 {
-                    //UpdateLambdas(keyBookmark.Value.lambda);
-                    //UpdateLambdas(bookmark.Key, bookmark.Value);
                     _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
 
                     markedKey = default(C);
                     markedAcc = -1;
-                    //_lambdas.Clear();
-                    //_determinedLambdas.Clear();
                     ExcludeRservedRightEnds();
                     _reserveRightEnds = false;
                 }
-                /*else if (currentAcc >= _minAcc &&
-                    currentAcc <= _maxAcc &&
-                    markedAcc != -1)
-                {
-                    //UpdateLambdas(keyBookmark.Value.lambda);
-                    //UpdateLambdas(bookmark.Key, bookmark.Value);
-                }*/
 
                 previousAcc = currentAcc;
             }
@@ -188,25 +150,21 @@ namespace Polimi.DEIB.VahidJalili.DI3
             {
                 reference = _intervals[i];
 
-                #region .::.     a quick note     .::.
                 /// This iteration starts from a keyBookmark which it's newKey (i.e., coordinate)
                 /// is the minimum >= to reference.currentBlockLeftEnd; and goes to the keyBookmark which the newKey
                 /// is maximum <= to reference.right. Of course if no such blocks are available
                 /// this iteration wont iteratre over anything. 
-                #endregion
                 foreach (var bookmark in _di3_1R.EnumerateRange(reference.left, reference.right))
-                    //UpdateLambdas(keyBookmark.Value.lambda);
                     UpdateLambdas(bookmark.Key, bookmark.Value);
 
                 _outputStrategy.Output(reference, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
 
                 _determinedLambdas.Clear();
                 _reservedRightEnds.Clear();
-
             }
         }
 
-        private void UpdateLambdas(C coordinate, B keyBookmark) //ReadOnlyCollection<Lambda> lambdas)
+        private void UpdateLambdas(C coordinate, B keyBookmark)
         {
             if (_determinedLambdas.Count == 0)
             {
@@ -263,23 +221,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
                         _reservedRightEnds.Add(lambda.atI, false);
                     else
                         _determinedLambdas.Remove(lambda.atI);
-
-                /*
-                if (keyBookmark.omega > 0)
-                {
-                    if (_reserveRightEnds)
-                    {
-                        foreach (var lambda in keyBookmark.lambda)
-                            if (!lambda.phi)
-                                _reservedRightEnds.Add(lambda.atI, false);
-                    }
-                    else
-                    {
-                        foreach (var lambda in keyBookmark.lambda)
-                            if (!lambda.phi)
-                                _determinedLambdas.Remove(lambda.atI);
-                    }
-                }*/
             }
         }
         private void ExcludeRservedRightEnds()

@@ -2,13 +2,13 @@
 using CSharpTest.Net.Serialization;
 using CSharpTest.Net.Synchronization;
 using CSharpTest.Net.Threading;
-using Polimi.DEIB.VahidJalili.IGenomics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Collections.Concurrent;
 using Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions;
 using Polimi.DEIB.VahidJalili.DI3.BasicOperations.IndexFunctions;
+using Polimi.DEIB.VahidJalili.IGenomics;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
@@ -239,8 +239,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             rtv.FileBlockSize = 8192;
 
-            //counted.CachePolicy = CachePolicy.Recent;
-
             rtv.StoragePerformance = StoragePerformance.Fastest;
 
             rtv.CachePolicy = options.CachePolicy;
@@ -420,7 +418,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
         public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
         {
             Object lockOnMe = new Object();
-            //Stopwatch watch = new Stopwatch();
             int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
             
             using (WorkQueue work = new WorkQueue(nThreads))
@@ -434,10 +431,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     else break;
                 }
 
-                //watch.Restart();
                 work.Complete(true, -1);
-                //watch.stop();
-                //Console.WriteLine("waited : {0}ms", watch.ElapsedMilliseconds);
             }
         }
 
@@ -610,32 +604,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
             partitions[0].left = _di3_2R.First().Key;
             partitions[fCount - 1].right = _di3_2R.Last().Key;
 
-            /// Refinement -------- Check if we need Refinement.
-            /*bool incrementRight = true;
-            fCount--;
-            for (int i = 0; i < fCount; i++)
-            {
-                foreach (var keyBookmark in _di3_2R.EnumerateFrom(partitions[i].right))
-                {
-                    if (incrementRight)
-                    {
-                        partitions[i].right = keyBookmark.Key;
-                        if (keyBookmark.Value.omega == keyBookmark.Value.lambda.Count)
-                            incrementRight = false;
-                        continue;
-                    }
-                    else
-                    {
-                        partitions[i + 1].left = keyBookmark.Key;
-                        break;
-                    }
-                }
-
-                if (partitions[i + 1].left.CompareTo(partitions[i + 1].right) == 1)
-                    partitions[i + 1].right = partitions[i + 1].left;
-                incrementRight = true;
-            }*/
-
             return partitions;
         }
 
@@ -673,11 +641,3 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
     }
 }
-
-
-/// Note 1:
-/// Cover, Summit, and Map manipulate the reference of outputStrategy. 
-/// During this process, outputStrategy is possibly modified outside the scope of these functions. 
-/// To avoid any issues, a possible scenario could be initializing a brand-new 
-/// instance of outputStrategy in each of the functions, and when finished, 
-/// replace the referenced type by the new instance. 

@@ -15,7 +15,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const int maxGap = 100;
         const int maxLenght = 500; // this value must be >= 4
         const int chrCount = 18;
-        const int regionsCount = 100000;//200000; // per sample
+        const int regionsCount = 50000;//200000; // per sample
         const int sampleCount = 30;//500; // IF YOU CHANGE THIS: remember to revise maxAcc.
         const int maxAcc = 20;//400; // Maximum accumulation. This number must be less than sampleCount.
 

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CSharpTest.Net.Collections;
 using Polimi.DEIB.VahidJalili.IGenomics;
-using CSharpTest.Net.Collections;
+using System;
 using System.Collections.Concurrent;
 
 namespace Polimi.DEIB.VahidJalili.DI3
@@ -41,13 +37,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
             int distinctIntervalsCount = 0;
             C currentBlockLeftEnd = _left;
             bool startNewBlock = true;
-            //Dictionary<uint, bool> presentIntervals = new Dictionary<uint, bool>();
             foreach (var bookmark in _di31R.EnumerateRange(_left, _right))
             {
                 maxAccumulation = Math.Max(maxAccumulation, bookmark.Value.mu + bookmark.Value.lambda.Count - bookmark.Value.omega);
-                //foreach (var interval in keyBookmark.Value.lambda)
-                //if (!presentIntervals.ContainsKey(interval.atI))
-                //presentIntervals.Add(interval.atI, true);
                 distinctIntervalsCount += bookmark.Value.lambda.Count - bookmark.Value.omega;
 
                 if (startNewBlock)
@@ -59,9 +51,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 if (bookmark.Value.lambda.Count == bookmark.Value.omega && bookmark.Value.mu == 0)
                 {
-                    Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, distinctIntervalsCount);// presentIntervals.Count);
+                    Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, distinctIntervalsCount);
                     maxAccumulation = 0;
-                    //presentIntervals.Clear();
                     distinctIntervalsCount = 0;
                     startNewBlock = true;
                 }

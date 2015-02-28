@@ -440,7 +440,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Dictionary<string, Dictionary<char, List<AccEntry<int>>>> results;
+            ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<int>>>> results;
             Herald.AnnounceExeReport("AccHistogram", di3B.AccumulationHistogram(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tleft\tright\taccumulation\tstrand"));
             return true;
@@ -456,7 +456,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> results;
+            ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> results;
             Herald.AnnounceExeReport("AccDistribution", di3B.AccumulationDistribution(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tstrand\taccumulation\tcount"));
             return true;
@@ -493,7 +493,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results = null;
+            ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results = null;
             Herald.AnnounceExeReport("Merge", di3B.Merge(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;
@@ -508,7 +508,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Dictionary<string, Dictionary<char, ICollection<BlockKey<int>>>> results = null;
+            ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results = null;
             Herald.AnnounceExeReport("Complement", di3B.Complement(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CSharpTest.Net.Collections;
 using Polimi.DEIB.VahidJalili.IGenomics;
-using CSharpTest.Net.Collections;
+using System;
+using System.Collections.Generic;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CSharpTest.Net.Collections;
 using Polimi.DEIB.VahidJalili.IGenomics;
-using CSharpTest.Net.Collections;
+using System;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {

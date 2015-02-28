@@ -2,6 +2,7 @@
 using Polimi.DEIB.VahidJalili.DI3.DI3B.Logging;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Polimi.DEIB.VahidJalili.DI3.DI3B
@@ -39,11 +40,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.Map(references, strand, aggregate, out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport AccumulationHistogram(out Dictionary<string, Dictionary<char, List<AccEntry<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport AccumulationHistogram(out ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             return genome.AccumulationHistogram(out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport AccumulationDistribution(out Dictionary<string, Dictionary<char, SortedDictionary<int, int>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport AccumulationDistribution(out ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             return genome.AccumulationDistribution(out result, maxDegreeOfParallelism);
         }
@@ -51,11 +52,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.SecondResolutionIndex(maxDegreeOfParallelism);
         }
-        public ExecutionReport Merge(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport Merge(out ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             return genome.Merge(out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport Complement(out Dictionary<string, Dictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport Complement(out ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             return genome.Complement(out result, maxDegreeOfParallelism);
         }
