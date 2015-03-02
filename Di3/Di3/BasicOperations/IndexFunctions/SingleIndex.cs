@@ -166,7 +166,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             int mu = 0;
             UInt16 omega = 0;
-            ReadOnlyCollection<Lambda> currentBookmarkLambda = null;
+            Lambda[] currentBookmarkLambda = null;
             var lambdaCarrier = new Dictionary<uint, bool>();
             KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
             List<uint> keysToRemove = new List<uint>();
@@ -179,7 +179,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     else
                         lambdaCarrier.Remove(lambda.atI);
 
-                mu = lambdaCarrier.Count - bookmark.Value.lambda.Count + bookmark.Value.omega; // ;-)
+                mu = lambdaCarrier.Count - bookmark.Value.lambda.Length + bookmark.Value.omega; // ;-)
                 if (bookmark.Value.mu != mu)
                 {
                     omega = bookmark.Value.omega;

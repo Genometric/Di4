@@ -372,7 +372,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new HigherOrderFuncs<C, I, M, O>(
+                        new CoverSummit<C, I, M, O>(
                             lockOnMe,
                             _di3_1R,
                             _di3_2R,
@@ -397,7 +397,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new HigherOrderFuncs<C, I, M, O>(
+                        new CoverSummit<C, I, M, O>(
                             lockOnMe,
                             _di3_1R,
                             _di3_2R,
@@ -427,7 +427,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > references.Count) stop = references.Count;
-                    if (start < stop) work.Enqueue(new HigherOrderFuncs<C, I, M, O>(lockOnMe, _di3_1R, outputStrategy, references, start, stop).Map);
+                    if (start < stop) work.Enqueue(new Map<C, I, M, O>(lockOnMe, _di3_1R, outputStrategy, references, start, stop).Run);
                     else break;
                 }
 
@@ -571,7 +571,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     if (incrementRight)
                     {
                         partitions[i].right = bookmark.Key;
-                        if (bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu == 0)
+                        if (bookmark.Value.lambda.Length - bookmark.Value.omega + bookmark.Value.mu == 0)
                             incrementRight = false;
                         continue;
                     }

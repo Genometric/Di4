@@ -39,8 +39,8 @@ namespace Polimi.DEIB.VahidJalili.DI3
             bool startNewBlock = true;
             foreach (var bookmark in _di31R.EnumerateRange(_left, _right))
             {
-                maxAccumulation = Math.Max(maxAccumulation, bookmark.Value.mu + bookmark.Value.lambda.Count - bookmark.Value.omega);
-                distinctIntervalsCount += bookmark.Value.lambda.Count - bookmark.Value.omega;
+                maxAccumulation = Math.Max(maxAccumulation, bookmark.Value.mu + bookmark.Value.lambda.Length - bookmark.Value.omega);
+                distinctIntervalsCount += bookmark.Value.lambda.Length - bookmark.Value.omega;
 
                 if (startNewBlock)
                 {
@@ -49,7 +49,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     continue;
                 }
 
-                if (bookmark.Value.lambda.Count == bookmark.Value.omega && bookmark.Value.mu == 0)
+                if (bookmark.Value.lambda.Length == bookmark.Value.omega && bookmark.Value.mu == 0)
                 {
                     Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, distinctIntervalsCount);
                     maxAccumulation = 0;

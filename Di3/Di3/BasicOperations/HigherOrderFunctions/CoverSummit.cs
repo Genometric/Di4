@@ -5,30 +5,12 @@ using System.Collections.Generic;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
-    internal class HigherOrderFuncs<C, I, M, O>
+    internal class CoverSummit<C, I, M, O>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal HigherOrderFuncs(Object lockOnMe, BPlusTree<C, B> di3)
-        {
-            _lockOnMe = lockOnMe;
-            _di3_1R = di3;
-            _determinedLambdas = new Dictionary<uint, bool>();
-            _reservedRightEnds = new Dictionary<uint, bool>();
-        }
-        internal HigherOrderFuncs(Object lockOnMe, BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
-        {
-            _lockOnMe = lockOnMe;
-            _di3_1R = di3_1R;
-            _determinedLambdas = new Dictionary<uint, bool>();
-            _intervals = intervals;
-            _start = start;
-            _stop = stop;
-            _outputStrategy = outputStrategy;
-            _reservedRightEnds = new Dictionary<uint, bool>();
-        }
-        internal HigherOrderFuncs(Object lockOnMe, BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, ICSOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
+        internal CoverSummit(Object lockOnMe, BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, ICSOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
         {
             _lockOnMe = lockOnMe;
             _di3_1R = di3_1R;
@@ -40,22 +22,25 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _maxAcc = maxAcc;
             _outputStrategy = outputStrategy;
             _reservedRightEnds = new Dictionary<uint, bool>();
+            _leftEndsToBeIgnored = new Dictionary<uint, bool>();
         }
 
         private BPlusTree<C, B> _di3_1R { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
-        private int _start { set; get; }
-        private int _stop { set; get; }
         private BlockKey<C> _left { set; get; }
         private BlockKey<C> _right { set; get; }
         private int _minAcc { set; get; }
         private int _maxAcc { set; get; }
-        private List<I> _intervals { set; get; }
+        private int _rightEndsToFind { set; get; }
+        private bool _startOfIteration { set; get; }
+        private bool _excludeRightEndFromFinalization { set; get; }
         private ICSOutput<C, I, M, O> _outputStrategy { set; get; }
         private Dictionary<UInt32, bool> _determinedLambdas { set; get; }
         private Object _lockOnMe { set; get; }
         private bool _reserveRightEnds { set; get; }
         private Dictionary<UInt32, bool> _reservedRightEnds { set; get; }
+        private Dictionary<UInt32, bool> _leftEndsToBeIgnored { set; get; }
+        
 
         internal void Cover()
         {
@@ -68,11 +53,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
             C markedKey = default(C);
             int markedAcc = -1;
             int accumulation = 0;
+            _startOfIteration = true;
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
-                UpdateLambdas(bookmark.Key, bookmark.Value);
+                accumulation = bookmark.Value.lambda.Length - bookmark.Value.omega + bookmark.Value.mu;
+                UpdateLambdas(bookmark.Value);
 
                 if (markedAcc == -1 &&
                     accumulation >= _minAcc &&
@@ -86,12 +72,16 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     (accumulation < _minAcc ||
                     accumulation > _maxAcc))
                 {
+                    if (_rightEndsToFind > 0)
+                        Finalize_mu(right);
+
                     _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
 
                     markedKey = default(C);
                     markedAcc = -1;
                     ExcludeRservedRightEnds();
-                    _reserveRightEnds = false;
+                    _reserveRightEnds = false;                    
+                    _excludeRightEndFromFinalization = true;
                 }
             }
         }
@@ -108,11 +98,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
             int markedAcc = -1;
             int currentAcc = 0;
             int previousAcc = 0;
+            _startOfIteration = true;
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                currentAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
-                UpdateLambdas(bookmark.Key, bookmark.Value);
+                currentAcc = bookmark.Value.lambda.Length - bookmark.Value.omega + bookmark.Value.mu;
+                UpdateLambdas(bookmark.Value);
 
                 if (previousAcc < currentAcc &&
                     markedAcc < currentAcc &&
@@ -129,98 +120,88 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     currentAcc > _maxAcc) &&
                     markedAcc != -1))
                 {
+                    if (_rightEndsToFind > 0)
+                        Finalize_mu(right);
+
                     _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
 
                     markedKey = default(C);
                     markedAcc = -1;
                     ExcludeRservedRightEnds();
                     _reserveRightEnds = false;
+                    _excludeRightEndFromFinalization = true;
                 }
 
                 previousAcc = currentAcc;
             }
         }
-        internal void Map()
+
+        private void UpdateLambdas(B keyBookmark)
         {
-            int i = 0;
-            I reference;
-            _reserveRightEnds = true;
-
-            for (i = _start; i < _stop; i++)
-            {
-                reference = _intervals[i];
-
-                /// This iteration starts from a keyBookmark which it's newKey (i.e., coordinate)
-                /// is the minimum >= to reference.currentBlockLeftEnd; and goes to the keyBookmark which the newKey
-                /// is maximum <= to reference.right. Of course if no such blocks are available
-                /// this iteration wont iteratre over anything. 
-                foreach (var bookmark in _di3_1R.EnumerateRange(reference.left, reference.right))
-                    UpdateLambdas(bookmark.Key, bookmark.Value);
-
-                _outputStrategy.Output(reference, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
-
-                _determinedLambdas.Clear();
-                _reservedRightEnds.Clear();
-            }
-        }
-
-        private void UpdateLambdas(C coordinate, B keyBookmark)
-        {
-            if (_determinedLambdas.Count == 0)
+            if (_startOfIteration)
             {
                 foreach (var lambda in keyBookmark.lambda)
                     if (lambda.phi == true)
                         _determinedLambdas.Add(lambda.atI, lambda.phi);
 
-                /// It's quite rare for this condition to be met under Cover/Summit functions, 
-                /// however, it's highly probable with Map operation.
-                if (keyBookmark.mu > 0)
-                {
-                    int mu = keyBookmark.mu;
-                    bool skipFirst = true;
-                    var tmpLambdas = new Dictionary<UInt32, bool>();
-                    foreach (var bookmark in _di3_1R.EnumerateFrom(coordinate))
-                    {
-                        if (skipFirst)
-                        {
-                            skipFirst = false;
-                            continue;
-                        }
-
-                        foreach (var lambda in bookmark.Value.lambda)
-                        {
-                            if (lambda.phi == true)
-                            {
-                                tmpLambdas.Add(lambda.atI, true);
-                                continue;
-                            }
-
-                            if (tmpLambdas.ContainsKey(lambda.atI))
-                            {
-                                tmpLambdas.Remove(lambda.atI);
-                                continue;
-                            }
-
-                            if (!_determinedLambdas.ContainsKey(lambda.atI))
-                            {
-                                _determinedLambdas.Add(lambda.atI, lambda.phi);
-                                mu--;
-                            }
-                        }
-
-                        if (mu == 0) break;
-                    }
-                }
+                _rightEndsToFind = keyBookmark.mu;
+                _startOfIteration = false;
             }
             else
             {
                 foreach (var lambda in keyBookmark.lambda)
-                    if (lambda.phi) // Do I really need following condition? : && _determinedLambdas.ContainsKey(lambda.atI) == false)
+                {
+                    if (_determinedLambdas.ContainsKey(lambda.atI) == false)
                         _determinedLambdas.Add(lambda.atI, lambda.phi);
-                    else if (_reserveRightEnds)
-                        _reservedRightEnds.Add(lambda.atI, false);
-                    else
-                        _determinedLambdas.Remove(lambda.atI);
+
+                    if (lambda.phi == false)
+                    {
+                        /// This condition is highly rare to be met.
+                        if (_determinedLambdas[lambda.atI] == false)
+                            _rightEndsToFind--;
+
+                        if (_reserveRightEnds)
+                            _reservedRightEnds.Add(lambda.atI, false);
+                        else
+                            _determinedLambdas.Remove(lambda.atI);
+                    }
+                }
+            }
+        }
+        private void Finalize_mu(C enumerationStart)
+        {
+            _leftEndsToBeIgnored.Clear();
+
+            foreach (var bookmark in _di3_1R.EnumerateFrom(enumerationStart))
+            {
+                if (_excludeRightEndFromFinalization)
+                {
+                    _excludeRightEndFromFinalization = false;
+                    continue;
+                }
+
+                foreach (var lambda in bookmark.Value.lambda)
+                {
+                    if (lambda.phi == true)
+                    {
+                        _leftEndsToBeIgnored.Add(lambda.atI, true);
+                        continue;
+                    }
+
+                    if (_leftEndsToBeIgnored.ContainsKey(lambda.atI))
+                    {
+                        _leftEndsToBeIgnored.Remove(lambda.atI);
+                        continue;
+                    }
+
+                    if (!_determinedLambdas.ContainsKey(lambda.atI))
+                    {
+                        _determinedLambdas.Add(lambda.atI, lambda.phi);
+                        _rightEndsToFind--;
+                    }
+                }
+
+                if (_rightEndsToFind == 0) break;
             }
         }
         private void ExcludeRservedRightEnds()

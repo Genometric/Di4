@@ -77,10 +77,11 @@
     <Compile Include="AuxiliaryComponents\BlockKeyComparer.cs" />
     <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
     <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\Map.cs" />
     <Compile Include="BasicOperations\IndexFunctions\BulkIndex.cs" />
     <Compile Include="BasicOperations\FirstOrderFunctions\AccumulationStats.cs" />
     <Compile Include="BasicOperations\FirstOrderFunctions\Merge.cs" />
-    <Compile Include="BasicOperations\HigherOrderFunctions\HigherOrderFuncs.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\CoverSummit.cs" />
     <Compile Include="BasicOperations\IndexFunctions\InfoIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\SingleIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\RangeIndex.cs" />

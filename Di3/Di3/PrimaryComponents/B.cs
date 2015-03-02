@@ -15,7 +15,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             switch(condition)
             {
                 case IntersectionCondition.LeftEnd:
-                    _lambda = new Lambda[] { new Lambda(phi: true, atI: atI) };
+                    this.lambda = new Lambda[] { new Lambda(phi: true, atI: atI) };
                     break;
 
                 case IntersectionCondition.Middle:
@@ -24,16 +24,16 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 case IntersectionCondition.RightEnd:
                     omega = 1;
-                    _lambda = new Lambda[] { new Lambda(phi: false, atI: atI) };
+                    this.lambda = new Lambda[] { new Lambda(phi: false, atI: atI) };
                     break;
             }
         }
-        internal B(int mu, UInt16 omega, ReadOnlyCollection<Lambda> lambda)
+        internal B(int mu, UInt16 omega, Lambda[] lambda)
         {
             this.mu = mu;
             this.omega = omega;
-            _lambda = new Lambda[lambda.Count];
-            lambda.CopyTo(_lambda, 0);
+            this.lambda = new Lambda[lambda.Length];
+            lambda.CopyTo(this.lambda, 0);
         }
         internal B(IntersectionCondition condition, UInt32 atI, B nextBookmark)
         {
@@ -42,7 +42,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             switch(condition)
             {
                 case IntersectionCondition.LeftEnd:                    
-                    _lambda = new Lambda[] { new Lambda(phi: true, atI: atI) };
+                    this.lambda = new Lambda[] { new Lambda(phi: true, atI: atI) };
                     break;
 
                 // I don't think this condition would be possibly seen ever :)
@@ -52,7 +52,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 case IntersectionCondition.RightEnd:
                     omega++;
-                    _lambda = new Lambda[] { new Lambda(phi: false, atI: atI) };
+                    this.lambda = new Lambda[] { new Lambda(phi: false, atI: atI) };
                     break;
             }
             
@@ -63,9 +63,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private B(int mu, UInt16 omega, Lambda[] lambda, bool phi, UInt32 atI)
         {
             this.omega = omega;
-            _lambda = new Lambda[lambda.Length + 1];
-            Array.Copy(lambda, _lambda, lambda.Length);
-            _lambda[lambda.Length] = new Lambda(phi: phi, atI: atI);
+            this.lambda = new Lambda[lambda.Length + 1];
+            Array.Copy(lambda, this.lambda, lambda.Length);
+            this.lambda[lambda.Length] = new Lambda(phi: phi, atI: atI);
         }
         private B(int mu, UInt16 omega, Lambda[] lambda, UInt32 atI, IntersectionCondition condition)
         {
@@ -74,22 +74,22 @@ namespace Polimi.DEIB.VahidJalili.DI3
             switch (condition)
             {
                 case IntersectionCondition.LeftEnd:
-                    _lambda = new Lambda[lambda.Length + 1];
-                    Array.Copy(lambda, _lambda, lambda.Length);
-                    _lambda[lambda.Length] = new Lambda(phi: true, atI: atI);
+                    this.lambda = new Lambda[lambda.Length + 1];
+                    Array.Copy(lambda, this.lambda, lambda.Length);
+                    this.lambda[lambda.Length] = new Lambda(phi: true, atI: atI);
                     break;
 
                 case IntersectionCondition.Middle:
                     this.mu++;
-                    _lambda = new Lambda[lambda.Length];
-                    Array.Copy(lambda, _lambda, lambda.Length);
+                    this.lambda = new Lambda[lambda.Length];
+                    Array.Copy(lambda, this.lambda, lambda.Length);
                     break;
 
                 case IntersectionCondition.RightEnd:
                     this.omega++;
-                    _lambda = new Lambda[lambda.Length + 1];
-                    Array.Copy(lambda, _lambda, lambda.Length);
-                    _lambda[lambda.Length] = new Lambda(phi: false, atI: atI);
+                    this.lambda = new Lambda[lambda.Length + 1];
+                    Array.Copy(lambda, this.lambda, lambda.Length);
+                    this.lambda[lambda.Length] = new Lambda(phi: false, atI: atI);
                     break;
             }
         }
@@ -110,27 +110,27 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// Represents the intervals intersecting with
         /// the e of corresponding keyBookmark.
         /// </summary>
-        private Lambda[] _lambda { set; get; }
+        internal Lambda[] lambda { private set; get; }
 
         /// <summary>
         /// Represents the intervals intersecting with
         /// the e of corresponding keyBookmark.
         /// </summary>
-        internal ReadOnlyCollection<Lambda> lambda { get { return Array.AsReadOnly(_lambda); } }
+        //internal ReadOnlyCollection<Lambda> lambda { get { return Array.AsReadOnly(this.lambda); } }
 
 
 
         internal B Update(int mu, UInt16 omega, bool phi, UInt32 atI)
         {
-            return new B(mu: mu, omega: omega, lambda: _lambda, phi: phi, atI: atI);
+            return new B(mu: mu, omega: omega, lambda: this.lambda, phi: phi, atI: atI);
         }
 
         internal B Update(UInt32 atI, IntersectionCondition condition)
         {
-            return new B(mu: this.mu, omega: this.omega, lambda: _lambda, atI: atI, condition: condition);
+            return new B(mu: this.mu, omega: this.omega, lambda: this.lambda, atI: atI, condition: condition);
         }
 
-        internal B Update(ref int mu, ref UInt16 omega, ReadOnlyCollection<Lambda> lambda)
+        internal B Update(ref int mu, ref UInt16 omega, Lambda[] lambda)
         {
             return new B(mu: mu, omega: omega, lambda: lambda);
         }
