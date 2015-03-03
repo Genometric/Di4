@@ -429,9 +429,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             options.FileBlockSize = 8192;
 
             options.CachePolicy = CachePolicy.Recent;
-            options.CacheKeepAliveTimeOut = 60000;
-            options.CacheMinimumHistory = 10240;
-            options.CacheMaximumHistory = 40960;
+            options.CacheKeepAliveTimeOut = 600;//60000;
+            options.CacheMinimumHistory = 512;//10240;
+            options.CacheMaximumHistory = 1024;//40960;
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
