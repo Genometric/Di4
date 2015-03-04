@@ -59,6 +59,14 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     else if (bookmark.Value.mu != 0 || bookmark.Value.omega != 0)
                     {
                         if (!iterated) _rightEndsToFind = bookmark.Value.mu;
+
+                        ////// TEST CODE
+                        using (var writter = new StreamWriter("\\RemaingMu.txt", true))
+                        {
+                          writter.WriteLine(_rightEndsToFind.ToString());
+                         writter.Flush();
+                         }
+
                         Finalize_mu(bookmark.Key);
                         break;
                     }
@@ -67,7 +75,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 }
 
                 ////// TEST CODE
-                using (var writter = new StreamWriter("F:\\RequiredIterations.txt", true))
+                using (var writter = new StreamWriter("\\RequiredIterations.txt", true))
                 {
                     writter.WriteLine(testestestestestestest.ToString());
                     writter.Flush();
@@ -96,7 +104,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
 
                 ////// TEST CODE
-                using (var writter = new StreamWriter("F:\\InitialMu.txt", true))
+               using (var writter = new StreamWriter("\\InitialMu.txt", true))
                 {
                     writter.WriteLine(_rightEndsToFind.ToString());
                     writter.Flush();
@@ -124,12 +132,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _leftEndsToBeIgnored.Clear();
             int testestestest = 0;
 
-            ////// TEST CODE
-            using (var writter = new StreamWriter("F:\\RemaingMu.txt", true))
-            {
-                writter.WriteLine(testestestest.ToString());
-                writter.Flush();
-            }
+            
 
             foreach (var bookmark in _di3_1R.EnumerateFrom(enumerationStart))
             {
@@ -156,7 +159,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 if (_rightEndsToFind == 0)
                 {
                     ////// TEST CODE
-                    using (var writter = new StreamWriter("F:\\extraIterations.txt", true))
+                    using (var writter = new StreamWriter("\\extraIterations.txt", true))
                     {
                         writter.WriteLine(testestestest.ToString());
                         writter.Flush();

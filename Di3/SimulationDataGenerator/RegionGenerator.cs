@@ -14,10 +14,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const int minGap = 50;
         const int maxGap = 100;
         const int maxLenght = 500; // this value must be >= 4
-        const int chrCount = 18;
-        const int regionsCount = 50000;//200000; // per sample
-        const int sampleCount = 30;//500; // IF YOU CHANGE THIS: remember to revise maxAcc.
-        const int maxAcc = 20;//400; // Maximum accumulation. This number must be less than sampleCount.
+        const int chrCount = 23;
+        const int regionsCount = 200000; // per sample
+        const int sampleCount = 500; // IF YOU CHANGE THIS: remember to revise maxAcc.
+        const int maxAcc = 400; // Maximum accumulation. This number must be less than sampleCount.
 
         int newStart = 0;
         int newStop = 0;
@@ -29,14 +29,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const string parentPath = "\\";
         static string filesExtension = "bed";
 
-        static readonly int[] similarity = new int[] { 0 };//, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+        static readonly int[] similarity = new int[] { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
 
         static readonly string[] chrTitles = new string[] {
             "chr1","chr2","chr3","chr4","chr5",
             "chr6","chr7","chr8","chr9","chr10",
             "chr11","chr12", "chr13", "chr14", "chr15",
             "chr16", "chr17", "chr18", "chr19", "chr20",
-            "chr21", "chr22", "chrX" };
+            "chr21", "chr22", "chrX", "chrY" };
 
         int[] regionsDistribution { set; get; }
         static Random rnd = new Random();
