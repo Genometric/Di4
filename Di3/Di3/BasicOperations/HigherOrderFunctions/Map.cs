@@ -19,7 +19,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _intervals = intervals;
             _start = start;
             _stop = stop;
-            _outputStrategy = outputStrategy;            
+            _outputStrategy = outputStrategy;
             _reservedRightEnds = new Dictionary<uint, bool>();
             _leftEndsToBeIgnored = new Dictionary<uint, bool>();
         }
@@ -47,11 +47,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
             for (int i = _start; i < _stop; i++)
             {
                 _reference = _intervals[i];
-                int testestestestestestest = 0;
 
                 foreach (var bookmark in _di3_1R.EnumerateFrom(_reference.left))
                 {
-                    testestestestestestest++;
                     _processingCoordinate = bookmark.Key;
 
                     if (bookmark.Key.CompareTo(_reference.right) == -1) // bookmark.key < _reference.right
@@ -59,26 +57,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     else if (bookmark.Value.mu != 0 || bookmark.Value.omega != 0)
                     {
                         if (!iterated) _rightEndsToFind = bookmark.Value.mu;
-
-                        ////// TEST CODE
-                        using (var writter = new StreamWriter("\\RemaingMu.txt", true))
-                        {
-                          writter.WriteLine(_rightEndsToFind.ToString());
-                         writter.Flush();
-                         }
-
                         Finalize_mu(bookmark.Key);
                         break;
                     }
                     else break;
                     iterated = true;
-                }
-
-                ////// TEST CODE
-                using (var writter = new StreamWriter("\\RequiredIterations.txt", true))
-                {
-                    writter.WriteLine(testestestestestestest.ToString());
-                    writter.Flush();
                 }
 
                 _outputStrategy.Output(_reference, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
@@ -101,14 +84,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 _rightEndsToFind = keyBookmark.mu;
                 _startOfIteration = false;
-
-
-                ////// TEST CODE
-               using (var writter = new StreamWriter("\\InitialMu.txt", true))
-                {
-                    writter.WriteLine(_rightEndsToFind.ToString());
-                    writter.Flush();
-                }
             }
             else
             {
@@ -130,13 +105,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private void Finalize_mu(C enumerationStart)
         {
             _leftEndsToBeIgnored.Clear();
-            int testestestest = 0;
-
-            
 
             foreach (var bookmark in _di3_1R.EnumerateFrom(enumerationStart))
             {
-                testestestest++;
                 foreach (var lambda in bookmark.Value.lambda)
                 {
                     if (lambda.phi == true)
@@ -144,11 +115,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
                         _leftEndsToBeIgnored.Add(lambda.atI, true);
                         continue;
                     }
-                    /*if (_leftEndsToBeIgnored.ContainsKey(lambda.atI))
-                    {
-                        _leftEndsToBeIgnored.Remove(lambda.atI);
-                        continue;
-                    }*/
                     if (_leftEndsToBeIgnored.Remove(lambda.atI)) continue;
                     if (!_determinedLambdas.ContainsKey(lambda.atI))
                     {
@@ -156,17 +122,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                         _rightEndsToFind--;
                     }
                 }
-                if (_rightEndsToFind == 0)
-                {
-                    ////// TEST CODE
-                    using (var writter = new StreamWriter("\\extraIterations.txt", true))
-                    {
-                        writter.WriteLine(testestestest.ToString());
-                        writter.Flush();
-                    }
-
-                    break;
-                }
+                if (_rightEndsToFind == 0) break;
             }
         }
     }
