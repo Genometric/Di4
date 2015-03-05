@@ -25,11 +25,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         int lastStop = maxLenght;
         int interStart = 0;
         int interStop = 0;
+        char dirSep = Path.DirectorySeparatorChar;
 
-        const string parentPath = "\\";
+        const string parentPath = "";
         static string filesExtension = "bed";
 
-        static readonly int[] similarity = new int[] { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+        static readonly int[] similarity = new int[] { /*0, 10, 20, 30, 40,*/ 50, 60, 70, 80, 90, 100 };
 
         static readonly string[] chrTitles = new string[] {
             "chr1","chr2","chr3","chr4","chr5",
@@ -52,9 +53,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
             {
                 Console.WriteLine("Preparing similarity : " + similarity[simIndex].ToString() + "%");
 
-                outputPath = parentPath + "count_" + regionsCount.ToString() + "\\similarity_" + similarity[simIndex].ToString() + "\\";
-                Directory.CreateDirectory(outputPath + "\\sorted\\");
-                Directory.CreateDirectory(outputPath + "\\shuffled\\");
+                outputPath = parentPath + "count_" + regionsCount.ToString() + dirSep + "similarity_" + similarity[simIndex].ToString() + dirSep;
+                Directory.CreateDirectory(outputPath + dirSep + "sorted" + dirSep);
+                Directory.CreateDirectory(outputPath + dirSep + "shuffled" + dirSep);
 
                 for (int chr = 0; chr < chrCount; chr++)
                 {
@@ -224,9 +225,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
-                    if (!Directory.Exists(filePath + "sorted\\")) Directory.CreateDirectory(filePath + "sorted\\");
+                    if (!Directory.Exists(filePath + "sorted" + dirSep)) Directory.CreateDirectory(filePath + "sorted" + dirSep);
                     using (FileStream fs =
-                        new FileStream(filePath + "sorted\\sample_" + sample.ToString() + "." + filesExtension, FileMode.Append, FileAccess.Write))
+                        new FileStream(filePath + "sorted" + dirSep + "sample_" + sample.ToString() + "." + filesExtension, FileMode.Append, FileAccess.Write))
                     using (StreamWriter sw = new StreamWriter(fs))
                         sw.WriteLine(rtvS[sample]);
                 }
@@ -243,7 +244,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
             char randomStrand = 'V';
             int randomRegion = 0;
             Peak peak = null;
-            var dirInfo = new DirectoryInfo(folderPath + "\\sorted");
+            var dirInfo = new DirectoryInfo(folderPath + dirSep+"sorted");
             FileInfo[] determinedFiles = dirInfo.GetFiles("*." + filesExtension);
             foreach (FileInfo fileInfo in determinedFiles)
             {
@@ -252,9 +253,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
                 var parsedSample = bedParser.Parse();
                 var intervals = parsedSample.intervals;
 
-                if (!Directory.Exists(folderPath + "shuffled\\")) Directory.CreateDirectory(folderPath + "shuffled\\");
+                if (!Directory.Exists(folderPath + "shuffled" + dirSep)) Directory.CreateDirectory(folderPath + "shuffled" + dirSep);
                 using (FileStream fs =
-                    new FileStream(folderPath + "shuffled\\" + Path.GetFileNameWithoutExtension(fileInfo.FullName) + "." + filesExtension, FileMode.Append, FileAccess.Write))
+                    new FileStream(folderPath + "shuffled" + dirSep + Path.GetFileNameWithoutExtension(fileInfo.FullName) + "." + filesExtension, FileMode.Append, FileAccess.Write))
                 using (StreamWriter sw = new StreamWriter(fs))
                     while (intervals.Count > 0)
                     {
