@@ -3,6 +3,7 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
@@ -11,118 +12,204 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal Map(Object lockOnMe, BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop)
+        internal Map(Object lockOnMe, BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop, C UDF, C DDF)
         {
-            _lockOnMe = lockOnMe;
-            _di3_1R = di3_1R;
-            _determinedLambdas = new Dictionary<uint, bool>();
-            _intervals = intervals;
-            _start = start;
+            _UDF = UDF;
+            _DDF = DDF;
             _stop = stop;
+            _start = start;
+            _di3_1R = di3_1R;
+            _lockOnMe = lockOnMe;
+            _intervals = intervals;
             _outputStrategy = outputStrategy;
-            _reservedRightEnds = new Dictionary<uint, bool>();
-            _leftEndsToBeIgnored = new Dictionary<uint, bool>();
+            _gapIntervals = new Dictionary<uint, bool>();
+            _determinedLambdas = new Dictionary<int, Dictionary<uint, bool>>();
         }
 
         private BPlusTree<C, B> _di3_1R { set; get; }
         private int _start { set; get; }
         private int _stop { set; get; }
+        private bool _aMuIsFound { set; get; }
+        private int _referenceIndex { set; get; }
         private int _rightEndsToFind { set; get; }
-        private bool _startOfIteration { set; get; }
-        private List<I> _intervals { set; get; }
-        private ICSOutput<C, I, M, O> _outputStrategy { set; get; }
-        private Dictionary<UInt32, bool> _determinedLambdas { set; get; }
-        private Object _lockOnMe { set; get; }
-        private Dictionary<UInt32, bool> _reservedRightEnds { set; get; }
-        private Dictionary<UInt32, bool> _leftEndsToBeIgnored { set; get; }
         private I _reference { set; get; }
-        private C _processingCoordinate { set; get; }
+        private List<I> _intervals { set; get; }
+        private Object _lockOnMe { set; get; }
+        private ICSOutput<C, I, M, O> _outputStrategy { set; get; }
+        private Dictionary<UInt32, bool> _gapIntervals { set; get; }
+        private IEnumerator<KeyValuePair<C, B>> _di3Enumerator { set; get; }
+        private Dictionary<int, Dictionary<UInt32, bool>> _determinedLambdas { set; get; }
+        private C _nextLeftEnd { set; get; }
+        private C _nextRightEnd { set; get; }
+        private bool _nextRefExists { set; get; }
+        private C _UDF { set; get; }
+        private C _DDF { set; get; }
+        
 
 
         internal void Run()
         {
-            bool iterated = false;
-            _startOfIteration = true;
-
-            for (int i = _start; i < _stop; i++)
+            for (_referenceIndex = _start; _referenceIndex < _stop; _referenceIndex++)
             {
-                _reference = _intervals[i];
+                _reference = _intervals[_referenceIndex];
+                _di3Enumerator = _di3_1R.EnumerateFrom(_reference.left).GetEnumerator();
+                _di3Enumerator.MoveNext();
 
-                foreach (var bookmark in _di3_1R.EnumerateFrom(_reference.left))
+                Initialize();
+
+                while (_di3Enumerator.MoveNext())
                 {
-                    _processingCoordinate = bookmark.Key;
-
-                    if (bookmark.Key.CompareTo(_reference.right) == -1) // bookmark.key < _reference.right
-                        UpdateLambdas(bookmark.Value);
-                    else if (bookmark.Value.mu != 0 || bookmark.Value.omega != 0)
+                    if (_di3Enumerator.Current.Key.CompareTo(_reference.right) != -1) // set it to "== 1" to make right-end inclusive.
                     {
-                        if (!iterated) _rightEndsToFind = bookmark.Value.mu;
-                        Finalize_mu(bookmark.Key);
-                        break;
+                        if (_rightEndsToFind == 0)
+                            break;
+                        if (TraverseGap())
+                            break;
                     }
-                    else break;
-                    iterated = true;
+
+                    ProcessCurrentBookmark();
                 }
 
-                _outputStrategy.Output(_reference, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
-
+                foreach (var refLambdas in _determinedLambdas)
+                    _outputStrategy.Output(_intervals[refLambdas.Key], new List<UInt32>(refLambdas.Value.Keys), _lockOnMe);
                 _determinedLambdas.Clear();
-                _reservedRightEnds.Clear();
-                _startOfIteration = true;
-                iterated = false;
             }
         }
-        private void UpdateLambdas(B keyBookmark)
+        private void Initialize()
         {
-            if (_startOfIteration)
-            {
-                foreach (var lambda in keyBookmark.lambda)
-                    if (lambda.phi == true)
-                        _determinedLambdas.Add(lambda.atI, lambda.phi);
-                    else if (_reference.left.CompareTo(_processingCoordinate) == -1)
-                        _determinedLambdas.Add(lambda.atI, lambda.phi);
+            ///                   Reference :  .....███████████████████.............
+            /// Enumerator current position :  .....■........■........■.......■.....
+            ///                                    [A]      [B]      [C]     [D]
+            /// [A] : overlaps the Left-end of the reference
+            /// [B] : falls between Left and Right-ends of the reference
+            /// [C] : overlaps the Right-end of the reference
+            /// [D] : falls after the Right-end of the reference.
 
-                _rightEndsToFind = keyBookmark.mu;
-                _startOfIteration = false;
+            _determinedLambdas.Add(_referenceIndex, new Dictionary<uint, bool>());
+            _rightEndsToFind = _di3Enumerator.Current.Value.mu;
+
+            // [A]
+            if (_di3Enumerator.Current.Key.CompareTo(_reference.left) == 0)
+            {
+                foreach (var lambda in _di3Enumerator.Current.Value.lambda)
+                    if (lambda.phi)
+                        _determinedLambdas[_referenceIndex].Add(lambda.atI, true);
+                return;
+            }
+            switch (_di3Enumerator.Current.Key.CompareTo(_reference.right))
+            {
+                case -1: // [B]
+                    foreach (var lambda in _di3Enumerator.Current.Value.lambda)
+                        _determinedLambdas[_referenceIndex].Add(lambda.atI, lambda.phi);
+                    return;
+
+                case 0: // [C]
+                case 1: // [D]
+                    foreach (var lambda in _di3Enumerator.Current.Value.lambda)
+                        if (lambda.phi)
+                            _gapIntervals.Add(lambda.atI, true);
+                        else
+                            _determinedLambdas[_referenceIndex].Add(lambda.atI, false);
+                    return;
+            }
+        }
+        private bool TraverseGap()
+        {
+            UpdateNextRefEnds();
+
+            do
+            {
+                while (_di3Enumerator.Current.Key.CompareTo(_nextLeftEnd) != -1 && _nextRefExists)
+                {
+                    _referenceIndex++;
+                    _reference = _intervals[_referenceIndex];
+                    _determinedLambdas.Add(_referenceIndex, new Dictionary<uint, bool>());
+
+                    foreach (var lambda in _gapIntervals) // The gapIntervals contains only leftEnds (i.e., phi = true)
+                        _determinedLambdas[_referenceIndex].Add(lambda.Key, true);
+                    _gapIntervals.Clear();
+
+                    foreach (var lambda in _determinedLambdas[_referenceIndex - 1])
+                        if (lambda.Value)
+                            _determinedLambdas[_referenceIndex].Add(lambda.Key, lambda.Value);
+
+                    if (_di3Enumerator.Current.Key.CompareTo(_nextRightEnd) == 1)
+                        UpdateNextRefEnds();
+                    else
+                        return false;
+                }
+
+                foreach (var lambda in _di3Enumerator.Current.Value.lambda)
+                    if (lambda.phi)
+                        _gapIntervals.Add(lambda.atI, true);
+                    else
+                    {
+                        if (_gapIntervals.Remove(lambda.atI))
+                            continue;
+                        _aMuIsFound = true;
+                        foreach (var refLambdas in _determinedLambdas)
+                            if (refLambdas.Value.ContainsKey(lambda.atI))
+                            {
+                                _aMuIsFound = false;
+                                refLambdas.Value[lambda.atI] = false;
+                            }
+                        if (_aMuIsFound)
+                        {
+                            _rightEndsToFind--;
+                            foreach (var refLambdas in _determinedLambdas)
+                                if (!refLambdas.Value.ContainsKey(lambda.atI))
+                                    refLambdas.Value.Add(lambda.atI, false);
+                        }
+                    }
+
+                if (_rightEndsToFind == 0)
+                    return true;
+
+            } while (_di3Enumerator.MoveNext());
+
+            return true;
+        }
+        private void ProcessCurrentBookmark()
+        {
+            foreach (var lambda in _di3Enumerator.Current.Value.lambda)
+            {
+                if (lambda.phi)
+                {
+                    _determinedLambdas[_referenceIndex].Add(lambda.atI, true);
+                }
+                else
+                {
+                    _aMuIsFound = true;
+                    foreach (var refLambdas in _determinedLambdas)
+                        if (refLambdas.Value.ContainsKey(lambda.atI))
+                        {
+                            _aMuIsFound = false;
+                            refLambdas.Value[lambda.atI] = false;
+                        }
+
+                    if (_aMuIsFound)
+                    {
+                        _rightEndsToFind--;
+                        foreach (var refLambdas in _determinedLambdas)
+                            if (!refLambdas.Value.ContainsKey(lambda.atI))
+                                refLambdas.Value.Add(lambda.atI, false);
+                    }
+                }
+            }
+        }
+
+        private void UpdateNextRefEnds()
+        {
+            if (_referenceIndex + 1 < _stop &&
+                _referenceIndex + 1 < _intervals.Count)
+            {
+                _nextLeftEnd = _intervals[_referenceIndex + 1].left;
+                _nextRightEnd = _intervals[_referenceIndex + 1].right;
+                _nextRefExists = true;
             }
             else
             {
-                foreach (var lambda in keyBookmark.lambda)
-                {
-                    if (_determinedLambdas.ContainsKey(lambda.atI) == false)
-                        _determinedLambdas.Add(lambda.atI, lambda.phi);
-
-                    if (lambda.phi == false)
-                    {
-                        if (_determinedLambdas[lambda.atI] == false)
-                            _rightEndsToFind--;
-
-                        _reservedRightEnds.Add(lambda.atI, false);
-                    }
-                }
-            }
-        }
-        private void Finalize_mu(C enumerationStart)
-        {
-            _leftEndsToBeIgnored.Clear();
-
-            foreach (var bookmark in _di3_1R.EnumerateFrom(enumerationStart))
-            {
-                foreach (var lambda in bookmark.Value.lambda)
-                {
-                    if (lambda.phi == true)
-                    {
-                        _leftEndsToBeIgnored.Add(lambda.atI, true);
-                        continue;
-                    }
-                    if (_leftEndsToBeIgnored.Remove(lambda.atI)) continue;
-                    if (!_determinedLambdas.ContainsKey(lambda.atI))
-                    {
-                        _determinedLambdas.Add(lambda.atI, lambda.phi);
-                        _rightEndsToFind--;
-                    }
-                }
-                if (_rightEndsToFind == 0) break;
+                _nextRefExists = false;
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A22F1A77-6131-413A-A9D7-062DC73406DA}"
 EndProject
@@ -179,8 +179,5 @@ Global
 		{39F5704E-F83C-42E2-A09E-1E453C66ED04} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4} = {D4532791-94FB-467A-83D1-5D449D3A3653}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

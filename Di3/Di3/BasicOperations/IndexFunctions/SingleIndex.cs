@@ -210,7 +210,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // _interval.right is bigger than item.Key
+                    case 1: // _interval.right is bigger than refLambdas.Key
                         _di3.AddOrUpdate(_interval.left, ref update);
 
                         update.iC = IntersectionCondition.Middle;

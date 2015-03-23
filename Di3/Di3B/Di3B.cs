@@ -60,5 +60,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.Complement(out result, maxDegreeOfParallelism);
         }
+        public ExecutionReport Dichotomies(out ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        {
+            return genome.Dichotomies(out result, maxDegreeOfParallelism);
+        }
     }
 }

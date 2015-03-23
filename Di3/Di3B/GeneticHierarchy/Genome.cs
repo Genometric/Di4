@@ -209,8 +209,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
 
-            var tmpResults = new FunctionOutput<Output<C, I, M>>();
-            
+            var tmpResults = new FunctionOutput<Output<C, I, M>>();            
 
             foreach (var refChr in references)
             {
@@ -298,13 +297,13 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 });
 
             result = tmpResult;
-            return new ExecutionReport(1, stpWtch.Elapsed);
+            return new ExecutionReport(1, stpWtch.Elapsed); // correct this
         }
 
         internal ExecutionReport SecondResolutionIndex(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
-            int totalBookmarks = 0;
+            //int blockCount = 0;
 
             Parallel.ForEach(chrs,
                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
@@ -314,13 +313,13 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                    {
                        stpWtch.Start();
                        sDi3.Value.SecondResolutionIndex(maxDegreeOfParallelism.di3Degree);
-                       totalBookmarks += sDi3.Value.blockCount;
+                       //blockCount += sDi3.Value.blockCount;
                        sDi3.Value.Commit();
                        stpWtch.Stop();
                    }
                });
 
-            return new ExecutionReport(totalBookmarks, stpWtch.Elapsed);
+            return new ExecutionReport(/*blockCount*/1, stpWtch.Elapsed); // correct this, check if blockCount += reduces speed or not
         }
 
         internal ExecutionReport Merge(out ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
@@ -338,7 +337,32 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     stpWtch.Stop();
                 }
 
-            return new ExecutionReport(1, stpWtch.Elapsed);
+            return new ExecutionReport(1, stpWtch.Elapsed); // correct this
+        }
+
+        internal ExecutionReport Dichotomies(out ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        {
+            Stopwatch stpWtch = new Stopwatch();
+            var tmpResults = new ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>>();
+            //int bookmarkCount = 0;
+
+            Parallel.ForEach(chrs,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                chr =>
+                {
+                    foreach (var sDi3 in chr.Value)
+                    {
+                        if (!tmpResults.ContainsKey(chr.Key)) tmpResults.TryAdd(chr.Key, new ConcurrentDictionary<char, ICollection<BlockKey<C>>>());
+                        if (!tmpResults[chr.Key].ContainsKey(sDi3.Key)) tmpResults[chr.Key].TryAdd(sDi3.Key, null);
+                        stpWtch.Start();
+                        tmpResults[chr.Key][sDi3.Key] = sDi3.Value.Dichotomies();
+                        //bookmarkCount += sDi3.Value.bookmarkCount;
+                        stpWtch.Stop();
+                    }
+                });
+
+            result = tmpResults;
+            return new ExecutionReport(/*bookmarkCount*/1, stpWtch.Elapsed); // correct this, check if bookmarkCount += reduces the speed or not.
         }
 
         internal ExecutionReport Complement(out ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)

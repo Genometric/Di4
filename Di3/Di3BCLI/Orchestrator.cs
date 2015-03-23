@@ -127,6 +127,16 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                     }
                     break;
 
+                case "dichotomies":
+                    _stopWatch.Restart();
+                    if(!Dichotomies(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+
                 case "getim": // get indexing mode.
                     return GetIndexingMode();
 
@@ -280,10 +290,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 readOnlyValidChrs: true,
                 startOffset: 0,
                 chrColumn: 0,
-                leftEndColumn: 3,
-                rightEndColumn: 4,
-                nameColumn: 8,
-                valueColumn: 5,
+                leftEndColumn: 1,//3,
+                rightEndColumn: 2,//4,
+                nameColumn: 3,//8,
+                valueColumn: 4,//5,
                 strandColumn: -1,
                 defaultValue: 0.01,
                 pValueFormat: pValueFormat.minus10_Log10_pValue,
@@ -510,6 +520,21 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results = null;
             Herald.AnnounceExeReport("Complement", di3B.Complement(out results, _maxDegreeOfParallelism));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            return true;
+        }
+        private bool Dichotomies(string[] args)
+        {
+            if(args.Length!= 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, String.Format("Missing parameter."));
+                return false;
+            }
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
+
+            ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results = null;
+            Herald.AnnounceExeReport("Dichotomies", di3B.Dichotomies(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
             return true;
         }

@@ -8,6 +8,7 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Polimi.DEIB.VahidJalili.DI3
@@ -110,8 +111,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
             _di3_info = new BPlusTree<string, int>(GetinfoOptions(options));
             _indexesCardinality = new InfoIndex(_di3_info);
-            INDEX = new SingleIndex<C, I, M>(_di3_1R);
-           
+            INDEX = new SingleIndex<C, I, M>(_di3_1R);            
 
             /// Don't enable following commands.
             /// The consequences are: initialization becomes very slow,
@@ -413,9 +413,17 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references)
         {
-            Map<O>(ref outputStrategy, references, Environment.ProcessorCount);
+            Map<O>(ref outputStrategy, references, Environment.ProcessorCount, default(C), default(C));
+        }
+        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, C UDF, C DDF)
+        {
+            Map<O>(ref outputStrategy, references, Environment.ProcessorCount, UDF, DDF);
         }
         public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
+        {
+            Map<O>(ref outputStrategy, references, nThreads, default(C), default(C));
+        }
+        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads, C UDF, C DDF)
         {
             Object lockOnMe = new Object();
             int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
@@ -545,6 +553,22 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
 
             return blocks.Keys;
+        }
+
+        public ICollection<BlockKey<C>> Dichotomies()
+        {
+            ICollection<C> keys = _di3_1R.Keys;
+            var results = new SortedDictionary<BlockKey<C>, bool>();
+            int keysCount = bookmarkCount;
+
+            for (int key = 0; key < keysCount - 1; key++)
+                results.Add(new BlockKey<C>(LeftEnd: keys.ElementAt(key), RightEnd: keys.ElementAt(key + 1)), true);
+
+            var keys2R = _di3_2R.Keys;
+            for (int key = 0; key < blockCount - 1; key++)
+                results.Remove(new BlockKey<C>(LeftEnd: keys2R.ElementAt(key).rightEnd, RightEnd: keys2R.ElementAt(key + 1).leftEnd));
+
+            return results.Keys;
         }
 
         private Partition<C>[] Fragment_1R(int fCount)

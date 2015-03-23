@@ -33,8 +33,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
             
             lock (_lockOnMe)
             {
-                foreach (var item in tmpDic)
-                    _blocks.Add(item.Key, item.Value);
+                foreach (var refLambdas in tmpDic)
+                    _blocks.Add(refLambdas.Key, refLambdas.Value);
             }*/
         }
         internal void Complement()

@@ -19,7 +19,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -37,7 +37,7 @@ namespace IndexSpeedTest
 
             /// Spars Regions
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -55,7 +55,7 @@ namespace IndexSpeedTest
 
             /// Spars Regions & Big node sizes (both newKey and currentValue)
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -77,7 +77,7 @@ namespace IndexSpeedTest
 
             /// Spars Regions & Small node sizes (both newKey and currentValue)
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -99,7 +99,7 @@ namespace IndexSpeedTest
 
             /// Most condensed regions
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -117,7 +117,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak newKey-currentValue sizes.
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,        // sample count
                 200000,      // region count
                 true,        // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -137,7 +137,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak newKey-currentValue sizes.
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,        // sample count
                 200000,      // region count
                 true,        // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -157,7 +157,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak newKey-currentValue sizes.
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,        // sample count
                 200000,      // region count
                 true,        // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -176,7 +176,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak newKey-currentValue sizes.            
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,            // sample count
                 200000,          // region count
                 true,            // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -195,7 +195,7 @@ namespace IndexSpeedTest
 
             /// Sparse regions; tweak newKey-currentValue sizes.
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,            // sample count
                 200000,          // region count
                 true,            // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -214,7 +214,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 2000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -234,7 +234,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 1000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -254,7 +254,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 1000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -276,7 +276,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 1000,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
@@ -297,7 +297,7 @@ namespace IndexSpeedTest
 
             /// Condensed Regions + Multi-Threading
             /*
-            indexSpeedTest_v1.Run(
+            indexSpeedTest_v1.RunOLD(
                 150,     // sample count
                 200000,   // region count
                 true,     // Keep or Dispose Polimi.DEIB.VahidJalili.DI3?
