@@ -435,7 +435,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > references.Count) stop = references.Count;
-                    if (start < stop) work.Enqueue(new Map<C, I, M, O>(lockOnMe, _di3_1R, outputStrategy, references, start, stop).Run);
+                    if (start < stop) work.Enqueue(new Map<C, I, M, O>(lockOnMe, _di3_1R, outputStrategy, references, start, stop, UDF, DDF).Run);
                     else break;
                 }
 

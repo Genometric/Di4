@@ -30,7 +30,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const string parentPath = "";
         static string filesExtension = "bed";
 
-        static readonly int[] similarity = new int[] { /*0, 10, 20, 30, 40,*/ 50, 60, 70, 80, 90, 100 };
+        static readonly int[] similarity = new int[] { /*0, 10, 20, 30,*/ 40, /* 50, 60, 70, 80, 90, 100 */};
 
         static readonly string[] chrTitles = new string[] {
             "chr1","chr2","chr3","chr4","chr5",
