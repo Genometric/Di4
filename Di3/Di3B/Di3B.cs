@@ -12,12 +12,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         where I : IInterval<C, M>, IFormattable, new()
         where M : IMetaData, IFormattable, new()
     {
-        public Di3B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Di3B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
 
-            genome = new Genome<C, I, M>(workingDirectory, sectionTitle, Memory, hddPerformance, CSerializer, CComparer);
+            genome = new Genome<C, I, M>(workingDirectory, sectionTitle, Memory, hddPerformance, cacheOptions, CSerializer, CComparer);
         }
 
         private ISerializer<C> CSerializer { set; get; }

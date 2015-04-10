@@ -19,7 +19,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
     /// type of pointer to descriptive atI cooresponding
     /// to the _interval.</typeparam>
     /// <typeparam name="O"></typeparam>
-    public interface ICSOutput<C, I, M, O>
+    public interface IOutput<C, I, M, O>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()

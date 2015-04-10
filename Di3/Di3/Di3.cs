@@ -182,7 +182,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             if (options.FileBlockSize != 0)
                 rtv.FileBlockSize = options.FileBlockSize;
 
-            rtv.CachePolicy = options.CachePolicy;
+            rtv.CachePolicy = options.cacheOptions.CachePolicy;
             if (options.CreatePolicy != CreatePolicy.Never)
                 rtv.FileName = options.FileName + ".idx1R";
 
@@ -212,11 +212,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     break;
             }
 
-            if (options.CacheMaximumHistory != 0 && options.CacheKeepAliveTimeOut != 0)
+            if (options.cacheOptions.CacheMaximumHistory != 0 && options.cacheOptions.CacheKeepAliveTimeOut != 0)
             {
-                rtv.CacheKeepAliveMaximumHistory = options.CacheMaximumHistory;
-                rtv.CacheKeepAliveMinimumHistory = options.CacheMinimumHistory;
-                rtv.CacheKeepAliveTimeout = options.CacheKeepAliveTimeOut;
+                rtv.CacheKeepAliveMaximumHistory = options.cacheOptions.CacheMaximumHistory;
+                rtv.CacheKeepAliveMinimumHistory = options.cacheOptions.CacheMinimumHistory;
+                rtv.CacheKeepAliveTimeout = options.cacheOptions.CacheKeepAliveTimeOut;
             }
 
             return rtv;
@@ -241,7 +241,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             rtv.StoragePerformance = StoragePerformance.Fastest;
 
-            rtv.CachePolicy = options.CachePolicy;
+            rtv.CachePolicy = options.cacheOptions.CachePolicy;
             if (options.CreatePolicy != CreatePolicy.Never)
                 rtv.FileName = options.FileName + ".idx2R";
 
@@ -271,11 +271,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     break;
             }
 
-            if (options.CacheMaximumHistory != 0 && options.CacheKeepAliveTimeOut != 0)
+            if (options.cacheOptions.CacheMaximumHistory != 0 && options.cacheOptions.CacheKeepAliveTimeOut != 0)
             {
-                rtv.CacheKeepAliveMaximumHistory = options.CacheMaximumHistory;
-                rtv.CacheKeepAliveMinimumHistory = options.CacheMinimumHistory;
-                rtv.CacheKeepAliveTimeout = options.CacheKeepAliveTimeOut;
+                rtv.CacheKeepAliveMaximumHistory = options.cacheOptions.CacheMaximumHistory;
+                rtv.CacheKeepAliveMinimumHistory = options.cacheOptions.CacheMinimumHistory;
+                rtv.CacheKeepAliveTimeout = options.cacheOptions.CacheKeepAliveTimeOut;
             }
 
             return rtv;
@@ -360,11 +360,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
 
 
-        public void Cover<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
+        public void Cover<O>(IOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
         {
             Cover<O>(outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
         }
-        public void Cover<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
+        public void Cover<O>(IOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
         {
             Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
@@ -385,11 +385,11 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 work.Complete(true, -1);
             }
         }
-        public void Summit<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
+        public void Summit<O>(IOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
         {
             Summit<O>(outputStrategy, minAccumulation, maxAccumulation, Environment.ProcessorCount);
         }
-        public void Summit<O>(ICSOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
+        public void Summit<O>(IOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
         {
             Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
@@ -411,19 +411,19 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
         }
 
-        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references)
+        public void Map<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references)
         {
             Map<O>(ref outputStrategy, references, Environment.ProcessorCount, default(C), default(C));
         }
-        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, C UDF, C DDF)
+        public void Map<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, C UDF, C DDF)
         {
             Map<O>(ref outputStrategy, references, Environment.ProcessorCount, UDF, DDF);
         }
-        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
+        public void Map<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
         {
             Map<O>(ref outputStrategy, references, nThreads, default(C), default(C));
         }
-        public void Map<O>(ref ICSOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads, C UDF, C DDF)
+        public void Map<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads, C UDF, C DDF)
         {
             Object lockOnMe = new Object();
             int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
@@ -595,7 +595,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     if (incrementRight)
                     {
                         partitions[i].right = bookmark.Key;
-                        if (bookmark.Value.lambda.Length - bookmark.Value.omega + bookmark.Value.mu == 0)
+                        if (bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu == 0)
                             incrementRight = false;
                         continue;
                     }

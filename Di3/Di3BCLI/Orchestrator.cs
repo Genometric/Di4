@@ -26,7 +26,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             samplesHashtable = new Dictionary<int, uint>();
             _stopWatch = new Stopwatch();
             _parserSTW = new Stopwatch();
-            di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, PrimitiveSerializer.Int32, int32Comparer);
+
+            _cacheOptions = new CacheOptions(
+                CacheMaximumHistory: 40960,
+                CacheMinimumHistory: 10240,
+                CacheKeepAliveTimeOut: 60000,
+                CachePolicy: CSharpTest.Net.Collections.CachePolicy.Recent);
+
+            di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, _cacheOptions, PrimitiveSerializer.Int32, int32Comparer);
         }
 
         /// <summary>
@@ -40,6 +47,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         private Stopwatch _stopWatch { set; get; }
         private Stopwatch _parserSTW { set; get; }
         private IndexingMode _indexingMode { set; get; }
+        private CacheOptions _cacheOptions { set; get; }
         Di3B<int, Peak, PeakData> di3B { set; get; }
         Int32Comparer int32Comparer { set; get; }
         Dictionary<int, UInt32> samplesHashtable { set; get; }
@@ -150,6 +158,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 case "setdp": // set degree of parallelization
                 case "setpd": // set parallelization degree
                     return SetPD(splittedCommand);
+
+                case "getci": // get cache information
+                    return GetCI();
+
+                case "setci": // set cache information
+                    return SetCI(splittedCommand);
 
                 case "2pass": // 2nd pass of indexing.
                     _stopWatch.Restart();
@@ -290,10 +304,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 readOnlyValidChrs: true,
                 startOffset: 0,
                 chrColumn: 0,
-                leftEndColumn: 3,
-                rightEndColumn: 4,
-                nameColumn: 8,
-                valueColumn: 5,
+                leftEndColumn: 1,//3,
+                rightEndColumn: 2,//4,
+                nameColumn: 3,//8,
+                valueColumn: 4,//5,
                 strandColumn: -1,
                 defaultValue: 0.01,
                 pValueFormat: pValueFormat.minus10_Log10_pValue,
@@ -536,6 +550,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results = null;
             Herald.AnnounceExeReport("Dichotomies", di3B.Dichotomies(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            return true;
+        }
+        private bool GetCI()
+        {
+            return true;
+        }
+        private bool SetCI(string[] args)
+        {
             return true;
         }
 

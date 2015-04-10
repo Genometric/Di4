@@ -9,7 +9,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         where I : IInterval<C, M>, IFormattable, new()
         where M : IMetaData, IFormattable, new()
     {
-        public ICSOutput<C, I, M, Output<C, I, M>> GetAggregateFunction(Aggregate aggregate)
+        public IOutput<C, I, M, Output<C, I, M>> GetAggregateFunction(Aggregate aggregate)
         {
             switch (aggregate)
             {

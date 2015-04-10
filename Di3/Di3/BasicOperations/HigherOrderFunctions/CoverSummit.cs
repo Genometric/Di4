@@ -10,7 +10,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal CoverSummit(Object lockOnMe, BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, ICSOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
+        internal CoverSummit(Object lockOnMe, BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, IOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
         {
             _lockOnMe = lockOnMe;
             _di3_1R = di3_1R;
@@ -34,7 +34,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private int _rightEndsToFind { set; get; }
         private bool _startOfIteration { set; get; }
         private bool _excludeRightEndFromFinalization { set; get; }
-        private ICSOutput<C, I, M, O> _outputStrategy { set; get; }
+        private IOutput<C, I, M, O> _outputStrategy { set; get; }
         private Dictionary<UInt32, bool> _determinedLambdas { set; get; }
         private Object _lockOnMe { set; get; }
         private bool _reserveRightEnds { set; get; }
@@ -57,7 +57,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                accumulation = bookmark.Value.lambda.Length - bookmark.Value.omega + bookmark.Value.mu;
+                accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 UpdateLambdas(bookmark.Value);
 
                 if (markedAcc == -1 &&
@@ -102,7 +102,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                currentAcc = bookmark.Value.lambda.Length - bookmark.Value.omega + bookmark.Value.mu;
+                currentAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 UpdateLambdas(bookmark.Value);
 
                 if (previousAcc < currentAcc &&

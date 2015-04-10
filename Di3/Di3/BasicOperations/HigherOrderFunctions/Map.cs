@@ -12,7 +12,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal Map(Object lockOnMe, BPlusTree<C, B> di3_1R, ICSOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop, C UDF, C DDF)
+        internal Map(Object lockOnMe, BPlusTree<C, B> di3_1R, IOutput<C, I, M, O> outputStrategy, List<I> intervals, int start, int stop, C UDF, C DDF)
         {
             _UDF = UDF;
             _DDF = DDF;
@@ -35,7 +35,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private I _reference { set; get; }
         private List<I> _intervals { set; get; }
         private Object _lockOnMe { set; get; }
-        private ICSOutput<C, I, M, O> _outputStrategy { set; get; }
+        private IOutput<C, I, M, O> _outputStrategy { set; get; }
         private Dictionary<UInt32, bool> _gapIntervals { set; get; }
         private IEnumerator<KeyValuePair<C, B>> _di3Enumerator { set; get; }
         private Dictionary<int, Dictionary<UInt32, bool>> _determinedLambdas { set; get; }

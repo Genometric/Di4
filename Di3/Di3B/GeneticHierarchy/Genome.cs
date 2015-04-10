@@ -17,13 +17,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         where I : IInterval<C, M>, IFormattable, new()
         where M : IMetaData, IFormattable, new()
     {
-        public Genome(string workingDirectory, string sectionTitle, Memory memory, HDDPerformance hddPerformance, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Genome(string workingDirectory, string sectionTitle, Memory memory, HDDPerformance hddPerformance, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             _memory = memory;
             _hddPerformance = hddPerformance;
             _CSerializer = CSerializer;
             _CComparer = CComparer;
             _sectionTitle = sectionTitle;
+            _cacheOptions = cacheOptions;
 
             _config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             _settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
@@ -51,12 +52,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             }
         }
 
+
         private string _sectionTitle { set; get; }
         private KeyValueConfigurationCollection _settings { set; get; }
         private ISerializer<C> _CSerializer { set; get; }
         private IComparer<C> _CComparer { set; get; }
         private Memory _memory { set; get; }
         private HDDPerformance _hddPerformance { set; get; }
+        private CacheOptions _cacheOptions { set; get; }
         private ChrSection _chrSection { set; get; }
         private Configuration _config { set; get; }
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> chrs { set; get; }
@@ -179,7 +182,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                 chr =>
                 {
-                    ICSOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
+                    IOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
 
                     foreach (var sDi3 in chr.Value)
                     {
@@ -227,7 +230,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                 refChr =>
                 {
-                    ICSOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
+                    IOutput<C, I, M, Output<C, I, M>> outputStrategy = new AggregateFactory<C, I, M>().GetAggregateFunction(aggregate);
 
                     if (chrs.ContainsKey(refChr.Key))
                         foreach (var refStrand in refChr.Value)
@@ -452,10 +455,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             options.AverageValueSize = 32;
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
-            options.CacheKeepAliveTimeOut = 600;//60000;
-            options.CacheMinimumHistory = 512;//10240;
-            options.CacheMaximumHistory = 1024;//40960;
+            options.cacheOptions = _cacheOptions;
 
             options.StoragePerformance = StoragePerformance.Fastest;
 

@@ -34,10 +34,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         public int MinimumValueNodes { set; get; }
         public LockMode Locking { set; get; }
         public int LockTimeout { set; get; }
-        public int CacheMaximumHistory { set; get; }
-        public int CacheMinimumHistory { set; get; }
-        public int CacheKeepAliveTimeOut { set; get; }
-        public CachePolicy CachePolicy { set; get; }
+        public CacheOptions cacheOptions { set; get; }
         public ExistingLogAction ExistingLogAction { set; get; }
         public StoragePerformance StoragePerformance { set; get; }
     }

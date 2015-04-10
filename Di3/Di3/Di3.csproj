@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="AuxiliaryComponents\AccEntryStruct.cs" />
     <Compile Include="AuxiliaryComponents\BlockKeyComparer.cs" />
+    <Compile Include="AuxiliaryComponents\CacheOptions.cs" />
     <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
     <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Map.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="BasicOperations\IndexFunctions\SingleIndex2R.cs" />
     <Compile Include="Comparers\StringComparer.cs" />
     <Compile Include="Di3.cs" />
-    <Compile Include="Interfaces\ICSOutput.cs" />
+    <Compile Include="Interfaces\IOutput.cs" />
     <Compile Include="PrimaryComponents\B.cs" />
     <Compile Include="PrimaryComponents\Block.cs" />
     <Compile Include="PrimaryComponents\Di3Options.cs" />

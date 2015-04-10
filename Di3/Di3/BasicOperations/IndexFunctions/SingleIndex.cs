@@ -166,7 +166,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             int mu = 0;
             UInt16 omega = 0;
-            Lambda[] currentBookmarkLambda = null;
+            ReadOnlyCollection<Lambda> currentBookmarkLambda = null;
             var lambdaCarrier = new Dictionary<uint, bool>();
             KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
             List<uint> keysToRemove = new List<uint>();
@@ -174,12 +174,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
             foreach (var bookmark in _di3.EnumerateFrom(firstItem.Key))
             {
                 foreach (var lambda in bookmark.Value.lambda)
-                    if (lambda.phi == true && !lambdaCarrier.ContainsKey(lambda.atI))
+                    if (lambda.phi == true && !lambdaCarrier.ContainsKey(lambda.atI)) /////////////// CHECK THIS LINE
                         lambdaCarrier.Add(lambda.atI, true);
                     else
                         lambdaCarrier.Remove(lambda.atI);
 
-                mu = lambdaCarrier.Count - bookmark.Value.lambda.Length + bookmark.Value.omega; // ;-)
+                mu = lambdaCarrier.Count - bookmark.Value.lambda.Count + bookmark.Value.omega; // ;-)
                 if (bookmark.Value.mu != mu)
                 {
                     omega = bookmark.Value.omega;
@@ -210,7 +210,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // _interval.right is bigger than refLambdas.Key
+                    case 1: // _interval.right is bigger than item.Key
                         _di3.AddOrUpdate(_interval.left, ref update);
 
                         update.iC = IntersectionCondition.Middle;
