@@ -65,9 +65,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     break;
             }
             
-            foreach (var item in nextBookmark.lambda)
+            /*foreach (var item in nextBookmark.lambda)
                 if (item.phi == false)
-                    mu++;
+                    mu++;*/
+            mu += nextBookmark.omega;
         }
         private B(int mu, UInt16 omega, Lambda[] lambda, bool phi, UInt32 atI)
         {
