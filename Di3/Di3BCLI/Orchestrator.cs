@@ -28,8 +28,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             _parserSTW = new Stopwatch();
 
             _cacheOptions = new CacheOptions(
-                CacheMaximumHistory: 40960,
-                CacheMinimumHistory: 10240,
+                CacheMaximumHistory: 81920,
+                CacheMinimumHistory: 20240,
                 CacheKeepAliveTimeOut: 60000,
                 CachePolicy: CSharpTest.Net.Collections.CachePolicy.Recent);
 
