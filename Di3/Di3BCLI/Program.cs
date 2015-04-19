@@ -56,8 +56,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             string wd = "";
             if (settings["WorkingDirectory"] == null)
             {
-                Console.Write("Please specify working directory : ");
-                while (Uri.TryCreate(Console.ReadLine(), UriKind.Absolute, out wdURI) == false)
+                Console.WriteLine("Current directory: {0}", Environment.CurrentDirectory);
+                Console.Write("Working directory not set yet, Please specify working directory : ");
+                while (Uri.TryCreate(Console.ReadLine(), UriKind.RelativeOrAbsolute, out wdURI) == false)
                 {
                     Console.WriteLine("Error: Incorrect Format!");
                     Console.Write("Please specify working directory : ");
@@ -66,7 +67,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             }
             else
             {
-                if (Uri.TryCreate(settings["WorkingDirectory"].Value, UriKind.Absolute, out wdURI))
+                if (Uri.TryCreate(settings["WorkingDirectory"].Value, UriKind.RelativeOrAbsolute, out wdURI))
                 {
                     Console.WriteLine("Configuration defines a valid working directory.");
                 }
@@ -83,7 +84,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (Path.GetExtension(wdURI.AbsolutePath).Trim() == "")
                 wd = Path.GetDirectoryName(wdURI.AbsolutePath) + Path.DirectorySeparatorChar + Path.GetFileName(wdURI.AbsolutePath) + Path.DirectorySeparatorChar;
             else
-                wd = Path.GetDirectoryName(wdURI.AbsolutePath) + Path.DirectorySeparatorChar;
+                wd = Path.GetDirectoryName(wdURI.AbsoluteUri) + Path.DirectorySeparatorChar;
 
             wd = Path.GetFullPath(wd);
 
@@ -108,7 +109,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (settings["LogFile"] == null)
             {
                 Console.Write("Please specify the Log file : ");
-                while (Uri.TryCreate(Console.ReadLine(), UriKind.Absolute, out logFileURI) == false ||
+                while (Uri.TryCreate(Console.ReadLine(), UriKind.RelativeOrAbsolute, out logFileURI) == false ||
                     Path.GetFileName(logFileURI.AbsolutePath) == null ||
                     Path.GetFileName(logFileURI.AbsolutePath).Trim() == "" ||
                     Path.GetDirectoryName(logFileURI.AbsolutePath).Trim() == "")
@@ -120,7 +121,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             }
             else
             {
-                if (Uri.TryCreate(settings["LogFile"].Value, UriKind.Absolute, out logFileURI))
+                if (Uri.TryCreate(settings["LogFile"].Value, UriKind.RelativeOrAbsolute, out logFileURI))
                     Console.WriteLine("Configuration defines a valid Log file.");
                 else
                 {
