@@ -25,6 +25,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         /// </summary>
         public UInt32 hashKey { set; get; }
 
+        /// <summary>
+        /// Sets and gets the summit of the interval.
+        /// </summary>
+        public int summit { set; get; }
+
         public string ToString(string separator = "\t")
         {
             return

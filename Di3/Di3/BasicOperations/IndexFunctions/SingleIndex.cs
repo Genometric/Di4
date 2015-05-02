@@ -167,19 +167,21 @@ namespace Polimi.DEIB.VahidJalili.DI3
             int mu = 0;
             UInt16 omega = 0;
             ReadOnlyCollection<Lambda> currentBookmarkLambda = null;
-            var lambdaCarrier = new Dictionary<uint, bool>();
+            var t = new Dictionary<uint, bool>();
             KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
             List<uint> keysToRemove = new List<uint>();
 
             foreach (var bookmark in _di3.EnumerateFrom(firstItem.Key))
             {
-                foreach (var lambda in bookmark.Value.lambda)
-                    if (lambda.phi == true && !lambdaCarrier.ContainsKey(lambda.atI)) /////////////// CHECK THIS LINE
-                        lambdaCarrier.Add(lambda.atI, true);
-                    else
-                        lambdaCarrier.Remove(lambda.atI);
+                // mu update option A:
+                mu = t.Count - bookmark.Value.omega;
 
-                mu = lambdaCarrier.Count - bookmark.Value.lambda.Count + bookmark.Value.omega; // ;-)
+                foreach (var lambda in bookmark.Value.lambda)
+                    if (!t.Remove(lambda.atI))
+                        t.Add(lambda.atI, true);
+
+                // mu update option B:
+                // mu = t.Count - bookmark.Value.lambda.Count + bookmark.Value.omega; // ;-)
                 if (bookmark.Value.mu != mu)
                 {
                     omega = bookmark.Value.omega;

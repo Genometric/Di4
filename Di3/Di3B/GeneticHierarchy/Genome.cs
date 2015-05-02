@@ -81,15 +81,15 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                         /// this case is problematic, because other operations 
                         /// are not implemented as they can work this way.
                         case HDDPerformance.LeastMemory:
+                            stpWtch.Start();
                             foreach (var chr in peaks)
                                 foreach (var strandEntry in chr.Value)
                                     using (var di3 = new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand)))) // this might be wrong
-                                    {
-                                        stpWtch.Start();
+                                    {   
                                         di3.Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree);
-                                        stpWtch.Stop();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
+                            stpWtch.Stop();
                             break;
 
                         case HDDPerformance.Fastest:
@@ -101,20 +101,20 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                                     if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options(GetDi3File(chr.Key, strand))));
                                 }
 
+                            stpWtch.Start();
                             /// Populate inside a parallel foreach loop.
                             Parallel.ForEach(peaks,
                                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                                 chr =>
                                 {
                                     foreach (var strandEntry in chr.Value)
-                                    {
-                                        stpWtch.Start();
+                                    {   
                                         chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree);
                                         chrs[chr.Key][strand].Commit();
-                                        stpWtch.Stop();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
                                 });
+                            stpWtch.Stop();
                             break;
                     }
 
@@ -127,18 +127,17 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     break;
 
                 case Memory.RAM:
+                    stpWtch.Start();
                     foreach (var chr in peaks)
                         foreach (var strandEntry in chr.Value)
                         {
                             if (!chrs.ContainsKey(chr.Key)) chrs.Add(chr.Key, new Dictionary<char, Di3<C, I, M>>());
                             if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di3<C, I, M>(GetDi3Options()));
-
-                            stpWtch.Start();
+                            
                             chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree);
-                            // Check if it's needed to call Commit().
-                            stpWtch.Stop();
                             totalIntervals += strandEntry.Value.Count;
                         }
+                    stpWtch.Stop();
                     break;
             }
 
@@ -148,19 +147,19 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
+            stpWtch.Start();
             Parallel.ForEach(chrs, //var chr in chrs
                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                chr =>
                {
                    foreach (var sDi3 in chr.Value)
-                   {
-                       stpWtch.Start();
+                   {   
                        totalIntervals += sDi3.Value.bookmarkCount;
                        sDi3.Value.SecondPass();
                        sDi3.Value.Commit();
-                       stpWtch.Stop();
                    }
                });
+            stpWtch.Stop();
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
@@ -259,18 +258,15 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!tmpResult[chr.Key].ContainsKey(sDi3.Key)) tmpResult[chr.Key].TryAdd(sDi3.Key, null);
                 }
 
+            stpWtch.Start();
             Parallel.ForEach(chrs,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                 chr =>
                 {
                     foreach (var sDi3 in chr.Value)
-                    {
-                        stpWtch.Start();
                         tmpResult[chr.Key][sDi3.Key] = sDi3.Value.AccumulationHistogram(maxDegreeOfParallelism.di3Degree);
-                        stpWtch.Stop();
-                    }
                 });
-
+            stpWtch.Stop();
             result = tmpResult;
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
@@ -287,18 +283,15 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!tmpResult[chr.Key].ContainsKey(sDi3.Key)) tmpResult[chr.Key].TryAdd(sDi3.Key, null);
                 }
 
+            stpWtch.Start();
             Parallel.ForEach(chrs,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                 chr =>
                 {
                     foreach (var sDi3 in chr.Value)
-                    {
-                        stpWtch.Start();
                         tmpResult[chr.Key][sDi3.Key] = sDi3.Value.AccumulationDistribution(maxDegreeOfParallelism.di3Degree);
-                        stpWtch.Stop();
-                    }
                 });
-
+            stpWtch.Stop();
             result = tmpResult;
             return new ExecutionReport(1, stpWtch.Elapsed); // correct this
         }
@@ -308,19 +301,19 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             Stopwatch stpWtch = new Stopwatch();
             //int blockCount = 0;
 
+            stpWtch.Start();
             Parallel.ForEach(chrs,
                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                chr =>
                {
                    foreach (var sDi3 in chr.Value)
-                   {
-                       stpWtch.Start();
+                   {   
                        sDi3.Value.SecondResolutionIndex(maxDegreeOfParallelism.di3Degree);
                        //blockCount += sDi3.Value.blockCount;
                        sDi3.Value.Commit();
-                       stpWtch.Stop();
                    }
                });
+            stpWtch.Stop();
 
             return new ExecutionReport(/*blockCount*/1, stpWtch.Elapsed); // correct this, check if blockCount += reduces speed or not
         }
@@ -329,17 +322,18 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             Stopwatch stpWtch = new Stopwatch();
             result = new ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>>();
-
+            
+            stpWtch.Start();
             foreach (var chr in chrs)
                 foreach (var sDi3 in chr.Value)
                 {
                     if (!result.ContainsKey(chr.Key)) result.TryAdd(chr.Key, new ConcurrentDictionary<char, ICollection<BlockKey<C>>>());
                     if (!result[chr.Key].ContainsKey(sDi3.Key)) result[chr.Key].TryAdd(sDi3.Key, null); // is null correct here?
-                    stpWtch.Start();
+                    
                     result[chr.Key][sDi3.Key] = sDi3.Value.Merge(maxDegreeOfParallelism.di3Degree);
-                    stpWtch.Stop();
                 }
 
+            stpWtch.Stop();
             return new ExecutionReport(1, stpWtch.Elapsed); // correct this
         }
 
@@ -349,6 +343,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             var tmpResults = new ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>>();
             //int bookmarkCount = 0;
 
+            stpWtch.Start();
             Parallel.ForEach(chrs,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                 chr =>
@@ -357,13 +352,13 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     {
                         if (!tmpResults.ContainsKey(chr.Key)) tmpResults.TryAdd(chr.Key, new ConcurrentDictionary<char, ICollection<BlockKey<C>>>());
                         if (!tmpResults[chr.Key].ContainsKey(sDi3.Key)) tmpResults[chr.Key].TryAdd(sDi3.Key, null);
-                        stpWtch.Start();
+                        
                         tmpResults[chr.Key][sDi3.Key] = sDi3.Value.Dichotomies();
                         //bookmarkCount += sDi3.Value.bookmarkCount;
-                        stpWtch.Stop();
                     }
                 });
-
+            
+            stpWtch.Stop();
             result = tmpResults;
             return new ExecutionReport(/*bookmarkCount*/1, stpWtch.Elapsed); // correct this, check if bookmarkCount += reduces the speed or not.
         }
@@ -380,18 +375,16 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     if (!tmpResult[chr.Key].ContainsKey(sDi3.Key)) tmpResult[chr.Key].TryAdd(sDi3.Key, null);
                 }
 
+            stpWtch.Start();
             Parallel.ForEach(chrs,
                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
                chr =>
                {
                    foreach (var sDi3 in chr.Value)
-                   {
-                       stpWtch.Start();
                        tmpResult[chr.Key][sDi3.Key] = sDi3.Value.Complement(maxDegreeOfParallelism.di3Degree);
-                       stpWtch.Stop();
-                   }
                });
 
+            stpWtch.Stop();
             result = tmpResult;
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
