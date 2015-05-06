@@ -28,9 +28,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             _parserSTW = new Stopwatch();
 
             _cacheOptions = new CacheOptions(
-                CacheMaximumHistory: 81920,
+                CacheMaximumHistory: 163840,//81920,
                 CacheMinimumHistory: 20240,
-                CacheKeepAliveTimeOut: 60000,
+                CacheKeepAliveTimeOut: 600000,
                 CachePolicy: CSharpTest.Net.Collections.CachePolicy.Recent);
 
             di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, _cacheOptions, PrimitiveSerializer.Int32, int32Comparer);
@@ -306,9 +306,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 chrColumn: 0,
                 leftEndColumn: 1,//3,
                 rightEndColumn: 2,//4,
-                summitColumn: -1,
-                nameColumn: 3,//8,
-                valueColumn: 4,//5,
+                summitColumn: 3,//-1,
+                nameColumn: 4,//8,
+                valueColumn: 5,
                 strandColumn: -1,
                 defaultValue: 0.01,
                 pValueFormat: pValueFormat.minus10_Log10_pValue,
@@ -482,8 +482,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
             ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> results;
-            Herald.AnnounceExeReport("AccDistribution", di3B.AccumulationDistribution(out results, _maxDegreeOfParallelism));
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tstrand\taccumulation\tcount"));
+            SortedDictionary<int, int> mergedResults;
+            Herald.AnnounceExeReport("AccDistribution", di3B.AccumulationDistribution(out results, out mergedResults, _maxDegreeOfParallelism));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, mergedResults, "chr\tstrand\taccumulation\tcount"));
             return true;
         }
         private bool GetPD()

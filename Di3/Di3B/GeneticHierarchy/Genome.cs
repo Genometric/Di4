@@ -271,9 +271,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(1, stpWtch.Elapsed);
         }
 
-        internal ExecutionReport AccumulationDistribution(out ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        internal ExecutionReport AccumulationDistribution(out ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> result, out SortedDictionary<int,int> mergedResult, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
+            mergedResult = new SortedDictionary<int, int>();
             var tmpResult = new ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>>();
 
             foreach (var chr in chrs)
@@ -291,8 +292,17 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                     foreach (var sDi3 in chr.Value)
                         tmpResult[chr.Key][sDi3.Key] = sDi3.Value.AccumulationDistribution(maxDegreeOfParallelism.di3Degree);
                 });
-            stpWtch.Stop();
-            result = tmpResult;
+
+            result = tmpResult;            
+            foreach (var chr in result)
+                foreach (var strand in chr.Value)
+                    foreach (var accumulation in strand.Value)
+                        if (mergedResult.ContainsKey(accumulation.Key))
+                            mergedResult[accumulation.Key] += accumulation.Value;
+                        else
+                            mergedResult.Add(accumulation.Key, accumulation.Value);
+
+            stpWtch.Stop();            
             return new ExecutionReport(1, stpWtch.Elapsed); // correct this
         }
 
@@ -446,7 +456,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;
-            options.FileBlockSize = 8192;
+            options.FileBlockSize = 4096;//512;//1024;//8192;
 
             options.cacheOptions = _cacheOptions;
 

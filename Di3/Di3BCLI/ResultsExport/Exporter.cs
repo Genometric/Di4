@@ -62,7 +62,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
-        internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> results, string header, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> results, SortedDictionary<int, int> mergedResults, string header, string separator = "\t")
         {
             int intervalCount = 0;
             Stopwatch stp = new Stopwatch();
@@ -81,6 +81,16 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                             intervalCount++;
                         }
                     }
+            }
+
+            string mergedResultsFile = fileName + "_merged";
+            if (!File.Exists(mergedResultsFile)) File.Delete(mergedResultsFile);
+            using (File.Create(mergedResultsFile)) { }
+            using (var writter = new StreamWriter(mergedResultsFile))
+            {
+                writter.WriteLine("accumulation" + separator + "frequency");
+                foreach (var pair in mergedResults)
+                    writter.WriteLine(pair.Key + separator + pair.Value);
             }
 
             stp.Stop();

@@ -44,9 +44,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.AccumulationHistogram(out result, maxDegreeOfParallelism);
         }
-        public ExecutionReport AccumulationDistribution(out ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport AccumulationDistribution(out ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> result, out SortedDictionary<int, int> mergedResult, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.AccumulationDistribution(out result, maxDegreeOfParallelism);
+            return genome.AccumulationDistribution(out result, out mergedResult, maxDegreeOfParallelism);
         }
         public ExecutionReport SecondResolutionIndex(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
