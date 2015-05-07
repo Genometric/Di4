@@ -21,6 +21,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 
         int newStart = 0;
         int newStop = 0;
+        int chrStart = 0;
+        int chrStop = 0;
         int lastStart = maxLenght + 1;
         int lastStop = maxLenght;
         int interStart = 0;
@@ -30,7 +32,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const string parentPath = "";
         static string filesExtension = "bed";
 
-        static readonly int[] similarity = new int[] { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+        static readonly int[] similarity = new int[] { /*0, 10, 20, 30,*/ 40, 50, 60, 70, 80, 90, 100 };
 
         static readonly string[] chrTitles = new string[] {
             "chr1","chr2","chr3","chr4","chr5",
@@ -51,6 +53,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
 
             for (int simIndex = 0; simIndex < similarity.Length; simIndex++)
             {
+                chrStart = lastStart;
                 Console.WriteLine("Preparing similarity : " + similarity[simIndex].ToString() + "%");
 
                 outputPath = parentPath + "count_" + regionsCount.ToString() + dirSep + "similarity_" + similarity[simIndex].ToString() + dirSep;
@@ -61,8 +64,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
                 {
                     Console.WriteLine("Generating Regions for chr" + chr.ToString());
                     CreateSortedRegions(simIndex, chr, chrTitles[chr], outputPath);
+                    chrStop = lastStop;
+                    CreateMapFile(chr, chrTitles[chr], outputPath);
+                    chrStart = lastStop;
                 }
-
+                
                 CreateShuffleRegions(outputPath);
 
                 newStart = 0;
@@ -273,6 +279,36 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
             }
             Console.WriteLine("Done");
         }
+        private void CreateMapFile(int chr, string chrTitle, string filePath)
+        {
+            SortedDictionary<interval, string> intervals = new SortedDictionary<interval, string>();
+            int start, stop;
+
+            for (int group = 0; group < regionsDistribution[chr]; group++)
+            {
+                for (int i = 0; i < regionsDistribution[chr]; i++)
+                {
+                    do
+                    {
+                        start = rnd.Next(chrStart, chrStop);
+                        stop = rnd.Next(start + 1, start + maxLenght);
+                    } while (start >= lastStop && stop >= lastStop);
+
+                    intervals.Add(new interval() { start = start, stop = stop },
+                        chrTitle + "\t" +
+                        start.ToString() + "\t" +
+                        stop.ToString() + "\t" +
+                        GetRandomName() + "\t" +
+                        Math.Round(rnd.NextDouble(), 3).ToString());
+                }
+            }
+
+            using (FileStream fs =
+                        new FileStream(filePath + "sorted" + dirSep + "mapRef." + filesExtension, FileMode.Append, FileAccess.Write))
+            using (StreamWriter sw = new StreamWriter(fs))
+                foreach (var interval in intervals)
+                    sw.WriteLine(interval.Value);
+        }
 
         private string GetRandomName()
         {
@@ -283,6 +319,20 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
                 rtv += chars[rnd.Next(0, chars.Length - 1)];
 
             return rtv;
+        }
+
+        private class interval : IComparable<interval>
+        {
+            public int start { set; get; }
+            public int stop { set; get; }
+
+
+            public int CompareTo(interval other)
+            {
+                if (other == null) return 1;
+                if (this.start != other.start) return this.start.CompareTo(other.start);
+                return this.stop.CompareTo(other.stop);
+            }
         }
     }
 }
