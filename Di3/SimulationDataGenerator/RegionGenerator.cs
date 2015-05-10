@@ -15,7 +15,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const int maxGap = 100;
         const int maxLenght = 1000; // this value must be >= 4
         const int chrCount = 23;
-        const int regionsCount = 20000; // per sample
+        const int regionsCount = 200000; // per sample
         const int sampleCount = 500; // IF YOU CHANGE THIS: remember to revise maxAcc.
         const int maxAcc = 400; // Maximum accumulation. This number must be less than sampleCount.
 
@@ -241,6 +241,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
                 Console.Write("\r{0:N0} \\ {1:N0}", (group + 1).ToString(), regionsDistribution[chr].ToString());
             }
 
+            Console.WriteLine("");
             Console.WriteLine("Done !");
         }
         private void CreateShuffleRegions(string folderPath)
@@ -281,27 +282,33 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         }
         private void CreateMapFile(int chr, string chrTitle, string filePath)
         {
-            SortedDictionary<interval, string> intervals = new SortedDictionary<interval, string>();
+            SortedDictionary<Interval, string> intervals = new SortedDictionary<Interval, string>();
             int start, stop;
+            Console.WriteLine("");
 
-            for (int group = 0; group < regionsDistribution[chr]; group++)
+            for (int i = 0; i < regionsDistribution[chr]; i++)
             {
-                for (int i = 0; i < regionsDistribution[chr]; i++)
+                do
                 {
-                    do
-                    {
-                        start = rnd.Next(chrStart, chrStop);
-                        stop = rnd.Next(start + 1, start + maxLenght);
-                    } while (start >= lastStop && stop >= lastStop);
+                    start = rnd.Next(chrStart, chrStop);
+                    stop = rnd.Next(start + 1, start + 1 + maxLenght);
+                } while (start >= lastStop && stop >= lastStop);
 
-                    intervals.Add(new interval() { start = start, stop = stop },
+
+                try
+                {
+                    intervals.Add(new Interval() { start = start, stop = stop },
                         chrTitle + "\t" +
                         start.ToString() + "\t" +
                         stop.ToString() + "\t" +
                         GetRandomName() + "\t" +
                         Math.Round(rnd.NextDouble(), 3).ToString());
+
+                    Console.Write("\r{0:N0} map intervals created.", i);
                 }
+                catch { i--; }
             }
+
 
             using (FileStream fs =
                         new FileStream(filePath + "sorted" + dirSep + "mapRef." + filesExtension, FileMode.Append, FileAccess.Write))
@@ -321,13 +328,13 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
             return rtv;
         }
 
-        private class interval : IComparable<interval>
+        private class Interval : IComparable<Interval>
         {
             public int start { set; get; }
             public int stop { set; get; }
 
 
-            public int CompareTo(interval other)
+            public int CompareTo(Interval other)
             {
                 if (other == null) return 1;
                 if (this.start != other.start) return this.start.CompareTo(other.start);
