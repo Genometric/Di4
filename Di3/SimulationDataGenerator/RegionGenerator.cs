@@ -286,13 +286,13 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
             int start, stop;
             Console.WriteLine("");
 
-            for (int i = 0; i < regionsDistribution[chr]; i++)
-            {
-                do
+                for (int i = 0; i < regionsDistribution[chr]; i++)
                 {
-                    start = rnd.Next(chrStart, chrStop);
+                    do
+                    {
+                        start = rnd.Next(chrStart, chrStop);
                     stop = rnd.Next(start + 1, start + 1 + maxLenght);
-                } while (start >= lastStop && stop >= lastStop);
+                    } while (start >= lastStop && stop >= lastStop);
 
 
                 try
