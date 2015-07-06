@@ -26,11 +26,15 @@ namespace IndexSpeedTest
                 PrimitiveSerializer.Int32, int32Comparer,
                 path + Path.DirectorySeparatorChar + "Di3_" + TestTitle);
 
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CSharpTest.Net.Collections.CachePolicy.Recent);
+
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;
             options.FileBlockSize = 8192;
-
-            options.CachePolicy = CachePolicy.Recent;
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -167,7 +171,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CSharpTest.Net.Collections.CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 

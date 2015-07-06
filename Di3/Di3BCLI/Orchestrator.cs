@@ -300,7 +300,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(
                 source: fileName,
                 species: Genomes.HomoSapiens,
-                assembly: Assemblies.hm19,
+                assembly: Assemblies.hg19,
                 readOnlyValidChrs: true,
                 startOffset: 0,
                 chrColumn: 0,

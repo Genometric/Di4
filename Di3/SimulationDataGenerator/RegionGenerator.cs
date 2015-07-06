@@ -15,7 +15,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
         const int maxGap = 100;
         const int maxLenght = 1000; // this value must be >= 4
         const int chrCount = 23;
-        const int regionsCount = 200000; // per sample
+        const int regionsCount = 20000; // per sample
         const int sampleCount = 500; // IF YOU CHANGE THIS: remember to revise maxAcc.
         const int maxAcc = 400; // Maximum accumulation. This number must be less than sampleCount.
 
@@ -256,7 +256,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.SimulationDataGenerator
             foreach (FileInfo fileInfo in determinedFiles)
             {
                 Console.WriteLine(string.Format("Now writing: {0}", Path.GetFileNameWithoutExtension(fileInfo.FullName)));
-                BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileInfo.FullName, Genomes.HomoSapiens, Assemblies.hm19, true);
+                BEDParser<Peak, PeakData> bedParser = new BEDParser<Peak, PeakData>(fileInfo.FullName, Genomes.HomoSapiens, Assemblies.hg19, true);
                 var parsedSample = bedParser.Parse();
                 var intervals = parsedSample.intervals;
 

@@ -69,7 +69,7 @@
       <HintPath>..\packages\CSharpTest.Net.Library.2.14.126.467\lib\net45\CSharpTest.Net.Library.dll</HintPath>
     </Reference>
     <Reference Include="GIFP">
-      <HintPath>..\..\..\..\..\02 - GIFP\GIFP\GIFP\GIFP\bin\Debug\GIFP.dll</HintPath>
+      <HintPath>..\..\..\..\..\02 - GIFP\GIFP\GIFP\GIFP\bin\Release\GIFP.dll</HintPath>
     </Reference>
     <Reference Include="IGenomics">
       <HintPath>..\..\..\..\..\03 - IGenomics\IGenomic\IGenomics\IGenomics\bin\Debug\IGenomics.dll</HintPath>

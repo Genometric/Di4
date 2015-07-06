@@ -305,7 +305,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -338,7 +342,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -371,7 +379,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -404,7 +416,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -434,7 +450,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -464,7 +484,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 1024;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -494,7 +518,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -524,7 +552,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -554,7 +586,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 196;
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -584,7 +620,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 196;
             options.FileBlockSize = 1024;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -614,7 +654,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 196;
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -644,7 +688,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 196;
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -674,7 +722,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -706,7 +758,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 1024;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -738,7 +794,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -770,7 +830,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -802,7 +866,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 196;
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -834,7 +902,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 196;
             options.FileBlockSize = 1024;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -866,7 +938,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 196;
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -898,7 +974,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 96;
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -930,7 +1010,11 @@ namespace IndexSpeedTest
             //options.AverageValueSize = 96;
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -968,7 +1052,11 @@ namespace IndexSpeedTest
             options.AverageValueSize = 32;
             options.FileBlockSize = 4096;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.LogFileInCache;
 
@@ -999,7 +1087,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -1035,7 +1127,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -1071,7 +1167,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -1107,7 +1207,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -1141,7 +1245,11 @@ namespace IndexSpeedTest
                 PrimitiveSerializer.Int32, int32Comparer,
                 path + Path.DirectorySeparatorChar + "Di3_" + testTitle);
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
@@ -1179,7 +1287,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 

@@ -50,7 +50,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.All;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.All);
 
 
             /// Why am I diconstructing bplustree at each iteration ? 
@@ -136,7 +140,11 @@ namespace IndexSpeedTest
 
             options.FileBlockSize = 512;
 
-            options.CachePolicy = CachePolicy.All;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.All);
 
             if (disposeDi3atEachSample)
             {
@@ -256,7 +264,11 @@ namespace IndexSpeedTest
             options.AverageKeySize = avgKeySize;
             options.AverageValueSize = avgValueSize;
             options.FileBlockSize = 512;
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.ExistingLogAction = ExistingLogAction.Truncate;
             options.StoragePerformance = StoragePerformance.Fastest;
@@ -373,7 +385,11 @@ namespace IndexSpeedTest
 
 
             options.FileBlockSize = 512;
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.ExistingLogAction = ExistingLogAction.Truncate;
             options.StoragePerformance = StoragePerformance.Fastest;
@@ -491,7 +507,11 @@ namespace IndexSpeedTest
             options.AverageKeySize = avgKeySize;
             options.AverageValueSize = avgValueSize;
             options.FileBlockSize = 512;
-            options.CachePolicy = CachePolicy.Recent;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.Recent);
 
             options.ExistingLogAction = ExistingLogAction.Truncate;
             options.StoragePerformance = StoragePerformance.Fastest;

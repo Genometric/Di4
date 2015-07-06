@@ -38,7 +38,11 @@ namespace MapSpeedTest
 
             options.FileBlockSize = 8192;
 
-            options.CachePolicy = CachePolicy.None;
+            options.cacheOptions = new CacheOptions(
+               CacheMaximumHistory: 163840,//81920,
+               CacheMinimumHistory: 20240,
+               CacheKeepAliveTimeOut: 600000,
+               CachePolicy: CachePolicy.None);
 
             options.StoragePerformance = StoragePerformance.Fastest;
 
