@@ -12,26 +12,31 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         where I : IInterval<C, M>, IFormattable, new()
         where M : IMetaData, IFormattable, new()
     {
-        public Di3B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Di3B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, IndexType indexType, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
 
-            genome = new Genome<C, I, M>(workingDirectory, sectionTitle, Memory, hddPerformance, cacheOptions, CSerializer, CComparer);
+            genome = new Genome<C, I, M>(workingDirectory, sectionTitle, Memory, hddPerformance, indexType, cacheOptions, CSerializer, CComparer);
         }
 
         private ISerializer<C> CSerializer { set; get; }
         private IComparer<C> CComparer { set; get; }
         private Genome<C, I, M> genome { set; get; }
 
-        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, MaxDegreeOfParallelism maxDegreeOfParallelism, out IndexingET indexingET)
         {
-            return genome.Add(peaks, '*', indexingMode, maxDegreeOfParallelism);
+            return genome.Add(peaks, '*', indexingMode, maxDegreeOfParallelism, out indexingET);
         }
-        public ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism, out IndexingET indexingET)
         {
-            return genome.Add2ndPass(maxDegreeOfParallelism);
+            return genome.Add2ndPass(maxDegreeOfParallelism, out indexingET);
         }
+        public void CommitTestFunction(MaxDegreeOfParallelism maxDegreeOfParallelism)
+        {
+            genome.CommitIndexedDataTest('*', maxDegreeOfParallelism);
+        }
+
         public ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             return genome.Cover(coverVariation, strand, minAcc, maxAcc, aggregate, out result, maxDegreeOfParallelism);

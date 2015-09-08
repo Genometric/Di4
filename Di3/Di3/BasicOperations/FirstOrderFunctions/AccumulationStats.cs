@@ -10,7 +10,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal AccumulationStats(BPlusTree<C, B> di3_1R, C left, C right, List<AccEntry<C>> accHistogram, Object lockOnMe)
+        internal AccumulationStats(BPlusTree<C, IIB> di3_1R, C left, C right, List<AccEntry<C>> accHistogram, Object lockOnMe)
         {
             _di3_1R = di3_1R;
             _left = left;
@@ -18,7 +18,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
             _lockOnMe = lockOnMe;
             _accHistogram = accHistogram;
         }
-        internal AccumulationStats(BPlusTree<C, B> di3_1R, C left, C right, SortedDictionary<int, int> accDistribution, Object lockOnMe)
+        internal AccumulationStats(BPlusTree<C, IIB> di3_1R, C left, C right, SortedDictionary<int, int> accDistribution, Object lockOnMe)
         {
             _di3_1R = di3_1R;
             _left = left;
@@ -28,7 +28,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.BasicOperations.FirstOrderFunctions
         }
         
 
-        private BPlusTree<C, B> _di3_1R { set; get; }
+        private BPlusTree<C, IIB> _di3_1R { set; get; }
         private C _left { set; get; }
         private C _right { set; get; }
         private List<AccEntry<C>> _accHistogram { set; get; }

@@ -6,62 +6,62 @@ namespace Polimi.DEIB.VahidJalili.DI3
     /// <summary>
     /// A Bookmark representing relative information of intervals
     /// intersecting with a particular e on domain.</summary>
-    public class B
+    public class IIB
     {
         /// <summary>
         /// A Bookmark representing relative information of intervals
         /// intersecting with a particular e on domain.</summary>
-        internal B() // this initializer may be redundant, however, it might have performance impact.
+        internal IIB() // this initializer may be redundant, however, it might have performance impact.
         {
             mu = 0;
             omega = 0;
             _lambda = new Lambda[0];
         }
-        internal B(IntersectionCondition condition, UInt32 atI)
+        internal IIB(Phi phi, uint atI)
         {
             mu = 0;
             omega = 0;
-            switch(condition)
+            switch(phi)
             {
-                case IntersectionCondition.LeftEnd:
-                    _lambda = new Lambda[] { new Lambda(phi: true, atI: atI) };
+                case Phi.LeftEnd:
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.LeftEnd, atI: atI) };
                     break;
 
-                case IntersectionCondition.Middle:
+                case Phi.Middle:
                     mu = 1;
                     break;
 
-                case IntersectionCondition.RightEnd:
+                case Phi.RightEnd:
                     omega = 1;
-                    _lambda = new Lambda[] { new Lambda(phi: false, atI: atI) };
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.RightEnd, atI: atI) };
                     break;
             }
         }
-        internal B(int mu, UInt16 omega, ReadOnlyCollection<Lambda> lambda)
+        internal IIB(int mu, ushort omega, ReadOnlyCollection<Lambda> lambda)
         {
             this.mu = mu;
             this.omega = omega;
             _lambda = new Lambda[lambda.Count];
             lambda.CopyTo(_lambda, 0);
         }
-        internal B(IntersectionCondition condition, UInt32 atI, B nextBookmark)
+        internal IIB(Phi phi, uint atI, IIB nextBookmark)
         {
             mu = nextBookmark.mu;
             omega = 0;
-            switch(condition)
+            switch(phi)
             {
-                case IntersectionCondition.LeftEnd:                    
-                    _lambda = new Lambda[] { new Lambda(phi: true, atI: atI) };
+                case Phi.LeftEnd:                    
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.LeftEnd, atI: atI) };
                     break;
 
-                // I don't think this condition would be possibly seen ever :)
-                case IntersectionCondition.Middle:
+                // I don't think this condition would be possibly ever met :)
+                case Phi.Middle:
                     mu++;
                     break;
 
-                case IntersectionCondition.RightEnd:
+                case Phi.RightEnd:
                     omega++;
-                    _lambda = new Lambda[] { new Lambda(phi: false, atI: atI) };
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.RightEnd, atI: atI) };
                     break;
             }
             
@@ -70,36 +70,40 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     mu++;*/
             mu += nextBookmark.omega;
         }
-        private B(int mu, UInt16 omega, Lambda[] lambda, bool phi, UInt32 atI)
+        private IIB(int mu, ushort omega, Lambda[] lambda, bool phi, uint atI)
         {
+            // TODO: 
+            /// Do I have to check if I need to update omega as omega++ based on phi ?
             this.omega = omega;
             _lambda = new Lambda[lambda.Length + 1];
             Array.Copy(lambda, _lambda, lambda.Length);
-            _lambda[lambda.Length] = new Lambda(phi: phi, atI: atI);
+
+            // The following line should not be commented-out
+            //_lambda[lambda.Length] = new Lambda(phi: phi, atI: atI);
         }
-        private B(int mu, UInt16 omega, Lambda[] lambda, UInt32 atI, IntersectionCondition condition)
+        private IIB(int mu, ushort omega, Lambda[] lambda, uint atI, Phi phi)
         {
             this.mu = mu;
             this.omega = omega;
-            switch (condition)
+            switch (phi)
             {
-                case IntersectionCondition.LeftEnd:
+                case Phi.LeftEnd:
                     _lambda = new Lambda[lambda.Length + 1];
                     Array.Copy(lambda, _lambda, lambda.Length);
-                    _lambda[lambda.Length] = new Lambda(phi: true, atI: atI);
+                    _lambda[lambda.Length] = new Lambda(phi: Phi.LeftEnd, atI: atI);
                     break;
 
-                case IntersectionCondition.Middle:
+                case Phi.Middle:
                     this.mu++;
                     _lambda = new Lambda[lambda.Length];
                     Array.Copy(lambda, _lambda, lambda.Length);
                     break;
 
-                case IntersectionCondition.RightEnd:
+                case Phi.RightEnd:
                     this.omega++;
                     _lambda = new Lambda[lambda.Length + 1];
                     Array.Copy(lambda, _lambda, lambda.Length);
-                    _lambda[lambda.Length] = new Lambda(phi: false, atI: atI);
+                    _lambda[lambda.Length] = new Lambda(phi: Phi.RightEnd, atI: atI);
                     break;
             }
         }
@@ -114,7 +118,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// Denotes the number of intervals whose
         /// right-end intersects with e. 
         /// </summary>
-        internal UInt16 omega { private set; get; }
+        internal ushort omega { private set; get; }
 
         /// <summary>
         /// Represents the intervals intersecting with
@@ -130,19 +134,19 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
 
 
-        internal B Update(int mu, UInt16 omega, bool phi, UInt32 atI)
+        internal IIB Update(int mu, ushort omega, bool phi, uint atI) // keep the bool for phi cos until make sure who is calling/using it !!
         {
-            return new B(mu: mu, omega: omega, lambda: _lambda, phi: phi, atI: atI);
+            return new IIB(mu: mu, omega: omega, lambda: _lambda, phi: phi, atI: atI);
         }
 
-        internal B Update(UInt32 atI, IntersectionCondition condition)
+        internal IIB Update(uint atI, Phi condition)
         {
-            return new B(mu: this.mu, omega: this.omega, lambda: _lambda, atI: atI, condition: condition);
+            return new IIB(mu: mu, omega: omega, lambda: _lambda, atI: atI, phi: condition);
         }
 
-        internal B Update(ref int mu, ref UInt16 omega, ReadOnlyCollection<Lambda> lambda)
+        internal IIB Update(ref int mu, ref ushort omega, ReadOnlyCollection<Lambda> lambda)
         {
-            return new B(mu: mu, omega: omega, lambda: lambda);
+            return new IIB(mu: mu, omega: omega, lambda: lambda);
         }
     }
 }

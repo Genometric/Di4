@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace Polimi.DEIB.VahidJalili.DI3
 {
-    class BookmarkSerializer : ISerializer<B>
+    class BookmarkSerializer : ISerializer<IIB>
     {
         private readonly ISerializer<ReadOnlyCollection<Lambda>> _lambdaArraySerializer;
         //private readonly ISerializer<Lambda[]> _lambdaArraySerializer;
@@ -13,13 +13,13 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _lambdaArraySerializer = lambdaArraySerializer;
         }
 
-        public B ReadFrom(System.IO.Stream stream)
+        public IIB ReadFrom(System.IO.Stream stream)
         {
-            return new B(PrimitiveSerializer.Int32.ReadFrom(stream), PrimitiveSerializer.UInt16.ReadFrom(stream), _lambdaArraySerializer.ReadFrom(stream));
+            return new IIB(PrimitiveSerializer.Int32.ReadFrom(stream), PrimitiveSerializer.UInt16.ReadFrom(stream), _lambdaArraySerializer.ReadFrom(stream));
             //return new B(PrimitiveSerializer.Int32.ReadFrom(stream), PrimitiveSerializer.UInt16.ReadFrom(stream), _lambdaArraySerializer.ReadFrom(stream));
         }
 
-        public void WriteTo(B value, System.IO.Stream stream)
+        public void WriteTo(IIB value, System.IO.Stream stream)
         {
             if (value == null) return;
 

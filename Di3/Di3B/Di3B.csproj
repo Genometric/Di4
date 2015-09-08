@@ -21,7 +21,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -62,7 +62,7 @@
       <HintPath>..\packages\CSharpTest.Net.Library.2.14.126.467\lib\net45\CSharpTest.Net.Library.dll</HintPath>
     </Reference>
     <Reference Include="IGenomics">
-      <HintPath>..\..\..\..\..\03 - IGenomics\IGenomic\IGenomics\IGenomics\bin\Debug\IGenomics.dll</HintPath>
+      <HintPath>..\..\..\..\03 - IGenomics\IGenomic\IGenomics\IGenomics\bin\Debug\IGenomics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

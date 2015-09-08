@@ -107,15 +107,18 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         public Di3(Di3Options<C> options)
         {
-            _di3_1R = new BPlusTree<C, B>(Get1ROptions(options));
-            _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions(options));
-            _di3_info = new BPlusTree<string, int>(GetinfoOptions(options));
+            _options = options;
+            _di3_idx = new BPlusTree<C, IB>(GetIdxOptions());
+            _di3_iidx = new BPlusTree<C, IIB>(GetIIdxOptions());
+            _di3_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions());
+            _di3_info = new BPlusTree<string, int>(GetinfoOptions());
             _indexesCardinality = new InfoIndex(_di3_info);
-            INDEX = new SingleIndex<C, I, M>(_di3_1R);            
+
+            IIdx = new IIndex<C, I, M>(_di3_idx);
+            INDEX = new SingleIndex<C, I, M>(_di3_iidx);            
 
             /// Don't enable following commands.
-            /// The consequences are: initialization becomes very slow,
-            /// specially if the data size is big.
+            /// Because, the initialization is linear with data size.
             //_di3_1R.EnableCount();
             //_di3_2R.EnableCount();
         }
@@ -123,25 +126,30 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// <summary>
         /// Di3 First resolution
         /// </summary>
-        private BPlusTree<C, B> _di3_1R { set; get; }
+        private BPlusTree<C, IIB> _di3_iidx { set; get; }
+        private BPlusTree<C, IB> _di3_idx { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
         private BPlusTree<string, int> _di3_info { set; get; }
         private BookmarkSerializer _bookmarkSerializer { set; get; }
+        private IBookmarkSerializer _iBookmarkSerializer { set; get; }
         private LambdaItemSerializer _lambdaItemSerializer { set; get; }
         private LambdaArraySerializer _lambdaArraySerializer { set; get; }
         private BlockKeySerializer<C> _blockKeySerializer { set; get; }
         private BlockValueSerializer _blockValueSerializer { set; get; }
         private InfoIndex _indexesCardinality { set; get; }
-        
+        private Di3Options<C> _options { set; get; }
+
         /// <summary>
         /// Cardinality Key for first resolution.
         /// </summary>
-        private string cKey_1R { set { } get { return "1st"; } }
+        private string cKey_iiIndex { get { return "incrementalIndex"; } }
+
+        private string cKey_iIndex { get { return "Index"; } }
 
         /// <summary>
         /// Cardinality key for second resolution
         /// </summary>
-        private string cKey_2R { set { } get { return "2nd"; } }
+        private string cKey_2R { get { return "2ndResolution"; } }
         
 
         /// <summary>
@@ -152,48 +160,55 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private SingleIndex<C, I, M> INDEX { set; get; }
 
         /// <summary>
+        /// Sets and gets an instance of indexing class
+        /// for inverted index.
+        /// </summary>
+        private IIndex<C, I, M> IIdx { set; get; }
+
+
+        /// <summary>
         /// Gets the number of blocks contained in Polimi.DEIB.VahidJalili.DI3.
         /// </summary>
-        public int bookmarkCount { private set { } get { return _indexesCardinality.GetValue(cKey_1R); } }
+        public int bookmarkCount { private set { } get { return _indexesCardinality.GetValue(cKey_iiIndex); } }
         public int blockCount { private set { } get { return _indexesCardinality.GetValue(cKey_2R); } }
 
-        private BPlusTree<C, B>.OptionsV2 Get1ROptions(Di3Options<C> options)
+        private BPlusTree<C, IIB>.OptionsV2 GetIIdxOptions()
         {
             _lambdaItemSerializer = new LambdaItemSerializer();
             _lambdaArraySerializer = new LambdaArraySerializer(_lambdaItemSerializer);
             _bookmarkSerializer = new BookmarkSerializer(_lambdaArraySerializer);
-            var rtv = new BPlusTree<C, B>.OptionsV2(options.CSerializer, _bookmarkSerializer, options.Comparer);
-            rtv.ReadOnly = options.OpenReadOnly;
+            var rtv = new BPlusTree<C, IIB>.OptionsV2(_options.CSerializer, _bookmarkSerializer, _options.Comparer);
+            rtv.ReadOnly = _options.OpenReadOnly;
 
-            if (options.MaximumChildNodes >= 4 &&
-                options.MinimumChildNodes >= 2 &&
-                options.MaximumValueNodes >= 4 &&
-                options.MinimumValueNodes >= 2)
+            if (_options.MaximumChildNodes >= 4 &&
+                _options.MinimumChildNodes >= 2 &&
+                _options.MaximumValueNodes >= 4 &&
+                _options.MinimumValueNodes >= 2)
             {
-                rtv.MaximumChildNodes = options.MaximumChildNodes;
-                rtv.MinimumChildNodes = options.MinimumChildNodes;
-                rtv.MaximumValueNodes = options.MaximumValueNodes;
-                rtv.MinimumValueNodes = options.MinimumValueNodes;
+                rtv.MaximumChildNodes = _options.MaximumChildNodes;
+                rtv.MinimumChildNodes = _options.MinimumChildNodes;
+                rtv.MaximumValueNodes = _options.MaximumValueNodes;
+                rtv.MinimumValueNodes = _options.MinimumValueNodes;
             }
 
-            if (options.AverageKeySize != 0 && options.AverageValueSize != 0)
-                rtv.CalcBTreeOrder(options.AverageKeySize, options.AverageValueSize);
+            if (_options.AverageKeySize != 0 && _options.AverageValueSize != 0)
+                rtv.CalcBTreeOrder(_options.AverageKeySize, _options.AverageValueSize);
 
-            if (options.FileBlockSize != 0)
-                rtv.FileBlockSize = options.FileBlockSize;
+            if (_options.FileBlockSize != 0)
+                rtv.FileBlockSize = _options.FileBlockSize;
 
-            rtv.CachePolicy = options.cacheOptions.CachePolicy;
-            if (options.CreatePolicy != CreatePolicy.Never)
-                rtv.FileName = options.FileName + ".idx1R";
+            rtv.CachePolicy = _options.cacheOptions.CachePolicy;
+            if (_options.CreatePolicy != CreatePolicy.Never)
+                rtv.FileName = _options.FileName + ".iidx";
 
-            rtv.CreateFile = options.CreatePolicy;
-            rtv.ExistingLogAction = options.ExistingLogAction;
-            rtv.StoragePerformance = options.StoragePerformance;
+            rtv.CreateFile = _options.CreatePolicy;
+            rtv.ExistingLogAction = _options.ExistingLogAction;
+            rtv.StoragePerformance = _options.StoragePerformance;
 
             rtv.CallLevelLock = new ReaderWriterLocking();
-            if (options.LockTimeout > 0) rtv.LockTimeout = options.LockTimeout;
+            if (_options.LockTimeout > 0) rtv.LockTimeout = _options.LockTimeout;
 
-            switch (options.Locking)
+            switch (_options.Locking)
             {
                 case LockMode.WriterOnlyLocking:
                     rtv.LockingFactory = new LockFactory<WriterOnlyLocking>();
@@ -212,25 +227,89 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     break;
             }
 
-            if (options.cacheOptions.CacheMaximumHistory != 0 && options.cacheOptions.CacheKeepAliveTimeOut != 0)
+            if (_options.cacheOptions.CacheMaximumHistory != 0 && _options.cacheOptions.CacheKeepAliveTimeOut != 0)
             {
-                rtv.CacheKeepAliveMaximumHistory = options.cacheOptions.CacheMaximumHistory;
-                rtv.CacheKeepAliveMinimumHistory = options.cacheOptions.CacheMinimumHistory;
-                rtv.CacheKeepAliveTimeout = options.cacheOptions.CacheKeepAliveTimeOut;
+                rtv.CacheKeepAliveMaximumHistory = _options.cacheOptions.CacheMaximumHistory;
+                rtv.CacheKeepAliveMinimumHistory = _options.cacheOptions.CacheMinimumHistory;
+                rtv.CacheKeepAliveTimeout = _options.cacheOptions.CacheKeepAliveTimeOut;
             }
 
             return rtv;
         }
-        private BPlusTree<BlockKey<C>, BlockValue>.OptionsV2 Get2ROptions(Di3Options<C> options)
+        private BPlusTree<C, IB>.OptionsV2 GetIdxOptions()
+        {
+            _lambdaItemSerializer = new LambdaItemSerializer();
+            _lambdaArraySerializer = new LambdaArraySerializer(_lambdaItemSerializer);
+            _iBookmarkSerializer = new IBookmarkSerializer(_lambdaArraySerializer);
+            var rtv = new BPlusTree<C, IB>.OptionsV2(_options.CSerializer, _iBookmarkSerializer, _options.Comparer);
+            rtv.ReadOnly = _options.OpenReadOnly;
+
+            if (_options.MaximumChildNodes >= 4 &&
+                _options.MinimumChildNodes >= 2 &&
+                _options.MaximumValueNodes >= 4 &&
+                _options.MinimumValueNodes >= 2)
+            {
+                rtv.MaximumChildNodes = _options.MaximumChildNodes;
+                rtv.MinimumChildNodes = _options.MinimumChildNodes;
+                rtv.MaximumValueNodes = _options.MaximumValueNodes;
+                rtv.MinimumValueNodes = _options.MinimumValueNodes;
+            }
+
+            if (_options.AverageKeySize != 0 && _options.AverageValueSize != 0)
+                rtv.CalcBTreeOrder(_options.AverageKeySize, _options.AverageValueSize);
+
+            if (_options.FileBlockSize != 0)
+                rtv.FileBlockSize = _options.FileBlockSize;
+
+            rtv.CachePolicy = _options.cacheOptions.CachePolicy;
+            if (_options.CreatePolicy != CreatePolicy.Never)
+                rtv.FileName = _options.FileName + ".idx";
+
+            rtv.CreateFile = _options.CreatePolicy;
+            rtv.ExistingLogAction = _options.ExistingLogAction;
+            rtv.StoragePerformance = _options.StoragePerformance;
+
+            rtv.CallLevelLock = new ReaderWriterLocking();
+            if (_options.LockTimeout > 0) rtv.LockTimeout = _options.LockTimeout;
+
+            switch (_options.Locking)
+            {
+                case LockMode.WriterOnlyLocking:
+                    rtv.LockingFactory = new LockFactory<WriterOnlyLocking>();
+                    break;
+
+                case LockMode.ReaderWriterLocking:
+                    rtv.LockingFactory = new LockFactory<ReaderWriterLocking>();
+                    break;
+
+                case LockMode.SimpleReadWriteLocking:
+                    rtv.LockingFactory = new LockFactory<SimpleReadWriteLocking>();
+                    break;
+
+                case LockMode.IgnoreLocking:
+                    rtv.LockingFactory = new IgnoreLockFactory();
+                    break;
+            }
+
+            if (_options.cacheOptions.CacheMaximumHistory != 0 && _options.cacheOptions.CacheKeepAliveTimeOut != 0)
+            {
+                rtv.CacheKeepAliveMaximumHistory = _options.cacheOptions.CacheMaximumHistory;
+                rtv.CacheKeepAliveMinimumHistory = _options.cacheOptions.CacheMinimumHistory;
+                rtv.CacheKeepAliveTimeout = _options.cacheOptions.CacheKeepAliveTimeOut;
+            }
+
+            return rtv;
+        }
+        private BPlusTree<BlockKey<C>, BlockValue>.OptionsV2 Get2ROptions()
         {
             /// TODO
             /// Try to optimize these settings as much as possible.
             
-            _blockKeySerializer = new BlockKeySerializer<C>(options.CSerializer);
+            _blockKeySerializer = new BlockKeySerializer<C>(_options.CSerializer);
             _blockValueSerializer = new BlockValueSerializer();
 
             var rtv = new BPlusTree<BlockKey<C>, BlockValue>.OptionsV2(_blockKeySerializer, _blockValueSerializer, new BlockKeyComparer<C>());
-            rtv.ReadOnly = options.OpenReadOnly;
+            rtv.ReadOnly = _options.OpenReadOnly;
 
             rtv.MinimumChildNodes = 2;
             rtv.MaximumChildNodes = 256;
@@ -241,18 +320,18 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
             rtv.StoragePerformance = StoragePerformance.Fastest;
 
-            rtv.CachePolicy = options.cacheOptions.CachePolicy;
-            if (options.CreatePolicy != CreatePolicy.Never)
-                rtv.FileName = options.FileName + ".idx2R";
+            rtv.CachePolicy = _options.cacheOptions.CachePolicy;
+            if (_options.CreatePolicy != CreatePolicy.Never)
+                rtv.FileName = _options.FileName + ".idx2R";
 
-            rtv.CreateFile = options.CreatePolicy;
-            rtv.ExistingLogAction = options.ExistingLogAction;
-            rtv.StoragePerformance = options.StoragePerformance;
+            rtv.CreateFile = _options.CreatePolicy;
+            rtv.ExistingLogAction = _options.ExistingLogAction;
+            rtv.StoragePerformance = _options.StoragePerformance;
 
             rtv.CallLevelLock = new ReaderWriterLocking();
-            if (options.LockTimeout > 0) rtv.LockTimeout = options.LockTimeout;
+            if (_options.LockTimeout > 0) rtv.LockTimeout = _options.LockTimeout;
 
-            switch (options.Locking)
+            switch (_options.Locking)
             {
                 case LockMode.WriterOnlyLocking:
                     rtv.LockingFactory = new LockFactory<WriterOnlyLocking>();
@@ -271,40 +350,38 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     break;
             }
 
-            if (options.cacheOptions.CacheMaximumHistory != 0 && options.cacheOptions.CacheKeepAliveTimeOut != 0)
+            if (_options.cacheOptions.CacheMaximumHistory != 0 && _options.cacheOptions.CacheKeepAliveTimeOut != 0)
             {
-                rtv.CacheKeepAliveMaximumHistory = options.cacheOptions.CacheMaximumHistory;
-                rtv.CacheKeepAliveMinimumHistory = options.cacheOptions.CacheMinimumHistory;
-                rtv.CacheKeepAliveTimeout = options.cacheOptions.CacheKeepAliveTimeOut;
+                rtv.CacheKeepAliveMaximumHistory = _options.cacheOptions.CacheMaximumHistory;
+                rtv.CacheKeepAliveMinimumHistory = _options.cacheOptions.CacheMinimumHistory;
+                rtv.CacheKeepAliveTimeout = _options.cacheOptions.CacheKeepAliveTimeOut;
             }
 
             return rtv;
         }
-        private BPlusTree<string, int>.OptionsV2 GetinfoOptions(Di3Options<C> options)
+        private BPlusTree<string, int>.OptionsV2 GetinfoOptions()
         {
             var rtv = new BPlusTree<string, int>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.Int32, new Comparers.StringComparer());
             rtv.FileBlockSize = 1024;
             rtv.CachePolicy = CachePolicy.All;
             rtv.StoragePerformance = StoragePerformance.Fastest;
-            rtv.FileName = options.FileName + ".info";
+            rtv.FileName = _options.FileName + ".info";
             rtv.CreateFile = CreatePolicy.IfNeeded;
             return rtv;
         }
 
 
 
-        public void Add(I interval)
-        {   
-            INDEX.Index(interval);
-        }
-        public void Add(List<I> intervals, IndexingMode mode)
+        public IndexingET Add(List<I> intervals, IndexingMode mode)
         {
-            Add(intervals, mode, Environment.ProcessorCount);
+            return Add(intervals, mode, Environment.ProcessorCount);
         }
-        public void Add(List<I> intervals, IndexingMode mode, int threads)
+        public IndexingET Add(List<I> intervals, IndexingMode mode, int threads)
         {
             int start = 0, stop = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             var addedBookmarks = new ConcurrentDictionary<int, int>();
+            var indexingET = new IndexingET();
+            var startTime = DateTime.Now;
             using (WorkQueue work = new WorkQueue(threads))
             {
                 for (int i = 0; i < threads; i++)
@@ -312,7 +389,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     start = i * range;
                     stop = (i + 1) * range;
                     if (stop > intervals.Count) stop = intervals.Count;
-                    work.Enqueue(new SingleIndex<C, I, M>(_di3_1R, intervals, start, stop, mode, addedBookmarks).Index);
+                    work.Enqueue(new SingleIndex<C, I, M>(_di3_iidx, intervals, start, stop, mode, addedBookmarks).Index);
                 }
 
                 work.Complete(true, -1);
@@ -321,11 +398,49 @@ namespace Polimi.DEIB.VahidJalili.DI3
             int counted = 0;
             foreach (var item in addedBookmarks)
                 counted += item.Value;
-            _indexesCardinality.AddOrUpdate(cKey_1R, counted);
+            _indexesCardinality.AddOrUpdate(cKey_iiIndex, counted);
+            indexingET.IncrementalIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
+            
+            if(_options.ActiveIndexes == IndexType.Both)
+            {
+                startTime = DateTime.Now;
+                addedBookmarks.Clear();
+                using (WorkQueue work = new WorkQueue(threads))
+                {
+                    for (int i = 0; i < threads; i++)
+                    {
+                        start = i * range;
+                        stop = (i + 1) * range;
+                        if (stop > intervals.Count) stop = intervals.Count;
+                        work.Enqueue(new IIndex<C, I, M>(_di3_idx, intervals, start, stop, mode, addedBookmarks).Index);
+                    }
+
+                    work.Complete(true, -1);
+                }
+
+                counted = 0;
+                foreach (var item in addedBookmarks)
+                    counted += item.Value;
+                _indexesCardinality.AddOrUpdate(cKey_iIndex, counted);
+                indexingET.InvertedIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
+            }
+
+            return indexingET;
         }
-        public void SecondPass()
+        public IndexingET SecondPass()
         {
+            var indexingET = new IndexingET();
+            var startTime = DateTime.Now;
             INDEX.SecondPass();
+            indexingET.IncrementalIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
+
+            if (_options.ActiveIndexes == IndexType.Both)
+            {
+                startTime = DateTime.Now;
+                IIdx.SecondPass();
+                indexingET.InvertedIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
+            }
+            return indexingET;
         }
 
 
@@ -344,7 +459,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
                         new SingleIndex2R<C, I, M>(
-                            _di3_1R,
+                            _di3_iidx,
                             _di3_2R,
                             partitions[i].left,
                             partitions[i].right,
@@ -366,7 +481,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public void Cover<O>(IOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
         {
-            Object lockOnMe = new Object();
+            if (_indexesCardinality.GetValue(cKey_2R) == 0)
+                throw new InvalidOperationException("The second-resolution index is required, which is not populated yet.");
+            
+            object lockOnMe = new object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
@@ -374,7 +492,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     work.Enqueue(
                         new CoverSummit<C, I, M, O>(
                             lockOnMe,
-                            _di3_1R,
+                            _di3_iidx,
                             _di3_2R,
                             outputStrategy,
                             partitions[i].left,
@@ -391,7 +509,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public void Summit<O>(IOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation, int nThreads)
         {
-            Object lockOnMe = new Object();
+            if (_indexesCardinality.GetValue(cKey_2R) == 0)
+                throw new InvalidOperationException("The second-resolution index is required, which is not populated yet.");
+
+            object lockOnMe = new object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
@@ -399,7 +520,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     work.Enqueue(
                         new CoverSummit<C, I, M, O>(
                             lockOnMe,
-                            _di3_1R,
+                            _di3_iidx,
                             _di3_2R,
                             outputStrategy,
                             partitions[i].left,
@@ -425,21 +546,40 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public void Map<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads, C UDF, C DDF)
         {
-            Object lockOnMe = new Object();
+            object lockOnMe = new object();
             int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
-            
-            using (WorkQueue work = new WorkQueue(nThreads))
-            {
-                for (int i = 0; i < nThreads; i++)
-                {
-                    start = i * range;
-                    stop = (i + 1) * range;
-                    if (stop > references.Count) stop = references.Count;
-                    if (start < stop) work.Enqueue(new Map<C, I, M, O>(lockOnMe, _di3_1R, outputStrategy, references, start, stop, UDF, DDF).Run);
-                    else break;
-                }
 
-                work.Complete(true, -1);
+            if (_options.ActiveIndexes == IndexType.OnlyIncremental)
+            {/// leverages on incremental inverted index
+                using (WorkQueue work = new WorkQueue(nThreads))
+                {
+                    for (int i = 0; i < nThreads; i++)
+                    {
+                        start = i * range;
+                        stop = (i + 1) * range;
+                        if (stop > references.Count) stop = references.Count;
+                        if (start < stop) work.Enqueue(new Map<C, I, M, O>(lockOnMe, _di3_iidx, outputStrategy, references, start, stop, UDF, DDF).Run);
+                        else break;
+                    }
+
+                    work.Complete(true, -1);
+                }
+            }
+            else
+            {/// leverages on inverted index
+                using (WorkQueue work = new WorkQueue(nThreads))
+                {
+                    for (int i = 0; i < nThreads; i++)
+                    {
+                        start = i * range;
+                        stop = (i + 1) * range;
+                        if (stop > references.Count) stop = references.Count;
+                        if (start < stop) work.Enqueue(new IIMap<C, I, M, O>(lockOnMe: lockOnMe, di3_1R: _di3_idx, outputStrategy: outputStrategy, intervals: references, start: start, stop: stop).Map);
+                        else break;
+                    }
+
+                    work.Complete(true, -1);
+                }
             }
         }
 
@@ -449,14 +589,14 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public List<AccEntry<C>> AccumulationHistogram(int nThreads)
         {
-            Object lockOnMe = new Object();
+            object lockOnMe = new object();
             var results = new List<AccEntry<C>>();
 
             var partitions = Fragment_1R(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new AccumulationStats<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccHistogram);
+                    work.Enqueue(new AccumulationStats<C, I, M>(_di3_iidx, partitions[i].left, partitions[i].right, results, lockOnMe).AccHistogram);
                 work.Complete(true, -1);
             }
 
@@ -481,7 +621,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new AccumulationStats<C, I, M>(_di3_1R, partitions[i].left, partitions[i].right, results, lockOnMe).AccDistribution);
+                    work.Enqueue(new AccumulationStats<C, I, M>(_di3_iidx, partitions[i].left, partitions[i].right, results, lockOnMe).AccDistribution);
                 work.Complete(true, -1);
             }
 
@@ -501,6 +641,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public ICollection<BlockKey<C>> Merge(int nThreads)
         {
+            if (_indexesCardinality.GetValue(cKey_2R) == 0)
+                throw new InvalidOperationException("The second-resolution index is required, which is not populated yet.");
+
             /*Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             var blocks = new SortedDictionary<BlockKey<C>, int>();
@@ -528,6 +671,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         public ICollection<BlockKey<C>> Complement(int nThreads)
         {
+            if (_indexesCardinality.GetValue(cKey_2R) == 0)
+                throw new InvalidOperationException("The second-resolution index is required, which is not populated yet.");
+
             Object lockOnMe = new Object();
             PartitionBlock<C>[] partitions = Fragment_2R(nThreads);
             var blocks = new SortedDictionary<BlockKey<C>, int>();
@@ -557,7 +703,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         public ICollection<BlockKey<C>> Dichotomies()
         {
-            ICollection<C> keys = _di3_1R.Keys;
+            if (_indexesCardinality.GetValue(cKey_2R) == 0)
+                throw new InvalidOperationException("The second-resolution index is required, which is not populated yet.");
+
+            ICollection<C> keys = _di3_iidx.Keys;
             var results = new SortedDictionary<BlockKey<C>, bool>();
             int keysCount = bookmarkCount;
 
@@ -573,24 +722,24 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         private Partition<C>[] Fragment_1R(int fCount)
         {
-            int range = Convert.ToInt32(Math.Floor((double)_indexesCardinality.GetValue(cKey_1R) / (double)fCount));
+            int range = Convert.ToInt32(Math.Floor((double)_indexesCardinality.GetValue(cKey_iiIndex) / (double)fCount));
 
             /// Initialization
             Partition<C>[] partitions = new Partition<C>[fCount];
             for (int i = 0; i < fCount; i++)
             {
-                partitions[i].left = _di3_1R.ElementAtOrDefault((i * range) + 1).Key;
-                partitions[i].right = _di3_1R.ElementAtOrDefault((i + 1) * range).Key;
+                partitions[i].left = _di3_iidx.ElementAtOrDefault((i * range) + 1).Key;
+                partitions[i].right = _di3_iidx.ElementAtOrDefault((i + 1) * range).Key;
             }
-            partitions[0].left = _di3_1R.First().Key;
-            partitions[fCount - 1].right = _di3_1R.Last().Key;
+            partitions[0].left = _di3_iidx.First().Key;
+            partitions[fCount - 1].right = _di3_iidx.Last().Key;
 
             /// Refinement
             bool incrementRight = true;
             fCount--;
             for (int i = 0; i < fCount; i++)
             {
-                foreach (var bookmark in _di3_1R.EnumerateFrom(partitions[i].right))
+                foreach (var bookmark in _di3_iidx.EnumerateFrom(partitions[i].right))
                 {
                     if (incrementRight)
                     {
@@ -645,12 +794,18 @@ namespace Polimi.DEIB.VahidJalili.DI3
             if (disposing)
             {
                 // Free managed objects here. 
-                _di3_1R.Commit();
-                _di3_1R.Dispose();
+                _di3_iidx.Commit();
+                _di3_iidx.Dispose();                
                 _di3_2R.Commit();
                 _di3_2R.Dispose();
                 _di3_info.Commit();
                 _di3_info.Dispose();
+
+                if (_options.ActiveIndexes == IndexType.Both)
+                {
+                    _di3_idx.Commit();
+                    _di3_idx.Dispose();
+                }
             }
 
             // Free unmanaged objects here. 
@@ -659,9 +814,12 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
         public void Commit()
         {
-            _di3_1R.Commit();
+            _di3_iidx.Commit();            
             _di3_2R.Commit();
             _di3_info.Commit();
+
+            if (_options.ActiveIndexes == IndexType.Both)
+                _di3_idx.Commit();
         }
     }
 }

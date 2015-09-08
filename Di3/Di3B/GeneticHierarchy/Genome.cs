@@ -17,7 +17,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         where I : IInterval<C, M>, IFormattable, new()
         where M : IMetaData, IFormattable, new()
     {
-        public Genome(string workingDirectory, string sectionTitle, Memory memory, HDDPerformance hddPerformance, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Genome(string workingDirectory, string sectionTitle, Memory memory, HDDPerformance hddPerformance, IndexType indexType, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             _memory = memory;
             _hddPerformance = hddPerformance;
@@ -25,6 +25,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             _CComparer = CComparer;
             _sectionTitle = sectionTitle;
             _cacheOptions = cacheOptions;
+            _indexType = indexType;
 
             _config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             _settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
@@ -59,16 +60,20 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         private IComparer<C> _CComparer { set; get; }
         private Memory _memory { set; get; }
         private HDDPerformance _hddPerformance { set; get; }
+        private IndexType _indexType { set; get; }
         private CacheOptions _cacheOptions { set; get; }
         private ChrSection _chrSection { set; get; }
         private Configuration _config { set; get; }
         internal Dictionary<string, Dictionary<char, Di3<C, I, M>>> chrs { set; get; }
 
 
-        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand, IndexingMode indexinMode, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        internal ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, char strand, IndexingMode indexinMode, MaxDegreeOfParallelism maxDegreeOfParallelism, out IndexingET indexingET)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
+
+            indexingET = new IndexingET();
+            var indexingETs = new ConcurrentBag<IndexingET>();
 
             switch (_memory)
             {
@@ -78,8 +83,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 
                     switch (_hddPerformance)
                     {
-                        /// this case is problematic, because other operations 
-                        /// are not implemented as they can work this way.
+                        // TODO:
+                        // This case is not complete, because other operations 
+                        // are not supporting this method.
                         case HDDPerformance.LeastMemory:
                             stpWtch.Start();
                             foreach (var chr in peaks)
@@ -93,7 +99,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                             break;
 
                         case HDDPerformance.Fastest:
-                            /// Initialize inside a sequential foreach loop.
+                            /// Initialize by a sequential foreach loop.
                             foreach(var chr in peaks)
                                 foreach(var strandEntry in chr.Value)
                                 {
@@ -109,12 +115,19 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                                 {
                                     foreach (var strandEntry in chr.Value)
                                     {   
-                                        chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree);
+                                        indexingETs.Add(chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree));
                                         chrs[chr.Key][strand].Commit();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
                                 });
                             stpWtch.Stop();
+
+                            
+                            foreach (var et in indexingETs)
+                            {
+                                indexingET.IncrementalIndex += et.IncrementalIndex;
+                                indexingET.InvertedIndex += et.InvertedIndex;
+                            }
                             break;
                     }
 
@@ -143,10 +156,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
 
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
-        internal ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism)
+        internal ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism, out IndexingET indexingET)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
+
+            indexingET = new IndexingET();
+            var indexingETs = new ConcurrentBag<IndexingET>();
+
             stpWtch.Start();
             Parallel.ForEach(chrs, //var chr in chrs
                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
@@ -155,12 +172,32 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                    foreach (var sDi3 in chr.Value)
                    {   
                        totalIntervals += sDi3.Value.bookmarkCount;
-                       sDi3.Value.SecondPass();
+                       indexingETs.Add(sDi3.Value.SecondPass());
                        sDi3.Value.Commit();
                    }
                });
             stpWtch.Stop();
+
+            foreach (var et in indexingETs)
+            {
+                indexingET.IncrementalIndex += et.IncrementalIndex;
+                indexingET.InvertedIndex += et.InvertedIndex;
+            }
+
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
+        }
+
+        internal void CommitIndexedDataTest(char strand, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        {
+            Parallel.ForEach(chrs,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                chr =>
+                {
+                    foreach (var strandEntry in chr.Value)
+                    {
+                        chrs[chr.Key][strand].Commit();
+                    }
+                });
         }
 
         internal ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
@@ -453,6 +490,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                         Comparer: _CComparer);
                     break;
             }
+
+            options.ActiveIndexes = _indexType;
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;

@@ -9,7 +9,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal RangeIndex(BPlusTree<C,B> di3)
+        internal RangeIndex(BPlusTree<C,IIB> di3)
         {
 
         }
@@ -20,6 +20,6 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private BPlusTree<C, B> _di3 { set; get; }
+        private BPlusTree<C, IIB> _di3 { set; get; }
     }
 }

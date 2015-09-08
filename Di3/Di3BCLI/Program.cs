@@ -9,13 +9,25 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         static void Main(string[] args)
         {
             Console.Title = "Di3B: Dynamic intervals inverted index for Bioinformatics";
-            KeyValueConfigurationCollection settings = ReadAndSetConfiguration();
+            KeyValueConfigurationCollection settings = null;
+            try
+            {
+                settings = ReadAndSetConfiguration();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("");
+                Console.WriteLine("Error !! Invalid URI.");
+            }
             if (settings == null) return; // Exit application.
 
-            Console.WriteLine("");
             Console.Write("Initializing ...");
             Herald.Initialize(Herald.Destination.Both, settings["LogFile"].Value);
-            Orchestrator orchestrator = new Orchestrator(settings["WorkingDirectory"].Value, Path.GetExtension(settings["LogFile"].Value));
+            var indexType = new IndexType();
+            if (settings["IndexType"].Value == "y")
+                indexType = IndexType.Both;
+            else indexType = IndexType.OnlyIncremental;
+            Orchestrator orchestrator = new Orchestrator(settings["WorkingDirectory"].Value, Path.GetExtension(settings["LogFile"].Value), indexType, Convert.ToInt32(settings["MinBInCache"].Value), Convert.ToInt32(settings["MaxBInCache"].Value));
             Console.Write(" Done!");
 
             Console.WriteLine("");
@@ -28,12 +40,20 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             Console.WriteLine("");
             Console.WriteLine(".::.   Working Directory : {0}", settings["WorkingDirectory"].Value);
 
-            do
+            try
             {
-                Herald.Announce(Herald.MessageType.None, "");
-                Console.Write("> ");
+                do
+                {
+                    Herald.Announce(Herald.MessageType.None, "");
+                    Console.Write("> ");
+                }
+                while (!orchestrator.CommandParse(Console.ReadLine()));
             }
-            while (!orchestrator.CommandParse(Console.ReadLine()));
+            catch(Exception e)
+            {
+                Herald.Announce(Herald.MessageType.Error, e.InnerException.Message);
+                Herald.Announce(Herald.MessageType.None, "Please restart the application having resolved the error(s).");
+            }
 
             Herald.Dispose();
         }
@@ -44,7 +64,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             var confingFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var settings = confingFile.AppSettings.Settings;
 
-            /// This function needs an update. 
+            /// This function needs an update .  
             /// If an invalid configuration or Log file is given by the configuration file, 
             /// then the user must manually correct it. It should be updated to allow user
             /// to change the working directory or log file within the program if an invalid
@@ -98,7 +118,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 settings.Add("WorkingDirectory", wd);
             
             Console.WriteLine("Working directory is successfully set to : {0}", wd);
-            Console.WriteLine(" ");
+            Console.WriteLine("");
 
             #endregion
 
@@ -146,8 +166,101 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 settings.Add("LogFile", logFilePath + Path.DirectorySeparatorChar + logFile);
 
             Console.WriteLine("Log file is successfully set to : {0}", logFilePath + Path.DirectorySeparatorChar + logFile);
+            Console.WriteLine("");
 
             #endregion
+
+            #region .::.     Set Index Type File       .::.
+            if (settings["IndexType"] == null)
+            {
+                Console.Write("Do you want to enable inverted index ? [y/n] ");
+                char key = Console.ReadKey().KeyChar;
+                while (key != 'y' && key != 'n')
+                {
+                    Console.WriteLine("\nError: Incorrect argument!");
+                    Console.Write("Please press \"y\" to Enable the inverted index, or \"n\" to Disable [y/n]: ");
+                    key = Console.ReadKey().KeyChar;
+                }
+
+                Console.WriteLine("");
+                settings.Add("IndexType", key.ToString());
+
+                if (key == 'y')
+                    Console.WriteLine("Inverted index is successfully enabled !");
+                else
+                    Console.WriteLine("Inverted index is successfully disabled !");
+            }
+            else
+            {
+                Console.WriteLine("Configuration defines a valid inverted index selection.");
+                switch (settings["IndexType"].Value)
+                {
+                    case "y":
+                        Console.WriteLine("Inverted index is Enabled !");
+                        break;
+
+                    case "n":
+                        Console.WriteLine("Inverted index is Disabled !");
+                        break;
+                }
+            }
+
+            Console.WriteLine("");
+
+            #endregion
+
+            #region .::.   Set Minimum cache size      .::.
+            if (settings["MinBInCache"] == null)
+            {
+                updateConfiguration = true;
+                Console.Write("Please specify the minimum history size (#bookmarks) per each index instance : ");
+                int minHistorySize;
+
+                while (!int.TryParse(Console.ReadLine(), out minHistorySize))
+                {
+                    Console.WriteLine("\nError: Incorrect number!");
+                    Console.Write("Please specify the minimum history size (#bookmarks) per each index instance : ");
+                }
+
+                settings.Add("MinBInCache", minHistorySize.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Configuration defines a valid minimum history size.");
+            }
+
+
+            Console.WriteLine(string.Format("Minimum history size is successfully set to <{0:N0}> per each index instance.", settings["MinBInCache"].Value));
+            Console.WriteLine("");
+
+            #endregion
+
+            #region .::.   Set Maximum cache size      .::.
+            if (settings["MaxBInCache"] == null)
+            {
+                updateConfiguration = true;
+                Console.Write("Please specify the maximum history size (#bookmarks) per each index instance : ");
+                int maxHistorySize;
+
+                while (!int.TryParse(Console.ReadLine(), out maxHistorySize))
+                {
+                    Console.WriteLine("\nError: Incorrect number!");
+                    Console.Write("Please specify the maximum history size (#bookmarks) per each index instance : ");
+                }
+
+                settings.Add("MaxBInCache", maxHistorySize.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Configuration defines a valid maximum history size.");
+            }
+
+
+            Console.WriteLine(string.Format("Maximum history size is successfully set to <{0:N0}> per each index instance.", settings["MaxBInCache"].Value));
+            Console.WriteLine("");
+
+            #endregion
+
 
             if (updateConfiguration)
                 confingFile.Save();

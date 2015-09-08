@@ -13,7 +13,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal SingleIndex2R(BPlusTree<C, B> di31R, BPlusTree<BlockKey<C>, BlockValue> di32R, C left, C right, ConcurrentDictionary<C, int> addedBlocks)
+        internal SingleIndex2R(BPlusTree<C, IIB> di31R, BPlusTree<BlockKey<C>, BlockValue> di32R, C left, C right, ConcurrentDictionary<C, int> addedBlocks)
         {
             _di31R = di31R;
             _di32R = di32R;
@@ -23,7 +23,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _bCounter = new BlockCounter();
         }
 
-        private BPlusTree<C, B> _di31R { set; get; }
+        private BPlusTree<C, IIB> _di31R { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di32R { set; get; }
         private C _left { set; get; }
         private C _right { set; get; }

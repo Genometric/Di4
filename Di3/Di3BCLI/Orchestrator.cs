@@ -15,7 +15,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 {
     public class Orchestrator
     {
-        public Orchestrator(string workingDirectory, string logFileExtension)
+        public Orchestrator(string workingDirectory, string logFileExtension, IndexType indexType, int minHistorySize, int maxHistorySize)
         {
             _maxDegreeOfParallelism = new MaxDegreeOfParallelism(Environment.ProcessorCount / 2, 2);
             _workingDirectory = workingDirectory;
@@ -28,12 +28,12 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             _parserSTW = new Stopwatch();
 
             _cacheOptions = new CacheOptions(
-                CacheMaximumHistory: 163840,//81920,
-                CacheMinimumHistory: 20240,
+                CacheMaximumHistory: maxHistorySize, //163840,//81920,
+                CacheMinimumHistory: minHistorySize,//20240,
                 CacheKeepAliveTimeOut: 600000,
                 CachePolicy: CSharpTest.Net.Collections.CachePolicy.Recent);
 
-            di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, _cacheOptions, PrimitiveSerializer.Int32, int32Comparer);
+            di3B = new Di3B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, Memory.HDD, HDDPerformance.Fastest, indexType, _cacheOptions, PrimitiveSerializer.Int32, int32Comparer);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         private CacheOptions _cacheOptions { set; get; }
         Di3B<int, Peak, PeakData> di3B { set; get; }
         Int32Comparer int32Comparer { set; get; }
-        Dictionary<int, UInt32> samplesHashtable { set; get; }
+        Dictionary<int, uint> samplesHashtable { set; get; }
 
         internal bool CommandParse(string command)
         {
@@ -81,8 +81,8 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                         return false;
                     }
                     _stopWatch.Stop();
-                    Herald.Announce(Herald.MessageType.Info, String.Format("Total number of indexed intervals: {0:N0} ", _tN2i));
-                    Herald.Announce(Herald.MessageType.Info, String.Format("       Average indexing speed was: {0}", Math.Round(_tN2i / _stopWatch.Elapsed.TotalSeconds, 2) + "  #i\\sec"));
+                    Herald.Announce(Herald.MessageType.Info, string.Format("Total number of indexed intervals: {0:N0} ", _tN2i));
+                    Herald.Announce(Herald.MessageType.Info, string.Format("       Average indexing speed was: {0}", Math.Round(_tN2i / _stopWatch.Elapsed.TotalSeconds, 2) + "  #i\\sec"));
                     break;
 
                 case "cover":
@@ -218,17 +218,19 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         }
 
 
-
+        IndexingET indexingET { set; get; }
         private bool Index(string[] args)
         {
             if (args.Length != 2)
             {
-                Herald.Announce(Herald.MessageType.Error, String.Format("Missing arguments."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Missing arguments."));
                 return false;
             }
 
             if (!Load(args[1])) return false;
-            var report = di3B.Add(Repository.parsedSample.intervals, _indexingMode, _maxDegreeOfParallelism);
+            var indexingET = new IndexingET();
+            var report = di3B.Add(Repository.parsedSample.intervals, _indexingMode, _maxDegreeOfParallelism, out indexingET);
+            this.indexingET = indexingET;
             Herald.AnnounceExeReport("Indexed", report);
             _tN2i += report.count;
             return true;
@@ -249,7 +251,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             }
             else
             {
-                Herald.Announce(Herald.MessageType.Error, String.Format("Invalid arguments."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
 
@@ -267,31 +269,57 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
 
             if (determinedFiles.Length == 0)
             {
-                Herald.Announce(Herald.MessageType.Warrning, String.Format("No file with \"{0}\" extension found!", extension));
+                Herald.Announce(Herald.MessageType.Warrning, string.Format("No file with \"{0}\" extension found!", extension));
                 return false;
             }
 
             int i = 0;
+            var totalIndexingET = new IndexingET();
             foreach (FileInfo fileInfo in determinedFiles)
             {
                 Herald.Announce(
                     Herald.MessageType.Info,
-                    String.Format(
+                    string.Format(
                     /*-*/ "[{0}\\{1}] {2}",
                     /*0*/ ++i,
                     /*1*/ determinedFiles.Length,
                     /*2*/ Path.GetFileNameWithoutExtension(fileInfo.FullName)));
 
-                Index(new string[] { null, fileInfo.FullName });
+                if (!Index(new string[] { null, fileInfo.FullName })) return false;
+                totalIndexingET.IncrementalIndex += indexingET.IncrementalIndex;
+                totalIndexingET.InvertedIndex += indexingET.InvertedIndex;
             }
+
+            Herald.Announce(Herald.MessageType.Info, string.Format("Total Load Time: {0}", totalLoadTime));
+            Herald.Announce(Herald.MessageType.Info, string.Format("Total Inverted Index Time: {0}", totalIndexingET.InvertedIndex));
+            Herald.Announce(Herald.MessageType.Info, string.Format("Total Incremental Inverted Index Time: {0}", totalIndexingET.IncrementalIndex));
+
+            /*
+            Stopwatch testStopWatch = new Stopwatch();
+            testStopWatch.Start();
+            di3B.CommitTestFunction(_maxDegreeOfParallelism);
+            testStopWatch.Stop();
+            Herald.Announce(Herald.MessageType.Info, string.Format("Commit Time {0}", testStopWatch.Elapsed.TotalSeconds.ToString()));*/
 
             return true;
         }
         private bool Index_2ndpass()
         {
-            Herald.AnnounceExeReport("2nd-pass", di3B.Add2ndPass(_maxDegreeOfParallelism));
+            var totalIndexingET = new IndexingET();
+            Herald.AnnounceExeReport("2nd-pass", di3B.Add2ndPass(_maxDegreeOfParallelism, out totalIndexingET));
+
+            Herald.Announce(Herald.MessageType.Info, string.Format("Total Inverted Index Time: {0}", totalIndexingET.InvertedIndex));
+            Herald.Announce(Herald.MessageType.Info, string.Format("Total Incremental Inverted Index Time: {0}", totalIndexingET.IncrementalIndex));
+
             return false;
         }
+
+        /// <summary>
+        /// This is used only for the test purpose.
+        /// you may delete it after completing all tests for the 
+        /// manuscript.
+        /// </summary>
+        double totalLoadTime = 0;
         private bool Load(string fileName)
         {
             if (!ValidateFileName(fileName, out fileName)) return false;
@@ -304,10 +332,10 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 readOnlyValidChrs: true,
                 startOffset: 0,
                 chrColumn: 0,
-                leftEndColumn: 1,//3,
-                rightEndColumn: 2,//4,
-                summitColumn: 3,//-1,
-                nameColumn: 4,//8,
+                leftEndColumn: 3,
+                rightEndColumn: 4,
+                summitColumn: -1,
+                nameColumn: 8,
                 valueColumn: 5,
                 strandColumn: -1,
                 defaultValue: 0.01,
@@ -319,13 +347,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             {
                 if (Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar == _workingDirectory &&
                     Path.GetExtension(fileName) == _logFileExtension)
-                    Herald.Announce(Herald.MessageType.Error, String.Format("The requested extension should not have same extension as the log file."));
+                    Herald.Announce(Herald.MessageType.Error, string.Format("The requested extension should not have same extension as the log file."));
                 else
-                    Herald.Announce(Herald.MessageType.Error, String.Format("{0}", e.Message));
+                    Herald.Announce(Herald.MessageType.Error, string.Format("{0}", e.Message));
                 return false;
             }
             _parserSTW.Stop();
 
+            totalLoadTime += _parserSTW.Elapsed.TotalSeconds;
             Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedSample.intervalsCount, _parserSTW.Elapsed));
 
             return true;
@@ -491,7 +520,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         {
             Herald.Announce(
                 Herald.MessageType.Info,
-                String.Format( "Maximum degree of parallelism: \nChr level = {0} threads \nDi3 level = {1} threads",
+                string.Format( "Maximum degree of parallelism: \nChr level = {0} threads \nDi3 level = {1} threads",
                 _maxDegreeOfParallelism.chrDegree,
                 _maxDegreeOfParallelism.di3Degree));
             return false;

@@ -10,12 +10,20 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal CoverSummit(Object lockOnMe, BPlusTree<C, B> di3_1R, BPlusTree<BlockKey<C>, BlockValue> di3_2R, IOutput<C, I, M, O> outputStrategy, BlockKey<C> left, BlockKey<C> right, int minAcc, int maxAcc)
+        internal CoverSummit(
+            object lockOnMe,
+            BPlusTree<C, IIB> di3_1R,
+            BPlusTree<BlockKey<C>, BlockValue> di3_2R,
+            IOutput<C, I, M, O> outputStrategy,
+            BlockKey<C> left,
+            BlockKey<C> right,
+            int minAcc,
+            int maxAcc)
         {
             _lockOnMe = lockOnMe;
             _di3_1R = di3_1R;
             _di3_2R = di3_2R;
-            _determinedLambdas = new Dictionary<uint, bool>();
+            _determinedLambdas = new Dictionary<uint, Phi>();
             _left = left;
             _right = right;
             _minAcc = minAcc;
@@ -25,7 +33,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             _leftEndsToBeIgnored = new Dictionary<uint, bool>();
         }
 
-        private BPlusTree<C, B> _di3_1R { set; get; }
+        private BPlusTree<C, IIB> _di3_1R { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
         private BlockKey<C> _left { set; get; }
         private BlockKey<C> _right { set; get; }
@@ -35,12 +43,18 @@ namespace Polimi.DEIB.VahidJalili.DI3
         private bool _startOfIteration { set; get; }
         private bool _excludeRightEndFromFinalization { set; get; }
         private IOutput<C, I, M, O> _outputStrategy { set; get; }
-        private Dictionary<UInt32, bool> _determinedLambdas { set; get; }
-        private Object _lockOnMe { set; get; }
+        private Dictionary<uint, Phi> _determinedLambdas { set; get; }
+        private object _lockOnMe { set; get; }
         private bool _reserveRightEnds { set; get; }
-        private Dictionary<UInt32, bool> _reservedRightEnds { set; get; }
-        private Dictionary<UInt32, bool> _leftEndsToBeIgnored { set; get; }
-        
+        private Dictionary<uint, bool> _reservedRightEnds { set; get; }
+        private Dictionary<uint, bool> _leftEndsToBeIgnored { set; get; }
+
+        private C _markedKey { set; get; }
+        private int _markedAcc { set; get; }
+        private int _accumulation { set; get; }
+        private int _currentAcc { set; get; }
+        private int _previousAcc { set; get; }
+
 
         internal void Cover()
         {
@@ -50,35 +64,35 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         private void _Cover(C left, C right)
         {
-            C markedKey = default(C);
-            int markedAcc = -1;
-            int accumulation = 0;
+            _markedKey = default(C);
+            _markedAcc = -1;
+            _accumulation = 0;
             _startOfIteration = true;
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
+                _accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 UpdateLambdas(bookmark.Value);
 
-                if (markedAcc == -1 &&
-                    accumulation >= _minAcc &&
-                    accumulation <= _maxAcc)
+                if (_markedAcc == -1 &&
+                    _accumulation >= _minAcc &&
+                    _accumulation <= _maxAcc)
                 {
-                    markedKey = bookmark.Key;
-                    markedAcc = accumulation;
+                    _markedKey = bookmark.Key;
+                    _markedAcc = _accumulation;
                     _reserveRightEnds = true;
                 }
-                else if (markedAcc != -1 &&
-                    (accumulation < _minAcc ||
-                    accumulation > _maxAcc))
+                else if (_markedAcc != -1 &&
+                    (_accumulation < _minAcc ||
+                    _accumulation > _maxAcc))
                 {
                     if (_rightEndsToFind > 0)
                         Finalize_mu(right);
 
-                    _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
+                    _outputStrategy.Output(_markedKey, bookmark.Key, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
 
-                    markedKey = default(C);
-                    markedAcc = -1;
+                    _markedKey = default(C);
+                    _markedAcc = -1;
                     ExcludeRservedRightEnds();
                     _reserveRightEnds = false;                    
                     _excludeRightEndFromFinalization = true;
@@ -94,54 +108,54 @@ namespace Polimi.DEIB.VahidJalili.DI3
         }
         private void _Summit(C left, C right)
         {
-            C markedKey = default(C);
-            int markedAcc = -1;
-            int currentAcc = 0;
-            int previousAcc = 0;
+            _markedKey = default(C);
+            _markedAcc = -1;
+            _currentAcc = 0;
+            _previousAcc = 0;
             _startOfIteration = true;
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                currentAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
+                _currentAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 UpdateLambdas(bookmark.Value);
 
-                if (previousAcc < currentAcc &&
-                    markedAcc < currentAcc &&
-                    currentAcc >= _minAcc &&
-                    currentAcc <= _maxAcc)
+                if (_previousAcc < _currentAcc &&
+                    _markedAcc < _currentAcc &&
+                    _currentAcc >= _minAcc &&
+                    _currentAcc <= _maxAcc)
                 {
-                    markedKey = bookmark.Key;
-                    markedAcc = currentAcc;
+                    _markedKey = bookmark.Key;
+                    _markedAcc = _currentAcc;
                     _reserveRightEnds = true;
                 }
-                else if (markedAcc > currentAcc ||
-                    (markedAcc < currentAcc && (
-                    currentAcc < _minAcc ||
-                    currentAcc > _maxAcc) &&
-                    markedAcc != -1))
+                else if (_markedAcc > _currentAcc ||
+                    (_markedAcc < _currentAcc && (
+                    _currentAcc < _minAcc ||
+                    _currentAcc > _maxAcc) &&
+                    _markedAcc != -1))
                 {
                     if (_rightEndsToFind > 0)
                         Finalize_mu(right);
 
-                    _outputStrategy.Output(markedKey, bookmark.Key, new List<UInt32>(_determinedLambdas.Keys), _lockOnMe);
+                    _outputStrategy.Output(_markedKey, bookmark.Key, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
 
-                    markedKey = default(C);
-                    markedAcc = -1;
+                    _markedKey = default(C);
+                    _markedAcc = -1;
                     ExcludeRservedRightEnds();
                     _reserveRightEnds = false;
                     _excludeRightEndFromFinalization = true;
                 }
 
-                previousAcc = currentAcc;
+                _previousAcc = _currentAcc;
             }
         }
 
-        private void UpdateLambdas(B keyBookmark)
+        private void UpdateLambdas(IIB keyBookmark)
         {
             if (_startOfIteration)
             {
                 foreach (var lambda in keyBookmark.lambda)
-                    if (lambda.phi == true)
+                    if (lambda.phi == Phi.LeftEnd)
                         _determinedLambdas.Add(lambda.atI, lambda.phi);
 
                 _rightEndsToFind = keyBookmark.mu;
@@ -154,11 +168,10 @@ namespace Polimi.DEIB.VahidJalili.DI3
                     if (_determinedLambdas.ContainsKey(lambda.atI) == false)
                         _determinedLambdas.Add(lambda.atI, lambda.phi);
 
-                    if (lambda.phi == false)
+                    if (lambda.phi == Phi.RightEnd)
                     {
-                        /// This condition is highly rare to be met.
-                        if (_determinedLambdas[lambda.atI] == false)
-                            _rightEndsToFind--;
+                        //if (_determinedLambdas[lambda.atI] == Phi.RightEnd)
+                        _rightEndsToFind--;
 
                         if (_reserveRightEnds)
                             _reservedRightEnds.Add(lambda.atI, false);
@@ -182,7 +195,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                 foreach (var lambda in bookmark.Value.lambda)
                 {
-                    if (lambda.phi == true)
+                    if (lambda.phi == Phi.LeftEnd)
                     {
                         _leftEndsToBeIgnored.Add(lambda.atI, true);
                         continue;

@@ -1,4 +1,5 @@
-﻿using CSharpTest.Net.Collections;
+﻿
+using CSharpTest.Net.Collections;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
@@ -10,7 +11,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
 {
     /// <summary>
     /// Provides efficient means of inserting an 
-    /// interval to Di3; i.e., Di3 indexding.
+    /// interval to Di3.
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
     /// type (e.g,. int, double, Time).</typeparam>
@@ -23,7 +24,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
     /// <typeparam name="M">Represents generic
     /// type of pointer to descriptive hashKey cooresponding
     /// to the interval.</typeparam>
-    internal class SingleIndex<C, I, M>
+    internal class IIndex<C, I, M>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
@@ -34,16 +35,16 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// </summary>
         /// <param name="_di3_1R">The reference _di3_1R to be 
         /// manipulated.</param>
-        internal SingleIndex(BPlusTree<C, IIB> di3)
+        internal IIndex(BPlusTree<C, IB> di3)
         {
             _di3 = di3;
         }
-        internal SingleIndex(BPlusTree<C, IIB> di3, List<I> intervals, int start, int stop, IndexingMode mode, ConcurrentDictionary<int, int> addedBookmarks)
+        internal IIndex(BPlusTree<C, IB> di3, List<I> Intervals, int Start, int Stop, IndexingMode mode, ConcurrentDictionary<int, int> addedBookmarks)
         {
             _di3 = di3;
-            _intervals = intervals;
-            _start = start;
-            _stop = stop;
+            _intervals = Intervals;
+            _start = Start;
+            _stop = Stop;
             _mode = mode;
             _addedBookmarks = addedBookmarks;
             _bCounter = new BookmarkCounter();
@@ -58,7 +59,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private BPlusTree<C, IIB> _di3 { set; get; }
+        private BPlusTree<C, IB> _di3 { set; get; }
         private IndexingMode _mode { set; get; }
         private int _start { set; get; }
         private int _stop { set; get; }
@@ -98,32 +99,37 @@ namespace Polimi.DEIB.VahidJalili.DI3
                         // shall be updated if the type
                         //  of hashkey is changed
                         if (_intervals[i].hashKey == 0)
-                            continue; 
+                            continue;
 
-                        update.atI = _intervals[i].hashKey;
-                        update.iC = Phi.LeftEnd;
+                        update.hashKey = _intervals[i].hashKey;
+                        update.phi = Phi.LeftEnd;
                         _di3.AddOrUpdate(_intervals[i].left, ref update);
 
-                        update.iC = Phi.RightEnd;
+                        update.phi = Phi.RightEnd;
                         _di3.AddOrUpdate(_intervals[i].right, ref update);
                     }
                     break;
             }
             _addedBookmarks.TryAdd(_start, _bCounter.value);
         }
-        private void Index(I interval)
+
+        /// <summary>
+        /// Indexes the provided interval.
+        /// </summary>
+        /// <param name="interval">The interval to be index.</param>
+        public void Index(I interval)
         {
             _interval = interval;
             bool isLeftEnd = true;
             bool enumerated = false;
-            update.atI = _interval.hashKey;
-            update.iC = Phi.LeftEnd;
+            update.phi = Phi.LeftEnd;
+            update.hashKey = _interval.hashKey;
             int compareResult;
 
             foreach (var item in _di3.EnumerateFrom(_interval.left))
             {
                 enumerated = true;
-                update.NextBookmark = null;
+                update.NextBlock = null;
 
                 if (isLeftEnd)
                 {
@@ -136,25 +142,25 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
                     if (compareResult == 0)
                     {
-                        update.iC = Phi.RightEnd;
+                        update.phi = Phi.RightEnd;
                         break;
                     }
-                    else if (compareResult == 1)// interval.right is bigger than keyBookmark.Key
+                    else if (compareResult == 1)// interval.right is bigger than bookmark.Key
                     {
-                        update.iC = Phi.Middle;
+                        update.phi = Phi.Middle;
                         _di3.AddOrUpdate(item.Key, ref update);
                     }
                     else
                     {
-                        update.iC = Phi.RightEnd;
-                        update.NextBookmark = item.Value;
+                        update.phi = Phi.RightEnd;
+                        update.NextBlock = item.Value;
                         break;
                     }
                 }
 
                 /// this will be useful when the iteration reaches the 
-                /// end of collection while right-end is not handled yet.
-                update.iC = Phi.RightEnd;
+                /// end of collection while right-end is not handled yet. 
+                update.phi = Phi.RightEnd;
             }
 
             if (enumerated)
@@ -163,45 +169,49 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
             else
             {
-                update.NextBookmark = null;
-                update.iC = Phi.LeftEnd;
-                update.atI = _interval.hashKey;
+                update.NextBlock = null;
+                update.phi = Phi.LeftEnd;
+                update.hashKey = _interval.hashKey;
                 _di3.AddOrUpdate(_interval.left, ref update);
 
-                update.iC = Phi.RightEnd;
+                update.phi = Phi.RightEnd;
+                update.hashKey = _interval.hashKey;
                 _di3.AddOrUpdate(_interval.right, ref update);
             }
         }
 
         public void SecondPass()
         {
-            KeyValuePair<C, IIB> firstItem;
+            KeyValuePair<C, IB> firstItem;
             _di3.TryGetFirst(out firstItem);
 
-            int mu = 0;
-            UInt16 omega = 0;
-            ReadOnlyCollection<Lambda> currentBookmarkLambda = null;
-            var t = new Dictionary<uint, bool>();
-            KeyValueUpdate<C, IIB> updateFunction = delegate(C k, IIB i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
+            Dictionary<uint, Lambda> lambdaCarrier = new Dictionary<uint, Lambda>();
+            KeyValueUpdate<C, IB> updateFunction = delegate (C k, IB i) { return i.Update(lambdaCarrier); };
             List<uint> keysToRemove = new List<uint>();
+            List<uint> keys;
 
             foreach (var bookmark in _di3.EnumerateFrom(firstItem.Key))
             {
-                // mu update option A:
-                mu = t.Count - bookmark.Value.omega;
-
                 foreach (var lambda in bookmark.Value.lambda)
-                    if (!t.Remove(lambda.atI))
-                        t.Add(lambda.atI, true);
-
-                // mu update option B:
-                // mu = t.Count - bookmark.Value.lambda.Count + bookmark.Value.omega; // ;-)
-                if (bookmark.Value.mu != mu)
                 {
-                    omega = bookmark.Value.omega;
-                    currentBookmarkLambda = bookmark.Value.lambda;
-                    _di3.TryUpdate(bookmark.Key, updateFunction);
+                    if (lambdaCarrier.ContainsKey(lambda.atI))
+                        lambdaCarrier[lambda.atI] = lambda;
+                    else
+                        lambdaCarrier.Add(lambda.atI, lambda);
+
+                    if (lambda.phi == Phi.RightEnd) keysToRemove.Add(lambda.atI);
                 }
+
+                if (UpdateRequired(bookmark.Value.lambda, lambdaCarrier))
+                    _di3.TryUpdate(bookmark.Key, updateFunction);
+
+                foreach (uint item in keysToRemove)
+                    lambdaCarrier.Remove(item);
+                keysToRemove.Clear();
+
+                keys = new List<uint>(lambdaCarrier.Keys);
+                foreach (var key in keys)
+                    lambdaCarrier[key] = new Lambda(Phi.Middle, lambdaCarrier[key].atI);
             }
         }
         private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda, Dictionary<uint, Lambda> lambdaCarrier)
@@ -213,7 +223,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
             return false;
         }
 
-        private bool HandleFirstItem(KeyValuePair<C, IIB> item)
+        private bool HandleFirstItem(KeyValuePair<C, IB> item)
         {
             if (_interval.left.Equals(item.Key))
             {
@@ -222,22 +232,23 @@ namespace Polimi.DEIB.VahidJalili.DI3
             }
             else
             {
-                update.NextBookmark = item.Value;
+                update.NextBlock = item.Value;
 
                 switch (_interval.right.CompareTo(item.Key))
                 {
-                    case 1: // _interval.right is bigger than item.Key
+                    case 1: // _interval.right is bigger than lambda.newKey
                         _di3.AddOrUpdate(_interval.left, ref update);
 
-                        update.iC = Phi.Middle;
-                        update.NextBookmark = null;
+                        update.phi = Phi.Middle;
+                        update.NextBlock = null;
                         _di3.AddOrUpdate(item.Key, ref update);
                         return false;
 
                     case 0:
                     case -1:
                         _di3.AddOrUpdate(_interval.left, ref update);
-                        update.iC = Phi.RightEnd;
+
+                        update.phi = Phi.RightEnd;
                         return true;
                 }
             }
@@ -247,50 +258,48 @@ namespace Polimi.DEIB.VahidJalili.DI3
 
 
 
-        struct AddUpdateValue : ICreateOrUpdateValue<C, IIB>, IRemoveValue<C, IIB>
+        struct AddUpdateValue : ICreateOrUpdateValue<C, IB>, IRemoveValue<C, IB>
         {
-            public IIB oldValue;
-            public Phi iC { set; get; }
-            public uint atI { set; get; }
-
+            public IB oldValue;
+            public Phi phi { set; get; }
+            public uint hashKey { set; get; }
             public BookmarkCounter bookmarkCounter { set; get; }
+            public IB NextBlock { set; get; }
 
-            public IIB NextBookmark { set; get; }
-
-            public bool CreateValue(C key, out IIB value)
+            public bool CreateValue(C key, out IB value)
             {
                 oldValue = null;
 
-                if (NextBookmark == null)
-                    value = new IIB(phi: iC, atI: atI);
+                if (NextBlock == null)
+                    value = new IB(phi: phi, hashKey: hashKey);
                 else
-                    value = new IIB(phi: iC, atI: atI, nextBookmark: NextBookmark);
+                    value = new IB(phi: phi, metadata: hashKey, nextBlock: NextBlock);
 
-                // TODO 1 : check the commented-out parts
-                //if (atI != 0)
-                //{
+                if (hashKey != 0)
+                {
                     bookmarkCounter.value++;
                     return true;
-                //}
-                //return false;
-            }
-            public bool UpdateValue(C key, ref IIB value)
-            {
-                oldValue = value;
-                value = value.Update(atI: atI, condition: iC);
-                //return atI != 0;
-                return true; // TODO 1 : check this
-            }
-            public bool RemoveValue(C key, IIB value)
-            {
-                oldValue = value;
+                }
 
-                if (value == value.Update(atI: atI, condition: iC))
+                //return hashKey != 0; //&& phi != default(char);
+                return true; // TODO1 : check this
+            }
+            public bool UpdateValue(C key, ref IB value)
+            {
+                oldValue = value;
+                value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
+                //return hashKey != 0; //&& phi != default(char);
+                return true; // TODO1 : check this
+            }
+            public bool RemoveValue(C key, IB value)
+            {
+                oldValue = value;
+                if (value == value.Update(atI: hashKey, condition: phi))
                 {
                     bookmarkCounter.value--;
                     return true;
                 }
-                return false;
+                return value == value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
             }
         }
 

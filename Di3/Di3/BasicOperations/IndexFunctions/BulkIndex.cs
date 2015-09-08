@@ -10,7 +10,7 @@ namespace Polimi.DEIB.VahidJalili.DI3
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal BulkIndex(BPlusTree<C, B> di3, SortedDictionary<C,B> bookmarks)
+        internal BulkIndex(BPlusTree<C, IIB> di3, SortedDictionary<C,IIB> bookmarks)
         {
             _di3 = di3;
             _bookmarks = bookmarks;
@@ -22,9 +22,9 @@ namespace Polimi.DEIB.VahidJalili.DI3
         /// is in common between all classes of 
         /// namespace.
         /// </summary>
-        private BPlusTree<C, B> _di3 { set; get; }
+        private BPlusTree<C, IIB> _di3 { set; get; }
 
-        private SortedDictionary<C, B> _bookmarks { set; get; }
+        private SortedDictionary<C, IIB> _bookmarks { set; get; }
 
         public void Index()
         {
