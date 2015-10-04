@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Di3BCLI")]
 [assembly: AssemblyDescription("Di3 Bioinformatics - Command Line Interface")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Politecnico di Milano - Dipartimento di Elettronica, Informazione e Bioingegneria")]
+[assembly: AssemblyCompany("Vahid Jalili @ Polimi.DEIB")]
 [assembly: AssemblyProduct("Di3BCLI")]
-[assembly: AssemblyCopyright("Copyright ©  2015 Vahid Jalili")]
+[assembly: AssemblyCopyright("Copyright © 2013 Vahid Jalili")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -36,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Polimi.DEIB.VahidJalili.DI3.CLI.Program</StartupObject>
@@ -69,10 +70,10 @@
       <HintPath>..\packages\CSharpTest.Net.Library.2.14.126.467\lib\net45\CSharpTest.Net.Library.dll</HintPath>
     </Reference>
     <Reference Include="GIFP">
-      <HintPath>..\..\..\..\02 - GIFP\GIFP\GIFP\GIFP\bin\Release\GIFP.dll</HintPath>
+      <HintPath>..\ExternalLibraries\GIFP.dll</HintPath>
     </Reference>
     <Reference Include="IGenomics">
-      <HintPath>..\..\..\..\03 - IGenomics\IGenomic\IGenomics\IGenomics\bin\Debug\IGenomics.dll</HintPath>
+      <HintPath>..\ExternalLibraries\IGenomics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

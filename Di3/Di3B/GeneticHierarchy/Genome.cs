@@ -116,12 +116,11 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
                                     foreach (var strandEntry in chr.Value)
                                     {   
                                         indexingETs.Add(chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di3Degree));
-                                        chrs[chr.Key][strand].Commit();
+                                        //chrs[chr.Key][strand].Commit();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
                                 });
                             stpWtch.Stop();
-
                             
                             foreach (var et in indexingETs)
                             {
@@ -187,7 +186,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
             return new ExecutionReport(totalIntervals, stpWtch.Elapsed);
         }
 
-        internal void CommitIndexedDataTest(char strand, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        internal void CommitIndexedData(char strand, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Parallel.ForEach(chrs,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },

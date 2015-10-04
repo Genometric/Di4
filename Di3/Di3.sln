@@ -32,6 +32,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{42546D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulationDataGenerator", "SimulationDataGenerator\SimulationDataGenerator.csproj", "{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalLibraries", "ExternalLibraries", "{D96648E3-43D4-442B-9A35-1A89AB49EC25}"
+	ProjectSection(SolutionItems) = preProject
+		ExternalLibraries\GIFP.dll = ExternalLibraries\GIFP.dll
+		ExternalLibraries\GIFP.pdb = ExternalLibraries\GIFP.pdb
+		ExternalLibraries\IGenomics.dll = ExternalLibraries\IGenomics.dll
+		ExternalLibraries\IGenomics.pdb = ExternalLibraries\IGenomics.pdb
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

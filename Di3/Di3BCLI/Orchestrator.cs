@@ -26,6 +26,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
             samplesHashtable = new Dictionary<int, uint>();
             _stopWatch = new Stopwatch();
             _parserSTW = new Stopwatch();
+            _commitSTW = new Stopwatch();
 
             _cacheOptions = new CacheOptions(
                 CacheMaximumHistory: maxHistorySize, //163840,//81920,
@@ -46,6 +47,7 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
         private string _sectionTitle { set; get; }
         private Stopwatch _stopWatch { set; get; }
         private Stopwatch _parserSTW { set; get; }
+        private Stopwatch _commitSTW { set; get; }
         private IndexingMode _indexingMode { set; get; }
         private CacheOptions _cacheOptions { set; get; }
         Di3B<int, Peak, PeakData> di3B { set; get; }
@@ -290,16 +292,14 @@ namespace Polimi.DEIB.VahidJalili.DI3.CLI
                 totalIndexingET.InvertedIndex += indexingET.InvertedIndex;
             }
 
+            _commitSTW.Restart();
+            di3B.CommitIndexedData(_maxDegreeOfParallelism);
+            _commitSTW.Stop();
+
             Herald.Announce(Herald.MessageType.Info, string.Format("Total Load Time: {0}", totalLoadTime));
             Herald.Announce(Herald.MessageType.Info, string.Format("Total Inverted Index Time: {0}", totalIndexingET.InvertedIndex));
             Herald.Announce(Herald.MessageType.Info, string.Format("Total Incremental Inverted Index Time: {0}", totalIndexingET.IncrementalIndex));
-
-            /*
-            Stopwatch testStopWatch = new Stopwatch();
-            testStopWatch.Start();
-            di3B.CommitTestFunction(_maxDegreeOfParallelism);
-            testStopWatch.Stop();
-            Herald.Announce(Herald.MessageType.Info, string.Format("Commit Time {0}", testStopWatch.Elapsed.TotalSeconds.ToString()));*/
+            Herald.Announce(Herald.MessageType.Info, string.Format("Commit Time {0}", _commitSTW.Elapsed.TotalSeconds.ToString()));
 
             return true;
         }

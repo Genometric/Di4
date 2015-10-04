@@ -32,9 +32,9 @@ namespace Polimi.DEIB.VahidJalili.DI3.DI3B
         {
             return genome.Add2ndPass(maxDegreeOfParallelism, out indexingET);
         }
-        public void CommitTestFunction(MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public void CommitIndexedData(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            genome.CommitIndexedDataTest('*', maxDegreeOfParallelism);
+            genome.CommitIndexedData('*', maxDegreeOfParallelism);
         }
 
         public ExecutionReport Cover(CoverVariation coverVariation, char strand, int minAcc, int maxAcc, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
