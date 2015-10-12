@@ -5,23 +5,11 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A22F1A77-6131-413A-A9D7-062DC73406DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3", "Di3\Di3.csproj", "{A18501A2-6959-40B2-9D17-9BB563C51BDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di4", "Di4\Di4.csproj", "{A18501A2-6959-40B2-9D17-9BB563C51BDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3B", "Di3B\Di3B.csproj", "{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di4B", "Di4B\Di4B.csproj", "{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OldVersion", "OldVersion", "{189C970C-43D3-474D-B0FB-9888DA972B87}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldDi3", "OldDi3\OldDi3.csproj", "{5D319E83-E522-44B4-BDF8-C331CE8F57F2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TesTPackages", "TesTPackages", "{D4532791-94FB-467A-83D1-5D449D3A3653}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexSpeedTest", "IndexSpeedTest\IndexSpeedTest.csproj", "{FB374DF9-EDBB-4788-9E50-5B16B9CF1963}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapSpeedTest", "MapSpeedTest\MapSpeedTest.csproj", "{39F5704E-F83C-42E2-A09E-1E453C66ED04}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BPlusTreeTest", "BPlusTreeTest\BPlusTreeTest.csproj", "{3F5273A0-2212-44F7-AE20-5D1C78BF7285}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di3BCLI", "Di3BCLI\Di3BCLI.csproj", "{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di4BCLI", "Di4BCLI\Di4BCLI.csproj", "{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{42546D07-6723-4395-8B16-D763430AE834}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{42546D
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulationDataGenerator", "SimulationDataGenerator\SimulationDataGenerator.csproj", "{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalLibraries", "ExternalLibraries", "{D96648E3-43D4-442B-9A35-1A89AB49EC25}"
 	ProjectSection(SolutionItems) = preProject
@@ -74,30 +60,6 @@ Global
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}.Release|Mixed Platforms.Build.0 = Release|x64
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}.Release|x64.ActiveCfg = Release|x64
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1}.Release|x64.Build.0 = Release|x64
-		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5D319E83-E522-44B4-BDF8-C331CE8F57F2}.Release|x64.ActiveCfg = Release|Any CPU
-		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963}.Release|x64.ActiveCfg = Release|Any CPU
-		{39F5704E-F83C-42E2-A09E-1E453C66ED04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39F5704E-F83C-42E2-A09E-1E453C66ED04}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{39F5704E-F83C-42E2-A09E-1E453C66ED04}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{39F5704E-F83C-42E2-A09E-1E453C66ED04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39F5704E-F83C-42E2-A09E-1E453C66ED04}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{39F5704E-F83C-42E2-A09E-1E453C66ED04}.Release|x64.ActiveCfg = Release|Any CPU
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|x64.ActiveCfg = Release|Any CPU
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -111,12 +73,6 @@ Global
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Release|x64.ActiveCfg = Release|x64
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Release|x64.Build.0 = Release|x64
 		{ED22831F-4E4D-4C49-B02B-A8CB21DCCF35}.Release|x64.Deploy.0 = Release|x64
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|x64.ActiveCfg = Release|Any CPU
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,47 +80,22 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A18501A2-6959-40B2-9D17-9BB563C51BDC} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
-		{5D319E83-E522-44B4-BDF8-C331CE8F57F2} = {189C970C-43D3-474D-B0FB-9888DA972B87}
-		{FB374DF9-EDBB-4788-9E50-5B16B9CF1963} = {D4532791-94FB-467A-83D1-5D449D3A3653}
-		{39F5704E-F83C-42E2-A09E-1E453C66ED04} = {D4532791-94FB-467A-83D1-5D449D3A3653}
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285} = {D4532791-94FB-467A-83D1-5D449D3A3653}
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4} = {D4532791-94FB-467A-83D1-5D449D3A3653}
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 9
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = Di3\\Di3.csproj
-		SccProjectTopLevelParentUniqueName1 = Di3.sln
-		SccProjectName1 = Di3
-		SccLocalPath1 = Di3
-		SccProjectUniqueName2 = Di3B\\Di3B.csproj
-		SccProjectTopLevelParentUniqueName2 = Di3.sln
-		SccProjectName2 = Di3B
-		SccLocalPath2 = Di3B
-		SccProjectUniqueName3 = OldDi3\\OldDi3.csproj
-		SccProjectTopLevelParentUniqueName3 = Di3.sln
-		SccProjectName3 = OldDi3
-		SccLocalPath3 = OldDi3
-		SccProjectUniqueName4 = IndexSpeedTest\\IndexSpeedTest.csproj
-		SccProjectTopLevelParentUniqueName4 = Di3.sln
-		SccProjectName4 = IndexSpeedTest
-		SccLocalPath4 = IndexSpeedTest
-		SccProjectUniqueName5 = MapSpeedTest\\MapSpeedTest.csproj
-		SccProjectTopLevelParentUniqueName5 = Di3.sln
-		SccProjectName5 = MapSpeedTest
-		SccLocalPath5 = MapSpeedTest
-		SccProjectUniqueName6 = BPlusTreeTest\\BPlusTreeTest.csproj
-		SccProjectTopLevelParentUniqueName6 = Di3.sln
-		SccProjectName6 = BPlusTreeTest
-		SccLocalPath6 = BPlusTreeTest
-		SccProjectUniqueName7 = Di3BCLI\\Di3BCLI.csproj
-		SccProjectName7 = Di3BCLI
-		SccLocalPath7 = Di3BCLI
-		SccProjectUniqueName8 = SimulationDataGenerator\\SimulationDataGenerator.csproj
-		SccProjectTopLevelParentUniqueName8 = Di3.sln
-		SccProjectName8 = SimulationDataGenerator
-		SccLocalPath8 = SimulationDataGenerator
+		SccProjectUniqueName1 = Di4\\Di4.csproj
+		SccProjectTopLevelParentUniqueName1 = Di4.sln
+		SccProjectName1 = Di4
+		SccLocalPath1 = Di4
+		SccProjectUniqueName2 = Di4B\\Di4B.csproj
+		SccProjectTopLevelParentUniqueName2 = Di4.sln
+		SccProjectName2 = Di4B
+		SccLocalPath2 = Di4B
+		SccProjectUniqueName3 = Di4BCLI\\Di4BCLI.csproj
+		SccProjectName3 = Di4BCLI
+		SccLocalPath3 = Di4BCLI
 	EndGlobalSection
 EndGlobal
