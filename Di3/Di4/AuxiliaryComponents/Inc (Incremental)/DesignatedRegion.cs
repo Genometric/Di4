@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI3.AuxiliaryComponents.Inc
+namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
 {
     internal class DesignatedRegion<C>
         where C : IComparable<C>, IFormattable
