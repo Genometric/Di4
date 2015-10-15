@@ -189,7 +189,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                 {
                     try
                     {
-                        readFileName = Path.GetFullPath(readFileName);
+                        readFileName = Path.GetFullPath(_settings[_logFileKey].Value);
                         if (Path.GetFileName(readFileName) != null &&
                             Path.GetFileName(readFileName).Trim() != "")
                             Console.WriteLine("Configuration defines a valid Log file.");
