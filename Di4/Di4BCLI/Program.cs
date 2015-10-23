@@ -4,6 +4,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 {
     class Program
     {
+        public static object Paralle { get; private set; }
+
         static void Main(string[] args)
         {
             Console.Title = "Di4B: Dynamic intervals incremental inverted index for Bio-informatics";
