@@ -16,7 +16,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             {
                 if (!UserConfigSetup.SetGet()) return; // Exit application.
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("");
                 Console.WriteLine("Error !! Invalid URI.");
@@ -49,8 +49,17 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             }
             catch (Exception e)
             {
-                Herald.Announce(Herald.MessageType.Error, e.InnerException.Message);
-                Herald.Announce(Herald.MessageType.None, "Please restart the application having resolved the error(s).");
+                if (e.InnerException == null)
+                {
+                    Herald.Announce(Herald.MessageType.Error,
+                        "My apologies for inconvenience, this was not supposed to happen!" +
+                        " Please restart Di4 and if you experience the issue again, please contact the support.");
+                }
+                else
+                {
+                    Herald.Announce(Herald.MessageType.Error, e.InnerException.Message);
+                    Herald.Announce(Herald.MessageType.None, "Please restart the application having resolved the error(s).");
+                }
             }
 
             Herald.Dispose();

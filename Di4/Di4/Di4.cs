@@ -8,23 +8,22 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Polimi.DEIB.VahidJalili.DI4
 {
     /// <summary>
-    /// Dynamic _intervals inverted index (Polimi.DEIB.VahidJalili.DI4) 
+    /// Dynamic intervals inverted index (Polimi.DEIB.VahidJalili.DI4) 
     /// is an indexing system aimed at providing
-    /// efficient means of processing the _intervals
+    /// efficient means of processing the intervals
     /// it indexes for common information retrieval 
     /// tasks.
     /// </summary>
     /// <typeparam name="C">Represents the c/domain
     /// type (e.g,. int, double, Time).</typeparam>
-    /// <typeparam name="I">Represents generic type of the _interval.
-    /// (e.g., time span, _interval on natural numbers)
-    /// <para>For _intervals of possibly different types,
+    /// <typeparam name="I">Represents generic type of the interval.
+    /// (e.g., time span, interval on natural numbers)
+    /// <para>For intervals of possibly different types,
     /// it is recommended to define this generic type
     /// parameter in terms of Lowest Common Denominator.
     /// </para></typeparam>
@@ -39,7 +38,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
         /// <summary>
         /// Dynamic intervals incremental inverted index (Polimi.DEIB.VahidJalili.DI4) 
         /// is an indexing system aimed at providing
-        /// efficient means of processing the _intervals
+        /// efficient means of processing the intervals
         /// it indexes for common information retrieval 
         /// tasks.
         /// </summary>
@@ -348,27 +347,31 @@ namespace Polimi.DEIB.VahidJalili.DI4
         {
             var rtv = new BPlusTree<string, int>.OptionsV2(PrimitiveSerializer.String, PrimitiveSerializer.Int32, new Comparers.StringComparer());
             rtv.FileBlockSize = 1024;
-            rtv.CachePolicy = CachePolicy.All;
             rtv.StoragePerformance = StoragePerformance.Fastest;
-            rtv.FileName = _options.FileName + ".info";
+            rtv.CachePolicy = _options.cacheOptions.CachePolicy;
+            if (_options.CreatePolicy != CreatePolicy.Never)
+                rtv.FileName = _options.FileName + ".info";
+
+            rtv.CreateFile = _options.CreatePolicy;
+            rtv.ExistingLogAction = _options.ExistingLogAction;
+            rtv.StoragePerformance = _options.StoragePerformance;
+
             rtv.CacheKeepAliveMinimumHistory = 512;
             rtv.CacheKeepAliveMaximumHistory = 4096;
-            rtv.CreateFile = CreatePolicy.IfNeeded;
+            
             return rtv;
         }
 
 
 
-        public IndexingET Add(List<I> intervals, IndexingMode mode)
+        public void Add(List<I> intervals, IndexingMode mode)
         {
-            return Add(intervals, mode, Environment.ProcessorCount);
+            Add(intervals, mode, Environment.ProcessorCount);
         }
-        public IndexingET Add(List<I> intervals, IndexingMode mode, int threads)
+        public void Add(List<I> intervals, IndexingMode mode, int threads)
         {
             int start = 0, stop = 0, count = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             var addedBookmarks = new ConcurrentDictionary<int, int>();
-            var indexingET = new IndexingET();
-            var startTime = DateTime.Now;
 
             if (_options.ActiveIndexes != IndexType.OnlyInverted)
             {
@@ -389,12 +392,10 @@ namespace Polimi.DEIB.VahidJalili.DI4
                 foreach (var item in addedBookmarks)
                     count += item.Value;
                 _indexesCardinality.AddOrUpdate(_keyCardinalityIncIndx, count);
-                indexingET.IncrementalIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
             }
 
             if (_options.ActiveIndexes != IndexType.OnlyIncremental)
             {
-                startTime = DateTime.Now;
                 addedBookmarks.Clear();
                 using (WorkQueue work = new WorkQueue(threads))
                 {
@@ -413,29 +414,15 @@ namespace Polimi.DEIB.VahidJalili.DI4
                 foreach (var item in addedBookmarks)
                     count += item.Value;
                 _indexesCardinality.AddOrUpdate(_keyCardinalityInvIndx, count);
-                indexingET.InvertedIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
             }
-
-            return indexingET;
         }
-        public IndexingET SecondPass()
+        public void SecondPass()
         {
-            var indexingET = new IndexingET();
-            var startTime = DateTime.Now;
-
-            if (_options.ActiveIndexes != IndexType.OnlyInverted)
-            {
+            if (_options.ActiveIndexes != IndexType.OnlyInverted)            
                 incBatchIndex.SecondPass();
-                indexingET.IncrementalIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
-            }
-            if (_options.ActiveIndexes != IndexType.OnlyIncremental)
-            {
-                startTime = DateTime.Now;
-                invBatchIndex.SecondPass();
-                indexingET.InvertedIndex = DateTime.Now.Subtract(startTime).TotalSeconds;
-            }
-
-            return indexingET;
+            
+            if (_options.ActiveIndexes != IndexType.OnlyIncremental)            
+                invBatchIndex.SecondPass();            
         }
 
 

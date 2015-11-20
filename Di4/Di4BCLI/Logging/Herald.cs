@@ -29,10 +29,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                 if (!File.Exists(speedFile))
                 {
                     _indexSpeedWriter = new StreamWriter(speedFile, true);
-                    _indexSpeedWriter.WriteLine(
-                        "Unit\t" + "Count\t" + "ET\t" + "Speed\t" +
-                        "InvertedIndexET(sec)\t" + "InvertedIndexSpeed\t" +
-                        "IncrementalIndexET(sec)\t" + "IncrementalIndexSpeed");
+                    _indexSpeedWriter.WriteLine("Unit\t" + "Count\t" + "ET\t" + "Speed\t");
                 }
                 else
                 {
@@ -87,8 +84,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         internal static void AnnounceExeReport(
             string command,
             ExecutionReport report,
-            SpeedUnit speedUnit = SpeedUnit.intervalPerSecond,
-            IndexingET indexingET = new IndexingET())
+            SpeedUnit speedUnit = SpeedUnit.intervalPerSecond)
         {
             string sUnit = "";
             switch (speedUnit)
@@ -114,11 +110,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     sUnit + "\t" +
                     report.count + "\t" +
                     report.ET + "\t" +
-                    Math.Round(report.count / report.ET.TotalSeconds, 2) + "\t" +
-                    indexingET.InvertedIndex +
-                    (indexingET.InvertedIndex == 0 ? "0" : (Math.Round(report.count / indexingET.InvertedIndex)).ToString()) + "\t" +
-                    indexingET.IncrementalIndex + "\t" +
-                    (indexingET.IncrementalIndex == 0 ? "0" : (Math.Round(report.count / indexingET.IncrementalIndex, 2)).ToString()) + "\t");
+                    Math.Round(report.count / report.ET.TotalSeconds, 2));
                 _indexSpeedWriter.Flush();
             }
         }

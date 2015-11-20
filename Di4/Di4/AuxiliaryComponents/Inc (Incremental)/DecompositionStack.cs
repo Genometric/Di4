@@ -1,5 +1,4 @@
-﻿using Polimi.DEIB.VahidJalili.DI4;
-using Polimi.DEIB.VahidJalili.IGenomics;
+﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 
@@ -30,7 +29,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
             _designatedRegions.Clear();
             _tLambdas.Clear();
         }
-        public void OpenDesignatedRegion(C leftEnd, DI4.Inc.B keyBookmark)
+        public void Open(C leftEnd, DI4.Inc.B keyBookmark)
         {
             var newDesignatedRegion = new DesignatedRegion<C>();
             newDesignatedRegion.leftEnd = leftEnd;
@@ -59,7 +58,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
             
             _designatedRegions.Add(newDesignatedRegion);
         }
-        public void CloseDesignatedRegion(C rightEnd, DI4.Inc.B keyBookmark)
+        public void Close(C rightEnd, DI4.Inc.B keyBookmark)
         {
             _designatedRegions[_designatedRegions.Count - 1].rightEnd = rightEnd;
             foreach (var lambda in keyBookmark.lambda)
@@ -93,14 +92,33 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
         }
         private void UpdateDesignatedRegions(uint atI)
         {
-            for (_i = _designatedRegions.Count - 1; _i >= 0; _i--)
+            /*for (_i = _designatedRegions.Count - 1; _i >= 0; _i--)
                 if (_designatedRegions[_i].lambdas.ContainsKey(atI))
                     _designatedRegions[_i].lambdas[atI] = Phi.RightEnd;
                 else
                 {
                     _designatedRegions[_i].lambdas.Add(atI, Phi.RightEnd);
                     _designatedRegions[_i].mu--;
+                }*/
+
+            foreach(var deRegion in _designatedRegions)
+                if (deRegion.lambdas.ContainsKey(atI))
+                    deRegion.lambdas[atI] = Phi.RightEnd;
+                else
+                {
+                    deRegion.lambdas.Add(atI, Phi.RightEnd);
+                    deRegion.mu--;
                 }
+
+            /*for (_i = _designatedRegions.Count - 1; _i >= 0; _i--)
+            {
+                var beforeUpdate = _designatedRegions[_i].lambdas[atI];
+                var afterUpdate = (_designatedRegions[_i].lambdas[atI] = Phi.RightEnd);
+                
+                if ((_designatedRegions[_i].lambdas[atI] = Phi.RightEnd) == Phi.RightEnd)
+                    _designatedRegions[_i].mu--;
+            }*/
+
         }
         public void Conclude()
         {

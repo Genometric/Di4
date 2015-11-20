@@ -33,9 +33,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BPlusTreeTest", "BPlusTreeTest\BPlusTreeTest.csproj", "{3F5273A0-2212-44F7-AE20-5D1C78BF7285}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -91,7 +88,6 @@ Global
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|x64.ActiveCfg = Release|x64
-		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|x64.Build.0 = Release|x64
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -101,7 +97,6 @@ Global
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|x64.ActiveCfg = Release|Any CPU
-		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

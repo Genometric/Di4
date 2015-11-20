@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Polimi.DEIB.VahidJalili.DI4</RootNamespace>
     <AssemblyName>Di4</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -79,16 +79,16 @@
     <Compile Include="AuxiliaryComponents\CacheOptions.cs" />
     <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DecompositionStack.cs" />
     <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DesignatedRegion.cs" />
-    <Compile Include="AuxiliaryComponents\IndexingET.cs" />
     <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
     <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inv %28Inverted%29\CoverSummit.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inv %28Inverted%29\Map.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\Map.cs" />
     <Compile Include="BasicOperations\IndexFunctions\Inc %28Incremental%29\BulkIndex.cs" />
     <Compile Include="BasicOperations\FirstOrderFunctions\AccumulationStats.cs" />
     <Compile Include="BasicOperations\FirstOrderFunctions\Merge.cs" />
-    <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit_NEW.cs" />
     <Compile Include="BasicOperations\IndexFunctions\Inv %28Inverted%29\BatchIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\InfoIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\Inc %28Incremental%29\BatchIndex.cs" />

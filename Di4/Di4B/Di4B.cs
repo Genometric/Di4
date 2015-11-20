@@ -24,13 +24,13 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         private IComparer<C> CComparer { set; get; }
         private Genome<C, I, M> genome { set; get; }
 
-        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, MaxDegreeOfParallelism maxDegreeOfParallelism, out IndexingET indexingET)
+        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Add(peaks, '*', indexingMode, maxDegreeOfParallelism, out indexingET);
+            return genome.Add(peaks, '*', indexingMode, maxDegreeOfParallelism);
         }
-        public ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism, out IndexingET indexingET)
+        public ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Add2ndPass(maxDegreeOfParallelism, out indexingET);
+            return genome.Add2ndPass(maxDegreeOfParallelism);
         }
         public void CommitIndexedData(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {

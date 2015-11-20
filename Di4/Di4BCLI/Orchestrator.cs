@@ -26,7 +26,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             _stopWatch = new Stopwatch();
             _parserSTW = new Stopwatch();
             _commitSTW = new Stopwatch();
-            _accumulatedIndexingET = new IndexingET();
+            _indexSTW = new Stopwatch();
 
             _cacheOptions = new CacheOptions(
                 CacheMaximumHistory: UserConfig.maxCacheSize, //163840,//81920,
@@ -43,7 +43,6 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         private int _tN2i { set; get; }
 
         private double _accumulatedLoadET { set; get; }
-        private IndexingET _accumulatedIndexingET;
 
         private MaxDegreeOfParallelism _maxDegreeOfParallelism { set; get; }
         private string _workingDirectory { set; get; }
@@ -51,6 +50,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         private string _sectionTitle { set; get; }
         private Stopwatch _stopWatch { set; get; }
         private Stopwatch _parserSTW { set; get; }
+        private Stopwatch _indexSTW { set; get; }
         private Stopwatch _commitSTW { set; get; }
         private IndexingMode _indexingMode { set; get; }
         private CacheOptions _cacheOptions { set; get; }
@@ -270,21 +270,15 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             }
 
             if (!Load(args[1])) return false;
-            var indexingET = new IndexingET();
-            var report = di4B.Add(Repository.parsedSample.intervals, _indexingMode, _maxDegreeOfParallelism, out indexingET);
+            var report = di4B.Add(Repository.parsedSample.intervals, _indexingMode, _maxDegreeOfParallelism);
 
-            _accumulatedIndexingET.IncrementalIndex += indexingET.IncrementalIndex;
-            _accumulatedIndexingET.InvertedIndex += indexingET.InvertedIndex;
-
-            Herald.AnnounceExeReport("Indexed", report, indexingET: indexingET);
+            Herald.AnnounceExeReport("Indexed", report);
             _tN2i += report.count;
             return true;
         }
         private bool BatchIndex(string[] args)
         {
             _tN2i = 0;
-            _accumulatedIndexingET.IncrementalIndex = 0;
-            _accumulatedIndexingET.InvertedIndex = 0;
 
             DirectoryInfo dirInfo;
             if (args.Length == 2 && args[1].Length > 2 && args[1][0] == '*' && args[1][1] == '.')
@@ -322,6 +316,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             }
 
             int i = 0;
+            _indexSTW.Restart();
             foreach (FileInfo fileInfo in foundFiles)
             {
                 Herald.Announce(
@@ -334,6 +329,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
                 if (!Index(new string[] { null, fileInfo.FullName })) return false;
             }
+            _indexSTW.Stop();
 
             _commitSTW.Restart();
             Commit();
@@ -341,28 +337,14 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
             Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1:N0}", "#indexed intervals", _tN2i));
             Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Load ET (sec)", _accumulatedLoadET));
-
-            if (UserConfig.indexType != IndexType.OnlyIncremental)
-                Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Inverted Index ET (sec)", _accumulatedIndexingET.InvertedIndex));
-
-            if (UserConfig.indexType != IndexType.OnlyInverted)
-                Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Incremental Index ET (sec)", _accumulatedIndexingET.IncrementalIndex));
-
+            Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Index ET (sec)", _indexSTW.Elapsed.TotalSeconds.ToString()));
             Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Commit ET (sec)", _commitSTW.Elapsed.TotalSeconds.ToString()));
 
             return true;
         }
         private bool Index2ndPass()
         {
-            var totalIndexingET = new IndexingET();
-            Herald.AnnounceExeReport("2ndPass", di4B.Add2ndPass(_maxDegreeOfParallelism, out totalIndexingET), speedUnit: Herald.SpeedUnit.bookmarkPerSecond);
-
-            if (UserConfig.indexType == IndexType.Both)
-            {
-                Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Inverted Index ET (sec)", totalIndexingET.InvertedIndex));
-                Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Incremental Index ET (sec)", totalIndexingET.IncrementalIndex));
-            }
-
+            Herald.AnnounceExeReport("2ndPass", di4B.Add2ndPass(_maxDegreeOfParallelism), speedUnit: Herald.SpeedUnit.bookmarkPerSecond);
             return true;
         }
         private bool Index2ndResolution()

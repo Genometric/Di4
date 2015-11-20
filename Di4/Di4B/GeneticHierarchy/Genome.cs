@@ -79,14 +79,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
             Dictionary<string, Dictionary<char, List<I>>> intervals,
             char strand,
             IndexingMode indexinMode,
-            MaxDegreeOfParallelism maxDegreeOfParallelism,
-            out IndexingET indexingET)
+            MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             int totalIntervals = 0;
-
-            indexingET = new IndexingET();
-            var indexingETs = new ConcurrentBag<IndexingET>();
 
             switch (_memory)
             {
@@ -128,18 +124,12 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
                                 {
                                     foreach (var strandEntry in chr.Value)
                                     {
-                                        indexingETs.Add(chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di4Degree));
+                                        chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di4Degree);
                                         //chrs[chr.Key][strand].Commit();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
                                 });
                             stpWtch.Stop();
-
-                            foreach (var et in indexingETs)
-                            {
-                                indexingET.IncrementalIndex += et.IncrementalIndex;
-                                indexingET.InvertedIndex += et.InvertedIndex;
-                            }
                             break;
                     }
 
@@ -187,15 +177,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
 
 
         internal ExecutionReport Add2ndPass(
-            MaxDegreeOfParallelism maxDegreeOfParallelism,
-            out IndexingET indexingET)
+            MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             Stopwatch stpWtch = new Stopwatch();
             int bookmarksCount = 0;
-            
-
-            indexingET = new IndexingET();
-            var indexingETs = new ConcurrentBag<IndexingET>();
 
             stpWtch.Start();
             Parallel.ForEach(chrs, //var chr in chrs
@@ -205,17 +190,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
                    foreach (var sDi4 in chr.Value)
                    {
                        bookmarksCount += sDi4.Value.bookmarkCount;
-                       indexingETs.Add(sDi4.Value.SecondPass());
+                       sDi4.Value.SecondPass();
                        sDi4.Value.Commit();
                    }
                });
             stpWtch.Stop();
-
-            foreach (var et in indexingETs)
-            {
-                indexingET.IncrementalIndex += et.IncrementalIndex;
-                indexingET.InvertedIndex += et.InvertedIndex;
-            }
 
             return new ExecutionReport(bookmarksCount, stpWtch.Elapsed);
         }        

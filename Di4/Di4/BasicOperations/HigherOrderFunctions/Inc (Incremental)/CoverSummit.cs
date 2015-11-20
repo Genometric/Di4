@@ -1,5 +1,4 @@
 ﻿using CSharpTest.Net.Collections;
-using Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
@@ -7,132 +6,222 @@ using System.Collections.Generic;
 namespace Polimi.DEIB.VahidJalili.DI4.Inc
 {
     internal class CoverSummit<C, I, M, O>
-        where C : IComparable<C>, IFormattable
-        where I : IInterval<C, M>
-        where M : IMetaData, new()
+    where C : IComparable<C>, IFormattable
+    where I : IInterval<C, M>
+    where M : IMetaData, new()
     {
         internal CoverSummit(
             object lockOnMe,
-            BPlusTree<C, B> di4_1R,
-            BPlusTree<BlockKey<C>, BlockValue> di4_2R,
+            BPlusTree<C, B> di3_1R,
+            BPlusTree<BlockKey<C>, BlockValue> di3_2R,
             IOutput<C, I, M, O> outputStrategy,
             BlockKey<C> left,
             BlockKey<C> right,
             int minAcc,
             int maxAcc)
         {
-            _di4_1R = di4_1R;
-            _di4_2R = di4_2R;
+            _lockOnMe = lockOnMe;
+            _di3_1R = di3_1R;
+            _di3_2R = di3_2R;
+            _determinedLambdas = new Dictionary<uint, Phi>();
             _left = left;
             _right = right;
             _minAcc = minAcc;
             _maxAcc = maxAcc;
-            _regionType = RegionType.Candidate;
-            _decompositionStack = new DecompositionStack<C, I, M, O>(outputStrategy, lockOnMe);
+            _outputStrategy = outputStrategy;
+            _reservedRightEnds = new Dictionary<uint, bool>();
+            _leftEndsToBeIgnored = new Dictionary<uint, bool>();
         }
 
-        private BPlusTree<C, B> _di4_1R { set; get; }
-        private BPlusTree<BlockKey<C>, BlockValue> _di4_2R { set; get; }
+        private BPlusTree<C, B> _di3_1R { set; get; }
+        private BPlusTree<BlockKey<C>, BlockValue> _di3_2R { set; get; }
         private BlockKey<C> _left { set; get; }
         private BlockKey<C> _right { set; get; }
         private int _minAcc { set; get; }
         private int _maxAcc { set; get; }
+        private int _rightEndsToFind { set; get; }
+        private bool _startOfIteration { set; get; }
+        private bool _excludeRightEndFromFinalization { set; get; }
+        private IOutput<C, I, M, O> _outputStrategy { set; get; }
+        private Dictionary<uint, Phi> _determinedLambdas { set; get; }
+        private object _lockOnMe { set; get; }
+        private bool _reserveRightEnds { set; get; }
+        private Dictionary<uint, bool> _reservedRightEnds { set; get; }
+        private Dictionary<uint, bool> _leftEndsToBeIgnored { set; get; }
+
+        private C _markedKey { set; get; }
         private int _markedAcc { set; get; }
         private int _accumulation { set; get; }
+        private int _currentAcc { set; get; }
         private int _previousAcc { set; get; }
-        private DecompositionStack<C,I,M,O> _decompositionStack { set; get; }
-        private RegionType _regionType { set; get; }
 
 
         internal void Cover()
         {
-            foreach (var block in _di4_2R.EnumerateRange(_left, _right))
+            foreach (var block in _di3_2R.EnumerateRange(_left, _right))
                 if (_minAcc <= block.Value.maxAccumulation)
                     _Cover(block.Key.leftEnd, block.Key.rightEnd);
         }
         private void _Cover(C left, C right)
         {
+            _markedKey = default(C);
             _markedAcc = -1;
             _accumulation = 0;
-            _decompositionStack.Reset();
-            _regionType = RegionType.Decomposition;
+            _startOfIteration = true;
 
-            foreach (var bookmark in _di4_1R.EnumerateRange(left, right))
+            foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
                 _accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
+                UpdateLambdas(bookmark.Value);
 
                 if (_markedAcc == -1 &&
                     _accumulation >= _minAcc &&
                     _accumulation <= _maxAcc)
                 {
+                    _markedKey = bookmark.Key;
                     _markedAcc = _accumulation;
-                    _regionType = RegionType.Designated;
-                    _decompositionStack.OpenDesignatedRegion(bookmark.Key, bookmark.Value);
-                    continue;
+                    _reserveRightEnds = true;
                 }
                 else if (_markedAcc != -1 &&
                     (_accumulation < _minAcc ||
                     _accumulation > _maxAcc))
                 {
-                    _decompositionStack.CloseDesignatedRegion(bookmark.Key, bookmark.Value);
-                    _regionType = RegionType.Decomposition;
+                    if (_rightEndsToFind > 0)
+                        Finalize_mu(right);
+
+                    _outputStrategy.Output(_markedKey, bookmark.Key, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
+
+                    _markedKey = default(C);
                     _markedAcc = -1;
-                    continue;
+                    ExcludeRservedRightEnds();
+                    _reserveRightEnds = false;
+                    _excludeRightEndFromFinalization = true;
                 }
-
-                _decompositionStack.Update(bookmark.Value, _regionType);
             }
-
-            _decompositionStack.Conclude();
         }
 
         internal void Summit()
         {
-            foreach (var block in _di4_2R.EnumerateRange(_left, _right))
+            foreach (var block in _di3_2R.EnumerateRange(_left, _right))
                 if (_minAcc <= block.Value.maxAccumulation)
                     _Summit(block.Key.leftEnd, block.Key.rightEnd);
         }
         private void _Summit(C left, C right)
         {
+            _markedKey = default(C);
             _markedAcc = -1;
+            _currentAcc = 0;
             _previousAcc = 0;
-            _accumulation = 0;
-            _decompositionStack.Reset();
-            _regionType = RegionType.Decomposition;
+            _startOfIteration = true;
 
-            foreach (var bookmark in _di4_1R.EnumerateRange(left, right))
+            foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                _accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
+                _currentAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
+                UpdateLambdas(bookmark.Value);
 
-                if (_previousAcc < _accumulation &&
-                    _markedAcc < _accumulation &&
-                    _accumulation >= _minAcc &&
-                    _accumulation <= _maxAcc)
+                if (_previousAcc < _currentAcc &&
+                    _markedAcc < _currentAcc &&
+                    _currentAcc >= _minAcc &&
+                    _currentAcc <= _maxAcc)
                 {
-                    _markedAcc = _accumulation;
-                    _regionType = RegionType.Designated;
-                    _decompositionStack.OpenDesignatedRegion(bookmark.Key, bookmark.Value);
-                    _previousAcc = _accumulation;
-                    continue;
+                    _markedKey = bookmark.Key;
+                    _markedAcc = _currentAcc;
+                    _reserveRightEnds = true;
                 }
-                else if (_markedAcc > _accumulation ||
-                    (_markedAcc < _accumulation && (
-                    _accumulation < _minAcc ||
-                    _accumulation > _maxAcc) &&
+                else if (_markedAcc > _currentAcc ||
+                    (_markedAcc < _currentAcc && (
+                    _currentAcc < _minAcc ||
+                    _currentAcc > _maxAcc) &&
                     _markedAcc != -1))
                 {
-                    _decompositionStack.CloseDesignatedRegion(bookmark.Key, bookmark.Value);
-                    _regionType = RegionType.Decomposition;
+                    if (_rightEndsToFind > 0)
+                        Finalize_mu(right);
+
+                    _outputStrategy.Output(_markedKey, bookmark.Key, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
+
+                    _markedKey = default(C);
                     _markedAcc = -1;
-                    _previousAcc = _accumulation;
+                    ExcludeRservedRightEnds();
+                    _reserveRightEnds = false;
+                    _excludeRightEndFromFinalization = true;
+                }
+
+                _previousAcc = _currentAcc;
+            }
+        }
+
+        private void UpdateLambdas(B keyBookmark)
+        {
+            if (_startOfIteration)
+            {
+                foreach (var lambda in keyBookmark.lambda)
+                    if (lambda.phi == Phi.LeftEnd)
+                        _determinedLambdas.Add(lambda.atI, lambda.phi);
+
+                _rightEndsToFind = keyBookmark.mu;
+                _startOfIteration = false;
+            }
+            else
+            {
+                foreach (var lambda in keyBookmark.lambda)
+                {
+                    if (_determinedLambdas.ContainsKey(lambda.atI) == false)
+                        _determinedLambdas.Add(lambda.atI, lambda.phi);
+
+                    if (lambda.phi == Phi.RightEnd)
+                    {
+                        //if (_determinedLambdas[lambda.atI] == Phi.RightEnd)
+                        _rightEndsToFind--;
+
+                        if (_reserveRightEnds)
+                            _reservedRightEnds.Add(lambda.atI, false);
+                        else
+                            _determinedLambdas.Remove(lambda.atI);
+                    }
+                }
+            }
+        }
+        private void Finalize_mu(C enumerationStart)
+        {
+            _leftEndsToBeIgnored.Clear();
+
+            foreach (var bookmark in _di3_1R.EnumerateFrom(enumerationStart))
+            {
+                if (_excludeRightEndFromFinalization)
+                {
+                    _excludeRightEndFromFinalization = false;
                     continue;
                 }
 
-                _previousAcc = _accumulation;
-                _decompositionStack.Update(bookmark.Value, _regionType);
-            }
+                foreach (var lambda in bookmark.Value.lambda)
+                {
+                    if (lambda.phi == Phi.LeftEnd)
+                    {
+                        _leftEndsToBeIgnored.Add(lambda.atI, true);
+                        continue;
+                    }
 
-            _decompositionStack.Conclude();
+                    if (_leftEndsToBeIgnored.ContainsKey(lambda.atI))
+                    {
+                        _leftEndsToBeIgnored.Remove(lambda.atI);
+                        continue;
+                    }
+
+                    if (!_determinedLambdas.ContainsKey(lambda.atI))
+                    {
+                        _determinedLambdas.Add(lambda.atI, lambda.phi);
+                        _rightEndsToFind--;
+                    }
+                }
+
+                if (_rightEndsToFind == 0) break;
+            }
+        }
+        private void ExcludeRservedRightEnds()
+        {
+            foreach (var lambda in _reservedRightEnds)
+                _determinedLambdas.Remove(lambda.Key);
+            _reservedRightEnds.Clear();
         }
     }
 }
