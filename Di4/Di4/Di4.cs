@@ -2,7 +2,6 @@
 using CSharpTest.Net.Serialization;
 using CSharpTest.Net.Synchronization;
 using CSharpTest.Net.Threading;
-using Polimi.DEIB.VahidJalili.DI4.BasicOperations.FirstOrderFunctions;
 using Polimi.DEIB.VahidJalili.DI4.BasicOperations.IndexFunctions;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
@@ -588,10 +587,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
         {
             Map<O>(ref outputStrategy, references, Environment.ProcessorCount, default(C), default(C));
         }
-        public void Map<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, C UDF, C DDF)
-        {
-            Map<O>(ref outputStrategy, references, Environment.ProcessorCount, UDF, DDF);
-        }
+        
         public void Map<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
         {
             Map<O>(ref outputStrategy, references, nThreads, default(C), default(C));
@@ -659,7 +655,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccHistogram);
+                    work.Enqueue(new Inc.AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccHistogram);
                 work.Complete(true, -1);
             }
 
@@ -678,13 +674,13 @@ namespace Polimi.DEIB.VahidJalili.DI4
         }
         public SortedDictionary<int, int> AccumulationDistribution(int nThreads)
         {
-            object lockOnMe = new Object();
+            object lockOnMe = new object();
             var results = new SortedDictionary<int, int>();
             var partitions = Partition_1RInc(nThreads);
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccDistribution);
+                    work.Enqueue(new Inc.AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccDistribution);
                 work.Complete(true, -1);
             }
 
@@ -744,7 +740,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new MergeComplement<C, I, M>(
+                        new Inc.MergeComplement<C, I, M>(
                             _di4_2R,
                             partitions[i].left,
                             partitions[i].right,
@@ -782,6 +778,41 @@ namespace Polimi.DEIB.VahidJalili.DI4
 
             return results.Keys;
         }
+
+        public BlockInfoDis BlockInfoDistributions()
+        {
+            if (_indexesCardinality.GetValue(_keyCardinality2R) == 0)
+                throw new InvalidOperationException("The second-resolution index is required, which is not populated yet.");
+
+            var rtv = new BlockInfoDis();
+
+            foreach(var block in _di4_2R.EnumerateFrom(_di4_2R.First().Key))
+            {
+                if (rtv.intervalCountDis.ContainsKey(block.Value.intervalCount))
+                    rtv.intervalCountDis[block.Value.intervalCount]++;
+                else
+                    rtv.intervalCountDis.Add(block.Value.intervalCount, 1);
+
+                if (rtv.maxAccDis.ContainsKey(block.Value.maxAccumulation))
+                    rtv.maxAccDis[block.Value.maxAccumulation]++;
+                else
+                    rtv.maxAccDis.Add(block.Value.maxAccumulation, 1);
+            }
+
+            int maxValue = 0;
+            maxValue = rtv.intervalCountDis.Keys.Max();
+            for (int i = 1; i < maxValue; i++)
+                if (!rtv.intervalCountDis.ContainsKey(i))
+                    rtv.intervalCountDis.Add(i, 0);
+
+            maxValue = rtv.maxAccDis.Keys.Max();
+            for (int i = 1; i < maxValue; i++)
+                if (!rtv.maxAccDis.ContainsKey(i))
+                    rtv.maxAccDis.Add(i, 0);
+
+            return rtv;
+        }
+        
 
         private Partition<C>[] Partition_1RInc(int fCount)
         {

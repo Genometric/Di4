@@ -3,14 +3,14 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.BasicOperations.FirstOrderFunctions
+namespace Polimi.DEIB.VahidJalili.DI4.Inc
 {
     internal class MergeComplement<C, I, M>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal MergeComplement(BPlusTree<BlockKey<C>, BlockValue> di4_2R, BlockKey<C> left, BlockKey<C> right, SortedDictionary<BlockKey<C>,int> blocks, Object lockOnMe)
+        internal MergeComplement(BPlusTree<BlockKey<C>, BlockValue> di4_2R, BlockKey<C> left, BlockKey<C> right, SortedDictionary<BlockKey<C>,int> blocks, object lockOnMe)
         {
             _di4_2R = di4_2R;
             _left = left;
@@ -23,7 +23,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.BasicOperations.FirstOrderFunctions
         private SortedDictionary<BlockKey<C>,int> _blocks { set; get; }
         private BlockKey<C> _left { set; get; }
         private BlockKey<C> _right { set; get; }
-        private Object _lockOnMe { set; get; }
+        private object _lockOnMe { set; get; }
 
         internal void Merge()
         {

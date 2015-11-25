@@ -2,9 +2,6 @@
 
 namespace Polimi.DEIB.VahidJalili.DI4
 {
-    /// <summary>
-    /// for second resolution.
-    /// </summary>
     public struct BlockKey<C> : IComparable<BlockKey<C>>
         where C : IComparable<C>, IFormattable
     {
@@ -39,18 +36,5 @@ namespace Polimi.DEIB.VahidJalili.DI4
             if (tmpCmp != 0) return tmpCmp;
             return rightEnd.CompareTo(other.rightEnd);
         }
-    }
-
-    internal struct BlockValue
-    {
-        internal BlockValue(int MaxAccumulation, int IntervalCount)
-            : this()
-        {
-            maxAccumulation = MaxAccumulation;
-            intervalCount = IntervalCount;
-        }
-
-        internal int maxAccumulation { private set; get; }
-        internal int intervalCount { private set; get; }
     }
 }

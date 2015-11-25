@@ -3,14 +3,14 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.BasicOperations.FirstOrderFunctions
+namespace Polimi.DEIB.VahidJalili.DI4.Inc
 {
     internal class AccumulationStats<C, I, M>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal AccumulationStats(BPlusTree<C, Inc.B> di4_1R, C left, C right, List<AccEntry<C>> accHistogram, object lockOnMe)
+        internal AccumulationStats(BPlusTree<C, B> di4_1R, C left, C right, List<AccEntry<C>> accHistogram, object lockOnMe)
         {
             _di4_1R = di4_1R;
             _left = left;
@@ -18,7 +18,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.BasicOperations.FirstOrderFunctions
             _lockOnMe = lockOnMe;
             _accHistogram = accHistogram;
         }
-        internal AccumulationStats(BPlusTree<C, Inc.B> di4_1R, C left, C right, SortedDictionary<int, int> accDistribution, object lockOnMe)
+        internal AccumulationStats(BPlusTree<C, B> di4_1R, C left, C right, SortedDictionary<int, int> accDistribution, object lockOnMe)
         {
             _di4_1R = di4_1R;
             _left = left;
@@ -28,7 +28,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.BasicOperations.FirstOrderFunctions
         }
         
 
-        private BPlusTree<C, Inc.B> _di4_1R { set; get; }
+        private BPlusTree<C, B> _di4_1R { set; get; }
         private C _left { set; get; }
         private C _right { set; get; }
         private List<AccEntry<C>> _accHistogram { set; get; }

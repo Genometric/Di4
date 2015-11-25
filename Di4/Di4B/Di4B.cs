@@ -69,5 +69,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         {
             return genome.Dichotomies(out result, maxDegreeOfParallelism);
         }
+        public ExecutionReport BlocksInfoDistribution(out BlockInfoDis result, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        {
+            return genome.BlocksInfoDistribution(out result, maxDegreeOfParallelism);
+        }
     }
 }

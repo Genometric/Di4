@@ -115,5 +115,43 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             stp.Stop();
             return new ExecutionReport(intervalCount, stp.Elapsed);
         }
+        internal static ExecutionReport Export(string fileName, BlockInfoDis results)
+        {
+            Stopwatch stp = new Stopwatch();
+            stp.Restart();
+            int intervalCount = 0;
+
+            string icdF = Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(fileName) + "_interval_count_distribution" + Path.GetExtension(fileName),
+                macF = Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(fileName) + "_maximum_accumulation_distribution" + Path.GetExtension(fileName);
+
+            #region .::.   Interval Count Distribution          .::.
+            if (!File.Exists(icdF)) File.Delete(icdF);
+            using (File.Create(icdF)) { }
+            using (var writter = new StreamWriter(icdF))
+            {
+                writter.WriteLine("IntervalCount\tCount");
+                foreach (var item in results.intervalCountDis)
+                {
+                    writter.WriteLine(item.Key + "\t" + item.Value);
+                    intervalCount++;
+                }
+            }
+            #endregion
+            #region .::.    Maximum Accumulation Distribution   .::.
+            if (!File.Exists(macF)) File.Delete(macF);
+            using (File.Create(macF)) { }
+            using (var writter = new StreamWriter(macF))
+            {
+                writter.WriteLine("MaximumAccumulation\tCount");
+                foreach (var item in results.maxAccDis)
+                {
+                    writter.WriteLine(item.Key + "\t" + item.Value);
+                }
+            }
+            #endregion
+
+            stp.Stop();
+            return new ExecutionReport(intervalCount, stp.Elapsed);
+        }
     }
 }

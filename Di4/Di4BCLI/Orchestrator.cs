@@ -168,6 +168,15 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     }
                     break;
 
+                case "blockinfo":
+                    _stopWatch.Restart();
+                    if (!BlockInfoDis(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
                 case "getim": // get indexing mode.
                     return GetIndexingMode();
 
@@ -558,6 +567,22 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results = null;
             Herald.AnnounceExeReport("Dichotomies", di4B.Dichotomies(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            return true;
+        }
+        private bool BlockInfoDis(string[] args)
+        {
+            if (args.Length != 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, string.Format("Missing parameter."));
+                return false;
+            }
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
+
+            BlockInfoDis results = null;
+            Herald.AnnounceExeReport("BlockInfo", di4B.BlocksInfoDistribution(out results, _maxDegreeOfParallelism));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+
             return true;
         }
 
