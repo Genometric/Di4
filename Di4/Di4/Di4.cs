@@ -799,17 +799,6 @@ namespace Polimi.DEIB.VahidJalili.DI4
                     rtv.maxAccDis.Add(block.Value.maxAccumulation, 1);
             }
 
-            int maxValue = 0;
-            maxValue = rtv.intervalCountDis.Keys.Max();
-            for (int i = 1; i < maxValue; i++)
-                if (!rtv.intervalCountDis.ContainsKey(i))
-                    rtv.intervalCountDis.Add(i, 0);
-
-            maxValue = rtv.maxAccDis.Keys.Max();
-            for (int i = 1; i < maxValue; i++)
-                if (!rtv.maxAccDis.ContainsKey(i))
-                    rtv.maxAccDis.Add(i, 0);
-
             return rtv;
         }
         
