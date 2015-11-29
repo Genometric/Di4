@@ -9,12 +9,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 {
     internal static class Exporter
     {
+        private static Stopwatch _stopWatch = new Stopwatch();
         internal static ExecutionReport Export(string fileName, FunctionOutput<Output<int, Peak, PeakData>> results, string header, string separator = "\t")
         {
             int intervalCount = 0;
-            Stopwatch stp = new Stopwatch();
-
-            stp.Restart();
+            _stopWatch.Restart();
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
@@ -34,39 +33,64 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                         }
             }
 
-            stp.Stop();
-            return new ExecutionReport(intervalCount, stp.Elapsed);
+            _stopWatch.Stop();
+            return new ExecutionReport(intervalCount, _stopWatch.Elapsed);
         }
-        internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<int>>>> results, string header, string separator = "\t")
+        internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<int>>>> results, string header, Mux mux = Mux.Join, string separator = "\t")
         {
             int intervalCount = 0;
-            Stopwatch stp = new Stopwatch();
-            stp.Restart();
-            if (!File.Exists(fileName)) File.Delete(fileName);
-            using (File.Create(fileName)) { }
-            using (var writter = new StreamWriter(fileName))
+            _stopWatch.Restart();
+
+            if (mux == Mux.Join)
             {
-                writter.WriteLine(header);
-                foreach (var chr in results)
-                    foreach (var strand in chr.Value)
-                    {
-                        strand.Value.Sort();
-                        foreach (var interval in strand.Value)
+                if (!File.Exists(fileName)) File.Delete(fileName);
+                using (File.Create(fileName)) { }
+                using (var writter = new StreamWriter(fileName))
+                {
+                    writter.WriteLine(header);
+                    foreach (var chr in results)
+                        foreach (var strand in chr.Value)
                         {
-                            writter.WriteLine(chr.Key + separator + interval.Left.ToString() + separator + interval.Right.ToString() + separator + interval.Accumulation.ToString() + separator + strand.Key);
-                            intervalCount++;
+                            strand.Value.Sort();
+                            foreach (var interval in strand.Value)
+                            {
+                                writter.WriteLine(chr.Key + separator + interval.Left.ToString() + separator + interval.Right.ToString() + separator + interval.Accumulation.ToString() + separator + strand.Key);
+                                intervalCount++;
+                            }
+                        }
+                }
+            }
+            else
+            {
+                string chrFile;
+                foreach (var chr in results)
+                {
+                    chrFile = Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(fileName) + "_" + chr.Key + Path.GetExtension(fileName);
+                    if (!File.Exists(chrFile)) File.Delete(chrFile);
+                    using (File.Create(chrFile)) { }
+                    using (var writter = new StreamWriter(chrFile))
+                    {
+                        writter.WriteLine(header);
+                        foreach (var strand in chr.Value)
+                        {
+                            strand.Value.Sort();
+                            foreach (var interval in strand.Value)
+                            {
+                                writter.WriteLine(chr.Key + separator + interval.Left.ToString() + separator + interval.Right.ToString() + separator + interval.Accumulation.ToString() + separator + strand.Key);
+                                intervalCount++;
+                            }
                         }
                     }
+                }
             }
 
-            stp.Stop();
-            return new ExecutionReport(intervalCount, stp.Elapsed);
+            _stopWatch.Stop();
+            return new ExecutionReport(intervalCount, _stopWatch.Elapsed);
         }
         internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, SortedDictionary<int, int>>> results, SortedDictionary<int, int> mergedResults, string header, string separator = "\t")
         {
             int intervalCount = 0;
-            Stopwatch stp = new Stopwatch();
-            stp.Restart();
+            _stopWatch.Restart();
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
@@ -93,14 +117,13 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     writter.WriteLine(pair.Key + separator + pair.Value);
             }
 
-            stp.Stop();
-            return new ExecutionReport(intervalCount, stp.Elapsed);
+            _stopWatch.Stop();
+            return new ExecutionReport(intervalCount, _stopWatch.Elapsed);
         }
         internal static ExecutionReport Export(string fileName, ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<int>>>> results, string separator = "\t")
         {
             int intervalCount = 0;
-            Stopwatch stp = new Stopwatch();
-            stp.Restart();
+            _stopWatch.Restart();
             if (!File.Exists(fileName)) File.Delete(fileName);
             using (File.Create(fileName)) { }
             using (var writter = new StreamWriter(fileName))
@@ -112,14 +135,35 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                             intervalCount++;
                         }
 
-            stp.Stop();
-            return new ExecutionReport(intervalCount, stp.Elapsed);
+            _stopWatch.Stop();
+            return new ExecutionReport(intervalCount, _stopWatch.Elapsed);
+        }
+        internal static ExecutionReport Export(string fileName, SortedDictionary<string, SortedDictionary<char, Stats>> results, string separator = "\t")
+        {
+            _stopWatch.Restart();
+            if (!File.Exists(fileName)) File.Delete(fileName);
+            using (File.Create(fileName)) { }
+            using (var writter = new StreamWriter(fileName))
+            {
+                writter.WriteLine("Chr" + separator + "strand" + separator + "intervalCount" + separator + "bookmarkCount" + separator + "blockCount");
+                foreach (var chr in results)
+                    foreach (var strand in chr.Value)
+                    {
+                        writter.WriteLine(
+                            chr.Key + separator +
+                            strand.Key + separator +
+                            strand.Value.intervalCount + separator +
+                            strand.Value.bookmarkCount + separator +
+                            strand.Value.blockCount);
+                    }
+            }
+            _stopWatch.Stop();
+            return new ExecutionReport(0, _stopWatch.Elapsed);
         }
         internal static ExecutionReport Export(string fileName, BlockInfoDis results)
         {
-            Stopwatch stp = new Stopwatch();
-            stp.Restart();
             int intervalCount = 0;
+            _stopWatch.Restart();
 
             string icdF = Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(fileName) + "_interval_count_distribution" + Path.GetExtension(fileName),
                 macF = Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(fileName) + "_maximum_accumulation_distribution" + Path.GetExtension(fileName);
@@ -150,8 +194,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             }
             #endregion
 
-            stp.Stop();
-            return new ExecutionReport(intervalCount, stp.Elapsed);
+            _stopWatch.Stop();
+            return new ExecutionReport(intervalCount, _stopWatch.Elapsed);
         }
     }
 }

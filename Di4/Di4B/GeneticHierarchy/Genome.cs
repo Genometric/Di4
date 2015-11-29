@@ -494,6 +494,33 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         }
 
 
+        internal ExecutionReport Statistics(
+            out SortedDictionary<string, SortedDictionary<char, Stats>> result)
+        {
+            _stpWtch.Restart();
+            result = new SortedDictionary<string, SortedDictionary<char, Stats>>();
+            var overallStats = new Stats();
+
+            foreach(var item in chrs)
+            {
+                result.Add(item.Key, new SortedDictionary<char, Stats>());
+                foreach(var strand in item.Value)
+                {
+                    var tmp = strand.Value.Statistics();
+                    result[item.Key].Add(strand.Key, tmp);
+                    overallStats = new Stats(
+                        overallStats.intervalCount + tmp.intervalCount,
+                        overallStats.bookmarkCount + tmp.bookmarkCount,
+                        overallStats.blockCount + tmp.blockCount);
+                }
+            }
+            result.Add("Overall", new SortedDictionary<char, Stats>());
+            result["Overall"].Add('*', overallStats);
+            _stpWtch.Stop();
+            return new ExecutionReport(1, _stpWtch.Elapsed);
+        }
+
+
         private string GetDi4File(string chr, char strand)
         {
             string s = "";

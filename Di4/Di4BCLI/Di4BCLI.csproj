@@ -87,13 +87,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Comparers\Int32Comparer.cs" />
+    <Compile Include="Components\Enums.cs" />
     <Compile Include="Logging\Herald.cs" />
     <Compile Include="Orchestrator.cs" />
-    <Compile Include="PrimaryComponents\Peak.cs" />
-    <Compile Include="PrimaryComponents\PeakData.cs" />
-    <Compile Include="PrimaryComponents\Repository.cs" />
-    <Compile Include="PrimaryComponents\UserConfig.cs" />
-    <Compile Include="PrimaryComponents\UserConfigSetup.cs" />
+    <Compile Include="Components\Peak.cs" />
+    <Compile Include="Components\PeakData.cs" />
+    <Compile Include="Components\Repository.cs" />
+    <Compile Include="Components\UserConfig.cs" />
+    <Compile Include="Components\UserConfigSetup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultsExport\Exporter.cs" />

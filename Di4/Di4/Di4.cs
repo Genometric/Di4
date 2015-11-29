@@ -801,6 +801,14 @@ namespace Polimi.DEIB.VahidJalili.DI4
 
             return rtv;
         }
+
+        public Stats Statistics()
+        {
+            if (_options.ActiveIndexes == IndexType.Both || _options.ActiveIndexes == IndexType.OnlyIncremental)
+                return new Stats(0, _indexesCardinality.GetValue(_keyCardinalityIncIndx), _indexesCardinality.GetValue(_keyCardinality2R));
+            else
+                return new Stats(0, _indexesCardinality.GetValue(_keyCardinalityInvIndx), _indexesCardinality.GetValue(_keyCardinality2R));
+        }
         
 
         private Partition<C>[] Partition_1RInc(int fCount)

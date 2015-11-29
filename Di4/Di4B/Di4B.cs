@@ -73,5 +73,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         {
             return genome.BlocksInfoDistribution(out result, maxDegreeOfParallelism);
         }
+        public ExecutionReport Statistics(out SortedDictionary<string, SortedDictionary<char, Stats>> result)
+        {
+            return genome.Statistics(out result);
+        }
     }
 }

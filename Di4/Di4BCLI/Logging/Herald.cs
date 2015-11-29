@@ -97,7 +97,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             if (command.Length > 7) command = command.Substring(0, 4) + "...";
 
             Announce(MessageType.None,
-                /*-*/ string.Format("{0,7} {1}: {2,9}     ET: {3,6}     Speed: {4,14}",
+                /*-*/ string.Format("{0,7} {1}: {2,10}     ET: {3,6}     Speed: {4,16}",
                 /*0*/ command,
                 /*1*/ sUnit,
                 /*2*/ string.Format("{0:N0}", report.count),

@@ -43,7 +43,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         private int _tN2i { set; get; }
 
         private double _accumulatedLoadET { set; get; }
-
+        private Mux _mux { set; get; }
         private MaxDegreeOfParallelism _maxDegreeOfParallelism { set; get; }
         private string _workingDirectory { set; get; }
         private string _logFile { set; get; }
@@ -97,7 +97,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     }
                     _stopWatch.Stop();
 
-                    Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Average indexing speed", Math.Round(_tN2i / _stopWatch.Elapsed.TotalSeconds, 2) + "  #i\\sec"));
+                    Herald.Announce(Herald.MessageType.Info, string.Format("{0,29}: {1}", "Average indexing speed", Math.Round(_tN2i / _stopWatch.Elapsed.TotalSeconds, 2) + "  #i\\sec"));
                     break;
 
                 case "2pass": // 2nd pass of indexing.
@@ -156,7 +156,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     break;
 
                 case "stats":
-                    ReportStats();
+                    ReportStats(splittedCommand);
                     return false;                
 
                 case "dichotomies":
@@ -224,7 +224,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
 
             _stopWatch.Stop();
-            Herald.Announce(Herald.MessageType.Success, string.Format("    Overall ET: {0}", _stopWatch.Elapsed.ToString()));
+            Herald.Announce(Herald.MessageType.Success, string.Format("     Overall ET: {0}", _stopWatch.Elapsed.ToString()));
             return false;
         }
         
@@ -344,10 +344,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             Commit();
             _commitSTW.Stop();
 
-            Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1:N0}", "#indexed intervals", _tN2i));
-            Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Load ET (sec)", _accumulatedLoadET));
-            Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Index ET (sec)", _indexSTW.Elapsed.TotalSeconds.ToString()));
-            Herald.Announce(Herald.MessageType.Info, string.Format("{0,28}: {1}", "Commit ET (sec)", _commitSTW.Elapsed.TotalSeconds.ToString()));
+            Herald.Announce(Herald.MessageType.Info, string.Format("{0,29}: {1:N0}", "#indexed intervals", _tN2i));
+            Herald.Announce(Herald.MessageType.Info, string.Format("{0,29}: {1}", "Load ET (sec)", _accumulatedLoadET));
+            Herald.Announce(Herald.MessageType.Info, string.Format("{0,29}: {1}", "Index ET (sec)", _indexSTW.Elapsed.TotalSeconds.ToString()));
+            Herald.Announce(Herald.MessageType.Info, string.Format("{0,29}: {1}", "Commit ET (sec)", _commitSTW.Elapsed.TotalSeconds.ToString()));
 
             return true;
         }
@@ -424,7 +424,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         {
             if (args.Length != 5)
             {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Missing arguments."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
 
@@ -492,25 +492,27 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         }
         private bool AccumulationHistogram(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length != 2 && args.Length != 3)
             {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Missing argument."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
+
+            if (args.Length == 3 && !ParseMux(args[2])) return false;
 
             string resultFile = "";
             if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
             ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<int>>>> results;
             Herald.AnnounceExeReport("AccHistogram", di4B.AccumulationHistogram(out results, _maxDegreeOfParallelism));
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tleft\tright\taccumulation\tstrand"));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results, "chr\tleft\tright\taccumulation\tstrand", mux: _mux));
             return true;
         }
         private bool AccumulationDistribution(string[] args)
         {
             if (args.Length != 2)
             {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Missing argument."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
 
@@ -528,7 +530,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         {
             if(args.Length != 2)
             {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Missing parameter."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
             string resultFile = "";
@@ -543,7 +545,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         {
             if (args.Length != 2)
             {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Missing parameter."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
             string resultFile = "";
@@ -558,7 +560,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         {
             if(args.Length!= 2)
             {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Missing parameter."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
             string resultFile = "";
@@ -573,7 +575,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         {
             if (args.Length != 2)
             {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Missing parameter."));
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
             string resultFile = "";
@@ -630,18 +632,20 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         }
 
 
-        private void ReportStats()
+        private bool ReportStats(string[] args)
         {
-            ChrSection chrSection = (ChrSection)ConfigurationManager.GetSection(_sectionTitle);
-            if (chrSection == null)
+            if (args.Length != 2)
             {
-                Herald.Announce(Herald.MessageType.Info, "Configuration does not contain any Di4 index.");
-                return;
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                return false;
             }
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
 
-            Herald.Announce(Herald.MessageType.Info, string.Format("Configuration contains {0,5} chromosomes as following:", chrSection.genomeChrs.Count));
-            foreach (ChrConfigElement element in chrSection.genomeChrs)
-                Herald.Announce(Herald.MessageType.Info, string.Format("Chromosome {0,5} is indexed in Di4 file: {1}", element.chr, element.index));
+            SortedDictionary<string, SortedDictionary<char, Stats>> results = null;
+            Herald.AnnounceExeReport("Statistics", di4B.Statistics(out results));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
+            return true;
         }
 
 
@@ -735,6 +739,21 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             }
             outputFileName = resultsFileURI.AbsolutePath;
             return true;
+        }
+        private bool ParseMux(string input)
+        {
+            input = input.ToLower().Trim();
+            if (input == "join")
+            {
+                _mux = Mux.Join;
+                return true;
+            }
+            if (input == "disjoin")
+            {
+                _mux = Mux.Disjoin;
+                return true;
+            }
+            return false;
         }
     }
 }
