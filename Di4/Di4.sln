@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A22F1A77-6131-413A-A9D7-062DC73406DA}"
 EndProject
@@ -31,6 +31,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestPackages", "TestPackages", "{53BE67B1-F065-4FAC-B1B9-3C29AB468E4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BPlusTreeTest", "BPlusTreeTest\BPlusTreeTest.csproj", "{3F5273A0-2212-44F7-AE20-5D1C78BF7285}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di4DataSim", "Di4DataSim\Di4DataSim.csproj", "{F523DCF9-8868-493D-A354-F6BD08FF6706}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,11 +84,13 @@ Global
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|x64.ActiveCfg = Debug|x64
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Debug|x64.Build.0 = Debug|x64
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4}.Release|x64.ActiveCfg = Release|x64
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -97,6 +101,18 @@ Global
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285}.Release|x64.ActiveCfg = Release|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Debug|x64.Build.0 = Debug|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Release|Mixed Platforms.Build.0 = Release|x64
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Release|x64.ActiveCfg = Release|x64
+		{F523DCF9-8868-493D-A354-F6BD08FF6706}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,9 +122,10 @@ Global
 		{D17DD4B8-EA5A-4A0C-A029-7B353B092AA1} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
 		{7EDF27C3-5236-46BD-BB52-641CC8A4E6E4} = {53BE67B1-F065-4FAC-B1B9-3C29AB468E4A}
 		{3F5273A0-2212-44F7-AE20-5D1C78BF7285} = {53BE67B1-F065-4FAC-B1B9-3C29AB468E4A}
+		{F523DCF9-8868-493D-A354-F6BD08FF6706} = {A22F1A77-6131-413A-A9D7-062DC73406DA}
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
+		SccNumberOfProjects = 7
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://agcc.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -131,5 +148,9 @@ Global
 		SccProjectTopLevelParentUniqueName5 = Di4.sln
 		SccProjectName5 = BPlusTreeTest
 		SccLocalPath5 = BPlusTreeTest
+		SccProjectUniqueName6 = Di4DataSim\\Di4DataSim.csproj
+		SccProjectTopLevelParentUniqueName6 = Di4.sln
+		SccProjectName6 = Di4DataSim
+		SccLocalPath6 = Di4DataSim
 	EndGlobalSection
 EndGlobal

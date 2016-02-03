@@ -14,13 +14,13 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
             _lockOnMe = lockOnMe;
             _outputStrategy = outputStrategy;
             _designatedRegions = new List<DesignatedRegion<C>>();
-            _tLambdas = new Dictionary<uint, Phi>();
+            _tLambdas = new AtomicDictionary<uint, Phi>();
         }
 
         private object _lockOnMe { set; get; }
         private IOutput<C, I, M, O> _outputStrategy { set; get; }
         private List<DesignatedRegion<C>> _designatedRegions { set; get; }
-        private Dictionary<uint, Phi> _tLambdas { set; get; }
+        private AtomicDictionary<uint, Phi> _tLambdas { set; get; }
         private int _dUpperLimit { set; get; }
         private int _i { set; get; }
 
@@ -55,7 +55,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
                     }
                 Conclude();
             }
-            
+
             _designatedRegions.Add(newDesignatedRegion);
         }
         public void Close(C rightEnd, DI4.Inc.B keyBookmark)
@@ -71,7 +71,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
         {
             switch (regionType)
             {
-                case RegionType.Candidate: break;
+                case RegionType.Candidate: return;
 
                 case RegionType.Designated:
                     foreach (var lambda in keyBookmark.lambda)
@@ -90,6 +90,21 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
                     break;
             }
         }
+        public void Conclude()
+        {
+            _dUpperLimit = _designatedRegions.Count;
+            for (int i = 0; i < _dUpperLimit; i++)
+                if (_designatedRegions[i].mu == 0)
+                {
+                    _outputStrategy.Output(_designatedRegions[i].leftEnd, _designatedRegions[i].rightEnd, new List<uint>(_designatedRegions[i].lambdas.Keys), _lockOnMe);
+                    _designatedRegions.RemoveAt(i);
+                    _dUpperLimit--;
+                    i--;
+                    continue;
+                }
+                else
+                    return;
+        }
         private void UpdateDesignatedRegions(uint atI)
         {
             /*for (_i = _designatedRegions.Count - 1; _i >= 0; _i--)
@@ -100,6 +115,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
                     _designatedRegions[_i].lambdas.Add(atI, Phi.RightEnd);
                     _designatedRegions[_i].mu--;
                 }*/
+
 
             foreach(var deRegion in _designatedRegions)
                 if (deRegion.lambdas.ContainsKey(atI))
@@ -119,21 +135,12 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
                     _designatedRegions[_i].mu--;
             }*/
 
-        }
-        public void Conclude()
-        {
-            _dUpperLimit = _designatedRegions.Count;
-            for (int i = 0; i < _dUpperLimit; i++)
-                if (_designatedRegions[i].mu == 0)
-                {
-                    _outputStrategy.Output(_designatedRegions[i].leftEnd, _designatedRegions[i].rightEnd, new List<uint>(_designatedRegions[i].lambdas.Keys), _lockOnMe);
-                    _designatedRegions.RemoveAt(i);
-                    _dUpperLimit--;
-                    i--;
-                    continue;
-                }
-                else
-                    return;
+
+
+            // Newest:
+            /*foreach (var deRegion in _designatedRegions)
+                if (!deRegion.lambdas.AddOrUpdate(atI, Phi.RightEnd))
+                    deRegion.mu--;*/
         }
     }
 }

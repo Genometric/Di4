@@ -1,6 +1,7 @@
 ﻿using Polimi.DEIB.VahidJalili.DI4.DI4B;
 using Polimi.DEIB.VahidJalili.DI4.DI4B.Logging;
 using Polimi.DEIB.VahidJalili.GIFP;
+using Polimi.DEIB.VahidJalili.DI4DataSim;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -177,6 +178,15 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     }
                     break;
 
+                case "gsimdata":
+                    _stopWatch.Restart();
+                    if(!GSimData(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
                 case "getim": // get indexing mode.
                     return GetIndexingMode();
 
@@ -251,7 +261,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                 strandColumn: -1,
                 defaultValue: 0.01,
                 pValueFormat: pValueFormat.minus10_Log10_pValue,
-                dropPeakIfInvalidValue: false);
+                dropPeakIfInvalidValue: false,
+                hashFunction: HashFunction.FNV);
 
             try { Repository.parsedSample = bedParser.Parse(); }
             catch (Exception e)
@@ -585,6 +596,29 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             Herald.AnnounceExeReport("BlockInfo", di4B.BlocksInfoDistribution(out results, _maxDegreeOfParallelism));
             Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, results));
 
+            return true;
+        }
+
+        private bool GSimData(string[] args)
+        {
+            int _sCount = 0, _iCount = 0, _chrCount = 0, _kk = 0, _klambda = 0, _lambdak = 0, _lambdalambda = 0, _fileSizeProb = 0;
+
+            if (args.Length != 9 ||
+                !int.TryParse(args[1], out _sCount) ||
+                !int.TryParse(args[2], out _iCount) ||
+                !int.TryParse(args[3], out _chrCount) ||
+                !int.TryParse(args[4], out _kk) ||
+                !int.TryParse(args[5], out _klambda) ||
+                !int.TryParse(args[6], out _lambdak) ||
+                !int.TryParse(args[7], out _lambdalambda) ||
+                !int.TryParse(args[8], out _fileSizeProb))
+            {
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                return false;
+            }            
+
+            var simData = new Di4DataSim(_workingDirectory);
+            simData.Generate(_sCount, _iCount, _chrCount, new ErlangDistribution(_kk, _klambda), new ErlangDistribution(_lambdak, _lambdalambda), _fileSizeProb);
             return true;
         }
 

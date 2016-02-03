@@ -163,7 +163,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             ushort omega = 0;
             ReadOnlyCollection<Lambda> currentBookmarkLambda = null;
             var t = new Dictionary<uint, bool>();
-            KeyValueUpdate<C, B> updateFunction = delegate(C k, B i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
+            KeyValueUpdate<C, B> updateFunction = delegate (C k, B i) { return i.Update(ref mu, ref omega, currentBookmarkLambda); };
 
             foreach (var bookmark in _di4.EnumerateFrom(firstItem.Key))
             {

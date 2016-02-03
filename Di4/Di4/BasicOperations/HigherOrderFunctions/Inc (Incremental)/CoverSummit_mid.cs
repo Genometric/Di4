@@ -6,12 +6,12 @@ using System.Collections.Generic;
 
 namespace Polimi.DEIB.VahidJalili.DI4.Inc
 {
-    internal class CoverSummit_NEW<C, I, M, O>
+    internal class CoverSummit_mid<C, I, M, O>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        internal CoverSummit_NEW(
+        internal CoverSummit_mid(
             object lockOnMe,
             BPlusTree<C, B> di4_1R,
             BPlusTree<BlockKey<C>, BlockValue> di4_2R,

@@ -132,6 +132,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
         /// </summary>
         internal ReadOnlyCollection<Lambda> lambda { get { return Array.AsReadOnly(_lambda); } }
 
+        internal int accumulation { get { return lambda.Count - omega + mu; } }
+
 
 
         internal B Update(int mu, ushort omega, bool phi, uint atI) // keep the bool for phi cos until make sure who is calling/using it !!

@@ -9,6 +9,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
+
+/// <summary>
+/// Di4 uses the hashkey of intervals as ID; hence two intervals with same ID should exist. 
+/// However, Di4 does not control this property, and trusts the input. Di4 does throw an 
+/// exception for duplicate IDs. However, the functions may crash is duplications exist.
+/// </summary>
+
+
+
 namespace Polimi.DEIB.VahidJalili.DI4
 {
     /// <summary>
@@ -505,7 +514,9 @@ namespace Polimi.DEIB.VahidJalili.DI4
                                 partitions[i].left,
                                 partitions[i].right,
                                 minAccumulation,
-                                maxAccumulation).Cover);
+                                maxAccumulation//,
+                                //_indexesCardinality.GetValue(_keyCardinalityIncIndx)
+                                ).Cover);
 
                     work.Complete(true, -1);
                 }
@@ -557,7 +568,9 @@ namespace Polimi.DEIB.VahidJalili.DI4
                                 partitions[i].left,
                                 partitions[i].right,
                                 minAccumulation,
-                                maxAccumulation).Summit);
+                                maxAccumulation//,
+                                //_indexesCardinality.GetValue(_keyCardinalityIncIndx)
+                                ).Summit);
 
                     work.Complete(true, -1);
                 }

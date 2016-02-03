@@ -7,15 +7,17 @@ using System.Linq;
 
 namespace Polimi.DEIB.VahidJalili.DI4.SimulationDataGenerator
 {
-    internal class RegionGenerator
+    internal class RegionGenerator_old
     {
         const int minGap = 50;
         const int maxGap = 100;
-        const int maxLenght = 1000; // this value must be >= 4
-        const int chrCount = 23;
-        const int regionsCount = 20000; // per sample
-        const int sampleCount = 500; // IF YOU CHANGE THIS: remember to revise maxAcc.
-        const int maxAcc = 400; // Maximum accumulation. This number must be less than sampleCount.
+        const int maxLenght = 10000; // this value must be >= 4
+        const int chrCount = 1;
+        const int regionsCount = 2000; // per sample
+        const int sampleCount = 100; // IF YOU CHANGE THIS: remember to revise maxAcc.
+        const int maxAcc = 100; // Maximum accumulation. This number must be less than sampleCount.
+        const int minSamplePerInterRegion = 10;
+        const int maxSamplePerInterRegion = 100;
 
         int newStart = 0;
         int newStop = 0;
@@ -175,6 +177,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.SimulationDataGenerator
                         int maxReTr = 5; // maximum allowed regeneration trials.
                         int regenTrialCount = 0; // regeneration trials count.
                         int tmpLastStop = 0;
+                        //int regionsToGenerate = rnd.Next(minSamplePerInterRegion, maxSamplePerInterRegion);
+
                         for (int s = 0; s < sampleCount; s++)
                         {
                             regenerateLastRegion = true;
