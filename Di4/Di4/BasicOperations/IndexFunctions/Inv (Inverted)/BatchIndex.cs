@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents;
 
 
 namespace Polimi.DEIB.VahidJalili.DI4.Inv
@@ -49,40 +50,31 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             _bCounter = new BookmarkCounter();
             update.bookmarkCounter = _bCounter;
         }
-
-
-
-        /// <summary>
-        /// Sets and gets the _di4_1R data structure
-        /// to be manipulated. This data structure
-        /// is in common between all classes of 
-        /// namespace.
-        /// </summary>
-        private BPlusTree<C, B> _di4 { set; get; }
-        private IndexingMode _mode { set; get; }
-        private int _start { set; get; }
-        private int _stop { set; get; }
-        private I _interval { set; get; }
-        private List<I> _intervals { set; get; }
-        private ConcurrentDictionary<int, int> _addedBookmarks { set; get; }
-        private BookmarkCounter _bCounter { set; get; }
+        
+        
+        private int _start;
+        private int _stop;
+        private IndexingMode _mode;
+        private List<I> _intervals;
+        private BPlusTree<C, B> _di4;
+        private ConcurrentDictionary<int, int> _addedBookmarks;
+        private BookmarkCounter _bCounter;
         private AddUpdateValue update = new AddUpdateValue();
 
 
         public void Run()
         {
-            int i;
             switch (_mode)
             {
                 case IndexingMode.SinglePass:
-                    for (i = _start; i < _stop; i++)                    
+                    for (int i = _start; i < _stop; i++)                    
                         Index(_intervals[i]);                    
                     break;
 
                 case IndexingMode.MultiPass:
-                    for (i = _start; i < _stop; i++)
+                    for (int i = _start; i < _stop; i++)
                     {
-                        update.hashKey = _intervals[i].hashKey;
+                        update.atI = _intervals[i].hashKey;
                         update.phi = Phi.LeftEnd;
                         _di4.AddOrUpdate(_intervals[i].left, ref update);
 
@@ -93,67 +85,67 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             }
             _addedBookmarks.TryAdd(_start, _bCounter.value);
         }
+
         public void Index(I interval)
         {
-            _interval = interval;
-            bool isLeftEnd = true;
-            bool enumerated = false;
             update.phi = Phi.LeftEnd;
-            update.hashKey = _interval.hashKey;
-            int compareResult;
+            update.atI = interval.hashKey;
+            update.NextBookmark = null;
 
-            foreach (var item in _di4.EnumerateFrom(_interval.left))
+            var enumerator = _di4.EnumerateFrom(interval.left).GetEnumerator();
+            
+            if(!enumerator.MoveNext())
             {
-                enumerated = true;
-                update.NextBlock = null;
+                _di4.AddOrUpdate(interval.left, ref update);
 
-                if (isLeftEnd)
-                {
-                    if (HandleFirstItem(item)) break;
-                    isLeftEnd = false;
-                }
-                else
-                {
-                    compareResult = _interval.right.CompareTo(item.Key);
-
-                    if (compareResult == 0)
-                    {
-                        update.phi = Phi.RightEnd;
-                        break;
-                    }
-                    else if (compareResult == 1)// interval.right is bigger than bookmark.Key
-                    {
-                        update.phi = Phi.Middle;
-                        _di4.AddOrUpdate(item.Key, ref update);
-                    }
-                    else
-                    {
-                        update.phi = Phi.RightEnd;
-                        update.NextBlock = item.Value;
-                        break;
-                    }
-                }
-
-                /// this will be useful when the iteration reaches the 
-                /// end of collection while right-end is not handled yet. 
                 update.phi = Phi.RightEnd;
+                _di4.AddOrUpdate(interval.right, ref update);
+                return;
             }
 
-            if (enumerated)
+            if (interval.left.Equals(enumerator.Current.Key))
             {
-                _di4.AddOrUpdate(_interval.right, ref update);
+                _di4.AddOrUpdate(interval.left, ref update);
+                if(!enumerator.MoveNext())
+                {
+                    update.phi = Phi.RightEnd;
+                    _di4.AddOrUpdate(interval.right, ref update);
+                    return;
+                }
             }
             else
             {
-                update.NextBlock = null;
-                update.phi = Phi.LeftEnd;
-                update.hashKey = _interval.hashKey;
-                _di4.AddOrUpdate(_interval.left, ref update);
-
-                update.phi = Phi.RightEnd;
-                update.hashKey = _interval.hashKey;
-                _di4.AddOrUpdate(_interval.right, ref update);
+                update.NextBookmark = enumerator.Current.Value;
+                _di4.AddOrUpdate(interval.left, ref update);
             }
+
+            do
+            {
+                switch(interval.right.CompareTo(enumerator.Current.Key))
+                {
+                    case 0:
+                        update.phi = Phi.RightEnd;
+                        update.NextBookmark = null;
+                        _di4.AddOrUpdate(interval.right, ref update);
+                        return;
+
+                    case 1:
+                        update.phi = Phi.Middle;
+                        update.NextBookmark = null;
+                        _di4.AddOrUpdate(enumerator.Current.Key, ref update);
+                        break;
+
+                    case -1:
+                        update.phi = Phi.RightEnd;
+                        update.NextBookmark = enumerator.Current.Value;
+                        _di4.AddOrUpdate(interval.right, ref update);
+                        return;
+                }
+            }
+            while (enumerator.MoveNext());
+
+            update.phi = Phi.RightEnd;
+            _di4.AddOrUpdate(interval.right, ref update);
         }
 
         public void SecondPass()
@@ -161,8 +153,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             KeyValuePair<C, B> firstItem;
             _di4.TryGetFirst(out firstItem);
 
-            Dictionary<uint, Lambda> lambdaCarrier = new Dictionary<uint, Lambda>();
-            KeyValueUpdate<C, B> updateFunction = delegate (C k, B i) { return i.Update(lambdaCarrier); };
+            var lambdaCarrier = new AtomicDictionary<uint, Lambda>();
+            KeyValueUpdate<C, B> updateFunction = delegate (C k, B i) { return i.Update(lambdaCarrier.Values); };
             List<uint> keysToRemove = new List<uint>();
             List<uint> keys;
 
@@ -170,11 +162,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             {
                 foreach (var lambda in bookmark.Value.lambda)
                 {
-                    if (lambdaCarrier.ContainsKey(lambda.atI))
-                        lambdaCarrier[lambda.atI] = lambda;
-                    else
-                        lambdaCarrier.Add(lambda.atI, lambda);
-
+                    lambdaCarrier.AddOrUpdate(lambda.atI, lambda);
                     if (lambda.phi == Phi.RightEnd) keysToRemove.Add(lambda.atI);
                 }
 
@@ -190,7 +178,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
                     lambdaCarrier[key] = new Lambda(Phi.Middle, lambdaCarrier[key].atI);
             }
         }
-        private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda, Dictionary<uint, Lambda> lambdaCarrier)
+        private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda, AtomicDictionary<uint, Lambda> lambdaCarrier)
         {
             if (lambda.Count != lambdaCarrier.Count) return true;
             foreach (var item in lambda)
@@ -199,57 +187,24 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             return false;
         }
 
-        private bool HandleFirstItem(KeyValuePair<C, B> item)
-        {
-            if (_interval.left.Equals(item.Key))
-            {
-                _di4.AddOrUpdate(_interval.left, ref update);
-                return false;
-            }
-            else
-            {
-                update.NextBlock = item.Value;
-
-                switch (_interval.right.CompareTo(item.Key))
-                {
-                    case 1: // _interval.right is bigger than lambda.newKey
-                        _di4.AddOrUpdate(_interval.left, ref update);
-
-                        update.phi = Phi.Middle;
-                        update.NextBlock = null;
-                        _di4.AddOrUpdate(item.Key, ref update);
-                        return false;
-
-                    case 0:
-                    case -1:
-                        _di4.AddOrUpdate(_interval.left, ref update);
-
-                        update.phi = Phi.RightEnd;
-                        return true;
-                }
-            }
-
-            return true;
-        }
-
 
 
         struct AddUpdateValue : ICreateOrUpdateValue<C, B>, IRemoveValue<C, B>
         {
             public B oldValue;
             public Phi phi { set; get; }
-            public uint hashKey { set; get; }
+            public uint atI { set; get; }
             public BookmarkCounter bookmarkCounter { set; get; }
-            public B NextBlock { set; get; }
+            public B NextBookmark { set; get; }
 
             public bool CreateValue(C key, out B value)
             {
                 oldValue = null;
 
-                if (NextBlock == null)
-                    value = new B(phi: phi, hashKey: hashKey);
+                if (NextBookmark == null)
+                    value = new B(phi: phi, hashKey: atI);
                 else
-                    value = new B(phi: phi, metadata: hashKey, nextBlock: NextBlock);
+                    value = new B(phi: phi, metadata: atI, nextBlock: NextBookmark);
 
                 bookmarkCounter.value++;
                 return true;
@@ -257,18 +212,18 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             public bool UpdateValue(C key, ref B value)
             {
                 oldValue = value;
-                value = value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
+                value = value.Update(omega: value.omega, phi: phi, hashKey: atI);
                 return true;
             }
             public bool RemoveValue(C key, B value)
             {
                 oldValue = value;
-                if (value == value.Update(atI: hashKey, condition: phi))
+                if (value == value.Update(atI: atI, condition: phi))
                 {
                     bookmarkCounter.value--;
                     return true;
                 }
-                return value == value.Update(omega: value.omega, phi: phi, hashKey: hashKey);
+                return value == value.Update(omega: value.omega, phi: phi, hashKey: atI);
             }
         }
 

@@ -32,12 +32,13 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             Array.Copy(lambda, _lambda, lambda.Length);
             _lambda[lambda.Length] = new Lambda(phi: phi, atI: hashKey);
         }
-        private B(ushort omega, Dictionary<uint, Lambda> lambdas)
+        private B(ushort omega, ICollection<Lambda> lambdas)
         {
             this.omega = omega;
             _lambda = new Lambda[lambdas.Count];
-            lambdas.Values.CopyTo(_lambda, 0);
+            lambdas.CopyTo(_lambda, 0);
         }
+        
 
         internal B(Phi phi, uint hashKey)
         {
@@ -121,9 +122,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             return new B(omega: omega, lambda: _lambda, atI: atI, phi: condition);
         }
 
-        internal B Update(Dictionary<uint, Lambda> lambdas)
+        internal B Update(ICollection<Lambda> lambdas)
         {
-            return new B(omega: this.omega, lambdas: lambdas);
+            return new B(omega: omega, lambdas: lambdas);
         }
     }
 }
