@@ -53,9 +53,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         {
             return genome.AccumulationDistribution(out result, out mergedResult, maxDegreeOfParallelism);
         }
-        public ExecutionReport SecondResolutionIndex(MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport SecondResolutionIndex(CuttingMethod cuttingMethod, int binCount, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.SecondResolutionIndex(maxDegreeOfParallelism);
+            return genome.SecondResolutionIndex(cuttingMethod, binCount, maxDegreeOfParallelism);
         }
         public ExecutionReport Merge(out ConcurrentDictionary<string, ConcurrentDictionary<char, ICollection<BlockKey<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {

@@ -9,7 +9,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-
+using Polimi.DEIB.VahidJalili.DI4;
 
 namespace Polimi.DEIB.VahidJalili.DI4.CLI
 {
@@ -112,7 +112,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
                 case "2ri": // 2nd resolution index
                     _stopWatch.Restart();
-                    if (!Index2ndResolution())
+                    if (!Index2ndResolution(splittedCommand))
                     {
                         _stopWatch.Stop();
                         return false;
@@ -367,9 +367,45 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             Herald.AnnounceExeReport("2ndPass", di4B.Add2ndPass(_maxDegreeOfParallelism), speedUnit: Herald.SpeedUnit.bookmarkPerSecond);
             return true;
         }
-        private bool Index2ndResolution()
+        public bool Index2ndResolution(string[] args)
         {
-            Herald.AnnounceExeReport("2RIndex", di4B.SecondResolutionIndex(_maxDegreeOfParallelism), speedUnit: Herald.SpeedUnit.blockPerSecond);
+            if(args.Length != 3)
+            {
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                return false;
+            }
+
+            CuttingMethod cuttingMethod = CuttingMethod.ZeroThresholding;
+            switch(args[1].ToLower())
+            {
+                case "zt":
+                case "zerothresholding":
+                    cuttingMethod = CuttingMethod.ZeroThresholding;
+                    break;
+
+                case "uq":
+                case "uniformscalarquantization":
+                    cuttingMethod = CuttingMethod.UniformScalarQuantization;
+                    break;
+
+                case "nuq":
+                case "nonuniformscalarquantization":
+                    cuttingMethod = CuttingMethod.NonUniformScalarQuantization;
+                    break;
+
+                default:
+                    Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                    return false;
+            }
+
+            int binCount = 0;
+            if(!int.TryParse(args[2], out binCount))
+            {
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                return false;
+            }
+
+            Herald.AnnounceExeReport("2RIndex", di4B.SecondResolutionIndex(cuttingMethod, binCount, _maxDegreeOfParallelism), speedUnit: Herald.SpeedUnit.blockPerSecond);
             return true;
         }
         private bool Commit()
@@ -381,7 +417,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
         
         
-        private bool Cover(string[] args)
+        public bool Cover(string[] args)
         {
             if (args.Length < 6)
             {
@@ -427,7 +463,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     break;
             }
 
-            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
+
+
+            // disabled for the test purpose only. uncomment after the test.
+            //Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
 
             return true;
         }

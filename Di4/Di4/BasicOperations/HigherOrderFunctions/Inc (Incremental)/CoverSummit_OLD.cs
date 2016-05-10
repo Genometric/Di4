@@ -2,6 +2,7 @@
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Polimi.DEIB.VahidJalili.DI4.Inc
 {
@@ -56,22 +57,33 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
         private int _previousAcc { set; get; }
 
 
+
         internal void Cover()
         {
             foreach (var block in _di3_2R.EnumerateRange(_left, _right))
-                if (_minAcc <= block.Value.maxAccumulation)
+                if (!(_maxAcc < block.Value.boundariesLowerBound || block.Value.boundariesUpperBound < _minAcc)) //_minAcc <= block.Value.boundariesUpperBound)
+                {
+                    // I'm not sure if this is correct. 
+                    _determinedLambdas.Clear();
+
+                    foreach (var atI in block.Value.atI)
+                        _determinedLambdas.Add(atI, Phi.LeftEnd);
+
                     _Cover(block.Key.leftEnd, block.Key.rightEnd);
+                }
         }
         private void _Cover(C left, C right)
         {
             _markedKey = default(C);
             _markedAcc = -1;
             _accumulation = 0;
-            _startOfIteration = true;
+            ////_startOfIteration = true;
+
+            bool itIsOpen = false;
 
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                _accumulation = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
+                _accumulation = bookmark.Value.accumulation;// bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 UpdateLambdas(bookmark.Value);
 
                 if (_markedAcc == -1 &&
@@ -81,13 +93,14 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     _markedKey = bookmark.Key;
                     _markedAcc = _accumulation;
                     _reserveRightEnds = true;
+                    itIsOpen = true;
                 }
                 else if (_markedAcc != -1 &&
                     (_accumulation < _minAcc ||
                     _accumulation > _maxAcc))
                 {
-                    if (_rightEndsToFind > 0)
-                        Finalize_mu(right);
+                    ////if (_rightEndsToFind > 0)
+                    ////    Finalize_mu(right);
 
                     _outputStrategy.Output(_markedKey, bookmark.Key, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
 
@@ -96,15 +109,32 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     ExcludeRservedRightEnds();
                     _reserveRightEnds = false;
                     _excludeRightEndFromFinalization = true;
+                    itIsOpen = false;
                 }
+            }
+
+            if (itIsOpen)
+            {
+                _outputStrategy.Output(_markedKey, right, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
+                ExcludeRservedRightEnds();
+                _reserveRightEnds = false;
+                _excludeRightEndFromFinalization = true;
             }
         }
 
         internal void Summit()
         {
             foreach (var block in _di3_2R.EnumerateRange(_left, _right))
-                if (_minAcc <= block.Value.maxAccumulation)
+                if (!(_maxAcc < block.Value.boundariesLowerBound || block.Value.boundariesUpperBound < _minAcc)) //_minAcc <= block.Value.boundariesUpperBound)
+                {
+                    // I'm not sure if this is correct. 
+                    _determinedLambdas.Clear();
+
+                    foreach (var atI in block.Value.atI)
+                        _determinedLambdas.Add(atI, Phi.LeftEnd);
+
                     _Summit(block.Key.leftEnd, block.Key.rightEnd);
+                }
         }
         private void _Summit(C left, C right)
         {
@@ -114,9 +144,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             _previousAcc = 0;
             _startOfIteration = true;
 
+            bool itIsOpen = false;
+
             foreach (var bookmark in _di3_1R.EnumerateRange(left, right))
             {
-                _currentAcc = bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
+                _currentAcc = bookmark.Value.accumulation;// bookmark.Value.lambda.Count - bookmark.Value.omega + bookmark.Value.mu;
                 UpdateLambdas(bookmark.Value);
 
                 if (_previousAcc < _currentAcc &&
@@ -127,6 +159,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     _markedKey = bookmark.Key;
                     _markedAcc = _currentAcc;
                     _reserveRightEnds = true;
+                    itIsOpen = true;
                 }
                 else if (_markedAcc > _currentAcc ||
                     (_markedAcc < _currentAcc && (
@@ -134,8 +167,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     _currentAcc > _maxAcc) &&
                     _markedAcc != -1))
                 {
-                    if (_rightEndsToFind > 0)
-                        Finalize_mu(right);
+                    //if (_rightEndsToFind > 0)
+                    //    Finalize_mu(right);
 
                     _outputStrategy.Output(_markedKey, bookmark.Key, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
 
@@ -144,25 +177,34 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     ExcludeRservedRightEnds();
                     _reserveRightEnds = false;
                     _excludeRightEndFromFinalization = true;
+                    itIsOpen = false;
                 }
 
                 _previousAcc = _currentAcc;
+            }
+
+            if (itIsOpen)
+            {
+                _outputStrategy.Output(_markedKey, right, new List<uint>(_determinedLambdas.Keys), _lockOnMe);
+                ExcludeRservedRightEnds();
+                _reserveRightEnds = false;
+                _excludeRightEndFromFinalization = true;
             }
         }
 
         private void UpdateLambdas(B keyBookmark)
         {
-            if (_startOfIteration)
-            {
-                foreach (var lambda in keyBookmark.lambda)
-                    if (lambda.phi == Phi.LeftEnd)
-                        _determinedLambdas.Add(lambda.atI, lambda.phi);
-
-                _rightEndsToFind = keyBookmark.mu;
-                _startOfIteration = false;
-            }
-            else
-            {
+            ////if (_startOfIteration)
+            ////{
+            ////    foreach (var lambda in keyBookmark.lambda)
+            ////        if (lambda.phi == Phi.LeftEnd)
+            ////            _determinedLambdas.Add(lambda.atI, lambda.phi);
+            ////
+            ////    _rightEndsToFind = keyBookmark.mu;
+            ////    _startOfIteration = false;
+            ////}
+            ////else
+            ////{
                 foreach (var lambda in keyBookmark.lambda)
                 {
                     if (_determinedLambdas.ContainsKey(lambda.atI) == false)
@@ -171,7 +213,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     if (lambda.phi == Phi.RightEnd)
                     {
                         //if (_determinedLambdas[lambda.atI] == Phi.RightEnd)
-                        _rightEndsToFind--;
+           ////             _rightEndsToFind--;
 
                         if (_reserveRightEnds)
                             _reservedRightEnds.Add(lambda.atI, false);
@@ -179,7 +221,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                             _determinedLambdas.Remove(lambda.atI);
                     }
                 }
-            }
+            ////}
         }
         private void Finalize_mu(C enumerationStart)
         {

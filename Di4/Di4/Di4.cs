@@ -436,9 +436,9 @@ namespace Polimi.DEIB.VahidJalili.DI4
 
         public void SecondResolutionIndex()
         {
-            SecondResolutionIndex(Environment.ProcessorCount);
+            SecondResolutionIndex(CuttingMethod.ZeroThresholding, 0, Environment.ProcessorCount);
         }
-        public void SecondResolutionIndex(int nThreads)
+        public void SecondResolutionIndex(CuttingMethod cuttingMethod, int binCount, int nThreads)
         {
             // TODO: change first resolution options here to be readonly and readonly lock.
             
@@ -447,7 +447,16 @@ namespace Polimi.DEIB.VahidJalili.DI4
             if (_options.ActiveIndexes == IndexType.Both ||
                 _options.ActiveIndexes == IndexType.OnlyIncremental)
             {
-                Partition<C>[] partitions = Partition_1RInc(nThreads);
+                //Partition<C>[] partitions = Partition_1RInc(nThreads);
+
+                KeyValuePair<C, Inc.B> firstElement;
+                _di4_incIdx.TryGetFirst(out firstElement);
+
+                KeyValuePair<C, Inc.B> lastElement;
+                _di4_incIdx.TryGetLast(out lastElement);
+
+                nThreads = 1;
+
                 using (WorkQueue work = new WorkQueue(nThreads))
                 {
                     for (int i = 0; i < nThreads; i++)
@@ -455,8 +464,10 @@ namespace Polimi.DEIB.VahidJalili.DI4
                             new Inc.BatchIndex2R<C, I, M>(
                                 _di4_incIdx,
                                 _di4_2R,
-                                partitions[i].left,
-                                partitions[i].right,
+                                firstElement.Key,//partitions[i].left,
+                                lastElement.Key,//partitions[i].right,
+                                cuttingMethod,
+                                binCount,
                                 addedBlocks).Run);
 
                     work.Complete(true, -1);
@@ -806,10 +817,10 @@ namespace Polimi.DEIB.VahidJalili.DI4
                 else
                     rtv.intervalCountDis.Add(block.Value.intervalCount, 1);
 
-                if (rtv.maxAccDis.ContainsKey(block.Value.maxAccumulation))
-                    rtv.maxAccDis[block.Value.maxAccumulation]++;
+                if (rtv.maxAccDis.ContainsKey(block.Value.boundariesUpperBound))
+                    rtv.maxAccDis[block.Value.boundariesUpperBound]++;
                 else
-                    rtv.maxAccDis.Add(block.Value.maxAccumulation, 1);
+                    rtv.maxAccDis.Add(block.Value.boundariesUpperBound, 1);
             }
 
             return rtv;

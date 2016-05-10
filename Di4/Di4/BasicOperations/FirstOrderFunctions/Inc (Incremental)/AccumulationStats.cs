@@ -26,14 +26,25 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             _lockOnMe = lockOnMe;
             _accDistribution = accDistribution;
         }
-        
+        internal AccumulationStats(BPlusTree<C, B> di4_1R, C left, C right, SortedDictionary<int, double> PDF, object lockOnMe)
+        {
+            _di4_1R = di4_1R;
+            _left = left;
+            _right = right;
+            _lockOnMe = lockOnMe;
+            _PDF = PDF;
+            _accDistribution = new SortedDictionary<int, int>();
+            _runPDF = true;
+        }
 
         private BPlusTree<C, B> _di4_1R { set; get; }
         private C _left { set; get; }
         private C _right { set; get; }
         private List<AccEntry<C>> _accHistogram { set; get; }
         private SortedDictionary<int, int> _accDistribution { set; get; }
+        private SortedDictionary<int, double> _PDF { set; get; }
         private object _lockOnMe { set; get; }
+        private bool _runPDF { set; get; }
 
 
         internal void AccHistogram()
@@ -94,6 +105,24 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     }
                     _accDistribution[item.Key] += item.Value;
                 }
+            }
+        }
+        internal void PDF()
+        {
+            AccDistribution();
+
+            lock(_lockOnMe)
+            {
+                if (!_runPDF) return;
+
+                _runPDF = false;
+
+                double sum = 0;
+                foreach (var frequency in _accDistribution)
+                    sum += frequency.Value;
+
+                foreach (var kvp in _accDistribution)
+                    _PDF.Add(kvp.Key, kvp.Value / sum);
             }
         }
     }

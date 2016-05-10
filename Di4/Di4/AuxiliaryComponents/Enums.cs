@@ -25,4 +25,6 @@ namespace Polimi.DEIB.VahidJalili.DI4
         OnlyInverted
     };
     internal enum RegionType : byte { Candidate, Designated, Decomposition };
+
+    public enum CuttingMethod { ZeroThresholding, UniformScalarQuantization, NonUniformScalarQuantization };
 }

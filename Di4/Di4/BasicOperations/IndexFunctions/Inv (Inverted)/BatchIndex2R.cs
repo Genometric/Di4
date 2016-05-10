@@ -56,7 +56,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
 
                 if (bookmark.Value.lambda.Count == bookmark.Value.omega) //&& bookmark.Value.mu == 0)
                 {
-                    Update(currentBlockLeftEnd, bookmark.Key, maxAccumulation, intervalsCount);
+                    Update(leftEnd: currentBlockLeftEnd, rightEnd: bookmark.Key, minAccumulation: 0, maxAccumulation: maxAccumulation, count: intervalsCount);
                     maxAccumulation = 0;
                     intervalsCount = 0;
                     startNewBlock = true;
@@ -66,11 +66,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             _addedBlocks.TryAdd(_left, _bCounter.value);
         }
 
-        private void Update(C leftEnd, C rightEnd, int maxAccumulation, int count)
+        private void Update(C leftEnd, C rightEnd, int minAccumulation, int maxAccumulation, int count)
         {
             /// lambda is an element of di4_1R that intersects newKey.
             var newKey = new BlockKey<C>(leftEnd, rightEnd);
-            var newValue = new BlockValue(maxAccumulation, count);
+            var newValue = new BlockValue(BoundariesLowerBound: minAccumulation, BoundariesUpperBound: maxAccumulation, IntervalCount: count, atI: new uint[0]);
 
             foreach (var item in _di42R.EnumerateFrom(newKey))
             {

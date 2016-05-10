@@ -201,7 +201,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         }        
 
 
-        internal ExecutionReport SecondResolutionIndex(MaxDegreeOfParallelism maxDegreeOfParallelism)
+        internal ExecutionReport SecondResolutionIndex(CuttingMethod cuttingMethod, int binCount, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             int blockCount = 0;
 
@@ -212,7 +212,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
                {
                    foreach (var sDi4 in chr.Value)
                    {
-                       sDi4.Value.SecondResolutionIndex(maxDegreeOfParallelism.di4Degree);
+                       sDi4.Value.SecondResolutionIndex(cuttingMethod, binCount, maxDegreeOfParallelism.di4Degree);
                        blockCount += sDi4.Value.blockCount;
                        sDi4.Value.Commit();
                    }

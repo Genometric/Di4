@@ -60,7 +60,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             foreach (var block in _di4_2R.EnumerateRange(_left, _right))
             {
                 //tCounter++;
-                if (_minAcc <= block.Value.maxAccumulation)
+                if (_minAcc <= block.Value.boundariesUpperBound)
                 {
                     _Cover(block.Key.leftEnd, block.Key.rightEnd);
                     //pCounter++;
@@ -151,7 +151,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
         internal void Summit()
         {
             foreach (var block in _di4_2R.EnumerateRange(_left, _right))
-                if (_minAcc <= block.Value.maxAccumulation)
+                if (_minAcc <= block.Value.boundariesUpperBound)
                     _Summit(block.Key.leftEnd, block.Key.rightEnd);
         }
         private void _Summit(C left, C right)

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace Polimi.DEIB.VahidJalili.DI4.CLI
 {
@@ -8,6 +11,12 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
         static void Main(string[] args)
         {
+            Test2RI();
+            Console.WriteLine("");
+            Console.WriteLine("Done ... press any key to exit.");
+            Console.ReadKey();
+            return;
+
             Console.Title = "Di4B: Dynamic intervals incremental inverted index for Bio-informatics";
             Console.Clear();
             Console.WriteLine("Following are the environment and initialization parameters ...");
@@ -61,6 +70,159 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     Herald.Announce(Herald.MessageType.None, "Please restart the application having resolved the error(s).");
                 }
             }
+
+            Herald.Dispose();
+        }
+
+        static void Test2RI()
+        {
+            UserConfigSetup.SetGet();
+            Directory.EnumerateFiles(UserConfig.workingDirectory, "*.idx2R").ToList().ForEach(x => File.Delete(x));
+            Herald.Initialize(Herald.Destination.Both, UserConfig.logFile);
+            Orchestrator orchestrator = new Orchestrator();
+            orchestrator.CommandParse("setdp 4 8");
+            Console.Clear();
+
+            int bin = 0;
+            Console.WriteLine("Enter bin size :");
+            int.TryParse(Console.ReadLine(), out bin);
+
+
+            var timer = new Stopwatch();
+            timer.Start();
+            orchestrator.Index2ndResolution(new string[] { "2RI", "zt", bin.ToString() });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "2riTimeToCreateTest.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "1", "2", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t1\t2\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "5", "10", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t5\t10\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "10", "20", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t10\t20\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "50", "60", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t50\t60\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "100", "200", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t100\t200\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "200", "220", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t200\t220\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "400", "500", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t400\t500\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "550", "1000", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t550\t1000\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "1", "1", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t1\t1\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "10", "10", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t10\t10\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "25", "25", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t25\t25\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "50", "50", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t50\t50\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "100", "100", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t100\t100\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+            timer.Restart();
+            orchestrator.Cover(new string[] { "cover", "covres.bed", "*", "150", "150", "count" });
+            timer.Stop();
+            using (var writter = new StreamWriter(UserConfig.workingDirectory + "CoverResult.txt", true))
+            {
+                writter.WriteLine(bin.ToString() + "\t150\t150\t" + timer.Elapsed.TotalSeconds.ToString());
+            }
+
+
 
             Herald.Dispose();
         }
