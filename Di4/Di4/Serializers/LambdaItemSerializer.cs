@@ -6,7 +6,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
     {
         public Lambda ReadFrom(System.IO.Stream stream)
         {
-            return new Lambda((Phi)PrimitiveSerializer.Byte.ReadFrom(stream), PrimitiveSerializer.UInt32.ReadFrom(stream));
+            return new Lambda((Phi)PrimitiveSerializer.Byte.ReadFrom(stream), PrimitiveSerializer.UInt32.ReadFrom(stream), PrimitiveSerializer.UInt32.ReadFrom(stream));
         }
 
         public void WriteTo(Lambda value, System.IO.Stream stream)
@@ -15,6 +15,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
             //if (value.atI == default(uint) && value.phi == default(Phi)) return;
             PrimitiveSerializer.Byte.WriteTo((byte)value.phi, stream);
             PrimitiveSerializer.UInt32.WriteTo(value.atI, stream);
+            PrimitiveSerializer.UInt32.WriteTo(value.collectionID, stream);
         }
     }
 }

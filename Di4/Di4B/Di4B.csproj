@@ -83,6 +83,7 @@
     <Compile Include="FunctionsOutput\CSOutputCount.cs" />
     <Compile Include="FunctionsOutput\FunctionOutput.cs" />
     <Compile Include="FunctionsOutput\Output.cs" />
+    <Compile Include="FunctionsOutput\VariantAnalysisOutputStrategy.cs" />
     <Compile Include="GeneticHierarchy\Genome.cs" />
     <Compile Include="Logging\ExecutionReport.cs" />
     <Compile Include="MaxDegreeOfParallelism.cs" />

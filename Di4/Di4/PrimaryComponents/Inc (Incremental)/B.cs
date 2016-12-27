@@ -17,14 +17,14 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             omega = 0;
             _lambda = new Lambda[0];
         }
-        internal B(Phi phi, uint atI)
+        internal B(Phi phi, uint atI, uint collectionID)
         {
             mu = 0;
             omega = 0;
             switch(phi)
             {
                 case Phi.LeftEnd:
-                    _lambda = new Lambda[] { new Lambda(phi: Phi.LeftEnd, atI: atI) };
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.LeftEnd, atI: atI, collectionID: collectionID) };
                     break;
 
                 case Phi.Middle:
@@ -33,7 +33,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
 
                 case Phi.RightEnd:
                     omega = 1;
-                    _lambda = new Lambda[] { new Lambda(phi: Phi.RightEnd, atI: atI) };
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.RightEnd, atI: atI, collectionID: collectionID) };
                     break;
             }
         }
@@ -44,14 +44,14 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             _lambda = new Lambda[lambda.Count];
             lambda.CopyTo(_lambda, 0);
         }
-        internal B(Phi phi, uint atI, B nextBookmark)
+        internal B(Phi phi, uint atI, uint collectionID, B nextBookmark)
         {
             mu = nextBookmark.mu;
             omega = 0;
             switch(phi)
             {
                 case Phi.LeftEnd:                    
-                    _lambda = new Lambda[] { new Lambda(phi: Phi.LeftEnd, atI: atI) };
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.LeftEnd, atI: atI, collectionID: collectionID) };
                     break;
 
                 // I don't think this condition would be possibly ever met :)
@@ -61,7 +61,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
 
                 case Phi.RightEnd:
                     omega++;
-                    _lambda = new Lambda[] { new Lambda(phi: Phi.RightEnd, atI: atI) };
+                    _lambda = new Lambda[] { new Lambda(phi: Phi.RightEnd, atI: atI, collectionID: collectionID) };
                     break;
             }
             
@@ -81,7 +81,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             // The following line should not be commented-out
             //_lambda[lambda.Length] = new Lambda(phi: phi, atI: atI);
         }
-        private B(int mu, ushort omega, Lambda[] lambda, uint atI, Phi phi)
+        private B(int mu, ushort omega, Lambda[] lambda, uint atI, uint collectionID, Phi phi)
         {
             this.mu = mu;
             this.omega = omega;
@@ -90,7 +90,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                 case Phi.LeftEnd:
                     _lambda = new Lambda[lambda.Length + 1];
                     Array.Copy(lambda, _lambda, lambda.Length);
-                    _lambda[lambda.Length] = new Lambda(phi: Phi.LeftEnd, atI: atI);
+                    _lambda[lambda.Length] = new Lambda(phi: Phi.LeftEnd, atI: atI, collectionID: collectionID);
                     break;
 
                 case Phi.Middle:
@@ -103,7 +103,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     this.omega++;
                     _lambda = new Lambda[lambda.Length + 1];
                     Array.Copy(lambda, _lambda, lambda.Length);
-                    _lambda[lambda.Length] = new Lambda(phi: Phi.RightEnd, atI: atI);
+                    _lambda[lambda.Length] = new Lambda(phi: Phi.RightEnd, atI: atI, collectionID: collectionID);
                     break;
             }
         }
@@ -141,9 +141,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             return new B(mu: mu, omega: omega, lambda: _lambda, phi: phi, atI: atI);
         }
 
-        internal B Update(uint atI, Phi condition)
+        internal B Update(uint atI, uint collectionID, Phi condition)
         {
-            return new B(mu: mu, omega: omega, lambda: _lambda, atI: atI, phi: condition);
+            return new B(mu: mu, omega: omega, lambda: _lambda, atI: atI, collectionID: collectionID, phi: condition);
         }
 
         internal B Update(ref int mu, ref ushort omega, ReadOnlyCollection<Lambda> lambda)

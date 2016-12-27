@@ -101,6 +101,20 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     Herald.Announce(Herald.MessageType.Info, string.Format("{0,29}: {1}", "Average indexing speed", Math.Round(_tN2i / _stopWatch.Elapsed.TotalSeconds, 2) + "  #i\\sec"));
                     break;
 
+
+                case "statistics":
+                    _stopWatch.Restart();
+                    if (!Statistics(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    _stopWatch.Stop();
+
+                    Herald.Announce(Herald.MessageType.Info, string.Format("{0,29}: {1}", "XYZ", Math.Round(_tN2i / _stopWatch.Elapsed.TotalSeconds, 2) + "  #i\\sec"));
+                    break;
+
+
                 case "2pass": // 2nd pass of indexing.
                     _stopWatch.Restart();
                     if (!Index2ndPass())
@@ -132,6 +146,18 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                 case "map": // example: Map E:\refChr.bed * count
                     _stopWatch.Restart();
                     if (!Map(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
+                case "va":
+                case "varianta":
+                case "vanalysis":
+                case "variantanalysis":
+                    _stopWatch.Restart();
+                    if (!VariantAnalysis(splittedCommand))
                     {
                         _stopWatch.Stop();
                         return false;
@@ -281,6 +307,31 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
             return true;
         }
+        private bool tmpLoadVCF(string fileName)
+        {
+            if (!ValidateFileName(fileName, out fileName)) return false;
+
+            _parserSTW.Restart();
+
+            VCFParser<Variant, VariantData> vcfParser = new VCFParser<Variant, VariantData>(source: fileName, species: Genomes.HomoSapiens, assembly: Assemblies.hg19);
+
+            try { Repository.parsedVariants = vcfParser.Parse(); }
+            catch (Exception e)
+            {
+                if (Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar == _workingDirectory &&
+                    Path.GetExtension(fileName) == _logFile)
+                    Herald.Announce(Herald.MessageType.Error, string.Format("The requested extension should not have same extension as the log file."));
+                else
+                    Herald.Announce(Herald.MessageType.Error, string.Format("{0}", e.Message));
+                return false;
+            }
+            _parserSTW.Stop();
+
+            _accumulatedLoadET += _parserSTW.Elapsed.TotalSeconds;
+            Herald.AnnounceExeReport("Loaded", new ExecutionReport(Repository.parsedVariants.intervalsCount, _parserSTW.Elapsed));
+
+            return true;
+        }
         private bool Index(string[] args)
         {
             if (args.Length != 2)
@@ -289,11 +340,35 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                 return false;
             }
 
-            if (!Load(args[1])) return false;
-            var report = di4B.Add(Repository.parsedSample.intervals, _indexingMode, _maxDegreeOfParallelism);
+            if (Path.GetExtension(args[1]) == ".vcf")
+            {
+                if (!tmpLoadVCF(args[1])) return false;
 
-            Herald.AnnounceExeReport("Indexed", report);
-            _tN2i += report.count;
+                var tmp = new Dictionary<string, Dictionary<char, List<Peak>>>();
+                foreach (var chr in Repository.parsedVariants.intervals)
+                {
+                    tmp.Add(chr.Key, new Dictionary<char, List<Peak>>());
+                    foreach (var strand in chr.Value)
+                    {
+                        tmp[chr.Key].Add(strand.Key, new List<Peak>());
+                        foreach (var peak in strand.Value)
+                            tmp[chr.Key][strand.Key].Add(new Peak() { left = peak.left, right = peak.right, hashKey = peak.hashKey });
+                    }
+                }
+                
+
+                var report = di4B.Add(Repository.parsedVariants.fileHashKey, tmp, _indexingMode, _maxDegreeOfParallelism);
+                Herald.AnnounceExeReport("Indexed", report);
+                _tN2i += report.count;
+            }
+            else
+            {
+                if (!Load(args[1])) return false;
+                var report = di4B.Add(Repository.parsedSample.fileHashKey, Repository.parsedSample.intervals, _indexingMode, _maxDegreeOfParallelism);
+                Herald.AnnounceExeReport("Indexed", report);
+                _tN2i += report.count;
+            }
+            
             return true;
         }
         private bool BatchIndex(string[] args)
@@ -346,7 +421,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     /*0*/ ++i,
                     /*1*/ foundFiles.Length,
                     /*2*/ Path.GetFileNameWithoutExtension(fileInfo.FullName)));
-
+                
                 if (!Index(new string[] { null, fileInfo.FullName })) return false;
             }
             _indexSTW.Stop();
@@ -499,7 +574,87 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
             return true;
         }
-        
+
+        private bool VariantAnalysis(string[] args)
+        {
+            if (args.Length != 3)
+            {
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                return false;
+            }
+
+            string resultFile = "";
+            if (!ExtractResultsFile(args[2], out resultFile)) return false; // invalid file URI.
+
+
+
+            if (!tmpLoadVCF(args[1])) return false;
+
+            var tmp = new Dictionary<string, Dictionary<char, List<Peak>>>();
+            foreach (var chr in Repository.parsedVariants.intervals)
+            {
+                tmp.Add(chr.Key, new Dictionary<char, List<Peak>>());
+                foreach (var s in chr.Value)
+                {
+                    tmp[chr.Key].Add(s.Key, new List<Peak>());
+                    foreach (var peak in s.Value)
+                        tmp[chr.Key][s.Key].Add(new Peak() { left = peak.left, right = peak.right, hashKey = peak.hashKey });
+                }
+            }
+
+            FunctionOutput<Output<int, Peak, PeakData>> result;
+            Dictionary<uint, int> newRes = new Dictionary<uint, int>();
+            Herald.AnnounceExeReport("Variant Analysis", di4B.VariantAnalysis('*', tmp, Aggregate.Count, out result, _maxDegreeOfParallelism, out newRes));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
+
+            var sortedRes = newRes.ToList();
+            sortedRes.Sort(
+                delegate (KeyValuePair<uint, int> i, KeyValuePair<uint, int> j)
+                {
+                    return j.Value.CompareTo(i.Value);
+                });
+
+
+            using (StreamWriter writer = new StreamWriter(resultFile))
+            {
+                writer.WriteLine("Sampled_ID\tVariations_in_common_with_reference");
+                foreach (var item in sortedRes)
+                    writer.WriteLine("{0}\t{1}", item.Key, item.Value);
+            }
+
+
+            return true;
+        }
+
+        private bool Statistics(string[] args)
+        {
+            if (args.Length != 2)
+            {
+                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                return false;
+            }
+
+            string resultFile = "";
+            if (!ExtractResultsFile(args[1], out resultFile)) return false; // invalid file URI.
+
+
+            SortedDictionary<int, int> result = new SortedDictionary<int, int>();
+            Herald.AnnounceExeReport("Statistics", di4B.LambdaSizeStats(out result));
+            
+            using (StreamWriter writer = new StreamWriter(resultFile))
+            {
+                writer.WriteLine("Lambda Size\tCount");
+                foreach (var item in result)
+                    writer.WriteLine("{0}\t{1}", item.Key, item.Value);
+            }
+
+
+
+
+            return true;
+        }
+
+
         private bool SetIndexingMode(string[] args)
         {
             if (args.Length < 2)

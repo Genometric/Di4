@@ -84,11 +84,16 @@
     <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DecomposerValue.cs" />
     <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DecompositionStack.cs" />
     <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DesignatedRegion.cs" />
+    <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\StatsCalculator.cs" />
     <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
     <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />
     <Compile Include="AuxiliaryComponents\Stats.cs" />
+    <Compile Include="AuxiliaryComponents\StatsCalculatorInv.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit_OLD.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\TMapForVariantAnalysis.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\VariantOutputStrategy.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\VariationAnalysis.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inv %28Inverted%29\CoverSummit.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inv %28Inverted%29\Map.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\Map.cs" />

@@ -383,6 +383,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             _accStats = new AccumulationStats<C, I, M>(_di41R, firstItem.Key, lastItem.Key, accDis, lockOnMe);
             _accStats.AccDistribution();
 
+            // TODO: this could be empty: no last item
             double r = accDis.Last().Key;
             double delta = r / _levels;
 
@@ -418,7 +419,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     else
                         reconstructionPoints[i] = sum / count;
                 }
-                reconstructionPoints[reconstructionPoints.Length - 1] = (sum + accDis.Keys.Last()) / (count + 1);
+                reconstructionPoints[reconstructionPoints.Length - 1] = (sum + accDis.Keys.Last()) / (count + 1); // this should be: (count + laskey.value) !!
 
                 double t;
                 distortionReductionRequired = false;

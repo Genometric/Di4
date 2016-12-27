@@ -24,13 +24,13 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             _lambda = new Lambda[0];
         }
 
-        private B(ushort omega, Lambda[] lambda, Phi phi, uint hashKey)
+        private B(ushort omega, Lambda[] lambda, Phi phi, uint hashKey, uint collectionID)
         {
             this.omega = phi == Phi.RightEnd ? (ushort)(omega + 1) : omega;
 
             _lambda = new Lambda[lambda.Length + 1];
             Array.Copy(lambda, _lambda, lambda.Length);
-            _lambda[lambda.Length] = new Lambda(phi: phi, atI: hashKey);
+            _lambda[lambda.Length] = new Lambda(phi: phi, atI: hashKey, collectionID: collectionID);
         }
         private B(ushort omega, ICollection<Lambda> lambdas)
         {
@@ -40,10 +40,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
         }
         
 
-        internal B(Phi phi, uint hashKey)
+        internal B(Phi phi, uint hashKey, uint collectionID)
         {
             omega = phi == Phi.RightEnd ? (ushort)1 : (ushort)0;
-            _lambda = new Lambda[] { new Lambda(phi: phi, atI: hashKey) };
+            _lambda = new Lambda[] { new Lambda(phi: phi, atI: hashKey, collectionID: collectionID) };
         }
 
         internal B(ushort omega, ReadOnlyCollection<Lambda> lambda)
@@ -63,7 +63,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             }*/
         }
 
-        internal B(Phi phi, uint metadata, B nextBlock) // check whether it is faster with ref or without ref for nextBlock. 
+        internal B(Phi phi, uint metadata, uint collectionID, B nextBlock) // check whether it is faster with ref or without ref for nextBlock. 
         {
             if (phi == Phi.RightEnd) omega = 1;
 
@@ -77,19 +77,19 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
                 if (item.phi !=  Phi.LeftEnd)
                     i++;
             _lambda = new Lambda[i];
-            _lambda[0] = new Lambda(phi: phi, atI: metadata);
+            _lambda[0] = new Lambda(phi: phi, atI: metadata, collectionID: collectionID);
             i = 1;
             foreach (var item in nextBlock.lambda)
                 if (item.phi != Phi.LeftEnd)
-                    _lambda[i++] = new Lambda(phi: Phi.Middle, atI: item.atI);
+                    _lambda[i++] = new Lambda(phi: Phi.Middle, atI: item.atI, collectionID: collectionID);
         }
 
-        private B(ushort omega, Lambda[] lambda, uint atI, Phi phi)
+        private B(ushort omega, Lambda[] lambda, uint atI, Phi phi, uint collectionID)
         {
             this.omega = omega;
             _lambda = new Lambda[lambda.Length + 1];
             Array.Copy(lambda, _lambda, lambda.Length);
-            _lambda[lambda.Length] = new Lambda(phi: phi, atI: atI);
+            _lambda[lambda.Length] = new Lambda(phi: phi, atI: atI, collectionID: collectionID);
 
             if (phi == Phi.RightEnd)
                 this.omega++;
@@ -112,14 +112,14 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
 
 
 
-        internal B Update(ushort omega, Phi phi, uint hashKey)
+        internal B Update(ushort omega, Phi phi, uint hashKey, uint collectionID)
         {
-            return new B(omega: omega, lambda: _lambda, phi: phi, hashKey: hashKey);
+            return new B(omega: omega, lambda: _lambda, phi: phi, hashKey: hashKey, collectionID: collectionID);
         }
 
-        internal B Update(uint atI, Phi condition)
+        internal B Update(uint atI, uint collectionID, Phi condition)
         {
-            return new B(omega: omega, lambda: _lambda, atI: atI, phi: condition);
+            return new B(omega: omega, lambda: _lambda, atI: atI, phi: condition, collectionID: collectionID);
         }
 
         internal B Update(ICollection<Lambda> lambdas)

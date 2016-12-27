@@ -24,9 +24,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         private IComparer<C> CComparer { set; get; }
         private Genome<C, I, M> genome { set; get; }
 
-        public ExecutionReport Add(Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, MaxDegreeOfParallelism maxDegreeOfParallelism)
+        public ExecutionReport Add(uint collectionID, Dictionary<string, Dictionary<char, List<I>>> peaks, IndexingMode indexingMode, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
-            return genome.Add(peaks, '*', indexingMode, maxDegreeOfParallelism);
+            return genome.Add(collectionID, peaks, '*', indexingMode, maxDegreeOfParallelism);
         }
         public ExecutionReport Add2ndPass(MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
@@ -44,6 +44,14 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         public ExecutionReport Map(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {
             return genome.Map(references, strand, aggregate, out result, maxDegreeOfParallelism);
+        }
+        public ExecutionReport VariantAnalysis(char strand, Dictionary<string, Dictionary<char, List<I>>> references, Aggregate aggregate, out FunctionOutput<Output<C, I, M>> result, MaxDegreeOfParallelism maxDegreeOfParallelism, out Dictionary<uint, int> newRes)
+        {
+            return genome.VariantAnalysis(references, strand, aggregate, out result, out newRes, maxDegreeOfParallelism);
+        }
+        public ExecutionReport LambdaSizeStats(out SortedDictionary<int, int> results)
+        {
+            return genome.LambdaSizeStats(out results);
         }
         public ExecutionReport AccumulationHistogram(out ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<C>>>> result, MaxDegreeOfParallelism maxDegreeOfParallelism)
         {

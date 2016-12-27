@@ -39,9 +39,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
         {
             _di4 = di4;
         }
-        internal BatchIndex(BPlusTree<C, B> di4, List<I> Intervals, int Start, int Stop, IndexingMode mode, ConcurrentDictionary<int, int> addedBookmarks)
+        internal BatchIndex(BPlusTree<C, B> di4, uint collectionID, List<I> Intervals, int Start, int Stop, IndexingMode mode, ConcurrentDictionary<int, int> addedBookmarks)
         {
             _di4 = di4;
+            _collectionID = collectionID;
             _intervals = Intervals;
             _start = Start;
             _stop = Stop;
@@ -50,10 +51,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             _bCounter = new BookmarkCounter();
             update.bookmarkCounter = _bCounter;
         }
-        
-        
+
+
         private int _start;
         private int _stop;
+        private uint _collectionID;
         private IndexingMode _mode;
         private List<I> _intervals;
         private BPlusTree<C, B> _di4;
@@ -67,14 +69,15 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             switch (_mode)
             {
                 case IndexingMode.SinglePass:
-                    for (int i = _start; i < _stop; i++)                    
-                        Index(_intervals[i]);                    
+                    for (int i = _start; i < _stop; i++)
+                        Index(_intervals[i]);
                     break;
 
                 case IndexingMode.MultiPass:
                     for (int i = _start; i < _stop; i++)
                     {
                         update.atI = _intervals[i].hashKey;
+                        update.collectionID = _collectionID;
                         update.phi = Phi.LeftEnd;
                         _di4.AddOrUpdate(_intervals[i].left, ref update);
 
@@ -90,11 +93,12 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
         {
             update.phi = Phi.LeftEnd;
             update.atI = interval.hashKey;
+            update.collectionID = _collectionID;
             update.NextBookmark = null;
 
             var enumerator = _di4.EnumerateFrom(interval.left).GetEnumerator();
-            
-            if(!enumerator.MoveNext())
+
+            if (!enumerator.MoveNext())
             {
                 _di4.AddOrUpdate(interval.left, ref update);
 
@@ -106,7 +110,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             if (interval.left.Equals(enumerator.Current.Key))
             {
                 _di4.AddOrUpdate(interval.left, ref update);
-                if(!enumerator.MoveNext())
+                if (!enumerator.MoveNext())
                 {
                     update.phi = Phi.RightEnd;
                     _di4.AddOrUpdate(interval.right, ref update);
@@ -121,7 +125,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
 
             do
             {
-                switch(interval.right.CompareTo(enumerator.Current.Key))
+                switch (interval.right.CompareTo(enumerator.Current.Key))
                 {
                     case 0:
                         update.phi = Phi.RightEnd;
@@ -175,7 +179,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
 
                 keys = new List<uint>(lambdaCarrier.Keys);
                 foreach (var key in keys)
-                    lambdaCarrier[key] = new Lambda(Phi.Middle, lambdaCarrier[key].atI);
+                    lambdaCarrier[key] = new Lambda(Phi.Middle, lambdaCarrier[key].atI, _collectionID);
             }
         }
         private bool UpdateRequired(ReadOnlyCollection<Lambda> lambda, AtomicDictionary<uint, Lambda> lambdaCarrier)
@@ -194,6 +198,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             public B oldValue;
             public Phi phi { set; get; }
             public uint atI { set; get; }
+            public uint collectionID { set; get; }
             public BookmarkCounter bookmarkCounter { set; get; }
             public B NextBookmark { set; get; }
 
@@ -202,9 +207,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
                 oldValue = null;
 
                 if (NextBookmark == null)
-                    value = new B(phi: phi, hashKey: atI);
+                    value = new B(phi: phi, hashKey: atI, collectionID: collectionID);
                 else
-                    value = new B(phi: phi, metadata: atI, nextBlock: NextBookmark);
+                    value = new B(phi: phi, metadata: atI, nextBlock: NextBookmark, collectionID: collectionID);
 
                 bookmarkCounter.value++;
                 return true;
@@ -212,18 +217,18 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
             public bool UpdateValue(C key, ref B value)
             {
                 oldValue = value;
-                value = value.Update(omega: value.omega, phi: phi, hashKey: atI);
+                value = value.Update(omega: value.omega, phi: phi, hashKey: atI, collectionID: collectionID);
                 return true;
             }
             public bool RemoveValue(C key, B value)
             {
                 oldValue = value;
-                if (value == value.Update(atI: atI, condition: phi))
+                if (value == value.Update(atI: atI, condition: phi, collectionID: collectionID))
                 {
                     bookmarkCounter.value--;
                     return true;
                 }
-                return value == value.Update(omega: value.omega, phi: phi, hashKey: atI);
+                return value == value.Update(omega: value.omega, phi: phi, hashKey: atI, collectionID: collectionID);
             }
         }
 

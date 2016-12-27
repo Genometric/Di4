@@ -11,11 +11,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
         static void Main(string[] args)
         {
-            Test2RI();
+            /*Test2RI();
             Console.WriteLine("");
             Console.WriteLine("Done ... press any key to exit.");
             Console.ReadKey();
-            return;
+            return;*/
 
             Console.Title = "Di4B: Dynamic intervals incremental inverted index for Bio-informatics";
             Console.Clear();

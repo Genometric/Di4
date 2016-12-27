@@ -7,13 +7,13 @@ using System.Diagnostics;
 
 namespace Polimi.DEIB.VahidJalili.DI4.Inc
 {
-    internal class Map<C, I, M, O>
+    internal class Tmp__Map__for__VA<C, I, M, O>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
 
-        internal Map(
+        internal Tmp__Map__for__VA(
             object lockOnMe,
             BPlusTree<C, Inc.B> di4_1R,
             IOutput<C, I, M, O> outputStrategy,
@@ -31,8 +31,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             _lockOnMe = lockOnMe;
             _intervals = intervals;
             _outputStrategy = outputStrategy;
-            _gapIntervals = new Dictionary<uint, bool>();
-            _determinedLambdas = new Dictionary<int, Dictionary<uint, Phi>>();
+            _gapIntervals = new Dictionary<uint[], bool>();
+            _determinedLambdas = new Dictionary<int, Dictionary<uint[], Phi>>();
         }
 
 
@@ -46,9 +46,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
         private List<I> _intervals { set; get; }
         private object _lockOnMe { set; get; }
         private IOutput<C, I, M, O> _outputStrategy { set; get; }
-        private Dictionary<uint, bool> _gapIntervals { set; get; }
+        private Dictionary<uint[], bool> _gapIntervals { set; get; }
         private IEnumerator<KeyValuePair<C, Inc.B>> _di4Enumerator { set; get; }
-        private Dictionary<int, Dictionary<uint, Phi>> _determinedLambdas { set; get; }
+        private Dictionary<int, Dictionary<uint[], Phi>> _determinedLambdas { set; get; } // to be checked: Does comparison between two uint[] work? 
         private C _nextLeftEnd { set; get; }
         private C _nextRightEnd { set; get; }
         private bool _nextRefExists { set; get; }
@@ -81,7 +81,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                 }
 
                 foreach (var refLambdas in _determinedLambdas)
-                    _outputStrategy.Output(_intervals[refLambdas.Key], new List<UInt32>(refLambdas.Value.Keys), _lockOnMe);
+                    _outputStrategy.Output(new List<uint[]>(refLambdas.Value.Keys), _lockOnMe);
                 _determinedLambdas.Clear();
             }
         }
@@ -95,7 +95,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             /// [C] : overlaps the Right-end of the reference
             /// [D] : falls after the Right-end of the reference.
 
-            _determinedLambdas.Add(_referenceIndex, new Dictionary<uint, Phi>());
+            _determinedLambdas.Add(_referenceIndex, new Dictionary<uint[], Phi>());
             _rightEndsToFind = _di4Enumerator.Current.Value.mu;
 
             // [A]
@@ -103,23 +103,23 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             {
                 foreach (var lambda in _di4Enumerator.Current.Value.lambda)
                     if (lambda.phi == Phi.LeftEnd)
-                        _determinedLambdas[_referenceIndex].Add(lambda.atI, Phi.LeftEnd);
+                        _determinedLambdas[_referenceIndex].Add(new uint[] { lambda.atI, lambda.collectionID }, Phi.LeftEnd);
                 return;
             }
             switch (_di4Enumerator.Current.Key.CompareTo(_reference.right))
             {
                 case -1: // [B]
                     foreach (var lambda in _di4Enumerator.Current.Value.lambda)
-                        _determinedLambdas[_referenceIndex].Add(lambda.atI, lambda.phi);
+                        _determinedLambdas[_referenceIndex].Add(new uint[] { lambda.atI, lambda.collectionID }, lambda.phi);
                     return;
 
                 case 0: // [C]
                 case 1: // [D]
                     foreach (var lambda in _di4Enumerator.Current.Value.lambda)
                         if (lambda.phi == Phi.LeftEnd)
-                            _gapIntervals.Add(lambda.atI, true);
+                            _gapIntervals.Add(new uint[] { lambda.atI, lambda.collectionID }, true);
                         else
-                            _determinedLambdas[_referenceIndex].Add(lambda.atI, Phi.RightEnd);
+                            _determinedLambdas[_referenceIndex].Add(new uint[] { lambda.atI, lambda.collectionID }, Phi.RightEnd);
                     return;
             }
         }
@@ -133,7 +133,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                 {
                     _referenceIndex++;
                     _reference = _intervals[_referenceIndex];
-                    _determinedLambdas.Add(_referenceIndex, new Dictionary<uint, Phi>());
+                    _determinedLambdas.Add(_referenceIndex, new Dictionary<uint[], Phi>());
 
                     foreach (var lambda in _gapIntervals) // The gapIntervals contains only leftEnds (i.e., phi = true)
                         _determinedLambdas[_referenceIndex].Add(lambda.Key, Phi.LeftEnd);
@@ -151,24 +151,24 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
 
                 foreach (var lambda in _di4Enumerator.Current.Value.lambda)
                     if (lambda.phi == Phi.LeftEnd)
-                        _gapIntervals.Add(lambda.atI, true);
+                        _gapIntervals.Add(new uint[] { lambda.atI, lambda.collectionID }, true);
                     else
                     {
-                        if (_gapIntervals.Remove(lambda.atI))
+                        if (_gapIntervals.Remove(new uint[] { lambda.atI, lambda.collectionID }))
                             continue;
                         _aMuIsFound = true;
                         foreach (var refLambdas in _determinedLambdas)
-                            if (refLambdas.Value.ContainsKey(lambda.atI))
+                            if (refLambdas.Value.ContainsKey(new uint[] { lambda.atI, lambda.collectionID }))
                             {
                                 _aMuIsFound = false;
-                                refLambdas.Value[lambda.atI] = Phi.RightEnd;
+                                refLambdas.Value[new uint[] { lambda.atI, lambda.collectionID }] = Phi.RightEnd;
                             }
                         if (_aMuIsFound)
                         {
                             _rightEndsToFind--;
                             foreach (var refLambdas in _determinedLambdas)
-                                if (!refLambdas.Value.ContainsKey(lambda.atI))
-                                    refLambdas.Value.Add(lambda.atI, Phi.RightEnd);
+                                if (!refLambdas.Value.ContainsKey(new uint[] { lambda.atI, lambda.collectionID }))
+                                    refLambdas.Value.Add(new uint[] { lambda.atI, lambda.collectionID }, Phi.RightEnd);
                         }
                     }
 
@@ -185,24 +185,24 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
             {
                 if (lambda.phi == Phi.LeftEnd)
                 {
-                    _determinedLambdas[_referenceIndex].Add(lambda.atI, Phi.LeftEnd);
+                    _determinedLambdas[_referenceIndex].Add(new uint[] { lambda.atI, lambda.collectionID }, Phi.LeftEnd);
                 }
                 else
                 {
                     _aMuIsFound = true;
                     foreach (var refLambdas in _determinedLambdas)
-                        if (refLambdas.Value.ContainsKey(lambda.atI))
+                        if (refLambdas.Value.ContainsKey(new uint[] { lambda.atI, lambda.collectionID }))
                         {
                             _aMuIsFound = false;
-                            refLambdas.Value[lambda.atI] = Phi.RightEnd;
+                            refLambdas.Value[new uint[] { lambda.atI, lambda.collectionID }] = Phi.RightEnd;
                         }
 
                     if (_aMuIsFound)
                     {
                         _rightEndsToFind--;
                         foreach (var refLambdas in _determinedLambdas)
-                            if (!refLambdas.Value.ContainsKey(lambda.atI))
-                                refLambdas.Value.Add(lambda.atI, Phi.RightEnd);
+                            if (!refLambdas.Value.ContainsKey(new uint[] { lambda.atI, lambda.collectionID }))
+                                refLambdas.Value.Add(new uint[] { lambda.atI, lambda.collectionID }, Phi.RightEnd);
                     }
                 }
             }

@@ -79,6 +79,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
 
 
         internal ExecutionReport Add(
+            uint collectionID,
             Dictionary<string, Dictionary<char, List<I>>> intervals,
             char strand,
             IndexingMode indexinMode,
@@ -103,7 +104,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
                                 foreach (var strandEntry in chr.Value)
                                     using (var di4 = new Di4<C, I, M>(GetDi4Options(GetDi4File(chr.Key, strand)))) // this might be wrong
                                     {
-                                        di4.Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di4Degree);
+                                        di4.Add(strandEntry.Value, indexinMode, collectionID, maxDegreeOfParallelism.di4Degree);
                                         totalIntervals += strandEntry.Value.Count;
                                     }
                             _stpWtch.Stop();
@@ -126,7 +127,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
                                 {
                                     foreach (var strandEntry in chr.Value)
                                     {
-                                        chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di4Degree);
+                                        chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, collectionID, maxDegreeOfParallelism.di4Degree);
                                         //chrs[chr.Key][strand].Commit();
                                         totalIntervals += strandEntry.Value.Count;
                                     }
@@ -151,7 +152,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
                             if (!chrs.ContainsKey(chr.Key)) chrs.Add(chr.Key, new Dictionary<char, Di4<C, I, M>>());
                             if (!chrs[chr.Key].ContainsKey(strand)) chrs[chr.Key].Add(strand, new Di4<C, I, M>(GetDi4Options()));
 
-                            chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, maxDegreeOfParallelism.di4Degree);
+                            chrs[chr.Key][strand].Add(strandEntry.Value, indexinMode, collectionID, maxDegreeOfParallelism.di4Degree);
                             totalIntervals += strandEntry.Value.Count;
                         }
                     _stpWtch.Stop();
@@ -311,6 +312,93 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
 
             result = tmpResults;
             return new ExecutionReport(totalIntervals, _stpWtch.Elapsed);
+        }
+
+
+
+        internal ExecutionReport VariantAnalysis(
+            Dictionary<string, Dictionary<char, List<I>>> references,
+            char strand, Aggregate aggregate,
+            out FunctionOutput<Output<C, I, M>> result,
+            out Dictionary<uint, int> newRes,
+            MaxDegreeOfParallelism maxDegreeOfParallelism)
+        {
+            int totalIntervals = 0;
+
+            var tmpResults = new FunctionOutput<Output<C, I, M>>();
+
+            foreach (var refChr in references)
+            {
+                if (!chrs.ContainsKey(refChr.Key)) continue;
+                foreach (var refStrand in refChr.Value)
+                {
+                    if (!chrs[refChr.Key].ContainsKey(refStrand.Key)) continue;
+                    if (!tmpResults.Chrs.ContainsKey(refChr.Key)) tmpResults.Chrs.TryAdd(refChr.Key, new ConcurrentDictionary<char, List<Output<C, I, M>>>());
+                    if (!tmpResults.Chrs[refChr.Key].ContainsKey(refStrand.Key)) tmpResults.Chrs[refChr.Key].TryAdd(refStrand.Key, new List<Output<C, I, M>>());
+                }
+            }
+
+
+
+
+            string lockOnMe = "Vahid";
+            Dictionary<uint, int> tmpRes = new Dictionary<uint, int>();
+
+            _stpWtch.Restart();
+            Parallel.ForEach(references,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism.chrDegree },
+                refChr =>
+                {
+                    IOutput<C, I, M, Output<C, I, M>> outputStrategy = new VariantAnalysisOutputStrategy<C, I, M>();
+
+                    if (chrs.ContainsKey(refChr.Key))
+                        foreach (var refStrand in refChr.Value)
+                        {
+                            if (!chrs[refChr.Key].ContainsKey(refStrand.Key)) continue;
+                            chrs[refChr.Key][refStrand.Key].VariantAnalysis<Output<C, I, M>>(ref outputStrategy, refStrand.Value, maxDegreeOfParallelism.di4Degree);
+                            tmpResults.Chrs[refChr.Key][refStrand.Key] = outputStrategy.output;
+                            totalIntervals += refStrand.Value.Count;
+
+                            lock(lockOnMe)
+                            {
+                                foreach(var item in ((VariantAnalysisOutputStrategy<C, I, M>)outputStrategy).samplesCV)
+                                {
+                                    if (tmpRes.ContainsKey(item.Key))
+                                        tmpRes[item.Key] += item.Value;
+                                    else
+                                        tmpRes.Add(item.Key, item.Value);
+                                }
+                            }
+                        }
+                });
+            _stpWtch.Stop();
+
+            result = tmpResults;
+            newRes = tmpRes;
+            return new ExecutionReport(totalIntervals, _stpWtch.Elapsed);
+        }
+
+
+        internal ExecutionReport LambdaSizeStats(out SortedDictionary<int, int> results)
+        {
+            results = new SortedDictionary<int, int>();
+            _stpWtch.Restart();
+            foreach (var chr in chrs)
+            {
+                foreach (var sDi4 in chr.Value)
+                {
+                    var tRes = sDi4.Value.LambdaSizeDis();
+                    foreach (var item in tRes)
+                    {
+                        if (results.ContainsKey(item.Key))
+                            results[item.Key] += item.Value;
+                        else
+                            results.Add(item.Key, item.Value);
+                    }
+                }
+            }
+            _stpWtch.Stop();
+            return new ExecutionReport(1, _stpWtch.Elapsed);
         }
 
 

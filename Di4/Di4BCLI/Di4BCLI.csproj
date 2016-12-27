@@ -88,6 +88,8 @@
   <ItemGroup>
     <Compile Include="Comparers\Int32Comparer.cs" />
     <Compile Include="Components\Enums.cs" />
+    <Compile Include="Components\Variant.cs" />
+    <Compile Include="Components\VariantData.cs" />
     <Compile Include="Logging\Herald.cs" />
     <Compile Include="Orchestrator.cs" />
     <Compile Include="Components\Peak.cs" />

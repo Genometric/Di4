@@ -372,11 +372,11 @@ namespace Polimi.DEIB.VahidJalili.DI4
 
 
 
-        public void Add(List<I> intervals, IndexingMode mode)
+        public void Add(List<I> intervals, IndexingMode mode, uint collectionID)
         {
-            Add(intervals, mode, Environment.ProcessorCount);
+            Add(intervals, mode, collectionID, Environment.ProcessorCount);
         }
-        public void Add(List<I> intervals, IndexingMode mode, int threads)
+        public void Add(List<I> intervals, IndexingMode mode, uint collectionID, int threads)
         {
             int start = 0, stop = 0, count = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             var addedBookmarks = new ConcurrentDictionary<int, int>();
@@ -390,7 +390,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
                         start = i * range;
                         stop = (i + 1) * range;
                         if (stop > intervals.Count) stop = intervals.Count;
-                        work.Enqueue(new Inc.BatchIndex<C, I, M>(_di4_incIdx, intervals, start, stop, mode, addedBookmarks).Run);
+                        work.Enqueue(new Inc.BatchIndex<C, I, M>(_di4_incIdx, collectionID, intervals, start, stop, mode, addedBookmarks).Run);
                     }
 
                     work.Complete(true, -1);
@@ -412,7 +412,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
                         start = i * range;
                         stop = (i + 1) * range;
                         if (stop > intervals.Count) stop = intervals.Count;
-                        work.Enqueue(new Inv.BatchIndex<C, I, M>(_di4_invIdx, intervals, start, stop, mode, addedBookmarks).Run);
+                        work.Enqueue(new Inv.BatchIndex<C, I, M>(_di4_invIdx, collectionID, intervals, start, stop, mode, addedBookmarks).Run);
                     }
 
                     work.Complete(true, -1);
@@ -664,6 +664,70 @@ namespace Polimi.DEIB.VahidJalili.DI4
                     work.Complete(true, -1);
                 }
             }
+        }
+
+
+        public void VariantAnalysis<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads)
+        {
+            VariantAnalysis<O>(ref outputStrategy, references, nThreads, default(C), default(C));
+        }
+        public void VariantAnalysis<O>(ref IOutput<C, I, M, O> outputStrategy, List<I> references, int nThreads, C UDF, C DDF)
+        {
+            object lockOnMe = new object();
+            /*int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
+
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
+                {
+                    start = i * range;
+                    stop = (i + 1) * range;
+                    if (stop > references.Count) stop = references.Count;
+                    if (start < stop) work.Enqueue(
+                        new Inc.VariationAnalysis<C, I, M, O>(
+                            lockOnMe, _di4_incIdx,
+                            outputStrategy,
+                            references,
+                            start, stop, UDF, DDF).Run);
+                    else break;
+                }
+
+                work.Complete(true, -1);
+            }*/
+
+            var tmp = new Inc.Tmp__Map__for__VA<C, I, M, O>(
+                lockOnMe,
+                _di4_incIdx,
+                outputStrategy,
+                references,
+                0,
+                references.Count, UDF, DDF);
+
+            /*var tmp = new Inc.VariationAnalysis<C, I, M, O>(
+                            lockOnMe, _di4_incIdx,
+                            outputStrategy,
+                            references,
+                            0, references.Count, UDF, DDF, results);*/
+
+            tmp.Run();
+        }
+
+        public SortedDictionary<int, int> LambdaSizeDis()
+        {
+            object lockOnMe = new object();
+            var results = new SortedDictionary<int, int>();
+
+            if (_options.ActiveIndexes == IndexType.OnlyIncremental)
+            {
+                var statsClass = new Inc.StatsCalculator<C, I, M>(_di4_incIdx, _di4_incIdx.First().Key, _di4_incIdx.Last().Key, results, lockOnMe);
+                statsClass.LambdaSizeDistribution();
+            }
+            else
+            {
+                var statsClass = new Inv.StatsCalculator<C, I, M>(_di4_invIdx, _di4_incIdx.First().Key, _di4_incIdx.Last().Key, results, lockOnMe);
+                statsClass.LambdaSizeDistribution();
+            }
+            return results;
         }
 
         public List<AccEntry<C>> AccumulationHistogram()
