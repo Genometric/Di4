@@ -43,6 +43,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
                     tLambdaSizeDis[snapshot.Value.lambda.Count]++;
                 else
                     tLambdaSizeDis.Add(snapshot.Value.lambda.Count, 1);
+
+                if (tLambdaSizeDis.ContainsKey(snapshot.Value.mu * -1))
+                    tLambdaSizeDis[snapshot.Value.mu * -1]++;
+                else
+                    tLambdaSizeDis.Add(snapshot.Value.mu * -1, 1);
             }
 
             lock(_lockOnMe)
