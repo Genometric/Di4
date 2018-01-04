@@ -81,8 +81,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
         {
             throw new NotImplementedException();
         }
+
+        public void Output(I interval, int count, object lockOnMe)
+        {
+            throw new NotImplementedException();
+        }
     }
-
-
-
 }

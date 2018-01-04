@@ -56,7 +56,6 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
         private C _DDF { set; get; }
         
 
-
         internal void Run()
         {
             for (_referenceIndex = _start; _referenceIndex < _stop; _referenceIndex++)

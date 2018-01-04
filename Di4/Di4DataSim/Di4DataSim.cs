@@ -21,7 +21,7 @@ namespace Polimi.DEIB.VahidJalili.DI4DataSim
 
         private int _chrCount { set; get; }
         private int _maxICount { set; get; }
-        private int _fileSizeProb { set; get; }        
+        private int _fileSizeProb { set; get; }
         private string _outputDirectory { set; get; }
         private ErlangDistribution _kDis { set; get; }
         private ErlangDistribution _lambdaDis { set; get; }

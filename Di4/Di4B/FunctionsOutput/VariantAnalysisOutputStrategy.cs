@@ -49,6 +49,11 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
                     samplesCV[item[1]]++;
             }
         }
+
+        public void Output(I interval, int count, object lockOnMe)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

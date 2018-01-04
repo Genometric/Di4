@@ -30,6 +30,8 @@ namespace Polimi.DEIB.VahidJalili.DI4
 
         void Output(List<uint[]> intervals, object lockOnMe);
 
+        void Output(I interval, int count, Object lockOnMe);
+
         List<O> output { set; get; }
     }
 }

@@ -631,7 +631,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
                         stop = (i + 1) * range;
                         if (stop > references.Count) stop = references.Count;
                         if (start < stop) work.Enqueue(
-                            new Inc.Map<C, I, M, O>(
+                            new Inc.MapCount<C, I, M, O>(
                                 lockOnMe, _di4_incIdx,
                                 outputStrategy,
                                 references,

@@ -47,10 +47,15 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
 
         public void Output(I interval, List<uint> intervals, object lockOnMe)
         {
-            
+            throw new NotImplementedException();
         }
 
         public void Output(C left, C right, List<uint> intervals, object lockOnMe)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Output(I interval, int count, object lockOnMe)
         {
             throw new NotImplementedException();
         }

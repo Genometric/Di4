@@ -36,5 +36,10 @@ namespace Polimi.DEIB.VahidJalili.DI4.DI4B
         {
             throw new NotImplementedException();
         }
+
+        public void Output(I interval, int count, object lockOnMe)
+        {
+            lock (lockOnMe) { output.Add(new Output<C, I, M>(interval, count)); }
+        }
     }
 }

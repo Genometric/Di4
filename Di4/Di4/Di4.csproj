@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Polimi.DEIB.VahidJalili.DI4</RootNamespace>
     <AssemblyName>Di4</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -91,6 +91,7 @@
     <Compile Include="AuxiliaryComponents\StatsCalculatorInv.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit_OLD.cs" />
+    <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\MapCount.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\TMapForVariantAnalysis.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\VariantOutputStrategy.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\VariationAnalysis.cs" />
