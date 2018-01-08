@@ -444,12 +444,13 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
         }
         public bool Index2ndResolution(string[] args)
         {
-            if(args.Length != 3)
+            if(args.Length < 2)
             {
                 Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                 return false;
             }
 
+            int binCount = 0;
             CuttingMethod cuttingMethod = CuttingMethod.ZeroThresholding;
             switch(args[1].ToLower())
             {
@@ -461,23 +462,36 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                 case "uq":
                 case "uniformscalarquantization":
                     cuttingMethod = CuttingMethod.UniformScalarQuantization;
+                    if (args.Length != 3)
+                    {
+                        Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                        return false;
+                    }
+                    if (!int.TryParse(args[2], out binCount))
+                    {
+                        Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                        return false;
+                    }
                     break;
 
                 case "nuq":
                 case "nonuniformscalarquantization":
                     cuttingMethod = CuttingMethod.NonUniformScalarQuantization;
+                    if (args.Length != 3)
+                    {
+                        Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                        return false;
+                    }
+                    if (!int.TryParse(args[2], out binCount))
+                    {
+                        Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
+                        return false;
+                    }
                     break;
 
                 default:
                     Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
                     return false;
-            }
-
-            int binCount = 0;
-            if(!int.TryParse(args[2], out binCount))
-            {
-                Herald.Announce(Herald.MessageType.Error, string.Format("Invalid arguments."));
-                return false;
             }
 
             Herald.AnnounceExeReport("2RIndex", di4B.SecondResolutionIndex(cuttingMethod, binCount, _maxDegreeOfParallelism), speedUnit: Herald.SpeedUnit.blockPerSecond);
