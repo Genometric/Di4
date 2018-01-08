@@ -17,7 +17,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             Console.ReadKey();
             return;*/
 
-            Console.Title = "Di4B: Dynamic intervals incremental inverted index for Bio-informatics";
+            Console.Title = "Di4B: 1D intervals incremental inverted index for Bio-informatics";
             Console.Clear();
             Console.WriteLine("Following are the environment and initialization parameters ...");
 
