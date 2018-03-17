@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Di4B")]
-[assembly: AssemblyDescription("Dynamic intervals incremental inverted index wrapper for Bio-informatics")]
+[assembly: AssemblyDescription("Di4 wrapper for Bio-informatics")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Vahid Jalili @ Polimi.DEIB")]
 [assembly: AssemblyProduct("Di4B")]
-[assembly: AssemblyCopyright("Copyright © 2013 Vahid Jalili")]
+[assembly: AssemblyCopyright("Copyright © 2013-2018 Vahid Jalili")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
