@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Di4")]
 [assembly: AssemblyDescription("1D intervals incremental inverted index")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Vahid Jalili @ Polimi.DEIB")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Di4")]
 [assembly: AssemblyCopyright("Copyright © 2013-2018 Vahid Jalili")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

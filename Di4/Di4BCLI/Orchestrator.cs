@@ -253,6 +253,15 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     }
                     break;
 
+                case "benchmark":
+                    _stopWatch.Restart();
+                    if (!Benchmark(splittedCommand))
+                    {
+                        _stopWatch.Stop();
+                        return false;
+                    }
+                    break;
+
                 default:
                     Herald.Announce(Herald.MessageType.Error, "Unknown Command.");
                     return false;
@@ -552,10 +561,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
                     break;
             }
 
-
-
-            // disabled for the test purpose only. uncomment after the test.
-            //Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
+            Herald.AnnounceExeReport("Export", Exporter.Export(resultFile, result, "chr\tleft\tright\tcount\tstrand"));
 
             return true;
         }
@@ -828,6 +834,54 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             var simData = new Di4DataSim(_workingDirectory);
             simData.Generate(_sCount, _iCount, _chrCount, new ErlangDistribution(_kk, _klambda), new ErlangDistribution(_lambdak, _lambdalambda), _fileSizeProb);
             return true;
+        }
+
+        private bool Benchmark(string[] args)
+        {
+            if(args.Length == 2)
+            {
+                if (args[1].ToLower() == "cover")
+                    BenchmarkCover();
+                return true;
+            }
+            else
+            {
+                Herald.Announce(Herald.MessageType.Error, string.Format("Missing argument."));
+                return false;
+            }
+        }
+        private void BenchmarkCover()
+        {
+            int tries = 10;
+            var agg = Aggregate.Count;
+            FunctionOutput<Output<int, Peak, PeakData>> result = null;
+            var combinations = new List<int[]>
+            {
+                new int[] { 1, 2 },
+                new int[] { 5, 10 },
+                new int[] { 10, 20 },
+                new int[] { 50, 60 },
+                new int[] { 80, 90 },
+                new int[] { 100, 200 },
+                new int[] { 200, 220 },
+                new int[] { 300, 320 },
+                new int[] { 400, 500 },
+                new int[] { 550, 1000 },
+                new int[] { 1, 1 },
+                new int[] { 10, 10 },
+                new int[] { 25, 25 },
+                new int[] { 50, 50 },
+                new int[] { 60, 60 },
+                new int[] { 80, 80 },
+                new int[] { 100, 100 },
+                new int[] { 150, 150 },
+                new int[] { 200, 200 },
+                new int[] { 500, 500 },
+            };
+
+            foreach (var c in combinations)
+                for (int i = 0; i < tries; i++)
+                    Herald.AnnounceExeReport("Cover", di4B.Cover(CoverVariation.Cover, '*', c[0], c[1], agg, out result, _maxDegreeOfParallelism), Herald.SpeedUnit.bookmarkPerSecond);
         }
 
         private bool GetPD()
