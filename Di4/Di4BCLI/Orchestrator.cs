@@ -842,6 +842,8 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
             {
                 if (args[1].ToLower() == "cover")
                     BenchmarkCover();
+                else if (args[1].ToLower() == "acchis")
+                    BenchmarkAccHis();
                 return true;
             }
             else
@@ -881,7 +883,14 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
             foreach (var c in combinations)
                 for (int i = 0; i < tries; i++)
-                    Herald.AnnounceExeReport("Cover", di4B.Cover(CoverVariation.Cover, '*', c[0], c[1], agg, out result, _maxDegreeOfParallelism), Herald.SpeedUnit.bookmarkPerSecond);
+                    Herald.AnnounceExeReport(c[0] + "," + c[1], di4B.Cover(CoverVariation.Cover, '*', c[0], c[1], agg, out result, _maxDegreeOfParallelism), Herald.SpeedUnit.bookmarkPerSecond);
+        }
+        private void BenchmarkAccHis()
+        {
+            int tries = 20;
+            ConcurrentDictionary<string, ConcurrentDictionary<char, List<AccEntry<int>>>> results;
+            for (int i = 0; i < tries; i++)
+                Herald.AnnounceExeReport("Run_" + i, di4B.AccumulationHistogram(out results, _maxDegreeOfParallelism));
         }
 
         private bool GetPD()
