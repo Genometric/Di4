@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="1D intervals incremental inverted index">
+  
+  <meta name="author" content="Vahid Jalili">
+
+  <title>Di4 | 1D intervals incremental inverted index</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="../image/x-icon" href="../img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="../plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="../plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="../plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="../plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="../plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body id="body">
+
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav class="navbar">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="../index.html">Home</a></li>
+								<li><a href="https://github.com/Genometric/Di4/releases">Download</a></li>
+								<li><a href="docs.html">Documentation</a></li>
+								<li><a href="benchmark.html">Benchmark</a></li>
+								<li><a href="https://github.com/Genometric/Di4/issues">Support</a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</div>
+	</div>
+</header>
+
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Logical-Level Building Blocks</h1>
+          <p></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="page-wrapper">
+	<div class="container">
+		<div class="row">
+      		<div class="col-md-4">
+				<aside class="sidebar">
+				
+					<div class="widget widget-latest-post">
+						<h4 class="widget-title">See also</h4>
+						<div class="media">
+							<div class="media-body">
+								<h4 class="media-heading"><a href="coming-soon.html">Di4 design</a></h4>
+								<p>how Di4 organizes intervals on key-value pair storage</p>
+							</div>
+						</div>
+						<div class="media">
+							<div class="media-body">
+								<h4 class="media-heading"><a href="coming-soon.html">Indexing</a></h4>
+								<p>batch indexing intervals into Di4</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="widget widget-category">
+						<h4 class="widget-title">Index</h4>
+						<ul class="widget-category-list">
+							<li><a href="#map">Map</a></li>
+						</ul>
+					</div>
+					
+					<div class="widget widget-category">
+						<h4 class="widget-title">Demos</h4>
+						<iframe width="85%" height="200" src="https://www.youtube.com/embed/Tnt5kFHUqZI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					</div>
+					
+				</aside>
+      		</div>
+			<div class="col-md-8">
+        		<div class="post">
+					<h3 id="fr" class="post-title">Map</h3>
+					<div class="post-content">
+						<p>The <code>map</code> function takes a reference file, an output filename,
+						the chromosome strand on which the operation should be applied, and an 
+						aggregation function. For instance:</p>
+<pre class="prettyprint">
+map C:\Users\Vahid\Desktop\Di4Data\ref.narrowpeak res.bed * count
+</pre>
+						<br/>
+						<p>Where <code>*</code> means “un-stranded” as the provided input data 
+						do not define strand. <code>count</code> is an aggregation function, 
+						which counts the number of intervals overlapping a reference interval. 
+						As a result of executing this command, <b>Di4BCLI</b> shows the following message.</p>
+						<img src="../images/blocks/mapres.png">
+						<br/>
+						<p>Regarding the runtime; Di4’s runtime is the runtime of the Map function,
+						which is <code>00:00:00:6749570</code> in this run. The load and export 
+						times are <b>Di4B</b> and <b>Di4BCLI</b> runtime for loading the reference
+						sample, calling independent instances of Di4 instances (Chr-level degree
+						of parallelism), and saving the results.</p>
+					</div>
+				</div>
+      		</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+	</div>
+</footer>
+
+    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+	<!-- JavaScript code prettifier -->
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sons-of-obsidian"></script>
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    <script src="js/script.js"></script>
+    
+
+
+
+  </body>
+  </html>

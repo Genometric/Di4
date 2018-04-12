@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="1D intervals incremental inverted index">
+  
+  <meta name="author" content="Vahid Jalili">
+
+  <title>Di4 | 1D intervals incremental inverted index</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="../image/x-icon" href="../img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="../plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="../plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="../plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="../plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="../plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body id="body">
+
+
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav class="navbar">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="../index.html">Home</a></li>
+								<li><a href="https://github.com/Genometric/Di4/releases">Download</a></li>
+								<li><a href="docs.html">Documentation</a></li>
+								<li><a href="benchmark.html">Benchmark</a></li>
+								<li><a href="https://github.com/Genometric/Di4/issues">Support</a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</div>
+	</div>
+</header>
+
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Installation</h1>
+          <p>Download, install, configure, and run Di4</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="page-wrapper">
+	<div class="container">
+		<div class="row">
+      		<div class="col-md-4">
+				<aside class="sidebar">
+
+					<div class="widget widget-latest-post">
+						<h4 class="widget-title">See also</h4>
+						<div class="media">
+							<div class="media-body">
+								<h4 class="media-heading"><a href="coming-soon.html">Di4 design</a></h4>
+								<p>how Di4 organizes intervals on key-value pair storage</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="widget widget-category">
+						<h4 class="widget-title">Index</h4>
+						<ul class="widget-category-list">
+							<li><a href="#sys_req">System requirements</a></li>
+							<li><a href="#download">Download and Install</a></li>
+							<li><a href="#config">Configuration</a></li>
+							<li><a href="#run">Run</a></li>
+						</ul>
+					</div>
+
+				</aside>
+			</div>
+			
+			<div class="col-md-8">
+        		<div id="sys_req" class="post">					
+					<h3 class="post-title">System requirements</h3>
+					<div class="post-content">
+						<p>Operating system: 		<b>Microsoft® Windows 10, 8.1, 8, or 7</b></p>
+						<p>Libraries and packages:	<b>.NET framework 4.7.1 (or newer)</b></p>
+					</div>
+				</div>
+				
+				
+				<div id="download" class="post">
+					<h3 class="post-title">Download and install</h3>
+					<div class="post-content">
+						<p>Di4 can be downloaded from the <a href="https://github.com/Genometric/Di4/releases">releases page on Github</a>.
+						Di4 is portable (i.e., it does not require installation); hence to execute it, extract the content from the downloaded
+						archive, and  either double-click on the <code>Di4BCLI.exe</code> file or call it from PowerShell using a command 
+						similar to the following:</p>
+<pre class="prettyprint">
+.\Di4BCLI.exe
+</pre>
+					</div>
+				</div>
+				
+				<div id="config" class="post">
+					<h3 class="post-title">configuration</h3>
+					<div class="post-content">
+						<p>Di4 requires a number of configuration parameters to be set. First, we explain how to set the parameters, then we explain
+						each of the parameters and their role.</p>
+						<br/>
+						<h4>How to set configuration parameters?</h4>
+						There are two methods to set configuration parameters: 
+						<ol type="A">
+							<li><b>Via command line interface (CLI)</b>
+							<p>When run for the first time, Di4 prompts for 
+							required configuration parameters and saves them for future use. For instance, at its first execution Di4 asks for
+							<b>working directory</b> as shown in the following figure: </p>
+							<img src="../images/setup/wd.png">
+							</li>
+							<br/>
+							<li><b>Manually modify Di4 configuration file: <code>Di4BCLI.exe.Config</code></b>
+							<p>This file is located under the downloaded 
+							and unziped Di4 archive and can be opened using any text editor (e.g.,
+							<a href="https://notepad-plus-plus.org/download/" target="_blank">Notepad++</a>). In its basic setup, the file’s content 
+							is as the following:</p>
+<?prettify linenums=true?>
+<pre class="prettyprint lang-xml">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;configuration&gt;
+  &lt;appSettings&gt;
+    &lt;add key="Memory" value="RAM" /&gt;
+    &lt;add key="Parser__ChrColumn" value="0" /&gt;
+    &lt;add key="Parser__LeftEndColumn" value="1" /&gt;
+    &lt;add key="Parser__RightEndColumn" value="2" /&gt;
+    &lt;add key="Parser__NameColumn" value="3" /&gt;
+    &lt;add key="Parser__ValueColumn" value="4" /&gt;
+  &lt;/appSettings&gt;
+  &lt;runtime&gt;
+    &lt;gcAllowVeryLargeObjects enabled="true"/&gt;
+  &lt;/runtime&gt;
+  &lt;startup&gt;
+    &lt;supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.1"/&gt;
+  &lt;/startup&gt;
+&lt;/configuration&gt;
+</pre>
+							</li>
+						</ol>
+						<br/>
+						<p>Some basic parameters can be set via CLI, but some others can be set only via the configuration file. 
+						Although for a basic execution it is not required to familiarize yourself with all these parameters 
+						and how to set them, but a degree of knowledge could help gain a better control on the Di4 framework
+						and its functionality.</p>
+									
+						<p>Some basic configuration parameters are discussed in the following.  Note that all the following 
+						settings should be nested under <code>appSettings</code>, as shown in the above example.</p>
+						<br/>
+						<h4>Run in RAM or HDD?</h4>
+						<p>One can choose whether to index files in RAM (execute in-memory) or persist on hard disk. When persisted
+						on hard disk, the indexed data can be re-used (and updated) in future execution. This configuration can 
+						be set via configuration file only. To set Di4 to execute in memory set the following in the configuration file: </p>
+<pre class="prettyprint lang-xml">
+&lt;add key="Memory" value="RAM" /&gt;
+</pre>
+						<p>And to set Di4 execute from hard disk, set the following:</p>
+<pre class="prettyprint lang-xml">
+&lt;add key="Memory" value="HDD" /&gt;
+</pre>
+						<br/>
+						<h4>Working directory</h4>
+						<p>Working directory is a folder where Di4 reads data to be indexed, and persists (if <code>HDD</code>
+						is chosen, as aforementioned) index data structures. For instance, the following figure shows how to
+						set working directory in CLI:</p>
+						<img src="../images/setup/wdcli.png">
+						<br/><br/>
+						<p>Or use the following key in configuration file.</p>
+<pre class="prettyprint lang-xml">
+&lt;add key="WorkingDirectory" value="C:\Users\Vahid\Desktop\Di4Data\B2\" /&gt;
+</pre>
+						<br/>
+						<h4>Log File</h4>
+						<p>In addition to CLI interactions, Di4 logs in a text file every command it receives and every message
+						it throws as a result of executing the command. One may set the log file as the following via CLI:</p>
+						<img src="../images/setup/log.png">
+						<br/><br/>
+						<p>Or using the following key in configuration file:</p>
+<pre class="prettyprint lang-xml">
+&lt;add key="LogFile" value="C:\Users\Vahid\Desktop\Di4Data\B2\Di4.log" /&gt;
+</pre>
+						<br/>
+						<h4>Enable/disable Di4/Di3 </h4>
+						<p>Di4 and Di3 can be enabled and/or disabled using two configuration keys, which can be set both via 
+						CLI and the configuration file. The following figure shows how they are set via CLI. </p>
+						<img src="../images/setup/di3di4.png">
+						<br/><br/>
+						<p><b>Inverted index</b> refers to Di3, and <b>incremental inverted index</b> refers to Di4. 
+						To enable/disable Di4/Di3 via configuration file, the <code>EnableInvertedIndex</code> and
+						<code>EnableIncrementalIndex</code> keys should be set, which refer to Di3 and Di4 respectively.
+						Therefore, <b>to run Di4 set the keys as the following:</b>
+<pre class="prettyprint lang-xml">
+&lt;add key="EnableInvertedIndex" value="n" /&gt;
+&lt;add key="EnableIncrementalIndex" value="y" /&gt;
+</pre>
+						<p>Or <b>to run Di3, set the keys as the following:</b></p>
+<pre class="prettyprint lang-xml">
+&lt;add key="EnableInvertedIndex" value="y" /&gt;
+&lt;add key="EnableIncrementalIndex" value="n" /&gt;
+</pre>
+						<br/>
+						<h4>Cache size</h4>
+						<p>When executed in persisted mode (i.e., index data are stored in hard disk), Di4 can cache a number 
+						of recently visited snapshots in memory. The minimum and maximum number of snapshots to be cached can 
+						be specified using the following configuration keys.</p>
+<pre class="prettyprint lang-xml">
+&lt;add key="MinBInCache" value="10" /&gt;
+&lt;add key="MaxBInCache" value="100" /&gt;
+</pre>
+						<p>Determining an optimal cache size is a common challenge, and applies here as well. 
+						The cache size is a trade-off between performance and memory consumption. If set too
+						low, Di4 mainly relies on de-serializing snapshots from hard disk; and if set too high,
+						depending on the computer performance, it may also penalize performance. Additionally,
+						whether the cached snapshots will be used executing a query or not, depends on the query.
+						For instance, when Di4 executes a query that is targeting different parts of the genome
+						at each step, the snapshots required to answer the query may not be cached previously;
+						therefore, Di4’s query on the cached data mainly hits no snapshot. This may degrade
+						performance as Di4 needs to first check the cached snapshots (which in this scenario,
+						may mainly hit no snapshot) before de-serializing required snapshots from hard disk.
+						Accordingly, cache size is a factor of computer performance, memory size, input data,
+						and commonly executed queries. Therefore, we leave it to the user to decide what could 
+						be “optimal” parameters for their setting.</p>
+					</div>
+				</div>
+
+        		<div id="run" class="post">
+					<h3 class="post-title">Run</h3>
+					<div class="post-content">
+						<p>A simplest approach to run Di4 is by double clicking on the <code>Di4BCLI.exe</code> file 
+						in the Di4 folder. After setting/showing the configurations, it shows the following screen 
+						which is Di4’s command prompt.</p>
+						<img src="../images/setup/welcome.png">
+						
+						<br/><br/>
+						<h4>Set degree of parallelism</h4>
+						<p>Run the command <code>getdp</code> in the Di4 command prompt (write the command and 
+						hit <kdb>Enter</kdb>); it displays a message as the following:</p>
+						<img src="../images/setup/getdp.png">
+						<br/><br/>
+						<p>This command returns the degree of parallelism at which Di4 is running, it is 
+						automatically determined based on the number of cores and thread of the host computer’s
+						processor. Di4 extensively benefits from parallelization and goes under extensive (partial)
+						locking mechanisms; therefore, its performance could be affected by the degree of 
+						parallelism. One may change the degree of parallelism by running <code>setdp</code> 
+						command as the following:</p>
+						<img src="../images/setup/setdp.png">
+						<br/><br/>
+						<p>Chr-level degree of parallelism specifies how many independent instances of Di4 are 
+						run in parallel. Di4-level degree of parallelism indicates how many parallel threads 
+						read/write each Di4 instance. Accordingly, with Chr and Di4 level of parallelism set 
+						to 4 and 4 respectively, 16 (=4*4) threads are executing a query. Accordingly, 
+						the host machine’s CPU and hard disk I/O (if index data are persisted on hard disk) 
+						should have enough throughput to execute all these threads optimally. Therefore, 
+						we recommend considering a host machine’s specs for setting the degree of parallelism.
+						Also, note that Di4 running in auto-determined degree of parallelism could perform at 
+						a reasonable throughput in most scenarios.</p>
+					</div>
+				</div>
+
+
+      		</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- footer Start -->
+<footer class="footer"></footer>
+
+    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="../plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="../plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="../plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="../plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+	
+	<!-- JavaScript code prettifier -->
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sons-of-obsidian"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js" defer></script>
+   
+
+    <script src="js/script.js"></script>
+    
+
+
+
+  </body>
+  </html>
