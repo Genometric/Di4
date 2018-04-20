@@ -22,7 +22,7 @@ import time
 
 
 TRIES = 10
-GIGGLE_SOURCE = "/Users/vahid/Code/giggle/source"
+GIGGLE_SOURCE = "..."  # Change this with a path to a local installation of giggle. 
 
 
 def list_files(scd):
