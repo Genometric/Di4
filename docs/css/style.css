@@ -1,15 +1,20 @@
 /*=== MEDIA QUERY ===*/
-@import url(http://fonts.googleapis.com/css?family=Verdana:400,100,300,500,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:200,400,100,300,500,700);
 @import url(https://fonts.googleapis.com/css?family=Oswald:300,400,500,600);
 @import url(http://fonts.googleapis.com/css?family=Garamond:400italic);
+@import url(http://fonts.googleapis.com/css?family=Quicksand:100,200,300,400,500);
+@import url(http://fonts.googleapis.com/css?family=Jura:100,200,300,400,500);
+@import url(http://fonts.googleapis.com/css?family=Calibri:100,200,300,400,500);
 body {
+	font-size: 16px;
   line-height: 1.5;
-  font-family: "Verdana", serif;
+  font-family: "Calibri";
+  font-weight: light;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Verdana", serif;
+  font-family: "Lato";
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -44,8 +49,9 @@ a:visited {
 
 p {
   color: #5c5b68;
-  font-size: 15px;
-  font-family: "Verdana", serif;
+  font-size: 16px;
+  font-weight: normal;
+  font-family: "Calibri";
 }
 
 /*
@@ -308,7 +314,7 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
 
 .page-title .block h1 {
   color: #fff;
-  font-weight: 200;
+  font-weight: 300;
   letter-spacing: 6px;
   margin-top: 0;
   text-transform: capitalize;
@@ -316,6 +322,8 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
 
 .page-title .block p {
   color: #fff;
+  font-weight: 300;
+  font-family: "Lato";
 }
 
 .heading {
@@ -725,7 +733,8 @@ font header .navbar-default .navbar-nav li a:hover {
   color: #5C5C5C;
   padding: 10px 15px;
   font-weight: 500;
-  font-size: 14px;
+  font-family: Jura;
+  font-size: 15px;
   text-transform: uppercase;
 }
 
@@ -772,8 +781,8 @@ font header .navbar-default .navbar-nav li a:hover {
 }
 
 .slider .block h1 {
-	color: #ffffff;
-  font-weight: 100;
+  color: #ffffff;
+  font-weight: 200;
   font-size: 65px;
   line-height: 60px;
   letter-spacing: 10px;
@@ -782,11 +791,11 @@ font header .navbar-default .navbar-nav li a:hover {
 
 .slider .block p {
   margin-bottom: 30px;
-  color: #c4bbce;
-  font-size: 28px;
+  color: #ffffff;
+  font-size: 30px;
   line-height: 40px;
   font-weight: 300;
-  font-family: "Courier New";
+  font-family: "Lato";
 }
 
 .call-to-action {
@@ -961,16 +970,21 @@ font header .navbar-default .navbar-nav li a:hover {
   color: #fff;
 }
 
-.portfolio-work .block .portfolio-contant ul li a h4 {
+.portfolio-work .block .portfolio-contant ul li a h1 {
   margin: 0;
   text-transform: uppercase;
   margin-bottom: 10px;
-  font-weight: 400;
+  font-weight: 300;
+  font-size: 30px;
+  font-size: 1.5vw;
 }
 
 .portfolio-work .block .portfolio-contant ul li a p {
-  font-size: 13px;
-  line-height: 20px;
+  font-weight: 300;
+  font-family: "Lato";
+  font-size: 20px;
+  font-size: 1vw;
+  line-height: 1.4vw;
   color: #fff;
 }
 
@@ -1066,7 +1080,7 @@ font header .navbar-default .navbar-nav li a:hover {
 }
 
 .testimonial .testimonial-carousel .user p {
-  font-family: "Verdana", serif;
+  font-family: "Lato";
   padding-bottom: 0;
   margin-top: 6px;
   font-size: 12px;
@@ -2172,11 +2186,13 @@ font header .navbar-default .navbar-nav li a:hover {
 }
 
 .widget.widget-latest-post .media p {
-  font-size: 12px;
+  font-size: 14px;
   color: #808080;
 }
 
 .widget.widget-category ul li {
+	font-size: 14px;
+	font-family: "Lato";
   margin-bottom: 10px;
 }
 
