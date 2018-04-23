@@ -15,21 +15,21 @@
   <!-- Mobile Specific Meta-->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Favicon -->
-  <link rel="shortcut icon" type="../image/x-icon" href="../img/favicon.png" />
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
   <!-- bootstrap.min css -->
-  <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
   <!-- Ionic Icon Css -->
-  <link rel="stylesheet" href="../plugins/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
   <!-- animate.css -->
-  <link rel="stylesheet" href="../plugins/animate-css/animate.css">
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
   <!-- Magnify Popup -->
-  <link rel="stylesheet" href="../plugins/magnific-popup/dist/magnific-popup.css">
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
   <!-- Owl Carousel CSS -->
-  <link rel="stylesheet" href="../plugins/slick-carousel/slick/slick.css">
-  <link rel="stylesheet" href="../plugins/slick-carousel/slick/slick-theme.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
   
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -52,7 +52,7 @@
 						</div>
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav navbar-right">
-								<li><a href="../index.html">Home</a></li>
+								<li><a href="index.html">Home</a></li>
 								<li><a href="https://github.com/Genometric/Di4/releases">Download</a></li>
 								<li><a href="docs.html">Documentation</a></li>
 								<li><a href="benchmark.html">Benchmark</a></li>
@@ -145,7 +145,7 @@
 							<p>When run for the first time, Di4 prompts for 
 							required configuration parameters and saves them for future use. For instance, at its first execution Di4 asks for
 							<b>working directory</b> as shown in the following figure: </p>
-							<img src="../images/setup/wd.png">
+							<img src="images/setup/wd.png">
 							</li>
 							<br/>
 							<li><b>Manually modify Di4 configuration file: <code>Di4BCLI.exe.Config</code></b>
@@ -200,7 +200,7 @@
 						<p>Working directory is a folder where Di4 reads data to be indexed, and persists (if <code>HDD</code>
 						is chosen, as aforementioned) index data structures. For instance, the following figure shows how to
 						set working directory in CLI:</p>
-						<img src="../images/setup/wdcli.png">
+						<img src="images/setup/wdcli.png">
 						<br/><br/>
 						<p>Or use the following key in configuration file.</p>
 <pre class="prettyprint lang-xml">
@@ -210,7 +210,7 @@
 						<h4>Log File</h4>
 						<p>In addition to CLI interactions, Di4 logs in a text file every command it receives and every message
 						it throws as a result of executing the command. One may set the log file as the following via CLI:</p>
-						<img src="../images/setup/log.png">
+						<img src="images/setup/log.png">
 						<br/><br/>
 						<p>Or using the following key in configuration file:</p>
 <pre class="prettyprint lang-xml">
@@ -220,7 +220,7 @@
 						<h4>Enable/disable Di4/Di3 </h4>
 						<p>Di4 and Di3 can be enabled and/or disabled using two configuration keys, which can be set both via 
 						CLI and the configuration file. The following figure shows how they are set via CLI. </p>
-						<img src="../images/setup/di3di4.png">
+						<img src="images/setup/di3di4.png">
 						<br/><br/>
 						<p><b>Inverted index</b> refers to Di3, and <b>incremental inverted index</b> refers to Di4. 
 						To enable/disable Di4/Di3 via configuration file, the <code>EnableInvertedIndex</code> and
@@ -266,13 +266,13 @@
 						<p>A simplest approach to run Di4 is by double clicking on the <code>Di4BCLI.exe</code> file 
 						in the Di4 folder. After setting/showing the configurations, it shows the following screen 
 						which is Di4’s command prompt.</p>
-						<img src="../images/setup/welcome.png">
+						<img src="images/setup/welcome.png">
 						
 						<br/><br/>
 						<h4>Set degree of parallelism</h4>
 						<p>Run the command <code>getdp</code> in the Di4 command prompt (write the command and 
 						hit <kdb>Enter</kdb>); it displays a message as the following:</p>
-						<img src="../images/setup/getdp.png">
+						<img src="images/setup/getdp.png">
 						<br/><br/>
 						<p>This command returns the degree of parallelism at which Di4 is running, it is 
 						automatically determined based on the number of cores and thread of the host computer’s
@@ -280,7 +280,7 @@
 						locking mechanisms; therefore, its performance could be affected by the degree of 
 						parallelism. One may change the degree of parallelism by running <code>setdp</code> 
 						command as the following:</p>
-						<img src="../images/setup/setdp.png">
+						<img src="images/setup/setdp.png">
 						<br/><br/>
 						<p>Chr-level degree of parallelism specifies how many independent instances of Di4 are 
 						run in parallel. Di4-level degree of parallelism indicates how many parallel threads 
@@ -314,15 +314,15 @@
    
     <script src="https://code.jquery.com/jquery-git.min.js"></script>
     <!-- Bootstrap 3.1 -->
-    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
     <!-- Owl Carousel -->
-    <script src="../plugins/slick-carousel/slick/slick.min.js"></script>
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
     <!--  -->
-    <script src="../plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
     <!-- Mixit Up JS -->
-    <script src="../plugins/mixitup/dist/mixitup.min.js"></script>
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
     <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
-    <script src="../plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
 	
 	<!-- JavaScript code prettifier -->
 	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sons-of-obsidian"></script>
