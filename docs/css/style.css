@@ -37,16 +37,16 @@ h4 {
 
 /* unvisited link */
 a:link {
-    color: blue;
+    color: #0054ff;
 }
 
 /* visited link */
 a:visited {
-    color: red;
+    color: #0076d1;
 }
 
 p {
-  color: #5c5b68;
+  color: #000000;
   font-size: 16px;
   font-weight: normal;
   font-family: "Calibri";
@@ -789,7 +789,7 @@ font header .navbar-default .navbar-nav li a:hover {
 
 .slider .block p {
   margin-bottom: 30px;
-  color: #ffffff;
+  color: #b2b0b7;
   font-size: 30px;
   line-height: 40px;
   font-weight: 300;
@@ -2150,8 +2150,15 @@ font header .navbar-default .navbar-nav li a:hover {
   background-repeat: no-repeat;
 }
 
+.bg-2 {
+  background: url("../images/pageheader.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
 .bg-1 h2 {
-	color: #2b3237;
+	color: #40474c;
 }
 
 .bg-1 p {
@@ -2179,13 +2186,13 @@ font header .navbar-default .navbar-nav li a:hover {
 }
 
 .widget.widget-latest-post .media .media-heading a {
-  color: #000;
+  color: #000000;
   font-size: 16px;
 }
 
 .widget.widget-latest-post .media p {
   font-size: 14px;
-  color: #808080;
+  color: #000000;
 }
 
 .widget.widget-category ul li {
@@ -2195,7 +2202,7 @@ font header .navbar-default .navbar-nav li a:hover {
 }
 
 .widget.widget-category ul li a {
-  color: #837f7e;
+  color: #000000;
   transition: all 0.3s ease;
 }
 
