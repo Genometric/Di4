@@ -973,7 +973,7 @@ font header .navbar-default .navbar-nav li a:hover {
   text-transform: uppercase;
   margin-bottom: 10px;
   font-weight: 300;
-  font-size: 30px;
+  font-size: 25px;
   font-size: 1.5vw;
 }
 
@@ -997,7 +997,7 @@ font header .navbar-default .navbar-nav li a:hover {
   bottom: 0;
   right: 0;
   left: 0;
-  background: rgba(20, 15, 55, 0.9);
+  background: rgba(4, 2, 20, 0.9);
   opacity: 0;
   transition: all 0.3s ease;
   text-align: center;
