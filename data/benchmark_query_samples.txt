@@ -1,0 +1,10 @@
+wgEncodeUwDgfH7esPkV2	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfH7esPkV2.narrowPeak.gz
+wgEncodeOpenChromFaireMrtg4016Pk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeOpenChromFaire/wgEncodeOpenChromFaireMrtg4016Pk.narrowPeak.gz
+wgEncodeOpenChromDnaseHuvecPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeOpenChromDnase/wgEncodeOpenChromDnaseHuvecPk.narrowPeak.gz
+wgEncodeSydhTfbsH1hescCebpbIggrabPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeSydhTfbs/wgEncodeSydhTfbsH1hescCebpbIggrabPk.narrowPeak.gz
+wgEncodeSydhTfbsH1hescUsf2IggrabPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeSydhTfbs/wgEncodeSydhTfbsH1hescUsf2IggrabPk.narrowPeak.gz
+wgEncodeAwgTfbsUtaGm12878Pol2UniPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeAwgTfbsUniform/wgEncodeAwgTfbsUtaGm12878Pol2UniPk.narrowPeak.gz
+wgEncodeAwgTfbsHaibK562Sp1Pcr1xUniPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeAwgTfbsUniform/wgEncodeAwgTfbsHaibK562Sp1Pcr1xUniPk.narrowPeak.gz
+wgEncodeAwgTfbsSydhK562Usf2IggrabUniPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeAwgTfbsUniform/wgEncodeAwgTfbsSydhK562Usf2IggrabUniPk.narrowPeak.gz
+wgEncodeSydhTfbsGm12878Tr4StdPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeSydhTfbs/wgEncodeSydhTfbsGm12878Tr4StdPk.narrowPeak.gz
+wgEncodeSydhTfbsK562Stat1Ifng6hStdPk	http://hgdownload.cse.ucsc.edu/goldenpath/hg19/encodeDCC/wgEncodeSydhTfbs/wgEncodeSydhTfbsK562Stat1Ifng6hStdPk.narrowPeak.gz
