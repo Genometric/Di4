@@ -105,6 +105,9 @@
 						<h4 class="widget-title">Index</h4>
 						<ul class="widget-category-list">
 							<li><a href="#map">Map</a></li>
+                            <li><a href="#cover">Cover</a></li>
+                            <li><a href="#summit">Summit</a></li>
+                            <li><a href="#acchis">AccHis</a></li>
 						</ul>
 					</div>
 					
@@ -117,26 +120,110 @@
       		</div>
 			<div class="col-md-8">
         		<div class="post">
-					<h3 id="fr" class="post-title">Map</h3>
+					<h3 id="map" class="post-title">Map</h3>
 					<div class="post-content">
-						<p>The <code>map</code> function takes a reference file, an output filename,
+						<p>The <code>Map</code> function takes a reference file, an output filename,
 						the chromosome strand on which the operation should be applied, and an 
-						aggregation function. For instance:</p>
+                        aggregation function. See the following example, where the highlighted intervals
+                        from the samples are determined as intervals overlapping with the given reference
+                        interval. </p>
+                        <img src="images/functions/map.png">
+                        <br/>
+                        <br/>
+                        <p>The <code>Map</code> function is exposed via Di4BCLI (the command line 
+                        interface to Di4's bioinformatics wrapper). The Di4BCLI defines the following 
+                        syntax for the <code>Map</code>function: </p>
 <pre class="prettyprint">
-map C:\Users\Vahid\Desktop\Di4Data\ref.narrowpeak res.bed * count
+Map reference results_file strand aggregate_function
+</pre>                            
+                        <p>For instance:</p>
+<pre class="prettyprint">
+Map C:\Users\Vahid\Desktop\Di4Data\ref.narrowpeak res.bed * count
 </pre>
 						<br/>
 						<p>Where <code>*</code> means “un-stranded” as the provided input data 
 						do not define strand. <code>count</code> is an aggregation function, 
 						which counts the number of intervals overlapping a reference interval. 
-						As a result of executing this command, <b>Di4BCLI</b> shows the following message.</p>
-						<img src="images/blocks/mapres.png">
+						As a result of executing this command, Di4BCLI shows the following message.</p>
+<pre class="prettyprint lang-bsh">
+> Map C:\Users\Vahid\Desktop\Di4Data\ref.narrowpeak res.bed * count
+ Loaded #i:    196,180     ET: 00:00:01.0622689     Speed:   184,680 #i\sec
+    Map #i:    196,180     ET: 00:00:00.2214104     Speed:   886,047 #i\sec
+ Export #i:    196,111     ET: 00:00:00.1353136     Speed: 1,449,307 #i\sec
+-: Done  ...       Overall ET: 00:00:01.4325864
+</pre>
 						<br/>
 						<p>Regarding the runtime; Di4’s runtime is the runtime of the Map function,
-						which is <code>00:00:00:6749570</code> in this run. The load and export 
-						times are <b>Di4B</b> and <b>Di4BCLI</b> runtime for loading the reference
+						which is <code>00:00:00.2214104</code> in this run. The load and export 
+						times are Di4B and Di4BCLI runtime for loading the reference
 						sample, calling independent instances of Di4 instances (Chr-level degree
 						of parallelism), and saving the results.</p>
+					</div>
+				</div>
+                <div class="post">
+					<h3 id="cover" class="post-title">Cover</h3>
+					<div class="post-content">
+						<p>The <code>Cover</code> function finds regions on domain where a particular number
+                        of intervals overlap. See the following exmaple where the <code>Cover</code>
+                        function has determined regions with at least <code>2</code> and at most 
+                        <code>5</code> intervals overlapping: </p>
+                        <img src="images/functions/cover.png">
+                        <br/>
+                        <br/>
+                        <p>The <code>Cover</code> function is exposed via Di4BCLI, and has the 
+                        following syntax: </p>
+<pre class="prettyprint">
+Cover results_file strand min_acc max_acc aggregate_function
+</pre>                            
+                        <p>For instance:</p>
+<pre class="prettyprint">
+Cover res.bed * 2 5 count
+</pre>
+						<br/>
+						<p>As a result of executing this command, Di4BCLI shows a message similar 
+                        to the following.</p>
+<pre class="prettyprint lang-bsh">
+> Cover res.bed * 2 5 count
+  Cover #b: 119,435,300     ET: 00:00:49.4589017    Speed: 2,414,839 #b\sec
+-: Done  ...        Overall ET: 00:00:49.4591127
+</pre>
+                        <br/>
+						<p>where <code>#b</code> shows the number of processed snapshots 
+                        (<code>119,435,300</code> in this example), and query processing speed
+                        is given in snapshot per second (<code>2,414,839 #b\sec</code> in this example).</p>
+					</div>
+				</div>
+                <div class="post">
+					<h3 id="summit" class="post-title">Summit</h3>
+					<div class="post-content">
+						<p>The <code>Summit</code> function is a variant of <code>Cover</code>
+                        function, and finds regions where interval accumulation is locally maximized. 
+                        See the following exmaple where the <code>Summit</code>
+                        function has determined regions with at least <code>2</code> and at most 
+                        <code>5</code> intervals overlapping: </p>
+                        <img src="images/functions/summit.png">
+                        <br/>
+                        <br/>
+                        <p>The <code>Summit</code> function is exposed via Di4BCLI, and has
+                        a syntax similar to the <code>Cover</code> function as the following: </p>
+<pre class="prettyprint">
+Summit results_file strand min_acc max_acc aggregate_function
+</pre>
+					</div>
+				</div>
+                <div class="post">
+					<h3 id="acchis" class="post-title">AccHis</h3>
+					<div class="post-content">
+						<p>The <code>AccHis</code> function determines a histogram of
+                        interval accumulation. See the following exmaple: </p>
+                        <img src="images/functions/acchis.png">
+                        <br/>
+                        <br/>
+                        <p>The <code>AccHis</code> function is exposed via Di4BCLI, and has
+                        the following syntax: </p>
+<pre class="prettyprint">
+AccHis results_file
+</pre>
 					</div>
 				</div>
       		</div>
