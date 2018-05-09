@@ -151,18 +151,38 @@ Indexing mode is set to &lt;Single-pass&gt; indexing
 						<br/>
 						<h4>Double-pass batch index: first pass</h4>
 						<p>To run the first-pass of the double-pass indexing algorithm, use the following command:</p>
+<?prettify linenums=true?>
 <pre class="prettyprint">
 batchindex *.narrowPeak
 </pre>
 						<p>This command parses and indexes all the files with <code>narrowpeaks</code>
 						extension in <code>WorkingDirectory</code>. Once the operation is finished, 
 						it reports the runtime and the number of indexed intervals as shown in the following example.</p>
-						<img src="images/index/bires.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-js">
+[44\45] wgEncodeAwgTfbsSydhK562Stat1Ifng30UniPk
+ Loaded #i:      2,203     ET: 00:00:00.0172472     Speed:   127,731 #i\sec
+Indexed #i:      2,203     ET: 00:00:00.0588744     Speed:    37,419 #i\sec
+[45\45] wgEncodeAwgTfbsSydhK562Stat1Ifng6hUniPk
+ Loaded #i:      2,333     ET: 00:00:00.0111938     Speed:   208,419 #i\sec
+Indexed #i:      2,333     ET: 00:00:00.0554094     Speed:    42,105 #i\sec
+           #indexed intervals: 456,385
+                Load ET (sec): 2.9263167
+               Index ET (sec): 8.8259436
+              Commit ET (sec): 0.0255342
+       Average indexing speed: 51523.98  #i\sec
+-: Done  ...       Overall ET: 00:00:08.8577204
+</pre>
 						<br/><br/>
 						<h4>Double-pass batch index: second pass</h4>
 						<p>Run <code>2pass</code> command to execute the second pass of double-pass indexing algorithm.
 						Note, this command is not required if indexing mode was set to single-pass indexing. </p>
-						<img src="images/index/bisp.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-js">
+> 2pass
+2ndPass #b:    746,190     ET: 00:00:01.0253235     Speed:   727,761 #b\sec
+-: Done  ...       Overall ET: 00:00:01.0267024
+</pre>
 					</div>
 				</div>
 
@@ -174,13 +194,21 @@ batchindex *.narrowPeak
 						Other quantization methods are <code>zt</code> and <code>uq</code> for 
 						zero-thresholding and uniform quantization, where zero-thresholding does not
 						take quantization level parameter.</p>
-						<img src="images/index/im.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-js">
+> 2ri nuq 16
+2RIndex #B:    470,235     ET: 00:00:01.9138708     Speed:   245,698 #B\sec
+-: Done  ...       Overall ET: 00:00:01.9160924
+</pre>
 						<br/>
-						<p>Some example of calling second-resolution indexing:</p>
-<pre class="prettyprint">
-2ri zt
-2ri uq 8
-2ri nuq 16
+						<p>Some other example of calling second-resolution indexing:</p>
+<?prettify linenums=true?>
+<pre class="prettyprint lang-bsh">
+> 2ri zt
+
+> 2ri uq 8
+
+> 2ri nuq 16
 </pre>
 					</div>
 				</div>
