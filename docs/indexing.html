@@ -132,9 +132,19 @@
 						<code>setim multi</code> to set indexing mode to single and multi-pass modes
 						respectively. One can also get the current setting for indexing mode using 
 						<code>getim</code> command. See the following console output as an example.</p>
-						<img src="images/index/im.png">
-						<br/><br/>
-						<h4 id="bi">Batch index</h4>
+<?prettify linenums=true?>
+<pre class="prettyprint lang-xml">
+> setim multi
+Indexing mode is set to &lt;Multi-pass&gt; indexing
+
+> setim single
+Indexing mode is set to &lt;Single-pass&gt; indexing
+
+> getim
+Indexing mode is set to &lt;Single-pass&gt; indexing
+</pre>
+						<br/>
+                        <h4 id="bi">Batch index</h4>
 						<p>Di4 can index data in batch; user specifies the files to be indexed,
 						then <em>Di4BCLI</em> and <em>Di4B</em> parses the files <b>one at a time</b>,
 						and indexes them in <em>Di4</em>.</p>
