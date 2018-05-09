@@ -123,9 +123,10 @@
 					<h3 class="post-title">Download and install</h3>
 					<div class="post-content">
 						<p>Di4 can be downloaded from the <a href="https://github.com/Genometric/Di4/releases">releases page on Github</a>.
-						Di4 is portable (i.e., it does not require installation); hence to execute it, extract the content from the downloaded
+						Di4 is portable (i.e., it does not require installation); hence, to execute it, extract the content from the downloaded
 						archive, and  either double-click on the <code>Di4BCLI.exe</code> file or call it from PowerShell using a command 
 						similar to the following:</p>
+<?prettify linenums=true?>
 <pre class="prettyprint">
 .\Di4BCLI.exe
 </pre>
@@ -145,7 +146,14 @@
 							<p>When run for the first time, Di4 prompts for 
 							required configuration parameters and saves them for future use. For instance, at its first execution Di4 asks for
 							<b>working directory</b> as shown in the following figure: </p>
-							<img src="images/setup/wd.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-xml">
+Following are the environment and initialization parameters ...
+Di4 runs in RAM
+
+current directory: C:\Users\Vahid\Desktop\Di4Data
+Please specify working directory : 
+</pre>
 							</li>
 							<br/>
 							<li><b>Manually modify Di4 configuration file: <code>Di4BCLI.exe.Config</code></b>
@@ -200,7 +208,14 @@
 						<p>Working directory is a folder where Di4 reads data to be indexed, and persists (if <code>HDD</code>
 						is chosen, as aforementioned) index data structures. For instance, the following figure shows how to
 						set working directory in CLI:</p>
-						<img src="images/setup/wdcli.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-xml">
+Following are the environment and initialization parameters ...
+Di4 runs in RAM
+
+current directory: C:\Users\Vahid\Desktop\Di4Data
+Please specify working directory : C:\Users\Vahid\Desktop\Di4Data\B2\
+</pre>
 						<br/><br/>
 						<p>Or use the following key in configuration file.</p>
 <pre class="prettyprint lang-xml">
@@ -210,7 +225,17 @@
 						<h4>Log File</h4>
 						<p>In addition to CLI interactions, Di4 logs in a text file every command it receives and every message
 						it throws as a result of executing the command. One may set the log file as the following via CLI:</p>
-						<img src="images/setup/log.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-xml">
+Following are the environment and initialization parameters ...
+Di4 runs in RAM
+
+current directory: C:\Users\Vahid\Desktop\Di4Data
+Please specify working directory : C:\Users\Vahid\Desktop\Di4Data\B2\
+Working directory is successfully set to : C:\Users\Vahid\Desktop\Di4Data\B2\
+
+Please specify the Log file : C:\Users\Vahid\Desktop\Di4Data\B2\Di4.log
+</pre>
 						<br/><br/>
 						<p>Or using the following key in configuration file:</p>
 <pre class="prettyprint lang-xml">
@@ -220,7 +245,14 @@
 						<h4>Enable/disable Di4/Di3 </h4>
 						<p>Di4 and Di3 can be enabled and/or disabled using two configuration keys, which can be set both via 
 						CLI and the configuration file. The following figure shows how they are set via CLI. </p>
-						<img src="images/setup/di3di4.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-xml">
+Do you want to enable inverted index ? [y/n] n
+Inverted index is disabled !
+
+Do you want to enable incremental inverted index ? [y/n] y
+Incremental inverted index is enabled !
+</pre>
 						<br/><br/>
 						<p><b>Inverted index</b> refers to Di3, and <b>incremental inverted index</b> refers to Di4. 
 						To enable/disable Di4/Di3 via configuration file, the <code>EnableInvertedIndex</code> and
@@ -266,13 +298,26 @@
 						<p>A simplest approach to run Di4 is by double clicking on the <code>Di4BCLI.exe</code> file 
 						in the Di4 folder. After setting/showing the configurations, it shows the following screen 
 						which is Di4’s command prompt.</p>
-						<img src="images/setup/welcome.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-xml">
+.::.    Hi, I'm Di4, ready and at your service.
+
+.::.    Working Directory : C:\Users\Vahid\Desktop\Di4Data\B2\
+
+>
+</pre>
 						
 						<br/><br/>
 						<h4>Set degree of parallelism</h4>
 						<p>Run the command <code>getdp</code> in the Di4 command prompt (write the command and 
 						hit <kdb>Enter</kdb>); it displays a message as the following:</p>
-						<img src="images/setup/getdp.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-bsh">
+> getdp
+maximum degree of parallelism:
+Chr level = 4 threads
+Di4 level = 2 threads
+</pre>
 						<br/><br/>
 						<p>This command returns the degree of parallelism at which Di4 is running, it is 
 						automatically determined based on the number of cores and thread of the host computer’s
@@ -280,7 +325,13 @@
 						locking mechanisms; therefore, its performance could be affected by the degree of 
 						parallelism. One may change the degree of parallelism by running <code>setdp</code> 
 						command as the following:</p>
-						<img src="images/setup/setdp.png">
+<?prettify linenums=true?>
+<pre class="prettyprint lang-bsh">
+> setdp 4 4
+maximum degree of parallelism:
+Chr level = 4 threads
+Di4 level = 4 threads
+</pre>
 						<br/><br/>
 						<p>Chr-level degree of parallelism specifies how many independent instances of Di4 are 
 						run in parallel. Di4-level degree of parallelism indicates how many parallel threads 
