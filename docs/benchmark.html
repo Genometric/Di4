@@ -92,7 +92,8 @@
                     <div class="post-content">
                         <p>
                             We prepared a package to benchmark Di4 against Di3, bedtools and BEDOPS.
-                            The package can be downloaded from <a href="" target="_blank">this link</a>.
+                            The package can be downloaded from 
+                            <a href="https://drive.google.com/open?id=1j9EGvYjCEbKOXhb_k6zQHEz3o_FXn4oK" target="_blank">this link</a>.
                             The package contents are as it follows:
                             <ul>
                                 <li>
@@ -105,7 +106,7 @@
                         <br />
                         <li>
                             <p>
-                                <code>list</code>. For benchmarking, the narrowPeaks in <code>files</code> folder are
+                                <code>list</code>; the narrowPeaks in <code>files</code> folder are
                                 grouped in <code>9</code> datasets labeled: A1, A2, A3, A4, B1, B2, C1, C2, and C3. The list of
                                 narrowPeaks in each of these datasets is given in <code>9</code> text files under <code>list</code>
                                 folder, where the text files are named with the label of dataset they belong to.
@@ -124,8 +125,8 @@
 python copy.py a1
 </pre>
                             <p>
-                                This script
-                                can be downloaded individually from <a href="" target="_blank">this link</a>.
+                                This script can be downloaded individually from 
+                                <a href="https://github.com/Genometric/Di4/blob/master/scrips/copy.py" target="_blank">this link</a>.
                             </p>
                             <br />
                         </li>
@@ -144,7 +145,8 @@ python run.py TOOL_NAME DATASET [--on-the-fly]
                                 is a dataset label (e.g., a1). When the <code>--on-the-fly</code> flag is set, this script measures
                                 runtime considering both preprocessing (sorting data) and processing time; and if this flag is not
                                 provided, this script measures runtime considering only processing time. This script
-                                can be downloaded individually from <a href="" target="_blank">this link</a>.
+                                can be downloaded individually from 
+                                <a href="https://github.com/Genometric/Di4/blob/master/scrips/run.py" target="_blank">this link</a>.
                             </p>
                         </li>
 
@@ -161,7 +163,8 @@ python run.py TOOL_NAME DATASET [--on-the-fly]
                             <p>
                                 <code>README.pdf</code>; this files contains a thorough explanation on how to benchmark
                                 Di4 against Di3, bedtools and BEDOPS using the provided datasets and scripts. The README file
-                                can be downloaded individually from <a href="" target="_blank">this link</a>.
+                                can be downloaded individually from 
+                                <a href="https://github.com/Genometric/Di4/blob/master/docs/README.pdf" target="_blank">this link</a>.
                             </p>
                         </li>
                         </ul>
@@ -172,25 +175,27 @@ python run.py TOOL_NAME DATASET [--on-the-fly]
                 <div class="post">
                     <h3 id="cbo" class="post-title">Run Giggle</h3>
                     <div class="post-content">
-                        <p>
-                            We prepared a <a href="https://github.com/Genometric/Di4/blob/master/scrips/giggle.py" target="_blank">a python script</a>
-                            to run <a href="https://github.com/ryanlayer/giggle" target="_blank">Giggle</a>. The syntax to run this script is as the
-                            following: 
+                        <p> We prepared a <a href="https://github.com/Genometric/Di4/blob/master/scrips/giggle.py" target="_blank">a python script</a>
+                        to run <a href="https://github.com/ryanlayer/giggle" target="_blank">Giggle</a>. The syntax to run this script is as the
+                        following: </p>
 <pre class="prettyprint" class="language-sh">
 python giggle.py PATH_TO_DATA_TO_BE_INDEXED PATH_TO_QUERY_DATASETS
 </pre>                            
-                            <br/>                      
-                            <p>This script runs Giggle to index the data in <code>PATH_TO_DATA_TO_BE_INDEXED</code> then queries the indexed data 
-                            using the query samples in <code>PATH_TO_QUERY_DATASETS</code>. Note, this python script runs each query
-                            <code>10</code> times. The links to the source of query samples we used for benchmarking Di4 against Giggle are available from
-							<a href="https://github.com/Genometric/Di4/blob/master/data/benchmark_query_samples.txt" target="_blank">this text file</a>.</p>
-							
+                        <br/>                      
+                        <p>This script runs Giggle to index the data in <code>PATH_TO_DATA_TO_BE_INDEXED</code>, then queries the indexed data 
+                        using the query samples in <code>PATH_TO_QUERY_DATASETS</code>. Note, this python script runs each query
+                        <code>10</code> times. </p>
+
+                        <p><a href="https://github.com/Genometric/Di4/blob/master/scrips/giggle.py" target="_blank">This python script</a>
+                        requires giggle and bedtools to be installed and configured. After installation, open this script in a text editor
+                        and update the <code>GIGGLE_SOURCE</code> variable to the path poining to your giggle installation path. 
                         </p>
-                        <p>
-                            <a href="https://github.com/Genometric/Di4/blob/master/scrips/giggle.py" target="_blank">This python script</a>
-                            requires giggle and bedtools be installed and configured. After installation, open this script in a text editor
-                            and update the <code>GIGGLE_SOURCE</code> variable to the path poining to your giggle installation path. 
-                        </p>
+                    
+                        <p>The links to the source of query samples we used for benchmarking Di4 against Giggle are available from
+				        <a href="https://github.com/Genometric/Di4/blob/master/data/benchmark_query_samples.txt" target="_blank">this text file</a>.</p>
+                        
+                        <p>The Roadmap Epigenomics dataset which we used for benchmarking Di4 against Giggle, can be downloaded from 
+                        <a href="https://drive.google.com/open?id=1XeZ6dQPtabHprS-5ecaNLWGdEX8qqlHH" target="_blank">this text file</a>.</p>
 
                         <p>
                             <b>NOTE: </b> if you are indexing a large number of samples (e.g., more than 100), then you would need to run 
