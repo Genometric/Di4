@@ -20,9 +20,9 @@ namespace Genometric.Di4
         {
             if (other.Equals(null)) return 1;
 
-            int l = this.Left.CompareTo(other.Left);
+            int l = Left.CompareTo(other.Left);
             if (l != 0) return l;
-            else return this.Right.CompareTo(other.Right);
+            else return Right.CompareTo(other.Right);
         }
     }
 }
