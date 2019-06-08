@@ -4,10 +4,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents;
+using Genometric.Di4.AuxiliaryComponents;
 
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inv
+namespace Genometric.Di4.Inv
 {
     /// <summary>
     /// Provides efficient means of inserting an 
@@ -31,7 +31,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inv
     {
         /// <summary>
         /// Provides efficient means of inserting an 
-        /// interval to Polimi.DEIB.VahidJalili.DI4; i.e., _di4_1R indexding.
+        /// interval to Genometric.Di4; i.e., _di4_1R indexding.
         /// </summary>
         /// <param name="_di4_1R">The reference _di4_1R to be 
         /// manipulated.</param>

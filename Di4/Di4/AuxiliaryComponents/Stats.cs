@@ -1,4 +1,4 @@
-﻿namespace Polimi.DEIB.VahidJalili.DI4
+﻿namespace Genometric.Di4
 {
     public struct Stats
     {

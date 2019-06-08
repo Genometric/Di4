@@ -1,7 +1,7 @@
 ﻿using CSharpTest.Net.Serialization;
-using Polimi.DEIB.VahidJalili.DI4.Serializers;
+using Genometric.Di4.Serializers;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     internal class BlockValueSerializer : ISerializer<BlockValue>
     {

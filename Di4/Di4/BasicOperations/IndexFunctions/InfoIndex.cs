@@ -1,6 +1,6 @@
 ﻿using CSharpTest.Net.Collections;
 
-namespace Polimi.DEIB.VahidJalili.DI4.BasicOperations.IndexFunctions
+namespace Genometric.Di4.BasicOperations.IndexFunctions
 {
     internal class InfoIndex
     {

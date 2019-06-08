@@ -2,16 +2,13 @@
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /// TODO: extend this class to calculate any type of statistics from Di4, and report all in single object. 
 
 /// <summary>
 /// 
 /// </summary>
-namespace Polimi.DEIB.VahidJalili.DI4.Inc
+namespace Genometric.Di4.Inc
 {
     internal class StatsCalculator<C, I, M>
         where C : IComparable<C>, IFormattable

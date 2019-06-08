@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     internal struct Partition<C>
         where C : IComparable<C>, IFormattable

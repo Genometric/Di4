@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     public class FunctionOutput<O>
     {

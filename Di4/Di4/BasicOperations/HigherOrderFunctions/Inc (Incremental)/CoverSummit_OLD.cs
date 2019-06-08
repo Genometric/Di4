@@ -2,9 +2,8 @@
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inc
+namespace Genometric.Di4.Inc
 {
     internal class CoverSummit<C, I, M, O>
     where C : IComparable<C>, IFormattable

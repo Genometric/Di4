@@ -1,8 +1,7 @@
-﻿using Polimi.DEIB.VahidJalili.DI4;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
+namespace Genometric.Di4.AuxiliaryComponents.Inc
 {
     internal class DesignatedRegion<C>
         where C : IComparable<C>, IFormattable

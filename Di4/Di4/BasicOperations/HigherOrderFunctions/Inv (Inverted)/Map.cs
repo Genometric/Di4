@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inv
+namespace Genometric.Di4.Inv
 {
     internal class Map<C, I, M, O>
         where C : IComparable<C>, IFormattable

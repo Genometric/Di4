@@ -1,9 +1,8 @@
 ﻿using CSharpTest.Net.Serialization;
 using System.Collections.ObjectModel;
-using System;
 using System.IO;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inv
+namespace Genometric.Di4.Inv
 {
     class BSerializer : ISerializer<B>
     {

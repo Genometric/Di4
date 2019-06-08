@@ -1,11 +1,11 @@
 ﻿using CSharpTest.Net.Serialization;
-using Polimi.DEIB.VahidJalili.DI4.DI4B.Logging;
+using Genometric.Di4.Di4B.Logging;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     public class Di4B<C, I, M>
         where C : IComparable<C>, IFormattable

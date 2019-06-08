@@ -1,10 +1,10 @@
 ﻿using CSharpTest.Net.Collections;
-using Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc;
+using Genometric.Di4.AuxiliaryComponents.Inc;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inc
+namespace Genometric.Di4.Inc
 {
     internal class CoverSummit_NEWEST<C, I, M, O>
         where C : IComparable<C>, IFormattable

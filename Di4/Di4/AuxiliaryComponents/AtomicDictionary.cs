@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
-
-
-
-namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents
+namespace Genometric.Di4.AuxiliaryComponents
 {
     internal class AtomicDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, IReadOnlyDictionary<TKey, TValue>, ISerializable, IDeserializationCallback
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     internal enum Phi : byte { LeftEnd = 0, Middle = 1, RightEnd = 2 };
     public enum LockMode : byte { WriterOnlyLocking, ReaderWriterLocking, SimpleReadWriteLocking, IgnoreLocking };

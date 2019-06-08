@@ -3,7 +3,7 @@ using CSharpTest.Net.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     public class Di4Options<C>
         where C : IComparable<C>

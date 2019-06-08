@@ -1,7 +1,6 @@
 ﻿using CSharpTest.Net.Collections;
 using CSharpTest.Net.Serialization;
-using Polimi.DEIB.VahidJalili.DI4;
-using Polimi.DEIB.VahidJalili.DI4.DI4B.Logging;
+using Genometric.Di4.Di4B.Logging;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
@@ -9,9 +8,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Linq;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     public class Genome<C, I, M>
         where C : IComparable<C>, IFormattable

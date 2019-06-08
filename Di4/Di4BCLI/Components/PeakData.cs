@@ -1,7 +1,7 @@
 ﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     /// <summary>
     /// Representing ChIP-seq Peak Metadata.

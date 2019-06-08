@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inv
+namespace Genometric.Di4.Inv
 {
     /// <summary>
     /// A Bookmark representing relative information of intervals

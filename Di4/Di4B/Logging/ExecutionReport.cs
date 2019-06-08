@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B.Logging
+namespace Genometric.Di4.Di4B.Logging
 {
     public struct ExecutionReport
     {

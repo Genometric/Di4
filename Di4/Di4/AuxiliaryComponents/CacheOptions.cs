@@ -1,11 +1,6 @@
 ﻿using CSharpTest.Net.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     public class CacheOptions
     {

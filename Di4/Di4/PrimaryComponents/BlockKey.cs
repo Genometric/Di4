@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     public struct BlockKey<C> : IComparable<BlockKey<C>>
         where C : IComparable<C>, IFormattable

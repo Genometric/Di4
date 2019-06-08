@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     /// <summary>
     /// Interface for Cover/Summit Output.

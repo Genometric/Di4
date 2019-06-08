@@ -1,7 +1,7 @@
 ﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     public class Output<C, I, M> : IFormattable
         where C : IComparable<C>, IFormattable

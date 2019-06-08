@@ -1,8 +1,7 @@
-﻿using Polimi.DEIB.VahidJalili.DI4;
-using Polimi.DEIB.VahidJalili.IGenomics;
+﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     public class AggregateFactory<C, I, M>
         where C : IComparable<C>, IFormattable

@@ -1,10 +1,8 @@
-﻿using Polimi.DEIB.VahidJalili.DI4;
-using Polimi.DEIB.VahidJalili.IGenomics;
+﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     /// <summary>
     /// Cover/Summit Output with the Count of regions present 

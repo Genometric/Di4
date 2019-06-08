@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using CSharpTest.Net.Serialization;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     class PrimitiveSerializer : ISerializer<int>, ISerializer<uint>
     {

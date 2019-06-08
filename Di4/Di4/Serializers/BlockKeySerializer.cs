@@ -1,7 +1,7 @@
 ﻿using CSharpTest.Net.Serialization;
 using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     internal class BlockKeySerializer<C> : ISerializer<BlockKey<C>>
         where C : IComparable<C>, IFormattable

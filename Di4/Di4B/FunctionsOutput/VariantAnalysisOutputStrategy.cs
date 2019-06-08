@@ -1,11 +1,8 @@
 ﻿using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     class VariantAnalysisOutputStrategy<C, I, M> : IOutput<C, I, M, Output<C, I, M>>
         where C : IComparable<C>, IFormattable

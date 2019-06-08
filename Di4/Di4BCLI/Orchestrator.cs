@@ -1,17 +1,15 @@
-﻿using Polimi.DEIB.VahidJalili.DI4.DI4B;
-using Polimi.DEIB.VahidJalili.DI4.DI4B.Logging;
+﻿using Genometric.Di4.Di4B;
+using Genometric.Di4.Di4B.Logging;
 using Polimi.DEIB.VahidJalili.GIFP;
-using Polimi.DEIB.VahidJalili.DI4DataSim;
+using Genometric.DataSim;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Polimi.DEIB.VahidJalili.DI4;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     public class Orchestrator
     {

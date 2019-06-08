@@ -2,10 +2,8 @@
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Diagnostics;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inc
+namespace Genometric.Di4.Inc
 {
     internal class Tmp__Map__for__VA<C, I, M, O>
         where C : IComparable<C>, IFormattable

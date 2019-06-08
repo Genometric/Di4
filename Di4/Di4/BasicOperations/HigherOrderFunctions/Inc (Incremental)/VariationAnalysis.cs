@@ -2,11 +2,8 @@
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inc
+namespace Genometric.Di4.Inc
 {
     internal class VariationAnalysis<C, I, M, O>
         where C : IComparable<C>, IFormattable

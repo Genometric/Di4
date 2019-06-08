@@ -1,11 +1,11 @@
-﻿using Polimi.DEIB.VahidJalili.DI4.CLI;
+﻿using Genometric.Di4.CLI;
 using Polimi.DEIB.VahidJalili.GIFP;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Polimi.DEIB.VahidJalili.DI4.SimulationDataGenerator
+namespace Genometric.Di4.SimulationDataGenerator
 {
     internal class RegionGenerator_old
     {

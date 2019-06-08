@@ -1,6 +1,6 @@
 ﻿using CSharpTest.Net.Serialization;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     class LambdaItemSerializer : ISerializer<Lambda>
     {

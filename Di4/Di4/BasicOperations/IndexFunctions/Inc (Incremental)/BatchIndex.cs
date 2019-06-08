@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inc
+namespace Genometric.Di4.Inc
 {
     /// <summary>
     /// Provides efficient means of inserting an 
@@ -30,7 +30,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.Inc
     {
         /// <summary>
         /// Provides efficient means of inserting an 
-        /// interval to Polimi.DEIB.VahidJalili.DI4; i.e., _di4_1R indexding.
+        /// interval to Genometric.Di4; i.e., _di4_1R indexding.
         /// </summary>
         /// <param name="_di4_1R">The reference _di4_1R to be 
         /// manipulated.</param>

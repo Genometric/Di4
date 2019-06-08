@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Collections.ObjectModel;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Serializers
+namespace Genometric.Di4.Serializers
 {
     internal class atIArraySerializer : ISerializer<ReadOnlyCollection<uint>>
     {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+﻿namespace Genometric.Di4.Di4B
 {
     public struct MaxDegreeOfParallelism
     {

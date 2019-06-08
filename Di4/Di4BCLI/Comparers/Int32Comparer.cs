@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     public class Int32Comparer : IComparer<int>
     {

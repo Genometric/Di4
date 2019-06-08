@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace Polimi.DEIB.VahidJalili.DI4.DI4B
+namespace Genometric.Di4.Di4B
 {
     /// <summary>
     /// Class holds the <Message> element

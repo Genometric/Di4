@@ -1,5 +1,5 @@
 ﻿
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     internal enum Mux { Join, Disjoin};
 }

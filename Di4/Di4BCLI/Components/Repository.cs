@@ -1,6 +1,6 @@
 ﻿using Polimi.DEIB.VahidJalili.GIFP;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     public static class Repository
     {

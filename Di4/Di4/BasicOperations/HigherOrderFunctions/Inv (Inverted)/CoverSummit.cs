@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CSharpTest.Net.Collections;
 using Polimi.DEIB.VahidJalili.IGenomics;
-using CSharpTest.Net.Collections;
-using System.Collections;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inv
+namespace Genometric.Di4.Inv
 {
     internal class CoverSummit<C, I, M, O>
         where C : IComparable<C>, IFormattable

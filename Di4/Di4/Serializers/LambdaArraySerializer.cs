@@ -2,7 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     class LambdaArraySerializer : ISerializer<ReadOnlyCollection<Lambda>>
     {

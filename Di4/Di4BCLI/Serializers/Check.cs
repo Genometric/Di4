@@ -15,7 +15,7 @@
 using System;
 using System.Reflection;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     /// <summary>
     /// provides a set of runtime validations for inputs

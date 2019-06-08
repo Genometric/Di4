@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Polimi.DEIB.VahidJalili.DI4DataSim
+namespace Genometric.DataSim
 {
     public class Di4DataSim
     {

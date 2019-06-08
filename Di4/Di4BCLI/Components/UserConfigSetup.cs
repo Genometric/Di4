@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.IO;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     static class UserConfigSetup
     {
@@ -34,9 +34,9 @@ namespace Polimi.DEIB.VahidJalili.DI4.CLI
 
             UserConfig.workingDirectory = _settings[_workingDirectoryKey].Value;
             UserConfig.logFile = _settings[_logFileKey].Value;
-            UserConfig.memory = (_settings[_memoryKey].Value.ToLower() == "hdd" ? DI4B.Memory.HDD : DI4B.Memory.RAM);
-            UserConfig.minCacheSize = UserConfig.memory == DI4B.Memory.HDD ? Convert.ToInt32(_settings[_minCacheKey].Value) : 0;
-            UserConfig.maxCacheSize = UserConfig.memory == DI4B.Memory.HDD ? Convert.ToInt32(_settings[_maxCacheKey].Value) : 0;
+            UserConfig.memory = (_settings[_memoryKey].Value.ToLower() == "hdd" ? Di4B.Memory.HDD : Di4B.Memory.RAM);
+            UserConfig.minCacheSize = UserConfig.memory == Di4B.Memory.HDD ? Convert.ToInt32(_settings[_minCacheKey].Value) : 0;
+            UserConfig.maxCacheSize = UserConfig.memory == Di4B.Memory.HDD ? Convert.ToInt32(_settings[_maxCacheKey].Value) : 0;
             UserConfig.ParserParameters.chrColumn = Convert.ToByte(_settings[_chrColKey].Value);
             UserConfig.ParserParameters.leftEndColumn = Convert.ToByte(_settings[_leftEndColKey].Value);
             UserConfig.ParserParameters.rightEndColumn = Convert.ToByte(_settings[_rightEndColKey].Value);

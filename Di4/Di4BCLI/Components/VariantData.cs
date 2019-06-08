@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Polimi.DEIB.VahidJalili.IGenomics;
+﻿using Polimi.DEIB.VahidJalili.IGenomics;
+using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     public class VariantData : IVCF, IFormattable
     {

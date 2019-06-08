@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization;
 using System.Threading;
-using System.Diagnostics.Contracts;
 
 
-namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents
+namespace Genometric.Di4.AuxiliaryComponents
 {
     internal static class HashHelpers
     {

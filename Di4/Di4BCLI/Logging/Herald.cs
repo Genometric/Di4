@@ -1,8 +1,8 @@
-﻿using Polimi.DEIB.VahidJalili.DI4.DI4B.Logging;
+﻿using Genometric.Di4.Di4B.Logging;
 using System;
 using System.IO;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     internal static class Herald
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     internal class BlockKeyComparer<C> : IComparer<BlockKey<C>>
         where C : IComparable<C>, IFormattable

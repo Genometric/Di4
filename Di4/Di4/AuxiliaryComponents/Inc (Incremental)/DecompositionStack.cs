@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
+namespace Genometric.Di4.AuxiliaryComponents.Inc
 {
     internal class DecompositionStack<C, I, M, O>
         where C : IComparable<C>, IFormattable
@@ -29,7 +29,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
             _designatedRegions.Clear();
             _tLambdas.Clear();
         }
-        public void Open(C leftEnd, DI4.Inc.B keyBookmark)
+        public void Open(C leftEnd, Di4.Inc.B keyBookmark)
         {
             var newDesignatedRegion = new DesignatedRegion<C>();
             newDesignatedRegion.leftEnd = leftEnd;
@@ -58,7 +58,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
 
             _designatedRegions.Add(newDesignatedRegion);
         }
-        public void Close(C rightEnd, DI4.Inc.B keyBookmark)
+        public void Close(C rightEnd, Di4.Inc.B keyBookmark)
         {
             _designatedRegions[_designatedRegions.Count - 1].rightEnd = rightEnd;
             foreach (var lambda in keyBookmark.lambda)
@@ -67,7 +67,7 @@ namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
                 else
                     UpdateDesignatedRegions(lambda.atI);
         }
-        public void Update(DI4.Inc.B keyBookmark, RegionType regionType)
+        public void Update(Di4.Inc.B keyBookmark, RegionType regionType)
         {
             switch (regionType)
             {

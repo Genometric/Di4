@@ -1,4 +1,4 @@
-﻿namespace Polimi.DEIB.VahidJalili.DI4.SimulationDataGenerator
+﻿namespace Genometric.Di4.SimulationDataGenerator
 {
     class Program
     {

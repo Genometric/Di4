@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Polimi.DEIB.VahidJalili.DI4.AuxiliaryComponents.Inc
+namespace Genometric.Di4.AuxiliaryComponents.Inc
 {
     internal struct DecomposerValue<C>
         where C : IComparable<C>, IFormattable

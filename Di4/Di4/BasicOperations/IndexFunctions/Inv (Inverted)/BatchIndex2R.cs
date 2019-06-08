@@ -3,7 +3,7 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Inv
+namespace Genometric.Di4.Inv
 {
     internal class BatchIndex2R<C, I, M>
         where C : IComparable<C>, IFormattable

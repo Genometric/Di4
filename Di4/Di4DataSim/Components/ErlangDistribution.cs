@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Polimi.DEIB.VahidJalili.DI4DataSim
+namespace Genometric.DataSim
 {
     public class ErlangDistribution
     {

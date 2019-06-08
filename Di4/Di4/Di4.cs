@@ -2,7 +2,7 @@
 using CSharpTest.Net.Serialization;
 using CSharpTest.Net.Synchronization;
 using CSharpTest.Net.Threading;
-using Polimi.DEIB.VahidJalili.DI4.BasicOperations.IndexFunctions;
+using Genometric.Di4.BasicOperations.IndexFunctions;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Concurrent;
@@ -18,10 +18,10 @@ using System.Linq;
 
 
 
-namespace Polimi.DEIB.VahidJalili.DI4
+namespace Genometric.Di4
 {
     /// <summary>
-    /// Dynamic intervals inverted index (Polimi.DEIB.VahidJalili.DI4) 
+    /// Dynamic intervals inverted index (Genometric.Di4) 
     /// is an indexing system aimed at providing
     /// efficient means of processing the intervals
     /// it indexes for common information retrieval 
@@ -44,7 +44,7 @@ namespace Polimi.DEIB.VahidJalili.DI4
         where M : IMetaData, new()
     {
         /// <summary>
-        /// Dynamic intervals incremental inverted index (Polimi.DEIB.VahidJalili.DI4) 
+        /// Dynamic intervals incremental inverted index (Genometric.Di4) 
         /// is an indexing system aimed at providing
         /// efficient means of processing the intervals
         /// it indexes for common information retrieval 

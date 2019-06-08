@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Polimi.DEIB.VahidJalili.DI4.Comparers
+namespace Genometric.Di4.Comparers
 {
     internal class StringComparer : IComparer<string>
     {

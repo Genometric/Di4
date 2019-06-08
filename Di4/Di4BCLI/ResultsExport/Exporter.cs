@@ -1,11 +1,11 @@
-﻿using Polimi.DEIB.VahidJalili.DI4.DI4B;
-using Polimi.DEIB.VahidJalili.DI4.DI4B.Logging;
+﻿using Genometric.Di4.Di4B;
+using Genometric.Di4.Di4B.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     internal static class Exporter
     {

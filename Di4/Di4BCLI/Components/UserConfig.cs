@@ -1,6 +1,6 @@
-﻿using Polimi.DEIB.VahidJalili.DI4.DI4B;
+﻿using Genometric.Di4.Di4B;
 
-namespace Polimi.DEIB.VahidJalili.DI4.CLI
+namespace Genometric.Di4.CLI
 {
     static class UserConfig
     {
