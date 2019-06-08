@@ -24,13 +24,13 @@ namespace Genometric.Di4
         where I : IInterval<C, M>
         where M : IMetaData, new()
     {
-        void Output(C left, C right, List<UInt32> intervals, Object lockOnMe);
+        void Output(C left, C right, List<uint> intervals, object lockOnMe);
 
-        void Output(I interval, List<UInt32> intervals, Object lockOnMe);
+        void Output(I interval, List<uint> intervals, object lockOnMe);
 
         void Output(List<uint[]> intervals, object lockOnMe);
 
-        void Output(I interval, int count, Object lockOnMe);
+        void Output(I interval, int count, object lockOnMe);
 
         List<O> output { set; get; }
     }
