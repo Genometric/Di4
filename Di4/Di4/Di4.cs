@@ -510,46 +510,23 @@ namespace Genometric.Di4
             object lockOnMe = new object();
             PartitionBlock<C>[] partitions = Partition_2R(nThreads);
 
-            if (_options.ActiveIndexes == IndexType.Both ||
-                _options.ActiveIndexes == IndexType.OnlyIncremental)
+            using (WorkQueue work = new WorkQueue(nThreads))
             {
-                using (WorkQueue work = new WorkQueue(nThreads))
-                {
-                    for (int i = 0; i < nThreads; i++)
-                        work.Enqueue(
-                            new Inc.CoverSummit<C, I, M, O>(
-                                lockOnMe,
-                                _di4_incIdx,
-                                _di4_2R,
-                                outputStrategy,
-                                partitions[i].left,
-                                partitions[i].right,
-                                minAccumulation,
-                                maxAccumulation//,
-                                //_indexesCardinality.GetValue(_keyCardinalityIncIndx)
-                                ).Cover);
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(
+                        new Inc.CoverSummit<C, I, M, O>(
+                            lockOnMe,
+                            _di4_incIdx,
+                            _di4_2R,
+                            outputStrategy,
+                            partitions[i].left,
+                            partitions[i].right,
+                            minAccumulation,
+                            maxAccumulation//,
+                                           //_indexesCardinality.GetValue(_keyCardinalityIncIndx)
+                            ).Cover);
 
-                    work.Complete(true, -1);
-                }
-            }
-            else
-            {
-                using (WorkQueue work = new WorkQueue(nThreads))
-                {
-                    for (int i = 0; i < nThreads; i++)
-                        work.Enqueue(
-                            new Inv.CoverSummit<C, I, M, O>(
-                                lockOnMe,
-                                _di4_invIdx,
-                                _di4_2R,
-                                outputStrategy,
-                                partitions[i].left,
-                                partitions[i].right,
-                                minAccumulation,
-                                maxAccumulation).Cover);
-
-                    work.Complete(true, -1);
-                }
+                work.Complete(true, -1);
             }
         }
         public void Summit<O>(IOutput<C, I, M, O> outputStrategy, int minAccumulation, int maxAccumulation)
@@ -564,46 +541,23 @@ namespace Genometric.Di4
             object lockOnMe = new object();
             PartitionBlock<C>[] partitions = Partition_2R(nThreads);
 
-            if (_options.ActiveIndexes == IndexType.Both ||
-                _options.ActiveIndexes == IndexType.OnlyIncremental)
+            using (WorkQueue work = new WorkQueue(nThreads))
             {
-                using (WorkQueue work = new WorkQueue(nThreads))
-                {
-                    for (int i = 0; i < nThreads; i++)
-                        work.Enqueue(
-                            new Inc.CoverSummit<C, I, M, O>(
-                                lockOnMe,
-                                _di4_incIdx,
-                                _di4_2R,
-                                outputStrategy,
-                                partitions[i].left,
-                                partitions[i].right,
-                                minAccumulation,
-                                maxAccumulation//,
-                                //_indexesCardinality.GetValue(_keyCardinalityIncIndx)
-                                ).Summit);
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(
+                        new Inc.CoverSummit<C, I, M, O>(
+                            lockOnMe,
+                            _di4_incIdx,
+                            _di4_2R,
+                            outputStrategy,
+                            partitions[i].left,
+                            partitions[i].right,
+                            minAccumulation,
+                            maxAccumulation//,
+                                           //_indexesCardinality.GetValue(_keyCardinalityIncIndx)
+                            ).Summit);
 
-                    work.Complete(true, -1);
-                }
-            }
-            else
-            {
-                using (WorkQueue work = new WorkQueue(nThreads))
-                {
-                    for (int i = 0; i < nThreads; i++)
-                        work.Enqueue(
-                            new Inv.CoverSummit<C, I, M, O>(
-                                lockOnMe,
-                                _di4_invIdx,
-                                _di4_2R,
-                                outputStrategy,
-                                partitions[i].left,
-                                partitions[i].right,
-                                minAccumulation,
-                                maxAccumulation).Summit);
-
-                    work.Complete(true, -1);
-                }
+                work.Complete(true, -1);
             }
         }
 
