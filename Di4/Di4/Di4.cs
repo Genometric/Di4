@@ -621,48 +621,23 @@ namespace Genometric.Di4
             object lockOnMe = new object();
             int start = 0, stop = 0, range = (int)Math.Ceiling(references.Count / (double)nThreads);
 
-            if (_options.ActiveIndexes == IndexType.OnlyIncremental)
-            {// leverages on incremental inverted index
-                using (WorkQueue work = new WorkQueue(nThreads))
+            using (WorkQueue work = new WorkQueue(nThreads))
+            {
+                for (int i = 0; i < nThreads; i++)
                 {
-                    for (int i = 0; i < nThreads; i++)
-                    {
-                        start = i * range;
-                        stop = (i + 1) * range;
-                        if (stop > references.Count) stop = references.Count;
-                        if (start < stop) work.Enqueue(
-                            new Inc.MapCount<C, I, M, O>(
-                                lockOnMe, _di4_incIdx,
-                                outputStrategy,
-                                references,
-                                start, stop, UDF, DDF).Run);
-                        else break;
-                    }
-
-                    work.Complete(true, -1);
+                    start = i * range;
+                    stop = (i + 1) * range;
+                    if (stop > references.Count) stop = references.Count;
+                    if (start < stop) work.Enqueue(
+                        new Inc.MapCount<C, I, M, O>(
+                            lockOnMe, _di4_incIdx,
+                            outputStrategy,
+                            references,
+                            start, stop, UDF, DDF).Run);
+                    else break;
                 }
-            }
-            else
-            {// leverages on inverted index
-                using (WorkQueue work = new WorkQueue(nThreads))
-                {
-                    for (int i = 0; i < nThreads; i++)
-                    {
-                        start = i * range;
-                        stop = (i + 1) * range;
-                        if (stop > references.Count) stop = references.Count;
-                        if (start < stop) work.Enqueue(
-                            new Inv.Map<C, I, M, O>(
-                                lockOnMe: lockOnMe,
-                                di4_1R: _di4_invIdx,
-                                outputStrategy: outputStrategy,
-                                intervals: references,
-                                start: start, stop: stop).Run);
-                        else break;
-                    }
 
-                    work.Complete(true, -1);
-                }
+                work.Complete(true, -1);
             }
         }
 

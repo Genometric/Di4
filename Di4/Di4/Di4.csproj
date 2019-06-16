@@ -96,7 +96,6 @@
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\VariantOutputStrategy.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\VariationAnalysis.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inv %28Inverted%29\CoverSummit.cs" />
-    <Compile Include="BasicOperations\HigherOrderFunctions\Inv %28Inverted%29\Map.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\Map.cs" />
     <Compile Include="BasicOperations\IndexFunctions\Inc %28Incremental%29\BulkIndex.cs" />
     <Compile Include="BasicOperations\FirstOrderFunctions\Inc %28Incremental%29\AccumulationStats.cs" />
