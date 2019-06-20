@@ -100,7 +100,6 @@
     <Compile Include="BasicOperations\FirstOrderFunctions\Inc %28Incremental%29\AccumulationStats.cs" />
     <Compile Include="BasicOperations\FirstOrderFunctions\Inc %28Incremental%29\Merge.cs" />
     <Compile Include="BasicOperations\HigherOrderFunctions\Inc %28Incremental%29\CoverSummit_mid.cs" />
-    <Compile Include="BasicOperations\IndexFunctions\Inv %28Inverted%29\BatchIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\InfoIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\Inc %28Incremental%29\BatchIndex.cs" />
     <Compile Include="BasicOperations\IndexFunctions\Inc %28Incremental%29\RangeIndex.cs" />

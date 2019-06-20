@@ -121,7 +121,6 @@ namespace Genometric.Di4
             _di4_info = new BPlusTree<string, int>(GetinfoOptions());
             _indexesCardinality = new InfoIndex(_di4_info);
 
-            invBatchIndex = new Inv.BatchIndex<C, I, M>(_di4_invIdx);
             incBatchIndex = new Inc.BatchIndex<C, I, M>(_di4_incIdx);            
 
             /// Don't enable following commands.
@@ -151,7 +150,6 @@ namespace Genometric.Di4
 
 
         private Inc.BatchIndex<C, I, M> incBatchIndex { set; get; }
-        private Inv.BatchIndex<C, I, M> invBatchIndex { set; get; }
 
 
         public int bookmarkCount
@@ -401,36 +399,11 @@ namespace Genometric.Di4
                     count += item.Value;
                 _indexesCardinality.AddOrUpdate(_keyCardinalityIncIndx, count);
             }
-
-            if (_options.ActiveIndexes != IndexType.OnlyIncremental)
-            {
-                addedBookmarks.Clear();
-                using (WorkQueue work = new WorkQueue(threads))
-                {
-                    for (int i = 0; i < threads; i++)
-                    {
-                        start = i * range;
-                        stop = (i + 1) * range;
-                        if (stop > intervals.Count) stop = intervals.Count;
-                        work.Enqueue(new Inv.BatchIndex<C, I, M>(_di4_invIdx, collectionID, intervals, start, stop, mode, addedBookmarks).Run);
-                    }
-
-                    work.Complete(true, -1);
-                }
-
-                count = 0;
-                foreach (var item in addedBookmarks)
-                    count += item.Value;
-                _indexesCardinality.AddOrUpdate(_keyCardinalityInvIndx, count);
-            }
         }
         public void SecondPass()
         {
             if (_options.ActiveIndexes != IndexType.OnlyInverted)            
-                incBatchIndex.SecondPass();
-            
-            if (_options.ActiveIndexes != IndexType.OnlyIncremental)            
-                invBatchIndex.SecondPass();            
+                incBatchIndex.SecondPass();   
         }
 
 
