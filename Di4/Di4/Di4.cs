@@ -414,54 +414,33 @@ namespace Genometric.Di4
         public void SecondResolutionIndex(CuttingMethod cuttingMethod, int binCount, int nThreads)
         {
             // TODO: change first resolution options here to be readonly and readonly lock.
-            
+
             var addedBlocks = new ConcurrentDictionary<C, int>();
 
-            if (_options.ActiveIndexes == IndexType.Both ||
-                _options.ActiveIndexes == IndexType.OnlyIncremental)
+            //Partition<C>[] partitions = Partition_1RInc(nThreads);
+
+            KeyValuePair<C, Inc.B> firstElement;
+            _di4_incIdx.TryGetFirst(out firstElement);
+
+            KeyValuePair<C, Inc.B> lastElement;
+            _di4_incIdx.TryGetLast(out lastElement);
+
+            nThreads = 1;
+
+            using (WorkQueue work = new WorkQueue(nThreads))
             {
-                //Partition<C>[] partitions = Partition_1RInc(nThreads);
+                for (int i = 0; i < nThreads; i++)
+                    work.Enqueue(
+                        new Inc.BatchIndex2R<C, I, M>(
+                            _di4_incIdx,
+                            _di4_2R,
+                            firstElement.Key,//partitions[i].left,
+                            lastElement.Key,//partitions[i].right,
+                            cuttingMethod,
+                            binCount,
+                            addedBlocks).Run);
 
-                KeyValuePair<C, Inc.B> firstElement;
-                _di4_incIdx.TryGetFirst(out firstElement);
-
-                KeyValuePair<C, Inc.B> lastElement;
-                _di4_incIdx.TryGetLast(out lastElement);
-
-                nThreads = 1;
-
-                using (WorkQueue work = new WorkQueue(nThreads))
-                {
-                    for (int i = 0; i < nThreads; i++)
-                        work.Enqueue(
-                            new Inc.BatchIndex2R<C, I, M>(
-                                _di4_incIdx,
-                                _di4_2R,
-                                firstElement.Key,//partitions[i].left,
-                                lastElement.Key,//partitions[i].right,
-                                cuttingMethod,
-                                binCount,
-                                addedBlocks).Run);
-
-                    work.Complete(true, -1);
-                }
-            }
-            else
-            {
-                Partition<C>[] partitions = Partition_1RInv(nThreads);
-                using (WorkQueue work = new WorkQueue(nThreads))
-                {
-                    for (int i = 0; i < nThreads; i++)
-                        work.Enqueue(
-                            new Inv.BatchIndex2R<C, I, M>(
-                                _di4_invIdx,
-                                _di4_2R,
-                                partitions[i].left,
-                                partitions[i].right,
-                                addedBlocks).Run);
-
-                    work.Complete(true, -1);
-                }
+                work.Complete(true, -1);
             }
 
             int counted = 0;
