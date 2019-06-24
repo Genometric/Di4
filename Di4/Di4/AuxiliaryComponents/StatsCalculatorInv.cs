@@ -3,9 +3,8 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 
-namespace Genometric.Di4.Inv
+namespace Genometric.Di4
 {
-
     internal class StatsCalculator<C, I, M>
         where C : IComparable<C>, IFormattable
         where I : IInterval<C, M>

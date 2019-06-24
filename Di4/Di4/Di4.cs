@@ -115,7 +115,6 @@ namespace Genometric.Di4
         public Di4(Di4Options<C> options)
         {
             _options = options;
-            _di4_invIdx = new BPlusTree<C, Inv.B>(GetInvOptions());
             _di4_incIdx = new BPlusTree<C, Inc.B>(GetIncOptions());
             _di4_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions());
             _di4_info = new BPlusTree<string, int>(GetinfoOptions());
@@ -131,11 +130,9 @@ namespace Genometric.Di4
 
 
         private BPlusTree<C, Inc.B> _di4_incIdx { set; get; }
-        private BPlusTree<C, Inv.B> _di4_invIdx { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di4_2R { set; get; }
         private BPlusTree<string, int> _di4_info { set; get; }
         private Inc.BSerializer _incBSerializer { set; get; }
-        private Inv.BSerializer _invBSerializer { set; get; }
         private LambdaItemSerializer _lambdaItemSerializer { set; get; }
         private LambdaArraySerializer _lambdaArraySerializer { set; get; }
         private BlockKeySerializer<C> _blockKeySerializer { set; get; }
@@ -190,70 +187,6 @@ namespace Genometric.Di4
             rtv.CachePolicy = _options.cacheOptions.CachePolicy;
             if (_options.CreatePolicy != CreatePolicy.Never)
                 rtv.FileName = _options.FileName + ".iidx";
-
-            rtv.CreateFile = _options.CreatePolicy;
-            rtv.ExistingLogAction = _options.ExistingLogAction;
-            rtv.StoragePerformance = _options.StoragePerformance;
-
-            rtv.CallLevelLock = new ReaderWriterLocking();
-            if (_options.LockTimeout > 0) rtv.LockTimeout = _options.LockTimeout;
-
-            switch (_options.Locking)
-            {
-                case LockMode.WriterOnlyLocking:
-                    rtv.LockingFactory = new LockFactory<WriterOnlyLocking>();
-                    break;
-
-                case LockMode.ReaderWriterLocking:
-                    rtv.LockingFactory = new LockFactory<ReaderWriterLocking>();
-                    break;
-
-                case LockMode.SimpleReadWriteLocking:
-                    rtv.LockingFactory = new LockFactory<SimpleReadWriteLocking>();
-                    break;
-
-                case LockMode.IgnoreLocking:
-                    rtv.LockingFactory = new IgnoreLockFactory();
-                    break;
-            }
-
-            if (_options.cacheOptions.CacheMaximumHistory != 0 && _options.cacheOptions.CacheKeepAliveTimeOut != 0)
-            {
-                rtv.CacheKeepAliveMaximumHistory = _options.cacheOptions.CacheMaximumHistory;
-                rtv.CacheKeepAliveMinimumHistory = _options.cacheOptions.CacheMinimumHistory;
-                rtv.CacheKeepAliveTimeout = _options.cacheOptions.CacheKeepAliveTimeOut;
-            }
-
-            return rtv;
-        }
-        private BPlusTree<C, Inv.B>.OptionsV2 GetInvOptions()
-        {
-            _lambdaItemSerializer = new LambdaItemSerializer();
-            _lambdaArraySerializer = new LambdaArraySerializer(_lambdaItemSerializer);
-            _invBSerializer = new Inv.BSerializer(_lambdaArraySerializer);
-            var rtv = new BPlusTree<C, Inv.B>.OptionsV2(_options.CSerializer, _invBSerializer, _options.Comparer);
-            rtv.ReadOnly = _options.OpenReadOnly;
-
-            if (_options.MaximumChildNodes >= 4 &&
-                _options.MinimumChildNodes >= 2 &&
-                _options.MaximumValueNodes >= 4 &&
-                _options.MinimumValueNodes >= 2)
-            {
-                rtv.MaximumChildNodes = _options.MaximumChildNodes;
-                rtv.MinimumChildNodes = _options.MinimumChildNodes;
-                rtv.MaximumValueNodes = _options.MaximumValueNodes;
-                rtv.MinimumValueNodes = _options.MinimumValueNodes;
-            }
-
-            if (_options.AverageKeySize != 0 && _options.AverageValueSize != 0)
-                rtv.CalcBTreeOrder(_options.AverageKeySize, _options.AverageValueSize);
-
-            if (_options.FileBlockSize != 0)
-                rtv.FileBlockSize = _options.FileBlockSize;
-
-            rtv.CachePolicy = _options.cacheOptions.CachePolicy;
-            if (_options.CreatePolicy != CreatePolicy.Never)
-                rtv.FileName = _options.FileName + ".idx";
 
             rtv.CreateFile = _options.CreatePolicy;
             rtv.ExistingLogAction = _options.ExistingLogAction;
@@ -598,16 +531,9 @@ namespace Genometric.Di4
             object lockOnMe = new object();
             var results = new SortedDictionary<int, int>();
 
-            if (_options.ActiveIndexes == IndexType.OnlyIncremental)
-            {
-                var statsClass = new Inc.StatsCalculator<C, I, M>(_di4_incIdx, _di4_incIdx.First().Key, _di4_incIdx.Last().Key, results, lockOnMe);
-                statsClass.LambdaSizeDistribution();
-            }
-            else
-            {
-                var statsClass = new Inv.StatsCalculator<C, I, M>(_di4_invIdx, _di4_incIdx.First().Key, _di4_incIdx.Last().Key, results, lockOnMe);
-                statsClass.LambdaSizeDistribution();
-            }
+            var statsClass = new Inc.StatsCalculator<C, I, M>(_di4_incIdx, _di4_incIdx.First().Key, _di4_incIdx.Last().Key, results, lockOnMe);
+            statsClass.LambdaSizeDistribution();
+
             return results;
         }
 
@@ -822,57 +748,6 @@ namespace Genometric.Di4
 
             return partitions;
         }
-        private Partition<C>[] Partition_1RInv(int fCount)
-        {
-            /// Important Note:
-            /// The 2nd resolution generation depends 
-            /// on the partitioning concept, in that the exist
-            /// no interval spanning two paritions. This condition
-            /// is guaranteed by this partitioning method; however,
-            /// upon modification, 2nd resolution generation
-            /// algorithm is required to be updated.
-            /// 
-
-            int range = Convert.ToInt32(Math.Floor(_indexesCardinality.GetValue(_keyCardinalityInvIndx) / (double)fCount));
-
-            /// Initialization
-            Partition<C>[] partitions = new Partition<C>[fCount];
-            for (int i = 0; i < fCount; i++)
-            {
-                partitions[i].left = _di4_invIdx.ElementAtOrDefault((i * range) + 1).Key;
-                partitions[i].right = _di4_invIdx.ElementAtOrDefault((i + 1) * range).Key;
-            }
-            partitions[0].left = _di4_invIdx.First().Key;
-            partitions[fCount - 1].right = _di4_invIdx.Last().Key;
-
-            /// Refinement
-            bool incrementRight = true;
-            fCount--;
-            for (int i = 0; i < fCount; i++)
-            {
-                foreach (var bookmark in _di4_invIdx.EnumerateFrom(partitions[i].right))
-                {
-                    if (incrementRight)
-                    {
-                        partitions[i].right = bookmark.Key;
-                        if (bookmark.Value.lambda.Count - bookmark.Value.omega == 0)
-                            incrementRight = false;
-                        continue;
-                    }
-                    else
-                    {
-                        partitions[i + 1].left = bookmark.Key;
-                        break;
-                    }
-                }
-
-                if (partitions[i + 1].left.CompareTo(partitions[i + 1].right) == 1)
-                    partitions[i + 1].right = partitions[i + 1].left;
-                incrementRight = true;
-            }
-
-            return partitions;
-        }
         private PartitionBlock<C>[] Partition_2R(int fCount)
         {
             // does this gets correct value ?
@@ -911,12 +786,6 @@ namespace Genometric.Di4
                 _di4_2R.Dispose();
                 _di4_info.Commit();
                 _di4_info.Dispose();
-
-                if (_options.ActiveIndexes == IndexType.Both)
-                {
-                    _di4_invIdx.Commit();
-                    _di4_invIdx.Dispose();
-                }
             }
 
             // Free unmanaged objects here. 
@@ -928,9 +797,6 @@ namespace Genometric.Di4
             _di4_incIdx.Commit();            
             _di4_2R.Commit();
             _di4_info.Commit();
-
-            if (_options.ActiveIndexes == IndexType.Both)
-                _di4_invIdx.Commit();
         }
     }
 }
