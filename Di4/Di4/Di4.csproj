@@ -112,7 +112,6 @@
     <Compile Include="PrimaryComponents\BlockKey.cs" />
     <Compile Include="AuxiliaryComponents\Di3Options.cs" />
     <Compile Include="AuxiliaryComponents\Enums.cs" />
-    <Compile Include="PrimaryComponents\Inv %28Inverted%29\B.cs" />
     <Compile Include="PrimaryComponents\Lambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\atIArraySerializer.cs" />
