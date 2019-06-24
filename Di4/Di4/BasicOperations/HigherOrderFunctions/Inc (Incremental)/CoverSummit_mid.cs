@@ -3,7 +3,7 @@ using Genometric.Di4.AuxiliaryComponents.Inc;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     internal class CoverSummit_mid<C, I, M, O>
         where C : IComparable<C>, IFormattable

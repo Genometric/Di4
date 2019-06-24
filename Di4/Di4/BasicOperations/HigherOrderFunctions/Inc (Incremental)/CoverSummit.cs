@@ -4,7 +4,7 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     internal class CoverSummit_NEWEST<C, I, M, O>
         where C : IComparable<C>, IFormattable

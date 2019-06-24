@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     public enum Aggregate { Count, Sum, Maximum, Minimum, Median, Mean, StandardDeviation };
 

@@ -115,12 +115,12 @@ namespace Genometric.Di4
         public Di4(Di4Options<C> options)
         {
             _options = options;
-            _di4_incIdx = new BPlusTree<C, Inc.B>(GetIncOptions());
+            _di4_incIdx = new BPlusTree<C, B>(GetIncOptions());
             _di4_2R = new BPlusTree<BlockKey<C>, BlockValue>(Get2ROptions());
             _di4_info = new BPlusTree<string, int>(GetinfoOptions());
             _indexesCardinality = new InfoIndex(_di4_info);
 
-            incBatchIndex = new Inc.BatchIndex<C, I, M>(_di4_incIdx);            
+            incBatchIndex = new BatchIndex<C, I, M>(_di4_incIdx);            
 
             /// Don't enable following commands.
             /// Because, the initialization is linear with data size.
@@ -129,10 +129,10 @@ namespace Genometric.Di4
         }
 
 
-        private BPlusTree<C, Inc.B> _di4_incIdx { set; get; }
+        private BPlusTree<C, B> _di4_incIdx { set; get; }
         private BPlusTree<BlockKey<C>, BlockValue> _di4_2R { set; get; }
         private BPlusTree<string, int> _di4_info { set; get; }
-        private Inc.BSerializer _incBSerializer { set; get; }
+        private BSerializer _incBSerializer { set; get; }
         private LambdaItemSerializer _lambdaItemSerializer { set; get; }
         private LambdaArraySerializer _lambdaArraySerializer { set; get; }
         private BlockKeySerializer<C> _blockKeySerializer { set; get; }
@@ -146,7 +146,7 @@ namespace Genometric.Di4
         private string _keyCardinality2R { get { return "2ndResolution"; } }        
 
 
-        private Inc.BatchIndex<C, I, M> incBatchIndex { set; get; }
+        private BatchIndex<C, I, M> incBatchIndex { set; get; }
 
 
         public int bookmarkCount
@@ -159,12 +159,12 @@ namespace Genometric.Di4
         }
         public int blockCount { get { return _indexesCardinality.GetValue(_keyCardinality2R); } }
 
-        private BPlusTree<C, Inc.B>.OptionsV2 GetIncOptions()
+        private BPlusTree<C, B>.OptionsV2 GetIncOptions()
         {
             _lambdaItemSerializer = new LambdaItemSerializer();
             _lambdaArraySerializer = new LambdaArraySerializer(_lambdaItemSerializer);
-            _incBSerializer = new Inc.BSerializer(_lambdaArraySerializer);
-            var rtv = new BPlusTree<C, Inc.B>.OptionsV2(_options.CSerializer, _incBSerializer, _options.Comparer);
+            _incBSerializer = new BSerializer(_lambdaArraySerializer);
+            var rtv = new BPlusTree<C, B>.OptionsV2(_options.CSerializer, _incBSerializer, _options.Comparer);
             rtv.ReadOnly = _options.OpenReadOnly;
 
             if (_options.MaximumChildNodes >= 4 &&
@@ -321,7 +321,7 @@ namespace Genometric.Di4
                         start = i * range;
                         stop = (i + 1) * range;
                         if (stop > intervals.Count) stop = intervals.Count;
-                        work.Enqueue(new Inc.BatchIndex<C, I, M>(_di4_incIdx, collectionID, intervals, start, stop, mode, addedBookmarks).Run);
+                        work.Enqueue(new BatchIndex<C, I, M>(_di4_incIdx, collectionID, intervals, start, stop, mode, addedBookmarks).Run);
                     }
 
                     work.Complete(true, -1);
@@ -352,10 +352,10 @@ namespace Genometric.Di4
 
             //Partition<C>[] partitions = Partition_1RInc(nThreads);
 
-            KeyValuePair<C, Inc.B> firstElement;
+            KeyValuePair<C, B> firstElement;
             _di4_incIdx.TryGetFirst(out firstElement);
 
-            KeyValuePair<C, Inc.B> lastElement;
+            KeyValuePair<C, B> lastElement;
             _di4_incIdx.TryGetLast(out lastElement);
 
             nThreads = 1;
@@ -364,7 +364,7 @@ namespace Genometric.Di4
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new Inc.BatchIndex2R<C, I, M>(
+                        new BatchIndex2R<C, I, M>(
                             _di4_incIdx,
                             _di4_2R,
                             firstElement.Key,//partitions[i].left,
@@ -399,7 +399,7 @@ namespace Genometric.Di4
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new Inc.CoverSummit<C, I, M, O>(
+                        new CoverSummit<C, I, M, O>(
                             lockOnMe,
                             _di4_incIdx,
                             _di4_2R,
@@ -430,7 +430,7 @@ namespace Genometric.Di4
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new Inc.CoverSummit<C, I, M, O>(
+                        new CoverSummit<C, I, M, O>(
                             lockOnMe,
                             _di4_incIdx,
                             _di4_2R,
@@ -468,7 +468,7 @@ namespace Genometric.Di4
                     stop = (i + 1) * range;
                     if (stop > references.Count) stop = references.Count;
                     if (start < stop) work.Enqueue(
-                        new Inc.MapCount<C, I, M, O>(
+                        new MapCount<C, I, M, O>(
                             lockOnMe, _di4_incIdx,
                             outputStrategy,
                             references,
@@ -509,7 +509,7 @@ namespace Genometric.Di4
                 work.Complete(true, -1);
             }*/
 
-            var tmp = new Inc.Tmp__Map__for__VA<C, I, M, O>(
+            var tmp = new Tmp__Map__for__VA<C, I, M, O>(
                 lockOnMe,
                 _di4_incIdx,
                 outputStrategy,
@@ -531,7 +531,7 @@ namespace Genometric.Di4
             object lockOnMe = new object();
             var results = new SortedDictionary<int, int>();
 
-            var statsClass = new Inc.StatsCalculator<C, I, M>(_di4_incIdx, _di4_incIdx.First().Key, _di4_incIdx.Last().Key, results, lockOnMe);
+            var statsClass = new StatsCalculator<C, I, M>(_di4_incIdx, _di4_incIdx.First().Key, _di4_incIdx.Last().Key, results, lockOnMe);
             statsClass.LambdaSizeDistribution();
 
             return results;
@@ -550,7 +550,7 @@ namespace Genometric.Di4
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new Inc.AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccHistogram);
+                    work.Enqueue(new AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccHistogram);
                 work.Complete(true, -1);
             }
 
@@ -575,7 +575,7 @@ namespace Genometric.Di4
             using (WorkQueue work = new WorkQueue(nThreads))
             {
                 for (int i = 0; i < nThreads; i++)
-                    work.Enqueue(new Inc.AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccDistribution);
+                    work.Enqueue(new AccumulationStats<C, I, M>(_di4_incIdx, partitions[i].left, partitions[i].right, results, lockOnMe).AccDistribution);
                 work.Complete(true, -1);
             }
 
@@ -635,7 +635,7 @@ namespace Genometric.Di4
             {
                 for (int i = 0; i < nThreads; i++)
                     work.Enqueue(
-                        new Inc.MergeComplement<C, I, M>(
+                        new MergeComplement<C, I, M>(
                             _di4_2R,
                             partitions[i].left,
                             partitions[i].right,

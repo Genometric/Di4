@@ -11,7 +11,7 @@ using System.Linq;
 // LOTS OF FUNCTIONS ARE SHARING CODE
 
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     internal class BatchIndex2R<C, I, M>
         where C : IComparable<C>, IFormattable

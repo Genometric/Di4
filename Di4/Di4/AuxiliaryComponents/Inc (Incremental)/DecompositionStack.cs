@@ -29,7 +29,7 @@ namespace Genometric.Di4.AuxiliaryComponents.Inc
             _designatedRegions.Clear();
             _tLambdas.Clear();
         }
-        public void Open(C leftEnd, Di4.Inc.B keyBookmark)
+        public void Open(C leftEnd, Di4.B keyBookmark)
         {
             var newDesignatedRegion = new DesignatedRegion<C>();
             newDesignatedRegion.leftEnd = leftEnd;
@@ -58,7 +58,7 @@ namespace Genometric.Di4.AuxiliaryComponents.Inc
 
             _designatedRegions.Add(newDesignatedRegion);
         }
-        public void Close(C rightEnd, Di4.Inc.B keyBookmark)
+        public void Close(C rightEnd, Di4.B keyBookmark)
         {
             _designatedRegions[_designatedRegions.Count - 1].rightEnd = rightEnd;
             foreach (var lambda in keyBookmark.lambda)
@@ -67,7 +67,7 @@ namespace Genometric.Di4.AuxiliaryComponents.Inc
                 else
                     UpdateDesignatedRegions(lambda.atI);
         }
-        public void Update(Di4.Inc.B keyBookmark, RegionType regionType)
+        public void Update(Di4.B keyBookmark, RegionType regionType)
         {
             switch (regionType)
             {

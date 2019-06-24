@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     /// <summary>
     /// Provides efficient means of inserting an 

@@ -2,7 +2,7 @@
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     internal class RangeIndex<C, I, M>
         where C : IComparable<C>, IFormattable

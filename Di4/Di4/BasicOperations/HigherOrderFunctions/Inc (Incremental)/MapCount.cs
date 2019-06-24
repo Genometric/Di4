@@ -3,7 +3,7 @@ using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     internal class MapCount<C, I, M, O>
         where C : IComparable<C>, IFormattable
@@ -13,7 +13,7 @@ namespace Genometric.Di4.Inc
 
         internal MapCount(
             object lockOnMe,
-            BPlusTree<C, Inc.B> di4_1R,
+            BPlusTree<C, B> di4_1R,
             IOutput<C, I, M, O> outputStrategy,
             List<I> intervals,
             int start,
@@ -34,7 +34,7 @@ namespace Genometric.Di4.Inc
         }
 
 
-        private BPlusTree<C, Inc.B> _di4_1R { set; get; }
+        private BPlusTree<C, B> _di4_1R { set; get; }
         private int _start { set; get; }
         private int _stop { set; get; }
         private bool _aMuIsFound { set; get; }
@@ -45,7 +45,7 @@ namespace Genometric.Di4.Inc
         private object _lockOnMe { set; get; }
         private IOutput<C, I, M, O> _outputStrategy { set; get; }
         private Dictionary<uint, bool> _gapIntervals { set; get; }
-        private IEnumerator<KeyValuePair<C, Inc.B>> _di4Enumerator { set; get; }
+        private IEnumerator<KeyValuePair<C, B>> _di4Enumerator { set; get; }
         private HashSet<uint> _lambdas { set; get; }
         private C _nextLeftEnd { set; get; }
         private C _nextRightEnd { set; get; }

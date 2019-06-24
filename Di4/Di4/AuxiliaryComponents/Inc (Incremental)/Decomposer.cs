@@ -42,7 +42,7 @@ namespace Genometric.Di4.AuxiliaryComponents.Inc
             _decomposedIntervals.Clear();
             _designatedRegions.Clear();
         }
-        public void Open(C leftEnd, Di4.Inc.B keyBookmark)
+        public void Open(C leftEnd, Di4.B keyBookmark)
         {
             //_tDecomposedIntervalsCount = _decomposedIntervals.Count;
             _regionType = RegionType.Designated;
@@ -97,7 +97,7 @@ namespace Genometric.Di4.AuxiliaryComponents.Inc
 
             _tLambdas.Clear();
         }
-        public void Close(C rightEnd, Di4.Inc.B keyBookmark)
+        public void Close(C rightEnd, Di4.B keyBookmark)
         {
             _designatedRegions[_designatedRegions.Count - 1] = _designatedRegions[_designatedRegions.Count - 1].UpdateRight(rightEnd);
             foreach (var lambda in keyBookmark.lambda)
@@ -120,7 +120,7 @@ namespace Genometric.Di4.AuxiliaryComponents.Inc
             if (_mu == 0)
                 Conclude();
         }
-        public void Update(Di4.Inc.B keyBookmark)
+        public void Update(Di4.B keyBookmark)
         {
             switch (_regionType)
             {

@@ -1,7 +1,7 @@
 ﻿using CSharpTest.Net.Serialization;
 using System.Collections.ObjectModel;
 
-namespace Genometric.Di4.Inc
+namespace Genometric.Di4
 {
     class BSerializer : ISerializer<B>
     {
