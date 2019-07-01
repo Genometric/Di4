@@ -80,10 +80,10 @@
     <Compile Include="AuxiliaryComponents\BlockKeyComparer.cs" />
     <Compile Include="AuxiliaryComponents\CacheOptions.cs" />
     <Compile Include="AuxiliaryComponents\HashHelpers.cs" />
-    <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\Decomposer.cs" />
-    <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DecomposerValue.cs" />
-    <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DecompositionStack.cs" />
-    <Compile Include="AuxiliaryComponents\Inc %28Incremental%29\DesignatedRegion.cs" />
+    <Compile Include="AuxiliaryComponents\Decomposer.cs" />
+    <Compile Include="AuxiliaryComponents\DecomposerValue.cs" />
+    <Compile Include="AuxiliaryComponents\DecompositionStack.cs" />
+    <Compile Include="AuxiliaryComponents\DesignatedRegion.cs" />
     <Compile Include="AuxiliaryComponents\StatsCalculator.cs" />
     <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
     <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />

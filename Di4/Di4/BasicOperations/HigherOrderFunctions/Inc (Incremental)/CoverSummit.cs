@@ -1,5 +1,5 @@
 ﻿using CSharpTest.Net.Collections;
-using Genometric.Di4.AuxiliaryComponents.Inc;
+using Genometric.Di4.AuxiliaryComponents;
 using Polimi.DEIB.VahidJalili.IGenomics;
 using System;
 using System.Collections.Generic;
