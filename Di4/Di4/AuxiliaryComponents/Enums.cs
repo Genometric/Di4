@@ -27,4 +27,6 @@ namespace Genometric.Di4
     internal enum RegionType : byte { Candidate, Designated, Decomposition };
 
     public enum CuttingMethod { ZeroThresholding, UniformScalarQuantization, NonUniformScalarQuantization };
+
+    public enum Aggregate { Count, Sum, Maximum, Minimum, Median, Mean, StandardDeviation };
 }

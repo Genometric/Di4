@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Genometric.Di4
 {
-    public enum Aggregate { Count, Sum, Maximum, Minimum, Median, Mean, StandardDeviation };
+    
 
     public class VCOutputStrategy<C, I, M, O> : IOutput<C, I, M, uint>
          where C : IComparable<C>, IFormattable
