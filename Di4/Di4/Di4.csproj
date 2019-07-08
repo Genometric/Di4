@@ -116,7 +116,7 @@
     <Compile Include="Serializers\atIArraySerializer.cs" />
     <Compile Include="Serializers\BlockKeySerializer.cs" />
     <Compile Include="Serializers\BlockValueSerializer.cs" />
-    <Compile Include="Serializers\Inc %28Incremental%29\BSerializer.cs" />
+    <Compile Include="Serializers\BSerializer.cs" />
     <Compile Include="Serializers\LambdaArraySerializer.cs" />
     <Compile Include="Serializers\LambdaItemSerializer.cs" />
   </ItemGroup>
