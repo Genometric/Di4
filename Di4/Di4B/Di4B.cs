@@ -12,12 +12,12 @@ namespace Genometric.Di4.Di4B
         where I : IInterval<C, M>, IFormattable, new()
         where M : IMetaData, IFormattable, new()
     {
-        public Di4B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, IndexType indexType, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
+        public Di4B(string workingDirectory, string sectionTitle, Memory Memory, HDDPerformance hddPerformance, CacheOptions cacheOptions, ISerializer<C> CSerializer, IComparer<C> CComparer)
         {
             this.CSerializer = CSerializer;
             this.CComparer = CComparer;
 
-            genome = new Genome<C, I, M>(workingDirectory, sectionTitle, Memory, hddPerformance, indexType, cacheOptions, CSerializer, CComparer);
+            genome = new Genome<C, I, M>(workingDirectory, sectionTitle, Memory, hddPerformance, cacheOptions, CSerializer, CComparer);
         }
 
         private ISerializer<C> CSerializer { set; get; }

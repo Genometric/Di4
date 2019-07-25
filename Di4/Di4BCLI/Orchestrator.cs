@@ -33,7 +33,7 @@ namespace Genometric.Di4.CLI
                 CacheKeepAliveTimeOut: 600000,
                 CachePolicy: CSharpTest.Net.Collections.CachePolicy.Recent);
 
-            di4B = new Di4B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, UserConfig.memory, HDDPerformance.Fastest, UserConfig.indexType, _cacheOptions, PrimitiveSerializer.Int32, int32Comparer);
+            di4B = new Di4B<int, Peak, PeakData>(_workingDirectory, _sectionTitle, UserConfig.memory, HDDPerformance.Fastest, _cacheOptions, PrimitiveSerializer.Int32, int32Comparer);
         }
 
         /// <summary>

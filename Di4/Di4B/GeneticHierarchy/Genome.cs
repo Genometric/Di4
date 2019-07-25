@@ -21,7 +21,6 @@ namespace Genometric.Di4.Di4B
             string sectionTitle,
             Memory memory,
             HDDPerformance hddPerformance,
-            IndexType indexType,
             CacheOptions cacheOptions,
             ISerializer<C> CSerializer,
             IComparer<C> CComparer)
@@ -32,7 +31,6 @@ namespace Genometric.Di4.Di4B
             _CComparer = CComparer;
             _sectionTitle = sectionTitle;
             _cacheOptions = cacheOptions;
-            _indexType = indexType;
             _stpWtch = new Stopwatch();
 
             _config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -68,7 +66,6 @@ namespace Genometric.Di4.Di4B
         private IComparer<C> _CComparer { set; get; }
         private Memory _memory { set; get; }
         private HDDPerformance _hddPerformance { set; get; }
-        private IndexType _indexType { set; get; }
         private CacheOptions _cacheOptions { set; get; }
         private ChrSection _chrSection { set; get; }
         private Configuration _config { set; get; }
@@ -660,8 +657,6 @@ namespace Genometric.Di4.Di4B
                         Comparer: _CComparer);
                     break;
             }
-
-            options.ActiveIndexes = _indexType;
 
             options.AverageKeySize = 4;
             options.AverageValueSize = 32;

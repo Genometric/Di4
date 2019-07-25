@@ -18,7 +18,6 @@ namespace Genometric.Di4
             this.CreatePolicy = CreatePolicy;
             this.CSerializer = CSerializer;
             this.Comparer = Comparer;
-            ActiveIndexes = IndexType.Both;
         }
 
         public bool OpenReadOnly { set; get; }
@@ -26,7 +25,6 @@ namespace Genometric.Di4
         internal CreatePolicy CreatePolicy { set; get; }
         internal ISerializer<C> CSerializer { set; get; }
         internal IComparer<C> Comparer { set; get; }
-        public IndexType ActiveIndexes { set; get; }
         public int FileBlockSize { set; get; }
         public int AverageKeySize { set; get; }
         public int AverageValueSize { set; get; }

@@ -6,7 +6,6 @@ namespace Genometric.Di4.CLI
     {
         public static string workingDirectory { set; get; }
         public static string logFile { set; get; }
-        public static IndexType indexType { set; get; }
         public static int minCacheSize { set; get; }
         public static int maxCacheSize { set; get; }
         public static Memory memory { set; get; }

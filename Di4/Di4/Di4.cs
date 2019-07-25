@@ -312,31 +312,27 @@ namespace Genometric.Di4
             int start = 0, stop = 0, count = 0, range = (int)Math.Ceiling(intervals.Count / (double)threads);
             var addedBookmarks = new ConcurrentDictionary<int, int>();
 
-            if (_options.ActiveIndexes != IndexType.OnlyInverted)
+            using (WorkQueue work = new WorkQueue(threads))
             {
-                using (WorkQueue work = new WorkQueue(threads))
+                for (int i = 0; i < threads; i++)
                 {
-                    for (int i = 0; i < threads; i++)
-                    {
-                        start = i * range;
-                        stop = (i + 1) * range;
-                        if (stop > intervals.Count) stop = intervals.Count;
-                        work.Enqueue(new BatchIndex<C, I, M>(_di4_incIdx, collectionID, intervals, start, stop, mode, addedBookmarks).Run);
-                    }
-
-                    work.Complete(true, -1);
+                    start = i * range;
+                    stop = (i + 1) * range;
+                    if (stop > intervals.Count) stop = intervals.Count;
+                    work.Enqueue(new BatchIndex<C, I, M>(_di4_incIdx, collectionID, intervals, start, stop, mode, addedBookmarks).Run);
                 }
 
-                count = 0;
-                foreach (var item in addedBookmarks)
-                    count += item.Value;
-                _indexesCardinality.AddOrUpdate(_keyCardinalityIncIndx, count);
+                work.Complete(true, -1);
             }
+
+            count = 0;
+            foreach (var item in addedBookmarks)
+                count += item.Value;
+            _indexesCardinality.AddOrUpdate(_keyCardinalityIncIndx, count);
         }
         public void SecondPass()
         {
-            if (_options.ActiveIndexes != IndexType.OnlyInverted)            
-                incBatchIndex.SecondPass();   
+            incBatchIndex.SecondPass();
         }
 
 
@@ -699,10 +695,7 @@ namespace Genometric.Di4
 
         public Stats Statistics()
         {
-            if (_options.ActiveIndexes == IndexType.Both || _options.ActiveIndexes == IndexType.OnlyIncremental)
-                return new Stats(0, _indexesCardinality.GetValue(_keyCardinalityIncIndx), _indexesCardinality.GetValue(_keyCardinality2R));
-            else
-                return new Stats(0, _indexesCardinality.GetValue(_keyCardinalityInvIndx), _indexesCardinality.GetValue(_keyCardinality2R));
+            return new Stats(0, _indexesCardinality.GetValue(_keyCardinalityIncIndx), _indexesCardinality.GetValue(_keyCardinality2R));
         }
         
 
