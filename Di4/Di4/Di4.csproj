@@ -109,7 +109,7 @@
     <Compile Include="PrimaryComponents\BlockValue.cs" />
     <Compile Include="PrimaryComponents\B.cs" />
     <Compile Include="PrimaryComponents\BlockKey.cs" />
-    <Compile Include="AuxiliaryComponents\Di3Options.cs" />
+    <Compile Include="AuxiliaryComponents\Options.cs" />
     <Compile Include="AuxiliaryComponents\Enums.cs" />
     <Compile Include="PrimaryComponents\Lambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

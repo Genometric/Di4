@@ -635,14 +635,14 @@ namespace Genometric.Di4.Di4B
 
             return _settings[chr].Value;
         }
-        private Di4Options<C> GetDi4Options(string indexFile = "none")
+        private Options<C> GetDi4Options(string indexFile = "none")
         {
-            Di4Options<C> options;
+            Options<C> options;
 
             switch (_memory)
             {
                 case Memory.HDD:
-                    options = new Di4Options<C>(
+                    options = new Options<C>(
                         FileName: indexFile,
                         CreatePolicy: CreatePolicy.IfNeeded,
                         CSerializer: _CSerializer,
@@ -651,7 +651,7 @@ namespace Genometric.Di4.Di4B
 
                 case Memory.RAM:
                 default:
-                    options = new Di4Options<C>(
+                    options = new Options<C>(
                         CreatePolicy: CreatePolicy.Never,
                         CSerializer: _CSerializer,
                         Comparer: _CComparer);

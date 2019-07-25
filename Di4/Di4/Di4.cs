@@ -112,7 +112,7 @@ namespace Genometric.Di4
         }
 
 
-        public Di4(Di4Options<C> options)
+        public Di4(Options<C> options)
         {
             _options = options;
             _di4_incIdx = new BPlusTree<C, B>(GetIncOptions());
@@ -138,7 +138,7 @@ namespace Genometric.Di4
         private BlockKeySerializer<C> _blockKeySerializer { set; get; }
         private BlockValueSerializer _blockValueSerializer { set; get; }
         private InfoIndex _indexesCardinality { set; get; }
-        private Di4Options<C> _options { set; get; }
+        private Options<C> _options { set; get; }
 
 
         private string _keyCardinalityIncIndx { get { return "INCINDX"; } }
