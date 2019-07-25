@@ -20,8 +20,6 @@ namespace Genometric.Di4.CLI
             if (!GetMemoryType()) return false;
             if (!SetGetWorkingDirectory()) return false;
             if (!SetGetLogFile()) return false;
-            if (!SetGetInvertedIndex()) return false;
-            if (!SetGetIncrementalIndex()) return false;
             if (_settings[_memoryKey].Value.ToLower() == "hdd")
             {   
                 if (!SetGetMinCache()) return false;
@@ -43,13 +41,6 @@ namespace Genometric.Di4.CLI
             UserConfig.ParserParameters.nameColumn = Convert.ToByte(_settings[_nameColKey].Value);
             UserConfig.ParserParameters.valueColumn = Convert.ToByte(_settings[_valueColKey].Value);
 
-            if (_settings[_invertedIndexKey].Value.ToLower() == "y" && _settings[_incrementalIndexKey].Value.ToLower() == "y")
-                UserConfig.indexType = IndexType.Both;
-            else if (_settings[_invertedIndexKey].Value.ToLower() == "y")
-                UserConfig.indexType = IndexType.OnlyInverted;
-            else
-                UserConfig.indexType = IndexType.OnlyIncremental;
-
             return true;
         }
 
@@ -60,9 +51,7 @@ namespace Genometric.Di4.CLI
         #region .::.   Keys   .::.
         private static string _memoryKey { get { return "Memory"; } }
         private static string _workingDirectoryKey { get { return "WorkingDirectory"; } }
-        private static string _logFileKey { get { return "LogFile"; } }
-        private static string _invertedIndexKey { get { return "EnableInvertedIndex"; } }
-        private static string _incrementalIndexKey { get { return "EnableIncrementalIndex"; } }        
+        private static string _logFileKey { get { return "LogFile"; } }      
         private static string _minCacheKey { get { return "MinBInCache"; } }
         private static string _maxCacheKey { get { return "MaxBInCache"; } }
         private static string _chrColKey { get { return "Parser__ChrColumn"; } }
@@ -225,72 +214,7 @@ namespace Genometric.Di4.CLI
 
             return true;
         }
-        private static bool SetGetInvertedIndex()
-        {
-            if (_settings[_invertedIndexKey] == null)
-            {
-                Console.Write("Do you want to enable inverted index ? [y/n] ");
-                char key = Console.ReadKey().KeyChar;
-                while (key != 'y' && key != 'n')
-                {
-                    Console.WriteLine("\nError: Incorrect argument!");
-                    Console.Write("Please press \"y\" to Enable the inverted index, or \"n\" to Disable [y/n]: ");
-                    key = Console.ReadKey().KeyChar;
-                }
 
-                Console.WriteLine("");
-                Console.WriteLine("Inverted index is {0} !", (key == 'y' ? "enabled" : "disabled"));
-                _settings.Add(_invertedIndexKey, key.ToString());
-                _updateConfiguration = true;
-            }
-            else
-            {
-                switch (_settings[_invertedIndexKey].Value)
-                {
-                    case "y": Console.WriteLine("Inverted index is Enabled !"); break;
-                    case "n": Console.WriteLine("Inverted index is Disabled !"); break;
-                    default:
-                        ExitMessage("Invalid inverted index parameter.");
-                        return false;
-                }
-            }
-
-            Console.WriteLine("");
-            return true;
-        }
-        private static bool SetGetIncrementalIndex()
-        {
-            if (_settings[_incrementalIndexKey] == null)
-            {
-                Console.Write("Do you want to enable incremental inverted index ? [y/n] ");
-                char key = Console.ReadKey().KeyChar;
-                while (key != 'y' && key != 'n')
-                {
-                    Console.WriteLine("\nError: Incorrect argument!");
-                    Console.Write("Please press \"y\" to Enable the incremental inverted index, or \"n\" to Disable [y/n]: ");
-                    key = Console.ReadKey().KeyChar;
-                }
-
-                Console.WriteLine("");
-                Console.WriteLine("Incremental inverted index is {0} !", (key == 'y' ? "enabled" : "disabled"));
-                _settings.Add(_incrementalIndexKey, key.ToString());
-                _updateConfiguration = true;
-            }
-            else
-            {
-                switch (_settings[_incrementalIndexKey].Value)
-                {
-                    case "y": Console.WriteLine("Incremental inverted index is Enabled !"); break;
-                    case "n": Console.WriteLine("Incremental inverted index is Disabled !"); break;
-                    default:
-                        ExitMessage("Invalid incremental inverted index parameter.");
-                        return false;
-                }
-            }
-
-            Console.WriteLine("");
-            return true;
-        }
         private static bool SetGetMinCache()
         {
             int minHistorySize;
