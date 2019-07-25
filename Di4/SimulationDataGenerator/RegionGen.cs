@@ -314,7 +314,6 @@ namespace Genometric.Di4.SimulationDataGenerator
             gOG = 0;
 
             int retries;
-            bool accept;
             bool overlaps;
 
             // Total number of intervals
@@ -360,7 +359,6 @@ namespace Genometric.Di4.SimulationDataGenerator
 
                     while (iCreated < iToCreate)
                     {
-                        accept = false;
                         var ibase = new IntervalBase();
                         ibase.left = rnd.Next(window.left, window.right - maxLenght - 1);
                         ibase.right = rnd.Next(ibase.left + 1, ibase.left + 1 + maxLenght);
