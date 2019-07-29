@@ -74,20 +74,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuxiliaryComponents\AccEntryStruct.cs" />
-    <Compile Include="AuxiliaryComponents\AtomicDictionary.cs" />
-    <Compile Include="AuxiliaryComponents\BlockInfoDis.cs" />
-    <Compile Include="AuxiliaryComponents\BlockKeyComparer.cs" />
-    <Compile Include="AuxiliaryComponents\CacheOptions.cs" />
-    <Compile Include="AuxiliaryComponents\HashHelpers.cs" />
-    <Compile Include="AuxiliaryComponents\Decomposer.cs" />
-    <Compile Include="AuxiliaryComponents\DecomposerValue.cs" />
-    <Compile Include="AuxiliaryComponents\DecompositionStack.cs" />
-    <Compile Include="AuxiliaryComponents\DesignatedRegion.cs" />
-    <Compile Include="AuxiliaryComponents\StatsCalculator.cs" />
-    <Compile Include="AuxiliaryComponents\PartitionBlockStruct.cs" />
-    <Compile Include="AuxiliaryComponents\PartitionStruct.cs" />
-    <Compile Include="AuxiliaryComponents\Stats.cs" />
+    <Compile Include="Model\AccEntryStruct.cs" />
+    <Compile Include="Model\AtomicDictionary.cs" />
+    <Compile Include="Model\BlockInfoDis.cs" />
+    <Compile Include="Model\BlockKeyComparer.cs" />
+    <Compile Include="Model\CacheOptions.cs" />
+    <Compile Include="Model\HashHelpers.cs" />
+    <Compile Include="Model\Decomposer.cs" />
+    <Compile Include="Model\DecomposerValue.cs" />
+    <Compile Include="Model\DecompositionStack.cs" />
+    <Compile Include="Model\DesignatedRegion.cs" />
+    <Compile Include="Model\StatsCalculator.cs" />
+    <Compile Include="Model\PartitionBlockStruct.cs" />
+    <Compile Include="Model\PartitionStruct.cs" />
+    <Compile Include="Model\Stats.cs" />
     <Compile Include="Functions\Retrieval\CoverSummit.cs" />
     <Compile Include="Functions\Retrieval\CoverSummit_OLD.cs" />
     <Compile Include="Functions\Retrieval\MapCount.cs" />
@@ -109,8 +109,8 @@
     <Compile Include="Model\Bookmark\BlockValue.cs" />
     <Compile Include="Model\Bookmark\B.cs" />
     <Compile Include="Model\Bookmark\BlockKey.cs" />
-    <Compile Include="AuxiliaryComponents\Options.cs" />
-    <Compile Include="AuxiliaryComponents\Enums.cs" />
+    <Compile Include="Model\Options.cs" />
+    <Compile Include="Model\Enums.cs" />
     <Compile Include="Model\Bookmark\Lambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\atIArraySerializer.cs" />
